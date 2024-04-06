@@ -6,8 +6,8 @@ namespace Freem.Entities;
 
 public class RunningRecord
 {
-    public const int MaxNameLength = LimitConstants.RecordMaxNameLength;
-    public const int MaxDescriptionLength = LimitConstants.RecordMaxDescriptionLength;
+    public const int MaxNameLength = LengthLimits.RecordMaxNameLength;
+    public const int MaxDescriptionLength = LengthLimits.RecordMaxDescriptionLength;
 
     private string? _name;
     private string? _description;

@@ -6,7 +6,7 @@ namespace Freem.Entities;
 
 public class Category
 {
-    public const int MaxNameLength = LimitConstants.CategoryMaxNameLength;
+    public const int MaxNameLength = LengthLimits.CategoryMaxNameLength;
 
     private string? _name;
 
