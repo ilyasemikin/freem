@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Entities", "Freem.Ent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Collections", "Freem.Collections\Freem.Collections.csproj", "{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DateTimePeriods", "Freem.DateTimePeriods\Freem.DateTimePeriods.csproj", "{1A9D599E-91D1-4504-9341-C095F0D9B81A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DateTimePeriods.UnitTests", "Freem.DateTimePeriods.UnitTests\Freem.DateTimePeriods.UnitTests.csproj", "{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

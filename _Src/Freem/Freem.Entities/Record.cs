@@ -1,4 +1,5 @@
 ﻿using Freem.Collections.Identifiers;
+using Freem.DateTimePeriods;
 using Freem.Entities.Constants;
 using Freem.Entities.Helpers;
 
@@ -41,14 +42,14 @@ public class Record
         }
     }
 
-    public TimePeriod TimePeriod { get; }
+    public DateTimePeriod TimePeriod { get; }
 
     public Record(
         string id,
         string userId,
         IEnumerable<string> categoryIds,
         IEnumerable<string>? tagsIds,
-        TimePeriod timePeriod)
+        DateTimePeriod timePeriod)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
