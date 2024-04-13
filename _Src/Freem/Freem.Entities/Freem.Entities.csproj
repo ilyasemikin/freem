@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
+		<ProjectReference Include="..\Freem.DateTimePeriods\Freem.DateTimePeriods.csproj" />
+	</ItemGroup>
 
 </Project>
