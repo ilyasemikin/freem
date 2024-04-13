@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Freem.DateTimePeriods\Freem.DateTimePeriods.csproj" />
+	  <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+	  <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj" />
+	  <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

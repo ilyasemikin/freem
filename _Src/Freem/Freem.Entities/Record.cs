@@ -16,7 +16,7 @@ public class Record
     public string Id { get; }
     public string UserId { get; }
     public IdentifiersCollection CategoryIds { get; }
-    public IdentifiersCollection TagsIds { get; }
+    public IdentifiersCollection TagIds { get; }
 
     public string? Name
     {
@@ -42,13 +42,13 @@ public class Record
         }
     }
 
-    public DateTimePeriod TimePeriod { get; }
+    public DateTimePeriod Period { get; }
 
     public Record(
         string id,
         string userId,
         IEnumerable<string> categoryIds,
-        IEnumerable<string>? tagsIds,
+        IEnumerable<string>? tagIds,
         DateTimePeriod timePeriod)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
@@ -60,8 +60,8 @@ public class Record
         UserId = userId;
         
         CategoryIds = new IdentifiersCollection(categoryIds, IdentifiersCheckerStrategies.CategoryIdsCheckerStrategy);
-        TagsIds = new IdentifiersCollection(tagsIds, IdentifiersCheckerStrategies.TagIdsCheckerStrategy);
+        TagIds = new IdentifiersCollection(tagIds, IdentifiersCheckerStrategies.TagIdsCheckerStrategy);
         
-        TimePeriod = timePeriod;
+        Period = timePeriod;
     }
 }
