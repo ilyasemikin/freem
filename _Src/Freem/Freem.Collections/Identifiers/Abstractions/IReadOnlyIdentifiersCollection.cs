@@ -2,5 +2,7 @@
 
 public interface IReadOnlyIdentifiersCollection : IReadOnlyCollection<string>
 {
+    bool Empty { get; }
+
     bool Contains(string identifier);
 }

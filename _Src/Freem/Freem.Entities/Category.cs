@@ -8,18 +8,19 @@ public class Category
 {
     public const int MaxNameLength = LengthLimits.CategoryMaxNameLength;
 
-    private string? _name;
+    private string _name = string.Empty;
 
     public string Id { get; }
     public string UserId { get; }
     public IdentifiersCollection TagIds { get; }
 
-    public string? Name
+    public string Name
     {
         get => _name;
         set
         {
-            if (value?.Length > MaxNameLength)
+            ArgumentException.ThrowIfNullOrEmpty(value);
+            if (value.Length > MaxNameLength)
                 throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
 
             _name = value;
@@ -32,6 +33,7 @@ public class Category
 
     public Category(
         string id,
+        string name,
         string userId,
         IEnumerable<string>? tagIds,
         DateTimeOffset createdAt,
@@ -42,6 +44,7 @@ public class Category
 
         Id = id;
         UserId = userId;
+        Name = name;
         TagIds = new IdentifiersCollection(tagIds, IdentifiersCheckerStrategies.TagIdsCheckerStrategy);
         Status = status;
         CreatedAt = createdAt.UtcDateTime;
