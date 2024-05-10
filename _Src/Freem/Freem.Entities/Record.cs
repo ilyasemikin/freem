@@ -1,22 +1,24 @@
-﻿using Freem.Collections.Identifiers;
-using Freem.DateTimePeriods;
+﻿using Freem.DateTimePeriods;
+using Freem.Entities.Abstractions;
+using Freem.Entities.Collections;
 using Freem.Entities.Constants;
-using Freem.Entities.Helpers;
 
 namespace Freem.Entities;
 
-public class Record
+public class Record : IEntity
 {
     public const int MaxNameLength = LengthLimits.RecordMaxNameLength;
     public const int MaxDescriptionLength = LengthLimits.RecordMaxDescriptionLength;
+
+    public const int RelatedCategoriesMinCount = 1;
 
     private string? _name;
     private string? _description;
 
     public string Id { get; }
     public string UserId { get; }
-    public IdentifiersCollection CategoryIds { get; }
-    public IdentifiersCollection TagIds { get; }
+    public RelatedEntitiesCollection<Category> Categories { get; }
+    public RelatedEntitiesCollection<Tag> Tags { get; }
 
     public string? Name
     {
@@ -47,21 +49,46 @@ public class Record
     public Record(
         string id,
         string userId,
-        IEnumerable<string> categoryIds,
-        IEnumerable<string>? tagIds,
+        RelatedEntitiesCollection<Category> categories,
+        RelatedEntitiesCollection<Tag> tags,
         DateTimePeriod timePeriod)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
-        ArgumentNullException.ThrowIfNull(categoryIds);
+        ArgumentNullException.ThrowIfNull(categories);
+        ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(timePeriod);
 
         Id = id;
         UserId = userId;
         
-        CategoryIds = new IdentifiersCollection(categoryIds, IdentifiersCheckerStrategies.CategoryIdsCheckerStrategy);
-        TagIds = new IdentifiersCollection(tagIds, IdentifiersCheckerStrategies.TagIdsCheckerStrategy);
+        Categories = categories;
+        Tags = tags;
         
         Period = timePeriod;
+    }
+
+    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(IEnumerable<Category> entities)
+    {
+        return CreateRelatedCategories(entities, []);
+    }
+
+    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(IEnumerable<string> identifiers)
+    {
+        return CreateRelatedCategories([], identifiers);
+    }
+
+    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(
+        IEnumerable<Category> entities, 
+        IEnumerable<string> identifiers)
+    {
+        return new RelatedEntitiesCollection<Category>(entities, identifiers, RelatedCategoriesMinCount);
+    }
+
+    public static RelatedEntitiesCollection<Tag> CreateRelatedTags(
+        IEnumerable<Tag>? entities = null, 
+        IEnumerable<string>? identifiers = null)
+    {
+        return new RelatedEntitiesCollection<Tag>(entities ?? [], identifiers ?? []);
     }
 }

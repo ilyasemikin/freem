@@ -1,8 +1,9 @@
-﻿using Freem.Entities.Constants;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Constants;
 
 namespace Freem.Entities;
 
-public class Tag
+public class Tag : IEntity
 {
     public const int MaxNameLength = LengthLimits.TagMaxNameLength;
 
