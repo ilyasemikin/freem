@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Entities", "Freem.Entities\Freem.Entities.csproj", "{711DAC13-481C-4177-A804-2116BE38BD35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Collections", "Freem.Collections\Freem.Collections.csproj", "{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DateTimePeriods", "Freem.DateTimePeriods\Freem.DateTimePeriods.csproj", "{1A9D599E-91D1-4504-9341-C095F0D9B81A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DateTimePeriods.UnitTests", "Freem.DateTimePeriods.UnitTests\Freem.DateTimePeriods.UnitTests.csproj", "{DFBCE009-D235-4EFF-9B52-06A5EDCAFAA3}"
@@ -19,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Sorting", "Freem.Sort
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL", "Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj", "{9A64AF28-C535-4B97-BD63-5D7990C44BBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.EFCore.Extensions", "Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj", "{986B8A6C-4CC8-45D0-9EA5-585C97A844BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.Migrations", "Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj", "{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +31,6 @@ Global
 		{711DAC13-481C-4177-A804-2116BE38BD35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{711DAC13-481C-4177-A804-2116BE38BD35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{711DAC13-481C-4177-A804-2116BE38BD35}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20ACDA4F-76E4-48E5-92FE-54E3D01D62DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A9D599E-91D1-4504-9341-C095F0D9B81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +55,14 @@ Global
 		{9A64AF28-C535-4B97-BD63-5D7990C44BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A64AF28-C535-4B97-BD63-5D7990C44BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A64AF28-C535-4B97-BD63-5D7990C44BBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{986B8A6C-4CC8-45D0-9EA5-585C97A844BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{986B8A6C-4CC8-45D0-9EA5-585C97A844BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{986B8A6C-4CC8-45D0-9EA5-585C97A844BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{986B8A6C-4CC8-45D0-9EA5-585C97A844BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

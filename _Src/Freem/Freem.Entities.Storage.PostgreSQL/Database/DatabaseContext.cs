@@ -1,5 +1,7 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations.Extensions;
+using Freem.Entities.Storage.PostgreSQL.Database.Relations.Configurations.Extensions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database;
 
@@ -16,5 +18,13 @@ internal class DatabaseContext : DbContext
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.ApplyRelationsConfigurations();
+        builder.ApplyEntitiesConfigurations();
+
+        base.OnModelCreating(builder);
     }
 }

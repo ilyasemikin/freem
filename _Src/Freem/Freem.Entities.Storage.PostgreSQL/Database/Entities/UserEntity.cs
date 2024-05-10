@@ -3,6 +3,6 @@
 internal class UserEntity
 {
     public required string Id { get; init; }
-
-    public IList<CategoryEntity>? Categories { get; set; }
+    
+    public required string Nickname {get; init; }
 }

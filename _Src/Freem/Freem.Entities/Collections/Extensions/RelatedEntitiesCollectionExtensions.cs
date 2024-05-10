@@ -12,12 +12,16 @@ public static class RelatedEntitiesCollectionExtensions
     public static bool Contains<TEntity>(this RelatedEntitiesCollection<TEntity> collection, TEntity entity)
         where TEntity : class, IEntity
     {
+        ArgumentNullException.ThrowIfNull(collection);
+
         return collection.Contains(entity.Id);
     }
 
-    public static bool ContainsEntitys<TEntity>(this RelatedEntitiesCollection<TEntity> collection, string id)
+    public static bool ContainsEntities<TEntity>(this RelatedEntitiesCollection<TEntity> collection, string identifier)
         where TEntity : class, IEntity
     {
-        return collection.TryGet(id, out var _);
+        ArgumentNullException.ThrowIfNull(collection);
+
+        return collection.TryGet(identifier, out var _);
     }
 }

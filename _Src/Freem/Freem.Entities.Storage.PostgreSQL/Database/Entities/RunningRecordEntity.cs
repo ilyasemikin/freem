@@ -2,7 +2,7 @@
 
 internal class RunningRecordEntity
 {
-    public required string UserId { get; set; }
+    public required string UserId { get; init; }
     
     public string? Name { get; set; }
     public string? Description { get; set; }
