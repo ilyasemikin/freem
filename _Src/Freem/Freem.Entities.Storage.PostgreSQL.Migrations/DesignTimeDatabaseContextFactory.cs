@@ -9,16 +9,15 @@ internal class DesignTimeDatabaseContextFactory : IDesignTimeDbContextFactory<Da
 {
     public DatabaseContext CreateDbContext(string[] args)
     {
-        if (args.Length == 0)
-            throw new InvalidOperationException("Connection string must be provided as first argument");
-
-        var connectionString = args[0];
+        var connectionString = args.Length == 0 
+            ? string.Empty 
+            : args[0];
 
         var builder = new DbContextOptionsBuilder<DatabaseContext>()
             .UseNpgsql(connectionString, b => 
             {
-                b.MigrationsAssembly("Freem.Entities.Storage.PostgreSQL.Migrations");
-                b.MigrationsHistoryTable(Names.Tables.EFCoreMigrations, Names.Schema);
+                b.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
+                b.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
             })
             .EnableDetailedErrors()
             .EnableSensitiveDataLogging();

@@ -10,6 +10,8 @@ public class Tag : IEntity
     private string _name = string.Empty;
 
     public string Id { get; }
+    public string UserId { get; }
+
     public string Name
     {
         get => _name;
@@ -24,11 +26,12 @@ public class Tag : IEntity
         }
     }
 
-    public Tag(string id, string name)
+    public Tag(string id, string userId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
+        ArgumentException.ThrowIfNullOrEmpty(userId);
 
         Id = id;
-        Name = name;
+        UserId = userId;
     }
 }

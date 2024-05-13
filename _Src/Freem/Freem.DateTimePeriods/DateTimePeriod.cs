@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Freem.DateTimePeriods;
 
-public class DateTimePeriod : IEquatable<DateTimePeriod>
+public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 {
     public static DateTimePeriod Empty { get; } = new DateTimePeriod(DateTimeOffset.MinValue, DateTimeOffset.MinValue);
 

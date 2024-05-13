@@ -8,14 +8,12 @@ public class RunningRecord
     public const int MaxNameLength = LengthLimits.RecordMaxNameLength;
     public const int MaxDescriptionLength = LengthLimits.RecordMaxDescriptionLength;
 
-    public const int RelatedCategoriesMinCount = 1;
-
     private string? _name;
     private string? _description;
 
     public string UserId { get; }
-    public RelatedEntitiesCollection<Category> Categories { get; }
-    public RelatedEntitiesCollection<Tag> Tags { get; }
+    public RelatedCategoriesCollection Categories { get; }
+    public RelatedTagsCollection Tags { get; }
 
     public string? Name
     {
@@ -45,8 +43,8 @@ public class RunningRecord
 
     public RunningRecord(
         string userId,
-        RelatedEntitiesCollection<Category> categories,
-        RelatedEntitiesCollection<Tag> tags,
+        RelatedCategoriesCollection categories,
+        RelatedTagsCollection tags,
         DateTimeOffset startAt)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
@@ -58,29 +56,5 @@ public class RunningRecord
         Tags = tags;
 
         StartAt = startAt;
-    }
-
-    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(IEnumerable<Category> entities)
-    {
-        return CreateRelatedCategories(entities, []);
-    }
-
-    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(IEnumerable<string> identifiers)
-    {
-        return CreateRelatedCategories([], identifiers);
-    }
-
-    public static RelatedEntitiesCollection<Category> CreateRelatedCategories(
-        IEnumerable<Category> entities, 
-        IEnumerable<string> identifiers)
-    {
-        return new RelatedEntitiesCollection<Category>(entities, identifiers, RelatedCategoriesMinCount);
-    }
-
-    public static RelatedEntitiesCollection<Tag> CreateRelatedTags(
-        IEnumerable<Tag>? entities = null, 
-        IEnumerable<string>? identifiers = null)
-    {
-        return new RelatedEntitiesCollection<Tag>(entities ?? [], identifiers ?? []);
     }
 }

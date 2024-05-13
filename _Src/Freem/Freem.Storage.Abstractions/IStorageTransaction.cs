@@ -1,7 +1,7 @@
 ﻿namespace Freem.Storage.Abstractions;
 
-public interface IStorageTransaction
+public interface IStorageTransaction : IAsyncDisposable
 {
-    Task AbortAsync(CancellationToken cancellationToken);
     Task CommitAsync(CancellationToken cancellationToken);
+    Task AbortAsync(CancellationToken cancellationToken);
 }

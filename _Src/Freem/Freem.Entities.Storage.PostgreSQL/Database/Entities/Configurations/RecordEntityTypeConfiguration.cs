@@ -1,57 +1,89 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Relations;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
 
-internal class RecordEntityTypeConfiguration : IEntityTypeConfiguration<RecordEntity>
+internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<RecordEntity>
 {
     public void Configure(EntityTypeBuilder<RecordEntity> builder)
     {
-        builder.ToTable(
-            Names.Tables.Records, 
-            Names.Schema,
-            table => table
-                .HasCheckConstraint(
-                    Names.Constrains.Records.TimeRangeCheck, 
-                    $"{Names.Properties.Records.StartAt} <= {Names.Properties.Records.EndAt}"));
+        builder.ToTable(EntitiesNames.Records.Table, table =>
+            table.HasCheckConstraint(
+                EntitiesNames.Records.Constaints.TimePeriodCheck, 
+                $"{EntitiesNames.Records.Properties.StartAt} <= {EntitiesNames.Records.Properties.EndAt}"));
 
         builder
             .Property(e => e.Id)
-            .HasColumnName(Names.Properties.Records.Id)
+            .HasColumnName(EntitiesNames.Records.Properties.Id)
+            .HasColumnOrder(0)
             .IsRequired();
 
         builder
-            .Property(e => e.StartAt)
-            .HasColumnType(Names.Properties.Records.StartAt)
-            .IsRequired();
-
-        builder
-            .Property(e => e.EndAt)
-            .HasColumnType(Names.Properties.Records.EndAt)
+            .Property(e => e.UserId)
+            .HasColumnName(EntitiesNames.Records.Properties.UserId)
             .IsRequired();
 
         builder
             .Property(e => e.Name)
-            .HasColumnName(Names.Properties.Records.Name);
+            .HasMaxLength(Record.MaxNameLength)
+            .HasColumnName(EntitiesNames.Records.Properties.Name);
 
         builder
             .Property(e => e.Description)
-            .HasColumnName(Names.Properties.Records.Description);
+            .HasMaxLength(Record.MaxDescriptionLength)
+            .HasColumnName(EntitiesNames.Records.Properties.Description);
+
+        builder
+            .Property(e => e.StartAt)
+            .HasColumnName(EntitiesNames.Records.Properties.StartAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.EndAt)
+            .HasColumnName(EntitiesNames.Records.Properties.EndAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Records.Properties.CreatedAt)
+            .HasColumnOrder(1)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Records.Properties.UpdatedAt);
 
         builder
             .HasKey(e => e.Id)
-            .HasName(Names.Constrains.Records.PrimaryKey);
+            .HasName(EntitiesNames.Records.Constaints.PrimaryKey);
+
+        builder
+            .HasIndex(e => e.UserId)
+            .HasDatabaseName(EntitiesNames.Records.Constaints.UserIdIndex);
+
+        builder
+            .HasOne(e => e.User)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .HasConstraintName(EntitiesNames.Records.Constaints.UsersForeignKey)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
 
         builder
             .HasMany(e => e.Categories)
             .WithMany()
-            .UsingEntity<RecordCategoryRelation>();
+            .UsingEntity<RecordCategoryRelationEntity>();
 
         builder
             .HasMany(e => e.Tags)
-            .WithMany()
-            .UsingEntity<RecordTagRelation>();
+            .WithMany(e => e.Records)
+            .UsingEntity<RecordTagRelationEntity>();
     }
 }

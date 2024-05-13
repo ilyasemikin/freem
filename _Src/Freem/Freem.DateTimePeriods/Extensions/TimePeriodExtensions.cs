@@ -1,4 +1,5 @@
 ﻿using Freem.DateTimePeriods.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Freem.DateTimePeriods.Extensions;
 
@@ -21,5 +22,29 @@ public static class TimePeriodExtensions
         }
 
         return result;
+    }
+
+    public static bool TryUpdateStartAt(this DateTimePeriod period, DateTimeOffset startAt, [NotNullWhen(true)] out DateTimePeriod? result)
+    {
+        if (startAt > period.EndAt)
+        {
+            result = null;
+            return false;
+        }
+
+        result = new DateTimePeriod(startAt, period.EndAt);
+        return true;
+    }
+
+    public static bool TryUpdateEndAt(this DateTimePeriod period, DateTimeOffset endAt, [NotNullWhen(true)] out DateTimePeriod? result)
+    {
+        if (endAt < period.StartAt)
+        {
+            result = null;
+            return false;
+        }
+
+        result = new DateTimePeriod(period.StartAt, endAt);
+        return true;
     }
 }

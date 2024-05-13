@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Collections.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

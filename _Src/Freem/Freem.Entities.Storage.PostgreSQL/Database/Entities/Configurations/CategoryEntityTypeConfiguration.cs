@@ -1,51 +1,73 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Relations;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
 
-internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<CategoryEntity>
+internal sealed class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<CategoryEntity>
 {
     public void Configure(EntityTypeBuilder<CategoryEntity> builder)
     {
-        builder.ToTable(
-            Names.Tables.Categories, 
-            Names.Schema);
+        builder.ToTable(EntitiesNames.Categories.Table);
 
         builder
             .Property(e => e.Id)
-            .HasColumnName(Names.Properties.Categories.Id)
+            .HasColumnName(EntitiesNames.Categories.Properties.Id)
+            .HasColumnOrder(0)
             .IsRequired();
 
         builder
             .Property(e => e.UserId)
-            .HasColumnName(Names.Properties.Categories.UserId)
+            .HasColumnName(EntitiesNames.Categories.Properties.UserId)
             .IsRequired();
 
         builder
             .Property(e => e.Name)
-            .HasColumnName(Names.Properties.Categories.Name);
+            .HasMaxLength(Category.MaxNameLength)
+            .HasColumnName(EntitiesNames.Categories.Properties.Name);
+
+        builder
+            .Property(e => e.Status)
+            .HasColumnName(EntitiesNames.Categories.Properties.Status)
+            .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.Categories.Models.CategoryStatus}")
+            .IsRequired();
+
+        builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Categories.Properties.CreatedAt)
+            .HasColumnOrder(1)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Categories.Properties.UpdatedAt);
 
         builder
             .HasKey(e => e.Id)
-            .HasName(Names.Constrains.Categories.PrimaryKey);
+            .HasName(EntitiesNames.Categories.Constaints.PrimaryKey);
 
         builder
             .HasIndex(e => e.UserId)
-            .HasDatabaseName(Names.Constrains.Categories.UserIdIndex);
+            .HasDatabaseName(EntitiesNames.Categories.Constaints.UserIdIndex);
 
         builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)
+            .HasConstraintName(EntitiesNames.Categories.Constaints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
-            .HasConstraintName(Names.Constrains.Categories.UsersForeignKey)
             .IsRequired();
 
         builder
             .HasMany(e => e.Tags)
-            .WithMany()
-            .UsingEntity<CategoryTagRelation>();
+            .WithMany(e => e.Categories)
+            .UsingEntity<CategoryTagRelationEntity>();
     }
 }

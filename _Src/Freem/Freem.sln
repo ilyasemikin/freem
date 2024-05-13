@@ -21,6 +21,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.EFCore.Extensions", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.Migrations", "Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj", "{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Storage.EFCore", "Freem.Storage.EFCore\Freem.Storage.EFCore.csproj", "{758EE40D-C306-437C-AEF6-E9C11C219135}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Sandbox", "Freem.Sandbox\Freem.Sandbox.csproj", "{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.IntegrationTests", "Freem.Entities.Storage.PostgreSQL.IntegrationTests\Freem.Entities.Storage.PostgreSQL.IntegrationTests.csproj", "{8893DD9E-D0D5-4872-90C0-E247A53D64A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Configurations", "Freem.Configurations\Freem.Configurations.csproj", "{C004D9B2-7021-474C-8FB8-1F7DEA454477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DependencyInjection.Microsoft", "Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj", "{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +73,26 @@ Global
 		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4E618D8-3EE0-4CCA-8DC7-CEAA078CCFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{758EE40D-C306-437C-AEF6-E9C11C219135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{758EE40D-C306-437C-AEF6-E9C11C219135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{758EE40D-C306-437C-AEF6-E9C11C219135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{758EE40D-C306-437C-AEF6-E9C11C219135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C004D9B2-7021-474C-8FB8-1F7DEA454477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C004D9B2-7021-474C-8FB8-1F7DEA454477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C004D9B2-7021-474C-8FB8-1F7DEA454477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C004D9B2-7021-474C-8FB8-1F7DEA454477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

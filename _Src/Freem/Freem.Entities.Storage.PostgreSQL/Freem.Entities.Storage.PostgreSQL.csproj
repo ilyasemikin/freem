@@ -14,14 +14,18 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
 	  <ProjectReference Include="..\Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Repositories\" />
+	  <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+	  <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations" />
+		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests" />
+		<InternalsVisibleTo Include="Freem.Sandbox" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Implementations\Repositories\" />
 	</ItemGroup>
 
 </Project>

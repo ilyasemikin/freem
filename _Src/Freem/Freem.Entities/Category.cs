@@ -12,7 +12,7 @@ public class Category : IEntity
 
     public string Id { get; }
     public string UserId { get; }
-    public RelatedEntitiesCollection<Tag> Tags { get; }
+    public RelatedTagsCollection Tags { get; }
 
     public string Name
     {
@@ -29,15 +29,11 @@ public class Category : IEntity
 
     public CategoryStatus Status { get; }
 
-    public DateTimeOffset CreatedAt { get; }
-
     public Category(
         string id,
-        string name,
         string userId,
-        RelatedEntitiesCollection<Tag> relatedTags,
-        DateTimeOffset createdAt,
-        CategoryStatus status = CategoryStatus.Active)
+        RelatedTagsCollection relatedTags,
+        CategoryStatus status)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
@@ -45,16 +41,7 @@ public class Category : IEntity
 
         Id = id;
         UserId = userId;
-        Name = name;
         Tags = relatedTags;
         Status = status;
-        CreatedAt = createdAt.UtcDateTime;
-    }
-
-    public static RelatedEntitiesCollection<Tag> CreateRelatedTags(
-        IEnumerable<Tag>? entities = null, 
-        IEnumerable<string>? identifiers = null)
-    {
-        return new RelatedEntitiesCollection<Tag>(entities ?? [], identifiers ?? []);
     }
 }

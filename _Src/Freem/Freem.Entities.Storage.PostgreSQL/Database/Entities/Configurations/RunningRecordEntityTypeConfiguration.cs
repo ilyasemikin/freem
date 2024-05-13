@@ -1,54 +1,72 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Relations;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
 
-internal class RunningRecordEntityTypeConfiguration : IEntityTypeConfiguration<RunningRecordEntity>
+internal sealed class RunningRecordEntityTypeConfiguration : IEntityTypeConfiguration<RunningRecordEntity>
 {
     public void Configure(EntityTypeBuilder<RunningRecordEntity> builder)
     {
-        builder.ToTable(Names.Tables.RunningRecords, Names.Schema);
+        builder.ToTable(EntitiesNames.RunningRecords.Table);
 
         builder
             .Property(e => e.UserId)
-            .HasColumnName(Names.Properties.RunningRecords.UserId)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.UserId)
+            .HasColumnOrder(0)
             .IsRequired();
 
         builder
             .Property(e => e.Name)
-            .HasColumnName(Names.Properties.RunningRecords.Name);
+            .HasMaxLength(RunningRecord.MaxNameLength)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.Name);
 
         builder
             .Property(e => e.Description)
-            .HasColumnName(Names.Properties.RunningRecords.Description);
+            .HasMaxLength(RunningRecord.MaxDescriptionLength)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.Description);
 
         builder
             .Property(e => e.StartAt)
-            .HasColumnName(Names.Properties.RunningRecords.StartAt)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.StartAt)
             .IsRequired();
 
         builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.CreatedAt)
+            .HasColumnOrder(1)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.UpdatedAt);
+
+        builder
             .HasKey(e => e.UserId)
-            .HasName(Names.Constrains.RunningRecords.PrimaryKey);
+            .HasName(EntitiesNames.RunningRecords.Constaints.PrimaryKey);
 
         builder
             .HasOne(e => e.User)
-            .WithOne()
-            .HasForeignKey<RunningRecordEntity>(e => e.UserId)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .HasConstraintName(EntitiesNames.RunningRecords.Constaints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
-            .HasConstraintName(Names.Constrains.RunningRecords.UsersForeignKey)
             .IsRequired();
 
         builder
             .HasMany(e => e.Categories)
             .WithMany()
-            .UsingEntity<RunningRecordCategoryRelation>();
+            .UsingEntity<RunningRecordCategoryRelationEntity>();
 
         builder
-            .HasMany(e => e.TagIds)
+            .HasMany(e => e.Tags)
             .WithMany()
-            .UsingEntity<RunningRecordTagRelation>();
+            .UsingEntity<RunningRecordTagRelationEntity>();
     }
 }

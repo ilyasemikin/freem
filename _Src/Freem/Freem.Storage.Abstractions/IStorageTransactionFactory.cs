@@ -2,5 +2,5 @@
 
 public interface IStorageTransactionFactory
 {
-    IStorageTransaction Create();
+    Task<IStorageTransaction> CreateAsync(CancellationToken cancellationToken = default);
 }
