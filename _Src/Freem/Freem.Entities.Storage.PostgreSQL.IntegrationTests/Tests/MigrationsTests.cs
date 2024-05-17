@@ -6,21 +6,21 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests;
+namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests;
 
-public class MigrationsTests
+public sealed class MigrationsTests
 {
-    private readonly DatabaseContext _database;
+    private readonly DatabaseContext _context;
 
     public MigrationsTests()
     {
-        _database = InfrastructureConfiguration.CreateDatabaseContext();
+        _context = DatabaseContextFactory.Create();
     }
 
     [Fact]
     public void Migrations_ShouldCreateNew_WhenModelsChangged()
     {
-        var hasChanges = _database.Database.HasPendingModelChanges();
+        var hasChanges = _context.Database.HasPendingModelChanges();
 
         Assert.False(hasChanges);
     }

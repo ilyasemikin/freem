@@ -13,7 +13,10 @@ internal sealed class CategoryTagRelationEntityTypeConfiguration : IEntityTypeCo
 {
     public void Configure(EntityTypeBuilder<CategoryTagRelationEntity> builder)
     {
-        builder.ToTable(RelationsNames.CategoriesTags.Table);
+        builder.ToTable(
+            RelationsNames.CategoriesTags.Table,
+            table => table
+                .HasTrigger(RelationsNames.CategoriesTags.Constraints.UserIdCheckTrigger));
 
         builder
             .Property(e => e.CategoryId)

@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Configurations", "Fre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.DependencyInjection.Microsoft", "Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj", "{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.AutoFixture", "Freem.AutoFixture\Freem.AutoFixture.csproj", "{B5817132-2C12-4E9C-BF1C-AC7BB7FFE2B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77D83DD3-51B7-4F70-97CE-1C7409DAD0E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5817132-2C12-4E9C-BF1C-AC7BB7FFE2B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5817132-2C12-4E9C-BF1C-AC7BB7FFE2B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5817132-2C12-4E9C-BF1C-AC7BB7FFE2B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5817132-2C12-4E9C-BF1C-AC7BB7FFE2B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

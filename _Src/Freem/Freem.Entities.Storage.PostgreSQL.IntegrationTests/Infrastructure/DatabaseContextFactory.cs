@@ -2,18 +2,19 @@
 using Freem.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 
-internal class InfrastructureConfiguration
+internal static class DatabaseContextFactory
 {
-    public const string DefaultFileName = "configuration.json";
-
-    public required string ConnectionString { get; init; }
-
-    public static DatabaseContext CreateDatabaseContext()
+    public static DatabaseContext Create()
     {
-        var configuration = Configuration.ReadFromJsonFile<InfrastructureConfiguration>(DefaultFileName);
+        var configuration = Configuration.ReadFromJsonFile<TestsConfiguration>(TestsConfiguration.DefaultFileName);
         var connectionString = configuration.ConnectionString;
 
         return Services.Resolve<DatabaseContext>(services => services.AddPostgreSqlStorage(connectionString));

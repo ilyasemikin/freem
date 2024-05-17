@@ -13,7 +13,10 @@ internal sealed class RecordTagRelationEntityTypeConfiguration : IEntityTypeConf
 {
     public void Configure(EntityTypeBuilder<RecordTagRelationEntity> builder)
     {
-        builder.ToTable(RelationsNames.RecordsTags.Table);
+        builder.ToTable(
+            RelationsNames.RecordsTags.Table,
+            table => table
+                .HasTrigger(RelationsNames.RecordsTags.Constraints.UserIdCheckTrigger));
 
         builder
             .Property(e => e.RecordId)

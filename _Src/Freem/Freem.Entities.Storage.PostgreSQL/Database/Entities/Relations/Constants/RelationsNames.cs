@@ -26,6 +26,7 @@ internal class RelationsNames
             public const string CategoriesForeignKey = $"{Table}_{EntitiesNames.Categories.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string TagsForeignKey = $"{Table}_{EntitiesNames.Tags.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string TagIdIndex = $"{Table}_{Properties.TagId}_{NamingConvention.IndexSuffix}";
+            public const string UserIdCheckTrigger = $"check_categories_tags_user_ids_trigger";
         }
     }
 
@@ -45,6 +46,7 @@ internal class RelationsNames
             public const string RecordsForeignKey = $"{Table}_{EntitiesNames.Records.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string TagsForeignKey = $"{Table}_{EntitiesNames.Tags.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string TagIdIndex = $"{Table}_{Properties.TagId}_{NamingConvention.IndexSuffix}";
+            public const string UserIdCheckTrigger = $"check_records_tags_user_ids_trigger";
         }
     }
 
