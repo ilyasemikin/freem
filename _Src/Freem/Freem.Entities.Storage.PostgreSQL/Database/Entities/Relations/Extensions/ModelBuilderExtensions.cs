@@ -1,11 +1,6 @@
 ﻿using Freem.EFCore.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Configurations;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Extensions;
 

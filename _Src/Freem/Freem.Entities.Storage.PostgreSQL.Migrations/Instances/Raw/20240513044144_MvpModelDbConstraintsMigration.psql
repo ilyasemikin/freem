@@ -1,3 +1,6 @@
+-- Begin check Categories Tags
+-- Begin declaration
+
 create or replace function core_entities.check_categories_tags_user_ids()
 returns trigger
 language PLPGSQL
@@ -24,6 +27,55 @@ create constraint trigger check_categories_tags_user_ids_trigger
 	on core_entities.categories_tags
 	for each row
 	execute procedure core_entities.check_categories_tags_user_ids();
+
+create or replace procedure core_entities.check_category_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from core_entities.categories_tags where category_id = id into tags_count;
+
+	if tags_count > 64 then
+		raise exception 'categories(id = %) must have tags in range [0, 64]', id;
+	end if;
+end;
+$$;
+
+create or replace function core_entities.check_categories_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call core_entities.check_category_tags_count(new.category_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_categories_tags_count_trigger
+	after insert or update
+	on core_entities.categories_tags
+	deferrable initially deferred
+	for each row
+	execute procedure core_entities.check_categories_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_categories_tags_user_ids_trigger on core_entities.categories_tags;
+drop function if exists core_entities.check_categories_tags_user_ids;
+
+drop trigger if exists check_categories_tags_count_trigger on core_entities.categories_tags;
+drop function if exists core_entities.check_categories_tags_count_on_insert_or_insert_relation;
+drop procedure if exists core_entities.check_category_tags_count;
+
+-- End dropping
+-- End check Categories Tags
+
+
+
+-- Begin check Records Tags
+-- Begin declaration
 
 create or replace function core_entities.check_records_tags_user_ids()
 returns trigger
@@ -52,6 +104,55 @@ create constraint trigger check_records_tags_user_ids_trigger
 	for each row
 	execute procedure core_entities.check_records_tags_user_ids();
 
+create or replace procedure core_entities.check_record_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from core_entities.records_tags where record_id = id into tags_count;
+
+	if tags_count > 64 then
+		raise exception 'records(id = %) must have tags in range [0, 64]', id;
+	end if;
+end;
+$$;
+
+create or replace function core_entities.check_records_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call core_entities.check_record_tags_count(new.record_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_records_tags_count_trigger
+	after insert or update
+	on core_entities.records_tags
+	deferrable initially deferred
+	for each row
+	execute procedure core_entities.check_records_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_records_tags_user_ids_trigger on core_entities.records_tags;
+drop function if exists core_entities.check_records_tags_user_ids;
+
+drop trigger if exists check_records_tags_count_trigger on core_entities.records_tags;
+drop function if exists core_entities.check_records_tags_count_on_insert_or_update_relation;
+drop procedure if exists core_entities.check_record_tags_count;
+
+-- End dropping
+-- End check Records Tags
+
+
+
+-- Begin check RunningRecords Tags
+-- Begin declaration
+
 create or replace function core_entities.check_running_records_tags_user_ids()
 returns trigger
 language PLPGSQL
@@ -76,6 +177,55 @@ create constraint trigger check_running_records_tags_user_ids_trigger
 	on core_entities.running_records_tags
 	for each row
 	execute procedure core_entities.check_running_records_tags_user_ids();
+
+create or replace procedure core_entities.check_running_records_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from core_entities.running_records where user_id = id into tags_count;
+
+	if tags_count > 64 then
+		raise exception 'running_records(id = %) must have tags in range [0, 64]', id;
+	end if;
+end;
+$$;
+
+create or replace function core_entities.check_running_records_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call core_entities.check_running_records_tags_count(new.user_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_running_records_tags_count_trigger
+	after insert or update 
+	on core_entities.running_records_tags
+	deferrable initially deferred
+	for each row
+	execute procedure core_entities.check_running_records_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_running_records_tags_user_ids_trigger on core_entities.running_records_tags;
+drop function if exists core_entities.check_running_records_tags_user_ids;
+
+drop trigger if exists check_running_records_tags_count_trigger on core_entities.running_records_tags;
+drop function if exists core_entities.check_running_records_tags_count_on_insert_or_update_relation;
+drop procedure if exists core_entities.check_running_records_tags_count;
+
+-- End dropping
+-- End check RunningRecords Tags
+
+
+
+-- Begin check Records Categories
+-- Begin declaration
 
 create or replace function core_entities.check_records_categories_user_ids()
 returns trigger
@@ -112,8 +262,8 @@ declare
 begin
 	select count(*) from core_entities.records_categories where record_id = id into categories_count;
 
-	if categories_count = 0 then
-		raise exception 'records(id = %) must have at least one category', id;
+	if categories_count < 1 or categories_count > 16 then
+		raise exception 'records(id = %) must have categories count in range [1, 16]', id;
 	end if;
 end;
 $$;
@@ -124,6 +274,16 @@ language PLPGSQL
 as $$
 begin 
 	call core_entities.check_record_categories_count(new.id);
+	return new;
+end;
+$$;
+
+create or replace function core_entities.check_record_categories_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin 
+	call core_entities.check_record_categories_count(new.record_id);
 	return new;
 end;
 $$;
@@ -145,12 +305,40 @@ create constraint trigger check_record_categories_count_trigger
 	for each row
 	execute procedure core_entities.check_record_categories_count_on_insert_record();
 
-create constraint trigger check_record_categories_count_trigger
+create constraint trigger check_record_categories_count_delete_trigger
 	after delete
 	on core_entities.records_categories
 	deferrable initially deferred
 	for each row
 	execute procedure core_entities.check_record_categories_count_on_delete_relation();
+
+create constraint trigger check_record_categories_count_insert_or_update_trigger
+	after insert or update
+	on core_entities.records_categories
+	deferrable initially deferred
+	for each row
+	execute procedure core_entities.check_record_categories_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_records_categories_user_ids_trigger on core_entities.records_categories;
+drop function if exists core_entities.check_records_categories_user_ids;
+drop trigger if exists check_record_categories_count_trigger on core_entities.records;
+drop function if exists core_entities.check_record_categories_count_on_insert_record;
+drop trigger if exists check_record_categories_count_delete_trigger on core_entities.records_categories;
+drop trigger if exists check_record_categories_count_insert_or_update_trigger on core_entities.records_categories;
+drop function if exists core_entities.check_record_categories_count_on_delete_relation;
+drop function if exists core_entities.check_record_categories_count_on_insert_or_update_relation;
+drop procedure if exists core_entities.check_record_categories_count;
+
+-- End dropping
+-- End check Records Categories
+
+
+
+-- Begin check RunningRecords Categories
+-- Begin declaration
 
 create or replace function core_entities.check_running_records_categories_user_ids()
 returns trigger
@@ -185,8 +373,8 @@ declare
 begin
 	select count(*) from core_entities.running_records_categories where user_id = id into categories_count;
 
-	if categories_count = 0 then
-		raise exception 'running_records(user_id = %) must have at least one category', id;
+	if categories_count < 1 or categories_count > 16 then
+		raise exception 'running_records(user_id = %) must have categories count in range [1, 16]', id;
 	end if;
 end;
 $$;
@@ -211,6 +399,16 @@ begin
 end;
 $$;
 
+create or replace function core_entities.check_running_records_categories_count_on_iu_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call core_entities.check_running_record_categories_count(new.user_id);
+	return new;
+end;
+$$;
+
 create constraint trigger check_running_records_categories_count_trigger
 	after insert
 	on core_entities.running_records
@@ -218,36 +416,33 @@ create constraint trigger check_running_records_categories_count_trigger
 	for each row
 	execute procedure core_entities.check_running_records_categories_count_on_insert_running_record();
 
-create constraint trigger check_running_records_categories_count_trigger
+create constraint trigger check_running_records_categories_count_delete_trigger
 	after delete
 	on core_entities.running_records_categories
 	deferrable initially deferred
 	for each row
 	execute procedure core_entities.check_running_records_categories_count_on_delete_relation();
 
-drop trigger if exists check_categories_tags_user_ids_trigger on core_entities.categories_tags;
-drop function if exists core_entities.check_categories_tags_user_ids;
+create constraint trigger check_running_records_categories_count_insert_or_update_trigger
+	after insert or update
+	on core_entities.running_records_categories
+	deferrable initially deferred
+	for each row
+	execute procedure core_entities.check_running_records_categories_count_on_iu_relation();
 
-drop trigger if exists check_records_tags_user_ids_trigger on core_entities.records_tags;
-drop function if exists core_entities.check_records_tags_user_ids;
-
-drop trigger if exists check_running_records_tags_user_ids_trigger on core_entities.running_records_tags;
-drop function if exists core_entities.check_running_records_tags_user_ids;
-
-drop trigger if exists check_records_categories_user_ids_trigger on core_entities.records_categories;
-drop function if exists core_entities.check_records_categories_user_ids;
-
-drop trigger if exists check_record_categories_count_trigger on core_entities.records;
-drop function if exists core_entities.check_record_categories_count_on_insert_record;
-drop trigger if exists check_record_categories_count_trigger on core_entities.records_categories;
-drop function if exists core_entities.check_record_categories_count_on_delete_relation;
-drop procedure if exists core_entities.check_record_categories_count;
+-- End declaration
+-- Begin dropping
 
 drop trigger if exists check_running_records_categories_user_ids_trigger on core_entities.running_records_categories;
 drop function if exists core_entities.check_running_records_categories_user_ids;
 
-drop trigger if exists check_running_records_categories_count_trigger on core_entities.running_records_categories;
-drop function if exists core_entities.check_running_records_categories_count_on_delete_relation;
 drop trigger if exists check_running_records_categories_count_trigger on core_entities.running_records;
+drop trigger if exists check_running_records_categories_count_delete_trigger on core_entities.running_records_categories;
+drop trigger if exists check_running_records_categories_count_insert_or_update_trigger on core_entities.running_records_categories;
 drop function if exists core_entities.check_running_records_categories_count_on_insert_running_record;
+drop function if exists core_entities.check_running_records_categories_count_on_delete_relation;
+drop function if exists core_entities.check_running_records_categories_count_on_iu_relation;
 drop procedure if exists core_entities.check_running_record_categories_count;
+
+-- End dropping
+-- End check RunningRecords Categories

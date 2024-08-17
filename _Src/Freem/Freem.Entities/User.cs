@@ -1,13 +1,15 @@
-﻿namespace Freem.Entities;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Identifiers;
 
-public class User
+namespace Freem.Entities;
+
+public class User : IEntity<UserIdentifier>
 {
-    public string Id { get; }
+    public UserIdentifier Id { get; }
     public string Nickname { get; }
 
-    public User(string id, string nickname)
+    public User(UserIdentifier id, string nickname)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(nickname);
 
         Id = id;

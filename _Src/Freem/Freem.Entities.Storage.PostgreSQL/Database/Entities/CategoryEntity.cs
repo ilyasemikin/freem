@@ -1,10 +1,5 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CategoryStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.CategoryStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;

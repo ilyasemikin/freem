@@ -1,8 +1,6 @@
 ﻿using Freem.DateTimePeriods.Extensions;
 using Freem.DateTimePeriods.UnitTests.DataFactory;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace Freem.DateTimePeriods.UnitTests;
 

@@ -1,12 +1,11 @@
-﻿using Freem.Entities.Storage.Abstractions.Base;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Sorting;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Storage.Abstractions.Base;
 
 namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface ICategoriesRepository :
-    IBaseWriteRepository<Category>,
-    IBaseSearchByIdRepository<Category>,
-    IBaseSearchByFilterRepository<Category, CategoryFilter, CategorySortField>
+    IBaseWriteRepository<Category, CategoryIdentifier>,
+    IBaseSearchByIdRepository<Category, CategoryIdentifier>,
+    IBaseMultipleDeletionByUserRepository<Category, CategoryIdentifier>
 {
 }

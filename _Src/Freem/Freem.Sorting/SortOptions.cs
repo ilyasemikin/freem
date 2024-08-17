@@ -2,7 +2,7 @@
 
 namespace Freem.Sorting;
 
-public class SortOptions<TSortField> : IReadOnlyList<SortOption<TSortField>>
+public sealed class SortOptions<TSortField> : IReadOnlyList<SortOption<TSortField>>
     where TSortField : Enum
 {
     private readonly SortOption<TSortField>[] _options;

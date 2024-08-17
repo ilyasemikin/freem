@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Freem.DateTimePeriods\Freem.DateTimePeriods.csproj" />
+	  <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
 	  <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
 	  <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj" />
 	  <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj" />

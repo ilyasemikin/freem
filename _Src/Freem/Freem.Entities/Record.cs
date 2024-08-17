@@ -1,21 +1,20 @@
 ﻿using Freem.DateTimePeriods;
 using Freem.Entities.Abstractions;
-using Freem.Entities.Collections;
-using Freem.Entities.Collections.Abstractions;
-using Freem.Entities.Constants;
+using Freem.Entities.Identifiers;
+using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities;
 
-public class Record : IEntity
+public class Record : IEntity<RecordIdentifier>
 {
-    public const int MaxNameLength = LengthLimits.RecordMaxNameLength;
-    public const int MaxDescriptionLength = LengthLimits.RecordMaxDescriptionLength;
+    public const int MaxNameLength = 128;
+    public const int MaxDescriptionLength = 1024;
 
     private string? _name;
     private string? _description;
 
-    public string Id { get; }
-    public string UserId { get; }
+    public RecordIdentifier Id { get; }
+    public UserIdentifier UserId { get; }
     public RelatedCategoriesCollection Categories { get; }
     public RelatedTagsCollection Tags { get; }
 
@@ -46,17 +45,15 @@ public class Record : IEntity
     public DateTimePeriod Period { get; set; }
 
     public Record(
-        string id,
-        string userId,
+        RecordIdentifier id,
+        UserIdentifier userId,
         RelatedCategoriesCollection categories,
         RelatedTagsCollection tags,
-        DateTimePeriod timePeriod)
+        DateTimePeriod period)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ArgumentNullException.ThrowIfNull(categories);
         ArgumentNullException.ThrowIfNull(tags);
-        ArgumentNullException.ThrowIfNull(timePeriod);
+        ArgumentNullException.ThrowIfNull(period);
 
         Id = id;
         UserId = userId;
@@ -64,6 +61,6 @@ public class Record : IEntity
         Categories = categories;
         Tags = tags;
         
-        Period = timePeriod;
+        Period = period;
     }
 }

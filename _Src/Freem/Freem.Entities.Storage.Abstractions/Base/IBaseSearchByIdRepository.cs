@@ -1,8 +1,12 @@
-﻿using Freem.Entities.Storage.Abstractions.Models;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Identifiers;
+using Freem.Entities.Storage.Abstractions.Models;
 
 namespace Freem.Entities.Storage.Abstractions.Base;
 
-public interface IBaseSearchByIdRepository<TEntity>
+public interface IBaseSearchByIdRepository<TEntity, TEntityIdentifier>
+    where TEntity : notnull, IEntity<TEntityIdentifier>
+    where TEntityIdentifier : notnull, IEntityIdentifier
 {
-    Task<SearchEntityResult<TEntity>> FindByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<SearchEntityResult<TEntity>> FindByIdAsync(TEntityIdentifier id, CancellationToken cancellationToken = default);
 }

@@ -1,11 +1,6 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Configurations;
 
@@ -16,7 +11,7 @@ internal sealed class RunningRecordCategoryRelationEntityTypeConfiguration : IEn
         builder.ToTable(RelationsNames.RunningRecordsCategories.Table);
 
         builder
-            .Property(e => e.RunningRecordId)
+            .Property(e => e.RunningRecordUserId)
             .HasColumnName(RelationsNames.RunningRecordsCategories.Properties.RunningRecordId)
             .IsRequired();
 
@@ -26,7 +21,7 @@ internal sealed class RunningRecordCategoryRelationEntityTypeConfiguration : IEn
             .IsRequired();
 
         builder
-            .HasKey(e => new { e.RunningRecordId, e.CategoryId })
+            .HasKey(e => new { e.RunningRecordUserId, e.CategoryId })
             .HasName(RelationsNames.RunningRecordsCategories.Constraints.PrimaryKey);
 
         builder
@@ -36,7 +31,7 @@ internal sealed class RunningRecordCategoryRelationEntityTypeConfiguration : IEn
         builder
             .HasOne(e => e.RunningRecord)
             .WithMany()
-            .HasForeignKey(e => e.RunningRecordId)
+            .HasForeignKey(e => e.RunningRecordUserId)
             .HasConstraintName(RelationsNames.RunningRecordsCategories.Constraints.RunningRecordsForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();

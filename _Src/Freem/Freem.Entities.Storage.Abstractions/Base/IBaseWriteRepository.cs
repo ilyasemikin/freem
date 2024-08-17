@@ -1,11 +1,13 @@
-﻿using Freem.Storage.Abstractions;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Identifiers;
 
 namespace Freem.Entities.Storage.Abstractions.Base;
 
-public interface IBaseWriteRepository<TEntity>
-    where TEntity : class
+public interface IBaseWriteRepository<TEntity, TEntityIdentifier>
+    where TEntity : notnull, IEntity<TEntityIdentifier>
+    where TEntityIdentifier : notnull, IEntityIdentifier
 {
-    Task<IStorageTransaction> CreateAsync(TEntity entity, IStorageTransaction? transaction = default, CancellationToken cancellationToken = default);
-    Task<IStorageTransaction> UpdateAsync(TEntity entity, IStorageTransaction? transaction = default, CancellationToken cancellationToken = default);
-    Task<IStorageTransaction> RemoveAsync(TEntity entity, IStorageTransaction? transaction = default, CancellationToken cancellationToken = default);
+    Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task RemoveAsync(TEntityIdentifier id, CancellationToken cancellationToken = default);
 }

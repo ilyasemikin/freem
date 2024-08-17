@@ -1,17 +1,19 @@
-﻿using Freem.Entities.Collections;
-using Freem.Entities.Constants;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Identifiers;
+using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities;
 
-public class RunningRecord
+public class RunningRecord : IEntity<UserIdentifier>
 {
-    public const int MaxNameLength = LengthLimits.RecordMaxNameLength;
-    public const int MaxDescriptionLength = LengthLimits.RecordMaxDescriptionLength;
+    public const int MaxNameLength = Record.MaxNameLength;
+    public const int MaxDescriptionLength = Record.MaxDescriptionLength;
 
     private string? _name;
     private string? _description;
 
-    public string UserId { get; }
+    public UserIdentifier Id => UserId;
+    public UserIdentifier UserId { get; }
     public RelatedCategoriesCollection Categories { get; }
     public RelatedTagsCollection Tags { get; }
 
@@ -42,12 +44,11 @@ public class RunningRecord
     public DateTimeOffset StartAt { get; }
 
     public RunningRecord(
-        string userId,
+        UserIdentifier userId,
         RelatedCategoriesCollection categories,
         RelatedTagsCollection tags,
         DateTimeOffset startAt)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ArgumentNullException.ThrowIfNull(categories);
         ArgumentNullException.ThrowIfNull(tags);
 

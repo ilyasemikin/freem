@@ -1,12 +1,10 @@
-﻿using Freem.Entities.Storage.Abstractions.Base;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Sorting;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Storage.Abstractions.Base;
 
 namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface IUsersRepository :
-    IBaseWriteRepository<User>,
-    IBaseSearchByIdRepository<User>,
-    IBaseSearchByFilterRepository<User, UserFilter, UserSortField>
+    IBaseWriteRepository<User, UserIdentifier>,
+    IBaseSearchByIdRepository<User, UserIdentifier>
 {
 }

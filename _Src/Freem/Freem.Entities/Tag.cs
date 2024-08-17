@@ -1,16 +1,16 @@
 ﻿using Freem.Entities.Abstractions;
-using Freem.Entities.Constants;
+using Freem.Entities.Identifiers;
 
 namespace Freem.Entities;
 
-public class Tag : IEntity
+public class Tag : IEntity<TagIdentifier>
 {
-    public const int MaxNameLength = LengthLimits.TagMaxNameLength;
+    public const int MaxNameLength = 128;
 
     private string _name = string.Empty;
 
-    public string Id { get; }
-    public string UserId { get; }
+    public TagIdentifier Id { get; }
+    public UserIdentifier UserId { get; }
 
     public string Name
     {
@@ -26,12 +26,13 @@ public class Tag : IEntity
         }
     }
 
-    public Tag(string id, string userId)
+    public Tag(
+        TagIdentifier id, 
+        UserIdentifier userId, 
+        string name)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        ArgumentException.ThrowIfNullOrEmpty(userId);
-
         Id = id;
         UserId = userId;
+        Name = name;
     }
 }

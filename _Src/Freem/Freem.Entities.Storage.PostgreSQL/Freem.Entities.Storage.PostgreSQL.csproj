@@ -8,10 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
+	  <ProjectReference Include="..\Freem.DateTimePeriods\Freem.DateTimePeriods.csproj" />
+	  <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
 	  <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
 	  <ProjectReference Include="..\Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj" />
 	  <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
@@ -22,10 +25,6 @@
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations" />
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests" />
 		<InternalsVisibleTo Include="Freem.Sandbox" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Implementations\Repositories\" />
 	</ItemGroup>
 
 </Project>
