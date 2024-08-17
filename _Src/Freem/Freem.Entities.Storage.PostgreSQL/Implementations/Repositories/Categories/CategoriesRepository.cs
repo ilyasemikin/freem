@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
 
-internal class CategoriesRepository : ICategoriesRepository
+internal sealed class CategoriesRepository : ICategoriesRepository
 {
     private readonly DatabaseContext _context;
 

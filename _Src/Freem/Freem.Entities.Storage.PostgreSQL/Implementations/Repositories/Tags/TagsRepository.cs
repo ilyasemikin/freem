@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 
-internal class TagsRepository : ITagsRepository
+internal sealed class TagsRepository : ITagsRepository
 {
     private readonly DatabaseContext _context;
 

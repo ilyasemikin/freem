@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 
-internal class RunningRecordsRepository : IRunningRecordRepository
+internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _context;
 
@@ -43,7 +43,7 @@ internal class RunningRecordsRepository : IRunningRecordRepository
 
             var (categoryIdsToRemove, categoryIdsToAdd) = currentCategoryIds.ExceptMutual(entity.Categories.Identifiers.AsValues());
             await context.RemoveRelationsAsync<RunningRecordCategoryRelationEntity>(
-                e => currentCategoryIds.Contains(e.RunningRecordUserId),
+                e => categoryIdsToRemove.Contains(e.RunningRecordUserId),
                 cancellationToken);
 
             var newDbCategoryRelations = categoryIdsToAdd.Select(id => RunningRecordMapper.MapToRunningRecordTagRelation(entity.Id, id));

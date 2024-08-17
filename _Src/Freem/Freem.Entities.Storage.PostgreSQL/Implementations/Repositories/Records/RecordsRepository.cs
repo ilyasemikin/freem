@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 
-internal class RecordsRepository : IRecordsRepository
+internal sealed class RecordsRepository : IRecordsRepository
 {
     private readonly DatabaseContext _context;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Identifiers;
+using Microsoft.EntityFrameworkCore;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
@@ -20,13 +22,6 @@ internal sealed class DatabaseContext : DbContext
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
-    }
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        builder.HasDefaultSchema(EnvironmentNames.Schema);
-
-        builder.ApplyEntitiesConfigurations();
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -60,5 +55,12 @@ internal sealed class DatabaseContext : DbContext
         }
 
         return await base.SaveChangesAsync(cancellationToken);
+    }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.HasDefaultSchema(EnvironmentNames.Schema);
+
+        builder.ApplyEntitiesConfigurations();
     }
 }
