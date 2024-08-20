@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
-internal sealed class UserEntity : IRowVersionableEntity, IAuditableEntity, ISoftDeletedEntity
+internal sealed class UserEntity : IRowVersionableEntity, ISoftDeletedEntity
 {
     public required string Id { get; init; }
 
@@ -11,9 +11,6 @@ internal sealed class UserEntity : IRowVersionableEntity, IAuditableEntity, ISof
 
     [Timestamp]
     public uint RowVersion { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }
 }

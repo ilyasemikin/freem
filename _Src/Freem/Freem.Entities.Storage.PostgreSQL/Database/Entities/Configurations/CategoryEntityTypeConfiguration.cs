@@ -31,32 +31,22 @@ internal sealed class CategoryEntityTypeConfiguration : IEntityTypeConfiguration
         builder
             .Property(e => e.Status)
             .HasColumnName(EntitiesNames.Categories.Properties.Status)
-            .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.Categories.Models.CategoryStatus}")
+            .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.Categories.Models.Status}")
             .IsRequired();
-
-        builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.Categories.Properties.CreatedAt)
-            .HasColumnOrder(1)
-            .IsRequired();
-
-        builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.Categories.Properties.UpdatedAt);
 
         builder
             .HasKey(e => e.Id)
-            .HasName(EntitiesNames.Categories.Constaints.PrimaryKey);
+            .HasName(EntitiesNames.Categories.Constraints.PrimaryKey);
 
         builder
             .HasIndex(e => e.UserId)
-            .HasDatabaseName(EntitiesNames.Categories.Constaints.UserIdIndex);
+            .HasDatabaseName(EntitiesNames.Categories.Constraints.UserIdIndex);
 
         builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)
-            .HasConstraintName(EntitiesNames.Categories.Constaints.UsersForeignKey)
+            .HasConstraintName(EntitiesNames.Categories.Constraints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 

@@ -1,4 +1,6 @@
-﻿using Freem.Entities.Abstractions.Identifiers.Extensions;
+﻿using Freem.Entities.Abstractions.Factories;
+using Freem.Entities.Abstractions.Identifiers.Extensions;
+using Freem.Entities.Events;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
@@ -13,9 +15,14 @@ internal sealed class TagsRepository : ITagsRepository
 {
     private readonly DatabaseContext _context;
 
-    public TagsRepository(DatabaseContext context)
+    private readonly IEventEntityFactory<TagEvent, EventIdentifier, UserIdentifier, Tag, TagIdentifier> _eventFactory;
+
+    public TagsRepository(
+        DatabaseContext context,
+        IEventEntityFactory<TagEvent, EventIdentifier, UserIdentifier, Tag, TagIdentifier> eventFactory)
     {
         _context = context;
+        _eventFactory = eventFactory;
     }
 
     public async Task CreateAsync(Tag entity, CancellationToken cancellationToken = default)
@@ -23,6 +30,8 @@ internal sealed class TagsRepository : ITagsRepository
         var dbEntity = entity.MapToDatabaseEntity();
 
         await _context.Tags.AddAsync(dbEntity, cancellationToken);
+
+        await WriteEventAsync(entity, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -37,24 +46,22 @@ internal sealed class TagsRepository : ITagsRepository
 
         dbEntity.Name = entity.Name;
 
+        await WriteEventAsync(entity, cancellationToken);
+        
         await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
     {
-        var count = await _context.Tags
-            .Where(e => e.Id == id.Value)
-            .ExecuteDeleteAsync(cancellationToken);
+        var dbEntity = await _context.Tags.FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
 
-        if (count == 0)
+        if (dbEntity is null)
             throw new NotFoundException(id);
-    }
 
-    public async Task<int> RemoveMultipleByUserAsync(UserIdentifier userId, IEnumerable<TagIdentifier> ids, CancellationToken cancellationToken = default)
-    {
-        return await _context.Tags
-            .Where(e => e.UserId == userId.Value && ids.AsValues().Contains(e.Id))
-            .ExecuteDeleteAsync(cancellationToken);
+        var entity = dbEntity.MapToDomainEntity();
+        await WriteEventAsync(entity, cancellationToken);
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<SearchEntityResult<Tag>> FindByIdAsync(TagIdentifier id, CancellationToken cancellationToken = default)
@@ -62,5 +69,12 @@ internal sealed class TagsRepository : ITagsRepository
         return await _context.Tags
             .AsNoTracking()
             .FindAsync(e => e.Id == id.Value, TagMapper.MapToDomainEntity);
+    }
+
+    private async Task WriteEventAsync(Tag entity, CancellationToken cancellationToken)
+    {
+        var eventEntity = _eventFactory.Create(entity);
+        var dbEventEntity = eventEntity.MapToDatabaseEntity();
+        await _context.AddAsync(dbEventEntity, cancellationToken);
     }
 }

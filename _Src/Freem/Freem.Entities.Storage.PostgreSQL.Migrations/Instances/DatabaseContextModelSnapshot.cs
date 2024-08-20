@@ -22,6 +22,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "category_status", new[] { "active", "archived" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "event_action", new[] { "created", "updated", "removed" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", b =>
@@ -30,11 +31,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("text")
                         .HasColumnName("id")
                         .HasColumnOrder(0);
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasColumnOrder(1);
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
@@ -51,10 +47,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("core_entities.category_status")
                         .HasColumnName("status");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
@@ -69,17 +61,51 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.ToTable("categories", "core_entities");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text")
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<int>("Action")
+                        .HasColumnType("event_action")
+                        .HasColumnName("action")
+                        .HasColumnOrder(3);
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("event_type");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id")
                         .HasColumnOrder(1);
+
+                    b.HasKey("Id")
+                        .HasName("events_pk");
+
+                    b.ToTable("events", "core_entities");
+
+                    b.HasDiscriminator<string>("EventType").IsComplete(true).HasValue("BaseEventEntity");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
@@ -104,10 +130,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.Property<DateTimeOffset>("StartAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("start_at");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -142,7 +164,10 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.HasIndex("TagId")
                         .HasDatabaseName("categories_tags_tag_id_idx");
 
-                    b.ToTable("categories_tags", "core_entities");
+                    b.ToTable("categories_tags", "core_entities", t =>
+                        {
+                            t.HasTrigger("check_categories_tags_user_ids_trigger");
+                        });
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordCategoryRelationEntity", b =>
@@ -180,12 +205,15 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.HasIndex("TagId")
                         .HasDatabaseName("records_tags_tag_id_idx");
 
-                    b.ToTable("records_tags", "core_entities");
+                    b.ToTable("records_tags", "core_entities", t =>
+                        {
+                            t.HasTrigger("check_records_tags_user_ids_trigger");
+                        });
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordCategoryRelationEntity", b =>
                 {
-                    b.Property<string>("RunningRecordId")
+                    b.Property<string>("RunningRecordUserId")
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
@@ -193,7 +221,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("text")
                         .HasColumnName("category_id");
 
-                    b.HasKey("RunningRecordId", "CategoryId")
+                    b.HasKey("RunningRecordUserId", "CategoryId")
                         .HasName("running_records_categories_pk");
 
                     b.HasIndex("CategoryId")
@@ -204,7 +232,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordTagRelationEntity", b =>
                 {
-                    b.Property<string>("RunningRecordId")
+                    b.Property<string>("RunningRecordUserId")
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
@@ -212,7 +240,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("text")
                         .HasColumnName("tag_id");
 
-                    b.HasKey("RunningRecordId", "TagId")
+                    b.HasKey("RunningRecordUserId", "TagId")
                         .HasName("running_records_tags_pk");
 
                     b.HasIndex("TagId")
@@ -227,11 +255,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("text")
                         .HasColumnName("user_id")
                         .HasColumnOrder(0);
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasColumnOrder(1);
 
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
@@ -253,10 +276,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("start_at");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
                     b.HasKey("UserId")
                         .HasName("running_records_pk");
 
@@ -270,11 +289,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -286,10 +300,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -316,11 +326,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasColumnOrder(1);
-
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
@@ -336,14 +341,53 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
                     b.HasKey("Id")
                         .HasName("users_pk");
 
                     b.ToTable("users", "core_entities");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.CategoryEventEntity", b =>
+                {
+                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
+
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("category_id");
+
+                    b.HasDiscriminator().HasValue("category");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.RecordEventEntity", b =>
+                {
+                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
+
+                    b.Property<string>("RecordId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("record_id");
+
+                    b.HasDiscriminator().HasValue("record");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.RunningRecordEventEntity", b =>
+                {
+                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
+
+                    b.HasDiscriminator().HasValue("running_record");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.TagEventEntity", b =>
+                {
+                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
+
+                    b.Property<string>("TagId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tag_id");
+
+                    b.HasDiscriminator().HasValue("tags");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", b =>
@@ -444,7 +488,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.RunningRecordEntity", "RunningRecord")
                         .WithMany()
-                        .HasForeignKey("RunningRecordId")
+                        .HasForeignKey("RunningRecordUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("running_records_categories_running_records_fk");
@@ -458,7 +502,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                 {
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.RunningRecordEntity", "RunningRecord")
                         .WithMany()
-                        .HasForeignKey("RunningRecordId")
+                        .HasForeignKey("RunningRecordUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("running_records_tags_running_records_fk");

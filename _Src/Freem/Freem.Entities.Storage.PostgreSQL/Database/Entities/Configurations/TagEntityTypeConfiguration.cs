@@ -29,34 +29,24 @@ internal sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<TagE
             .IsRequired();
 
         builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.Tags.Properties.CreatedAt)
-            .HasColumnOrder(1)
-            .IsRequired();
-
-        builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.Tags.Properties.UpdatedAt);
-
-        builder
             .HasKey(e => e.Id)
-            .HasName(EntitiesNames.Tags.Constaints.PrimaryKey);
+            .HasName(EntitiesNames.Tags.Constraints.PrimaryKey);
 
         builder
             .HasIndex(e => e.UserId)
-            .HasDatabaseName(EntitiesNames.Tags.Constaints.UserIdIndex);
+            .HasDatabaseName(EntitiesNames.Tags.Constraints.UserIdIndex);
 
         builder
             .HasIndex(e => new { e.Name, e.UserId })
-            .HasDatabaseName(EntitiesNames.Tags.Constaints.NameUserIdIndex)
+            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameUserIdIndex)
             .IsUnique()
-            .HasDatabaseName(EntitiesNames.Tags.Constaints.NameUserIdUnique);
+            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameUserIdUnique);
 
         builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)
-            .HasConstraintName(EntitiesNames.Tags.Constaints.UsersForeignKey)
+            .HasConstraintName(EntitiesNames.Tags.Constraints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 

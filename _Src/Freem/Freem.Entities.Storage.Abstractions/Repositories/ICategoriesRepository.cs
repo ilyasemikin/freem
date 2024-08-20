@@ -5,7 +5,6 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface ICategoriesRepository :
     IBaseWriteRepository<Category, CategoryIdentifier>,
-    IBaseSearchByIdRepository<Category, CategoryIdentifier>,
-    IBaseMultipleDeletionByUserRepository<Category, CategoryIdentifier>
+    IBaseSearchByIdRepository<Category, CategoryIdentifier>
 {
 }

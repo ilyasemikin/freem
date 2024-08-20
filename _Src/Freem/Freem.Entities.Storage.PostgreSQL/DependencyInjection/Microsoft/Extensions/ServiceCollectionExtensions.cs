@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<IRecordsRepository, RecordsRepository>();
         services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
         services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
+        services.TryAddTransient<IEventsRepository, EventsRepository>();
         
         return services;
     }

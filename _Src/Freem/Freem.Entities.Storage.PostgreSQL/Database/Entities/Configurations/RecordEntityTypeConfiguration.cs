@@ -11,7 +11,7 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
     {
         builder.ToTable(EntitiesNames.Records.Table, table =>
             table.HasCheckConstraint(
-                EntitiesNames.Records.Constaints.TimePeriodCheck, 
+                EntitiesNames.Records.Constraints.TimePeriodCheck, 
                 $"{EntitiesNames.Records.Properties.StartAt} <= {EntitiesNames.Records.Properties.EndAt}"));
 
         builder
@@ -46,28 +46,18 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
             .IsRequired();
 
         builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.Records.Properties.CreatedAt)
-            .HasColumnOrder(1)
-            .IsRequired();
-
-        builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.Records.Properties.UpdatedAt);
-
-        builder
             .HasKey(e => e.Id)
-            .HasName(EntitiesNames.Records.Constaints.PrimaryKey);
+            .HasName(EntitiesNames.Records.Constraints.PrimaryKey);
 
         builder
             .HasIndex(e => e.UserId)
-            .HasDatabaseName(EntitiesNames.Records.Constaints.UserIdIndex);
+            .HasDatabaseName(EntitiesNames.Records.Constraints.UserIdIndex);
 
         builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)
-            .HasConstraintName(EntitiesNames.Records.Constaints.UsersForeignKey)
+            .HasConstraintName(EntitiesNames.Records.Constraints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 

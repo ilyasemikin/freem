@@ -26,16 +26,6 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
             .HasName(EntitiesNames.Users.Constraints.PrimaryKey);
 
         builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.Users.Properties.CreatedAt)
-            .HasColumnOrder(1)
-            .IsRequired();
-
-        builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.Users.Properties.UpdatedAt);
-
-        builder
             .Property(e => e.DeletedAt)
             .HasColumnName(EntitiesNames.Users.Properties.DeletedAt);
     }

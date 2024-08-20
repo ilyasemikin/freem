@@ -5,7 +5,6 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface IRecordsRepository :
     IBaseWriteRepository<Record, RecordIdentifier>,
-    IBaseSearchByIdRepository<Record, RecordIdentifier>,
-    IBaseMultipleDeletionByUserRepository<Record, RecordIdentifier>
+    IBaseSearchByIdRepository<Record, RecordIdentifier>
 {
 }

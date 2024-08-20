@@ -33,24 +33,14 @@ internal sealed class RunningRecordEntityTypeConfiguration : IEntityTypeConfigur
             .IsRequired();
 
         builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.RunningRecords.Properties.CreatedAt)
-            .HasColumnOrder(1)
-            .IsRequired();
-
-        builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.RunningRecords.Properties.UpdatedAt);
-
-        builder
             .HasKey(e => e.UserId)
-            .HasName(EntitiesNames.RunningRecords.Constaints.PrimaryKey);
+            .HasName(EntitiesNames.RunningRecords.Constraints.PrimaryKey);
 
         builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)
-            .HasConstraintName(EntitiesNames.RunningRecords.Constaints.UsersForeignKey)
+            .HasConstraintName(EntitiesNames.RunningRecords.Constraints.UsersForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 

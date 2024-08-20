@@ -5,7 +5,6 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface ITagsRepository :
     IBaseWriteRepository<Tag, TagIdentifier>,
-    IBaseSearchByIdRepository<Tag, TagIdentifier>,
-    IBaseMultipleDeletionByUserRepository<Tag, TagIdentifier>
+    IBaseSearchByIdRepository<Tag, TagIdentifier>
 {
 }

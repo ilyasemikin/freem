@@ -5,6 +5,8 @@ using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database;
 
@@ -19,6 +21,8 @@ internal sealed class DatabaseContext : DbContext
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
 
+    public DbSet<BaseEventEntity> Events => Set<BaseEventEntity>();
+
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {
@@ -27,31 +31,12 @@ internal sealed class DatabaseContext : DbContext
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow;
-        foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
-        {
-            IAuditableEntity entity = entry.Entity;
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entity.CreatedAt = entity.CreatedAt == DateTimeOffset.MinValue
-                        ? now
-                        : entity.CreatedAt;
-                    break;
-                case EntityState.Modified:
-                    entity.UpdatedAt ??= now;
-                    break;
-            }
-        }
 
         foreach (var entry in ChangeTracker.Entries<ISoftDeletedEntity>())
         {
-            ISoftDeletedEntity entity = entry.Entity;
-            switch (entry.State)
-            {
-                case EntityState.Deleted:
-                    entity.DeletedAt = now;
-                    break;
-            }
+            var entity = entry.Entity;
+            if (entry.State is EntityState.Deleted)
+                entity.DeletedAt = now;
         }
 
         return await base.SaveChangesAsync(cancellationToken);
