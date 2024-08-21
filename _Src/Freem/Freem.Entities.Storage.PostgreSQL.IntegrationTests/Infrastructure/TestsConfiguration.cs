@@ -1,4 +1,7 @@
-﻿namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
+﻿using Freem.Configurations;
+using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
+
+namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 
 internal sealed class TestsConfiguration
 {
@@ -11,5 +14,10 @@ internal sealed class TestsConfiguration
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
         
         ConnectionString = connectionString;
+    }
+
+    public static TestsConfiguration Read()
+    {
+        return Configuration.ReadFromJsonFile<TestsConfiguration>(DefaultFileName);
     }
 }

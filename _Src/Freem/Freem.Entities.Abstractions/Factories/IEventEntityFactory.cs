@@ -9,5 +9,5 @@ public interface IEventEntityFactory<TEventEntity, TEventIdentifier, TUserIdenti
     where TEntity : IEntity<TEntityIdentifier>
     where TEntityIdentifier : IEntityIdentifier
 {
-    TEventEntity Create(TEntity entity);
+    TEventEntity Create(TEntity entity, EventAction action);
 }

@@ -6,5 +6,7 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface IRunningRecordRepository : IBaseWriteRepository<RunningRecord, UserIdentifier>
 {
-    Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(UserIdentifier userId, CancellationToken cancellationToken);
+    Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(
+        UserIdentifier userId,
+        CancellationToken cancellationToken);
 }

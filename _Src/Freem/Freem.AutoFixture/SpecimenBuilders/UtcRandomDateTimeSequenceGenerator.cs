@@ -15,13 +15,11 @@ public class UtcRandomDateTimeSequenceGenerator : ISpecimenBuilder
     public object Create(object request, ISpecimenContext context)
     {
         var result = _innerRandomDateTimeSequenceGenerator.Create(request, context);
-        if (result is NoSpecimen)
-            return result;
-        else if (result is DateTimeOffset dateTimeOffset)
-            return dateTimeOffset.ToUniversalTime();
-        else if (result is DateTime dateTime)
-            return dateTime.ToUniversalTime();
-
-        return result;
+        return result switch
+        {
+            DateTimeOffset dateTimeOffset => dateTimeOffset.ToUniversalTime(),
+            DateTime dateTime => dateTime.ToUniversalTime(),
+            _ => result
+        };
     }
 }

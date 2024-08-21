@@ -1,4 +1,5 @@
 ﻿using Freem.Collections.Extensions;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Factories;
 using Freem.Entities.Abstractions.Identifiers.Extensions;
 using Freem.Entities.Events;
@@ -37,7 +38,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         await _context.AddRangeAsync(dbCategoryRelations, cancellationToken);
         await _context.AddRangeAsync(dbTagRelations, cancellationToken);
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -93,7 +94,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         await UpdateCategoryRelationsAsync(_context, entity, cancellationToken);
         await UpdateTagRelationsAsync(_context, entity, cancellationToken);
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -108,7 +109,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         _context.Remove(dbEntity);
         
         var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -128,9 +129,9 @@ internal sealed class RecordsRepository : IRecordsRepository
         return SearchEntityResult<Record>.Found(entity);
     }
 
-    private async Task WriteEventAsync(Record entity, CancellationToken cancellationToken)
+    private async Task WriteEventAsync(Record entity, EventAction action, CancellationToken cancellationToken)
     {
-        var eventEntity = _eventFactory.Create(entity);
+        var eventEntity = _eventFactory.Create(entity, action);
         var dbEventEntity = eventEntity.MapToDatabaseEntity();
         await _context.Events.AddAsync(dbEventEntity, cancellationToken);
     }

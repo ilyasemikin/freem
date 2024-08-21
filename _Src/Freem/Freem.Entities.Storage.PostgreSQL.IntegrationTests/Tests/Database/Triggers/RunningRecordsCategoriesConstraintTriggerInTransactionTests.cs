@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
-using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Data;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,7 +17,7 @@ public sealed class RunningRecordsCategoriesConstraintTriggerInTransactionTests 
     [Fact]
     public async Task RunningRecordsCategories_ShouldExecute_WhenUserIdsCorrect()
     {
-        var factory = EntitiesFactory.CreateFirstUserEntitiesFactory();
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
         var category = factory.CreateCategory();
@@ -43,8 +43,8 @@ public sealed class RunningRecordsCategoriesConstraintTriggerInTransactionTests 
     [Fact]
     public async Task RunningRecordsCategories_ShouldThrowException_WhenHaveDifferentUserIds()
     {
-        var firstFactory = EntitiesFactory.CreateFirstUserEntitiesFactory();
-        var secondFactory = EntitiesFactory.CreateSecondUserEntitiesFactory();
+        var firstFactory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+        var secondFactory = DatabaseEntitiesFactory.CreateSecondUserEntitiesFactory();
 
         var firstUser = firstFactory.User;
         var firstCategory = firstFactory.CreateCategory();

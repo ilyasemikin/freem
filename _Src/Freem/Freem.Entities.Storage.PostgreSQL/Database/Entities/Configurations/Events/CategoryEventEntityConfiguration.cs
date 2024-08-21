@@ -1,5 +1,4 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

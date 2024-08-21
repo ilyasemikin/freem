@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Abstractions.Factories;
-using Freem.Entities.Abstractions.Identifiers.Extensions;
+﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Factories;
 using Freem.Entities.Events;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
@@ -31,7 +31,7 @@ internal sealed class TagsRepository : ITagsRepository
 
         await _context.Tags.AddAsync(dbEntity, cancellationToken);
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -46,7 +46,7 @@ internal sealed class TagsRepository : ITagsRepository
 
         dbEntity.Name = entity.Name;
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
         
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -59,7 +59,7 @@ internal sealed class TagsRepository : ITagsRepository
             throw new NotFoundException(id);
 
         var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -71,9 +71,9 @@ internal sealed class TagsRepository : ITagsRepository
             .FindAsync(e => e.Id == id.Value, TagMapper.MapToDomainEntity);
     }
 
-    private async Task WriteEventAsync(Tag entity, CancellationToken cancellationToken)
+    private async Task WriteEventAsync(Tag entity, EventAction action, CancellationToken cancellationToken)
     {
-        var eventEntity = _eventFactory.Create(entity);
+        var eventEntity = _eventFactory.Create(entity, action);
         var dbEventEntity = eventEntity.MapToDatabaseEntity();
         await _context.AddAsync(dbEventEntity, cancellationToken);
     }

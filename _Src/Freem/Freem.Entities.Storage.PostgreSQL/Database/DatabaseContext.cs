@@ -1,11 +1,8 @@
-﻿using Freem.Entities.Abstractions;
-using Freem.Entities.Abstractions.Identifiers;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database;

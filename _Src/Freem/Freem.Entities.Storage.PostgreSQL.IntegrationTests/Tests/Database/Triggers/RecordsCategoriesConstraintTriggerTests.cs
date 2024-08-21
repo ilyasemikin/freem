@@ -1,9 +1,9 @@
 ﻿using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
-using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Data;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Xunit;
@@ -20,7 +20,7 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
     [Fact]
     public async Task RecordsCategories_ShouldThrowException_WhenNoCategoriesAdded()
     {
-        var factory = EntitiesFactory.CreateFirstUserEntitiesFactory();
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
         var category = factory.CreateCategory();
@@ -40,7 +40,7 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
     [Fact]
     public async Task RecordsCategories_ShouldThrowException_WhenDeleteLastCategory()
     {
-        var factory = EntitiesFactory.CreateFirstUserEntitiesFactory();
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
         var category = factory.CreateCategory();
@@ -69,7 +69,7 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
     [Fact]
     public async Task RecordCategories_ShouldThrowException_WhenAddToManyTags()
     {
-        var factory = EntitiesFactory.CreateFirstUserEntitiesFactory();
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
         var record = factory.CreateRecord();

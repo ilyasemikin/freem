@@ -1,4 +1,5 @@
 ﻿using Freem.Collections.Extensions;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Factories;
 using Freem.Entities.Abstractions.Identifiers.Extensions;
 using Freem.Entities.Events;
@@ -36,7 +37,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
         await _context.Categories.AddAsync(dbEntity, cancellationToken);
         await _context.AddRangeAsync(dbRelations, cancellationToken);
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -70,7 +71,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
 
         await UpdateTagRelationsAsync(_context, entity, cancellationToken);
 
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -85,7 +86,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
         _context.Remove(dbEntity);
         
         var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, cancellationToken);
+        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
@@ -104,9 +105,9 @@ internal sealed class CategoriesRepository : ICategoriesRepository
         return SearchEntityResult<Category>.Found(entity);
     }
 
-    private async Task WriteEventAsync(Category entity, CancellationToken cancellationToken)
+    private async Task WriteEventAsync(Category entity, EventAction action, CancellationToken cancellationToken)
     {
-        var eventEntity = _eventFactory.Create(entity);
+        var eventEntity = _eventFactory.Create(entity, action);
         var dbEventEntity = eventEntity.MapToDatabaseEntity();
         await _context.Events.AddAsync(dbEventEntity, cancellationToken);
     }

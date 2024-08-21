@@ -10,7 +10,7 @@ internal static class DatabaseContextFactory
 {
     public static DatabaseContext Create(Action<string>? logger = null)
     {
-        var configuration = Configuration.ReadFromJsonFile<TestsConfiguration>(TestsConfiguration.DefaultFileName);
+        var configuration = TestsConfiguration.Read();
         var connectionString = configuration.ConnectionString;
 
         var storageConfiguration = new StorageConfiguration(connectionString)

@@ -1,40 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
 
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
-	</PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-		<PackageReference Include="xunit" Version="2.4.2" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Freem.AutoFixture\Freem.AutoFixture.csproj" />
-		<ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj" />
-		<ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
-		<ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj" />
-		<ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
-		<ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.AutoFixture\Freem.AutoFixture.csproj"/>
+        <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj"/>
+        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+    </ItemGroup>
 
-	<Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
-		<Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)" />
-	</Target>
+    <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)"/>
+    </Target>
 
 </Project>

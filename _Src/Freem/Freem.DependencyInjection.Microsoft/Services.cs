@@ -18,6 +18,18 @@ public static class Services
         return provider.GetRequiredKeyedService<TService>(key);
     }
 
+    public static object Resolve(Action<IServiceCollection> initializer, Type type)
+    {
+        var provider = BuildServiceProvider(initializer);
+        return provider.GetRequiredService(type);
+    }
+
+    public static object Resolve(Action<IServiceCollection> initializer, Type type, object? key)
+    {
+        var provider = BuildServiceProvider(initializer);
+        return provider.GetRequiredKeyedService(type, key);
+    }
+
     private static ServiceProvider BuildServiceProvider(Action<IServiceCollection> initializer)
     {
         var services = new ServiceCollection();
