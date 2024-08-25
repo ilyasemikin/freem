@@ -4,7 +4,7 @@ using Freem.Entities.Storage.Abstractions.Exceptions.Extensions;
 
 namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
-public sealed class NotFoundException : StorageBaseException
+public sealed class NotFoundException : StorageException
 {
     public IReadOnlyList<IEntityIdentifier> IdValues { get; }
 

@@ -5,7 +5,6 @@ public enum CategorySortField
     Id,
     UserId,
     Name,
-    Description,
     Status,
     CreatedAt
 }

@@ -4,8 +4,8 @@ using Freem.Entities.Abstractions.Identifiers;
 namespace Freem.Entities.Abstractions.Relations.Collection;
 
 public interface IReadOnlyRelatedEntitiesCollection<TEntity, TEntityIdentifier>
-    where TEntity : notnull, IEntity<TEntityIdentifier>
-    where TEntityIdentifier : notnull, IEntityIdentifier
+    where TEntity : IEntity<TEntityIdentifier>
+    where TEntityIdentifier : IEntityIdentifier
 {
     int Count { get; }
 

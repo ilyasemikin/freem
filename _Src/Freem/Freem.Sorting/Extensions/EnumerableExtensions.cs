@@ -6,9 +6,9 @@ public static class EnumerableExtensions
         this IEnumerable<T> enumerable, 
         IEnumerable<SortOption<TSortField>> options, 
         Func<TSortField, Func<T, TSortKey>> selectorFactory)
-        where TSortField : Enum
+        where TSortField : struct, Enum
     {
-        var iterator = options.GetEnumerator();
+        using var iterator = options.GetEnumerator();
 
         if (iterator.MoveNext())
             return enumerable;

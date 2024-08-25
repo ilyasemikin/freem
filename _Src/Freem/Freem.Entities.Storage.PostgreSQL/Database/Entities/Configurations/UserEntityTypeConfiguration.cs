@@ -22,11 +22,20 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
             .IsRequired();
 
         builder
-            .HasKey(e => e.Id)
-            .HasName(EntitiesNames.Users.Constraints.PrimaryKey);
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Users.Properties.CreatedAt)
+            .IsRequired();
 
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Users.Properties.UpdatedAt);
+        
         builder
             .Property(e => e.DeletedAt)
             .HasColumnName(EntitiesNames.Users.Properties.DeletedAt);
+
+        builder
+            .HasKey(e => e.Id)
+            .HasName(EntitiesNames.Users.Constraints.PrimaryKey);
     }
 }

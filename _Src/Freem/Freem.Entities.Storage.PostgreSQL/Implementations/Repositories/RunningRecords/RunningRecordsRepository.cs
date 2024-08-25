@@ -1,15 +1,13 @@
-﻿using Freem.Collections.Extensions;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Factories;
-using Freem.Entities.Abstractions.Identifiers.Extensions;
 using Freem.Entities.Events;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
@@ -17,19 +15,11 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Running
 internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _context;
-
-    private readonly IEventEntityFactory<
-            RunningRecordEvent,
-            EventIdentifier,
-            UserIdentifier,
-            RunningRecord,
-            UserIdentifier>
-        _eventFactory;
+    private readonly IEventEntityFactory<RunningRecordEvent, RunningRecord> _eventFactory;
 
     public RunningRecordsRepository(
         DatabaseContext context,
-        IEventEntityFactory<RunningRecordEvent, EventIdentifier, UserIdentifier, RunningRecord, UserIdentifier>
-            eventFactory)
+        IEventEntityFactory<RunningRecordEvent, RunningRecord> eventFactory)
     {
         _context = context;
         _eventFactory = eventFactory;
@@ -38,8 +28,8 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
     public async Task CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
         var dbEntity = entity.MapToDatabaseEntity();
-        var dbCategoryRelations = entity.MapToRunningRecordCategoryRelations();
-        var dbTagRelations = entity.MapToRunningRecordTagRelations();
+        var dbCategoryRelations = entity.CreateDatabaseRunningRecordCategoryRelations();
+        var dbTagRelations = entity.CreateDatabaseRunningRecordTagRelations();
 
         await _context.RunningRecords.AddAsync(dbEntity, cancellationToken);
         await _context.AddRangeAsync(dbCategoryRelations, cancellationToken);
@@ -52,41 +42,6 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
     public async Task UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
-        static async Task UpdateCategoryRelationsAsync(DatabaseContext context, RunningRecord entity,
-            CancellationToken cancellationToken)
-        {
-            var currentCategoryIds = context.FindRelatedIds<RunningRecordCategoryRelationEntity>(
-                e => e.RunningRecordUserId == entity.Id.Value,
-                e => e.CategoryId);
-
-            var (categoryIdsToRemove, categoryIdsToAdd) =
-                currentCategoryIds.ExceptMutual(entity.Categories.Identifiers.AsValues());
-            await context.RemoveRelationsAsync<RunningRecordCategoryRelationEntity>(
-                e => categoryIdsToRemove.Contains(e.RunningRecordUserId),
-                cancellationToken);
-
-            var newDbCategoryRelations =
-                categoryIdsToAdd.Select(id => RunningRecordMapper.MapToRunningRecordTagRelation(entity.Id, id));
-            await context.AddRangeAsync(newDbCategoryRelations, cancellationToken);
-        }
-
-        static async Task UpdateTagRelationsAsync(DatabaseContext context, RunningRecord entity,
-            CancellationToken cancellationToken)
-        {
-            var currentTagIds = context.FindRelatedIds<RunningRecordTagRelationEntity>(
-                e => e.RunningRecordUserId == entity.Id.Value,
-                e => e.TagId);
-
-            var (tagIdsToRemove, tagIdsToAdd) = currentTagIds.ExceptMutual(entity.Tags.Identifiers.AsValues());
-            await context.RemoveRelationsAsync<RunningRecordTagRelationEntity>(
-                e => tagIdsToRemove.Contains(e.TagId),
-                cancellationToken);
-
-            var newDbTagsRelations =
-                tagIdsToAdd.Select(id => RunningRecordMapper.MapToRunningRecordTagRelation(entity.Id, id));
-            await context.AddRangeAsync(newDbTagsRelations, cancellationToken);
-        }
-
         var dbEntity = await _context.RunningRecords.FirstOrDefaultAsync(
             e => e.UserId == entity.UserId.Value,
             cancellationToken);
@@ -98,8 +53,8 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
         dbEntity.StartAt = entity.StartAt;
 
-        await UpdateCategoryRelationsAsync(_context, entity, cancellationToken);
-        await UpdateTagRelationsAsync(_context, entity, cancellationToken);
+        await _context.UpdateRelatedCategoriesAsync(entity, cancellationToken);
+        await _context.UpdateRelatedTagsAsync(entity, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
@@ -121,20 +76,14 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(UserIdentifier userId,
+    public async Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(
+        UserIdentifier userId,
         CancellationToken cancellationToken)
     {
-        var dbEntity = await _context.RunningRecords
-            .AsNoTracking()
+        return await _context.RunningRecords
             .Include(e => e.Categories)
             .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == userId.Value, cancellationToken);
-
-        if (dbEntity is null)
-            return SearchEntityResult<RunningRecord>.NotFound();
-
-        var entity = dbEntity.MapToDomainEntity();
-        return SearchEntityResult<RunningRecord>.Found(entity);
+            .FindAsync(e => e.UserId == userId.Value, RunningRecordMapper.MapToDomainEntity, cancellationToken);
     }
 
     private async Task WriteEventAsync(RunningRecord entity, EventAction action, CancellationToken cancellationToken)

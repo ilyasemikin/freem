@@ -7,11 +7,10 @@ using Freem.Time.Abstractions;
 
 namespace Freem.Entities.Factories.Base;
 
-public abstract class BaseEventEntityFactory<TEventEntity, TEntity, TIdentifier>
-    : IEventEntityFactory<TEventEntity, EventIdentifier, UserIdentifier, TEntity, TIdentifier>
+public abstract class BaseEventEntityFactory<TEventEntity, TEntity>
+    : IEventEntityFactory<TEventEntity, TEntity>
     where TEventEntity : IEventEntity<EventIdentifier, UserIdentifier>
-    where TEntity : IEntity<TIdentifier>
-    where TIdentifier : IEntityIdentifier
+    where TEntity : IEntity<IEntityIdentifier>
 {
     protected delegate TEventEntity CreateDelegate(
         TEntity entity, 

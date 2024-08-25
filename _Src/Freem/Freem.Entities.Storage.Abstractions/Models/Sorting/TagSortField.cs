@@ -3,5 +3,6 @@
 public enum TagSortField
 {
     Id,
-    Name
+    Name,
+    CreatedAt,
 }

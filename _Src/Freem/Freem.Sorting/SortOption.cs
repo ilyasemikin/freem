@@ -1,7 +1,19 @@
-﻿namespace Freem.Sorting;
+﻿using Freem.Enums.Exceptions;
 
-public sealed record SortOption<TSortField>(TSortField Field, SortOrder Order)
-    where TSortField : Enum
+namespace Freem.Sorting;
+
+public sealed class SortOption<TSortField>
+    where TSortField : struct, Enum
 {
-    public Type SortFieldType => typeof(TSortField);
+    public TSortField Field { get; }
+    public SortOrder Order { get; }
+    
+    public SortOption(TSortField field, SortOrder order)
+    {
+        InvalidEnumValueException<TSortField>.ThrowIfValueInvalid(field);
+        InvalidEnumValueException<SortOrder>.ThrowIfValueInvalid(order);
+
+        Field = field;
+        Order = order;
+    }
 }

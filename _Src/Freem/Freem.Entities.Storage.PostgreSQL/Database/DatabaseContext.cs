@@ -27,8 +27,25 @@ internal sealed class DatabaseContext : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        // TODO: Использовать время из сервиса по получению текущего времени
         var now = DateTimeOffset.UtcNow;
 
+        foreach (var entry in ChangeTracker.Entries<IAuditableEntity>())
+        {
+            var entity = entry.Entity;
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entity.CreatedAt = now;
+                    break;
+                case EntityState.Modified:
+                    entity.UpdatedAt = now;
+                    break;
+                default:
+                    continue;
+            }
+        }
+        
         foreach (var entry in ChangeTracker.Entries<ISoftDeletedEntity>())
         {
             var entity = entry.Entity;

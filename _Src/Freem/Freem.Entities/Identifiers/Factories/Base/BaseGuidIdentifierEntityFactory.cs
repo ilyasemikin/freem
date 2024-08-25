@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Identifiers.Factories;
 
-namespace Freem.Entities.Identifiers.Factories;
+namespace Freem.Entities.Identifiers.Factories.Base;
 
 public abstract class BaseGuidIdentifierEntityFactory<TEntityIdentifier> : IEntityIdentifierFactory<TEntityIdentifier>
     where TEntityIdentifier : IEntityIdentifier

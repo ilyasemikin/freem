@@ -19,6 +19,8 @@ internal sealed class UsersRepository : IUsersRepository
 
     public async Task CreateAsync(User entity, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+        
         var dbEntity = entity.MapToDatabaseEntity();
 
         await _context.Users.AddAsync(dbEntity, cancellationToken);
@@ -28,6 +30,8 @@ internal sealed class UsersRepository : IUsersRepository
 
     public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+        
         var dbEntity = await _context.Users.FirstOrDefaultAsync(
             e => e.Id == entity.Id.Value,
             cancellationToken);
@@ -39,6 +43,8 @@ internal sealed class UsersRepository : IUsersRepository
 
     public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(id);
+        
         await _context.Users
             .Where(e => e.Id == id.Value)
             .ExecuteDeleteAsync(cancellationToken);
@@ -48,8 +54,8 @@ internal sealed class UsersRepository : IUsersRepository
         UserIdentifier id,
         CancellationToken cancellationToken = default)
     {
-        return await _context.Users
-            .AsNoTracking()
-            .FindAsync(e => e.Id == id.Value, UserMapper.MapToDomainEntity);
+        ArgumentNullException.ThrowIfNull(id);
+        
+        return await _context.Users.FindAsync(e => e.Id == id.Value, UserMapper.MapToDomainEntity, cancellationToken);
     }
 }

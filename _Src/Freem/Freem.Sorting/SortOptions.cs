@@ -3,7 +3,7 @@
 namespace Freem.Sorting;
 
 public sealed class SortOptions<TSortField> : IReadOnlyList<SortOption<TSortField>>
-    where TSortField : Enum
+    where TSortField : struct, Enum
 {
     private readonly SortOption<TSortField>[] _options;
 
@@ -11,6 +11,16 @@ public sealed class SortOptions<TSortField> : IReadOnlyList<SortOption<TSortFiel
 
     public int Count => _options.Length;
 
+    public SortOptions(SortOption<TSortField> option)
+    {
+        _options = [option];
+    }
+
+    public SortOptions(TSortField field, SortOrder order)
+        : this(new SortOption<TSortField>(field, order))
+    {
+    }
+    
     public SortOptions(IEnumerable<SortOption<TSortField>> options)
     {
         _options = options.ToArray();

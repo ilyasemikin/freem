@@ -29,6 +29,15 @@ internal sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<TagE
             .IsRequired();
 
         builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Tags.Properties.CreatedAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Tags.Properties.UpdatedAt);
+
+        builder
             .HasKey(e => e.Id)
             .HasName(EntitiesNames.Tags.Constraints.PrimaryKey);
 

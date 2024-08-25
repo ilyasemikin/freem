@@ -12,6 +12,8 @@ internal static class EntitiesNames
         {
             public const string Id = "id";
             public const string Nickname = "nickname";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
             public const string DeletedAt = "deleted_at";
         }
 
@@ -30,6 +32,8 @@ internal static class EntitiesNames
             public const string Id = "id";
             public const string UserId = "user_id";
             public const string Name = "name";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
         }
 
         public static class Constraints
@@ -52,6 +56,8 @@ internal static class EntitiesNames
             public const string UserId = "user_id";
             public const string Name = "name";
             public const string Status = "status";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
         }
 
         public static class Constraints
@@ -79,6 +85,8 @@ internal static class EntitiesNames
             public const string Description = "description";
             public const string StartAt = "start_at";
             public const string EndAt = "end_at";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
         }
 
         public static class Constraints
@@ -100,6 +108,8 @@ internal static class EntitiesNames
             public const string Name = "name";
             public const string Description = "description";
             public const string StartAt = "start_at";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
         }
 
         public static class Constraints

@@ -46,6 +46,15 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
             .IsRequired();
 
         builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Records.Properties.CreatedAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Records.Properties.UpdatedAt);
+
+        builder
             .HasKey(e => e.Id)
             .HasName(EntitiesNames.Records.Constraints.PrimaryKey);
 

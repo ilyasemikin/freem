@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
-internal sealed class RunningRecordEntity : IRowVersionableEntity
+internal sealed class RunningRecordEntity : IAuditableEntity, IRowVersionableEntity
 {
     public required string UserId { get; init; }
     
@@ -15,7 +15,10 @@ internal sealed class RunningRecordEntity : IRowVersionableEntity
     public UserEntity? User { get; set; }
     public ICollection<CategoryEntity>? Categories { get; set; }
     public ICollection<TagEntity>? Tags { get; set; }
-
+    
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    
     [Timestamp]
     public uint RowVersion { get; private set; }
 }

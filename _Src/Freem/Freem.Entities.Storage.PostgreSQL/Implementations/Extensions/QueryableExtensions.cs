@@ -1,21 +1,19 @@
 ﻿using Freem.Entities.Storage.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 
 internal static class QueryableExtensions
 {
-    public static async Task<SearchEntityResult<TEntity>> FindAsync<TDatabaseEntity, TEntity>(
+    public static async Task<SearchEntitiesAsyncResult<TEntity>> CountAndMapAsync<TDatabaseEntity, TEntity>(
         this IQueryable<TDatabaseEntity> queryable,
-        Expression<Func<TDatabaseEntity, bool>> predicate,
-        Func<TDatabaseEntity, TEntity> mapper)
+        Func<TDatabaseEntity, TEntity> mapper,
+        CancellationToken cancellationToken = default)
     {
-        var dbEntity = await queryable.FirstOrDefaultAsync(predicate);
-        if (dbEntity is null)
-            return SearchEntityResult<TEntity>.NotFound();
+        var totalCount = await queryable.CountAsync(cancellationToken);
 
-        var entity = mapper(dbEntity);
-        return SearchEntityResult<TEntity>.Found(entity);
+        var enumerable = queryable.AsAsyncEnumerable();
+        
+        return SearchEntitiesAsyncResult<TEntity>.Create(enumerable, mapper, totalCount);
     }
 }

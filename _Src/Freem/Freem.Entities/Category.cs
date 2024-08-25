@@ -1,25 +1,30 @@
 ﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
+using Freem.Enums.Exceptions;
 
 namespace Freem.Entities;
 
-public class Category : IEntity<CategoryIdentifier>
+public class Category : IEntity<CategoryIdentifier>, IEntityRelation<Tag, TagIdentifier>
 {
     public const int MaxNameLength = 128;
 
     private string _name = string.Empty;
+    private CategoryStatus _status;
 
     public CategoryIdentifier Id { get; }
     public UserIdentifier UserId { get; }
     public RelatedTagsCollection Tags { get; }
+
+    IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
     public string Name
     {
         get => _name;
         set
         {
-            ArgumentException.ThrowIfNullOrEmpty(value);
+            ArgumentNullException.ThrowIfNull(value);
             if (value.Length > MaxNameLength)
                 throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
 
@@ -27,7 +32,16 @@ public class Category : IEntity<CategoryIdentifier>
         }
     }
 
-    public CategoryStatus Status { get; }
+    public CategoryStatus Status
+    {
+        get => _status;
+        set
+        {
+            InvalidEnumValueException<CategoryStatus>.ThrowIfValueInvalid(value);
+
+            _status = value;
+        }
+    }
 
     public Category(
         CategoryIdentifier id,

@@ -7,7 +7,7 @@ using Freem.Time.Abstractions;
 
 namespace Freem.Entities.Factories;
 
-public sealed class CategoryEventEntityFactory : BaseEventEntityFactory<CategoryEvent, Category, CategoryIdentifier>
+public sealed class CategoryEventEntityFactory : BaseEventEntityFactory<CategoryEvent, Category>
 {
     public CategoryEventEntityFactory(
         IEntityIdentifierFactory<EventIdentifier> identifierFactory, 

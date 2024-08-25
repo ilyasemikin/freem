@@ -1,5 +1,4 @@
-﻿using Freem.Configurations;
-using Freem.DependencyInjection.Microsoft;
+﻿using Freem.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;

@@ -1,10 +1,14 @@
 ﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities;
 
-public class RunningRecord : IEntity<UserIdentifier>
+public class RunningRecord : 
+    IEntity<UserIdentifier>,
+    IEntityRelation<Category, CategoryIdentifier>, 
+    IEntityRelation<Tag, TagIdentifier>
 {
     public const int MaxNameLength = Record.MaxNameLength;
     public const int MaxDescriptionLength = Record.MaxDescriptionLength;
@@ -16,6 +20,9 @@ public class RunningRecord : IEntity<UserIdentifier>
     public UserIdentifier UserId { get; }
     public RelatedCategoriesCollection Categories { get; }
     public RelatedTagsCollection Tags { get; }
+    
+    IReadOnlyRelatedEntitiesCollection<Category, CategoryIdentifier> IEntityRelation<Category, CategoryIdentifier>.RelatedEntities => Categories;
+    IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
     public string? Name
     {

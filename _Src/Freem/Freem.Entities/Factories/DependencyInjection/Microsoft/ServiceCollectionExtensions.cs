@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Abstractions.Factories;
 using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Identifiers.Factories.DependencyInjection.Microsoft;
 using Freem.Time.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,20 +20,19 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddFactories(this IServiceCollection services)
     {
         services.TryAddSingleton<
-            IEventEntityFactory<CategoryEvent, EventIdentifier, UserIdentifier, Category, CategoryIdentifier>,
+            IEventEntityFactory<CategoryEvent, Category>, 
             CategoryEventEntityFactory>();
-
+        
         services.TryAddSingleton<
-            IEventEntityFactory<RecordEvent, EventIdentifier, UserIdentifier, Record, RecordIdentifier>,
+            IEventEntityFactory<RecordEvent, Record>, 
             RecordEventEntityFactory>();
 
         services.TryAddSingleton<
-            IEventEntityFactory<RunningRecordEvent, EventIdentifier, UserIdentifier, RunningRecord, UserIdentifier>,
+            IEventEntityFactory<RunningRecordEvent, RunningRecord>, 
             RunningRecordEventEntityFactory>();
 
         services.TryAddSingleton<
-            IEventEntityFactory<TagEvent, EventIdentifier, UserIdentifier, Tag, TagIdentifier>,
-            TagEventEntityFactory>();
+            IEventEntityFactory<TagEvent, Tag>, TagEventEntityFactory>();
 
         return services;
     }

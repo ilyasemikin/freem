@@ -33,6 +33,15 @@ internal sealed class RunningRecordEntityTypeConfiguration : IEntityTypeConfigur
             .IsRequired();
 
         builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.CreatedAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.RunningRecords.Properties.UpdatedAt);
+
+        builder
             .HasKey(e => e.UserId)
             .HasName(EntitiesNames.RunningRecords.Constraints.PrimaryKey);
 

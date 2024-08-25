@@ -8,9 +8,9 @@ public static class QueryableExtensions
         this IQueryable<T> queryable, 
         IEnumerable<SortOption<TSortField>> options, 
         Func<TSortField, Expression<Func<T, TSortKey>>> selectorFactory)
-        where TSortField : Enum
+        where TSortField : struct, Enum
     {
-        var iterator = options.GetEnumerator();
+        using var iterator = options.GetEnumerator();
 
         if (!iterator.MoveNext())
             return queryable;
@@ -36,14 +36,5 @@ public static class QueryableExtensions
         }
 
         return orderedQueryable;
-    }
-
-    public static IQueryable<T> OrderBy<T, TSortField>(
-        this IQueryable<T> queryable,
-        IEnumerable<SortOption<TSortField>> options,
-        Func<TSortField, Expression<Func<T, object>>> selectorFactory)
-        where TSortField : Enum
-    {
-        return queryable.OrderBy(options, selectorFactory);
     }
 }

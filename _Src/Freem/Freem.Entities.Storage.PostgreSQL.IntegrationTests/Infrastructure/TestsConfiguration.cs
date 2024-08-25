@@ -1,5 +1,4 @@
 ﻿using Freem.Configurations;
-using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 

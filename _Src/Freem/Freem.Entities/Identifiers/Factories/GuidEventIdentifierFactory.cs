@@ -1,6 +1,8 @@
-﻿namespace Freem.Entities.Identifiers.Factories;
+﻿using Freem.Entities.Identifiers.Factories.Base;
 
-public class GuidEventIdentifierFactory : BaseGuidIdentifierEntityFactory<EventIdentifier>
+namespace Freem.Entities.Identifiers.Factories;
+
+public sealed class GuidEventIdentifierFactory : BaseGuidIdentifierEntityFactory<EventIdentifier>
 {
     public GuidEventIdentifierFactory() 
         : base(value => new EventIdentifier(value))

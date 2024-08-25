@@ -3,7 +3,7 @@ using Freem.Entities.Abstractions.Identifiers;
 
 namespace Freem.Entities.Storage.Abstractions.Base;
 
-public interface IBaseWriteRepository<TEntity, TEntityIdentifier>
+public interface IWriteRepository<TEntity, TEntityIdentifier>
     where TEntity : notnull, IEntity<TEntityIdentifier>
     where TEntityIdentifier : notnull, IEntityIdentifier
 {

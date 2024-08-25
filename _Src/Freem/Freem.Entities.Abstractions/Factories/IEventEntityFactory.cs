@@ -2,12 +2,9 @@
 
 namespace Freem.Entities.Abstractions.Factories;
 
-public interface IEventEntityFactory<TEventEntity, TEventIdentifier, TUserIdentifier, TEntity, TEntityIdentifier>
-    where TEventEntity : IEventEntity<TEventIdentifier, TUserIdentifier>
-    where TEventIdentifier : IEntityIdentifier
-    where TUserIdentifier : IEntityIdentifier
-    where TEntity : IEntity<TEntityIdentifier>
-    where TEntityIdentifier : IEntityIdentifier
+public interface IEventEntityFactory<TEventEntity, TEntity>
+    where TEventEntity : IEventEntity<IEntityIdentifier, IEntityIdentifier>
+    where TEntity : IEntity<IEntityIdentifier>
 {
     TEventEntity Create(TEntity entity, EventAction action);
 }

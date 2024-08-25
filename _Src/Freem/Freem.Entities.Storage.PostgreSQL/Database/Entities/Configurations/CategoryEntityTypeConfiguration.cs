@@ -35,6 +35,15 @@ internal sealed class CategoryEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired();
 
         builder
+            .Property(e => e.CreatedAt)
+            .HasColumnName(EntitiesNames.Categories.Properties.CreatedAt)
+            .IsRequired();
+
+        builder
+            .Property(e => e.UpdatedAt)
+            .HasColumnName(EntitiesNames.Categories.Properties.UpdatedAt);
+
+        builder
             .HasKey(e => e.Id)
             .HasName(EntitiesNames.Categories.Constraints.PrimaryKey);
 

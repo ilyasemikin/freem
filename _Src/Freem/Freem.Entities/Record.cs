@@ -1,11 +1,15 @@
 ﻿using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
 using Freem.Time.Models;
 
 namespace Freem.Entities;
 
-public class Record : IEntity<RecordIdentifier>
+public class Record : 
+    IEntity<RecordIdentifier>, 
+    IEntityRelation<Category, CategoryIdentifier>, 
+    IEntityRelation<Tag, TagIdentifier>
 {
     public const int MaxNameLength = 128;
     public const int MaxDescriptionLength = 1024;
@@ -17,6 +21,9 @@ public class Record : IEntity<RecordIdentifier>
     public UserIdentifier UserId { get; }
     public RelatedCategoriesCollection Categories { get; }
     public RelatedTagsCollection Tags { get; }
+
+    IReadOnlyRelatedEntitiesCollection<Category, CategoryIdentifier> IEntityRelation<Category, CategoryIdentifier>.RelatedEntities => Categories;
+    IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
     public string? Name
     {

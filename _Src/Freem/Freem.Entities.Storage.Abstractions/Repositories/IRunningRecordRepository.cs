@@ -4,7 +4,7 @@ using Freem.Entities.Storage.Abstractions.Models;
 
 namespace Freem.Entities.Storage.Abstractions.Repositories;
 
-public interface IRunningRecordRepository : IBaseWriteRepository<RunningRecord, UserIdentifier>
+public interface IRunningRecordRepository : IWriteRepository<RunningRecord, UserIdentifier>
 {
     Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(
         UserIdentifier userId,

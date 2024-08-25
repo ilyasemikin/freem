@@ -4,7 +4,7 @@ using CategoryStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Mod
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
-internal sealed class CategoryEntity : IRowVersionableEntity
+internal sealed class CategoryEntity : IAuditableEntity, IRowVersionableEntity
 {
     public required string Id { get; init; }
     public required string UserId { get; init; }
@@ -16,6 +16,9 @@ internal sealed class CategoryEntity : IRowVersionableEntity
     public UserEntity? User { get; set; }
     public ICollection<TagEntity>? Tags { get; set; }
 
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    
     [Timestamp]
     public uint RowVersion { get; private set; }
 }

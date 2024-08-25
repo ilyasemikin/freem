@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 using Freem.Time.Models;
 
@@ -16,34 +15,6 @@ internal static class RecordMapper
             Name = entity.Name,
             Description = entity.Description,
             UserId = entity.UserId.Value,
-        };
-    }
-
-    public static IEnumerable<RecordCategoryRelationEntity> MapToRecordCategoryRelations(this Record entity)
-    {
-        return entity.Categories.Identifiers.Select(id => MapToRecordCategoryRelation(entity.Id, id.Value));
-    }
-
-    public static IEnumerable<RecordTagRelationEntity> MapToRecordTagRelations(this Record entity)
-    {
-        return entity.Tags.Identifiers.Select(id => MapToRecordTagRelation(entity.Id, id.Value));
-    }
-
-    public static RecordCategoryRelationEntity MapToRecordCategoryRelation(RecordIdentifier recordId, string categoryIdString)
-    {
-        return new RecordCategoryRelationEntity
-        {
-            RecordId = recordId.Value,
-            CategoryId = categoryIdString,
-        };
-    }
-
-    public static RecordTagRelationEntity MapToRecordTagRelation(RecordIdentifier recordId, string tagIdString)
-    {
-        return new RecordTagRelationEntity
-        {
-            RecordId = recordId.Value,
-            TagId = tagIdString
         };
     }
 

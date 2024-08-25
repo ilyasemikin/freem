@@ -7,7 +7,7 @@ using Freem.Time.Abstractions;
 
 namespace Freem.Entities.Factories;
 
-public class TagEventEntityFactory : BaseEventEntityFactory<TagEvent, Tag, TagIdentifier>
+public class TagEventEntityFactory : BaseEventEntityFactory<TagEvent, Tag>
 {
     public TagEventEntityFactory(
         IEntityIdentifierFactory<EventIdentifier> identifierFactory, 
