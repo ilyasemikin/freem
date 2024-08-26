@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ internal sealed class BaseEventEntityConfiguration : IEntityTypeConfiguration<Ba
         builder
             .Property(e => e.Action)
             .HasColumnName(EntitiesNames.Events.Properties.Action)
-            .HasColumnType(EntitiesNames.Events.Models.Action)
+            .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.Events.Models.Action}")
             .HasColumnOrder(3)
             .IsRequired();
 
