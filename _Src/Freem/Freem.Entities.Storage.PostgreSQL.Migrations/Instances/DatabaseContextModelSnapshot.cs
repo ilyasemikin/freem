@@ -77,7 +77,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnOrder(0);
 
                     b.Property<int>("Action")
-                        .HasColumnType("event_action")
+                        .HasColumnType("core_entities.event_action")
                         .HasColumnName("action")
                         .HasColumnOrder(3);
 
