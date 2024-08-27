@@ -14,8 +14,11 @@ public class TagEventsConstraintTriggerTests : ConstraintTriggerTestsBase
     {
     }
 
-    [Fact]
-    public async Task TagEvent_ShouldSuccess_WhenTagExists()
+    [Theory]
+    [InlineData(EventAction.Created)]
+    [InlineData(EventAction.Updated)]
+    [InlineData(EventAction.Removed)]
+    public async Task TagEvent_ShouldSuccess_WhenTagExists(EventAction action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
@@ -30,7 +33,30 @@ public class TagEventsConstraintTriggerTests : ConstraintTriggerTestsBase
             Id = "id",
             TagId = tag.Id,
             UserId = user.Id,
-            Action = EventAction.Created,
+            Action = action,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+
+        await Context.Events.AddAsync(@event);
+
+        await Context.ShouldNotThrowExceptionAsync();
+    }
+
+    [Fact]
+    public async Task TagEvent_ShouldSuccess_WhenTagNotExistsAndActionIsRemoved()
+    {
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+
+        var user = factory.User;
+
+        await Context.Users.AddAsync(user);
+
+        var @event = new TagEventEntity
+        {
+            Id = "id",
+            TagId = "not_existed_id",
+            UserId = user.Id,
+            Action = EventAction.Removed,
             CreatedAt = DateTimeOffset.UtcNow
         };
 

@@ -40,7 +40,8 @@ public static class ServiceCollectionExtensions
                 {
                     options.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
                     options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable);
-                });
+                })
+                .EnableServiceProviderCaching(configuration.EnableServiceProviderCaching);
 
             if (configuration.Logger is not null)
                 builder.LogTo(message => configuration.Logger(message));

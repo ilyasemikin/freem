@@ -7,6 +7,8 @@ public sealed class StorageConfiguration
     public string ConnectionString { get; }
     
     public LoggerAction? Logger { get; init; }
+
+    public bool EnableServiceProviderCaching { get; init; } = true;
     
     public StorageConfiguration(string connectionString)
     {

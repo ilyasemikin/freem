@@ -2,6 +2,7 @@
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
 using Xunit;
@@ -15,8 +16,11 @@ public sealed class CategoryEventsConstraintTriggerTests : ConstraintTriggerTest
     {
     }
 
-    [Fact]
-    public async Task CategoryEvent_ShouldSuccess_WhenCategoryExists()
+    [Theory]
+    [InlineData(EventAction.Created)]
+    [InlineData(EventAction.Updated)]
+    [InlineData(EventAction.Removed)]
+    public async Task CategoryEvent_ShouldSuccess_WhenCategoryExists(EventAction action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
@@ -31,7 +35,30 @@ public sealed class CategoryEventsConstraintTriggerTests : ConstraintTriggerTest
             Id = "id",
             CategoryId = category.Id,
             UserId = user.Id,
-            Action = EventAction.Created,
+            Action = action,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+
+        await Context.Events.AddAsync(@event);
+
+        await Context.ShouldNotThrowExceptionAsync();
+    }
+
+    [Fact]
+    public async Task CategoryEvent_ShouldSuccess_WhenCategoryNotExistsAndActionIsRemoved()
+    {
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+
+        var user = factory.User;
+
+        await Context.Users.AddAsync(user);
+
+        var @event = new CategoryEventEntity
+        {
+            Id = "id",
+            CategoryId = "not_existed_id",
+            UserId = user.Id,
+            Action = EventAction.Removed,
             CreatedAt = DateTimeOffset.UtcNow
         };
 

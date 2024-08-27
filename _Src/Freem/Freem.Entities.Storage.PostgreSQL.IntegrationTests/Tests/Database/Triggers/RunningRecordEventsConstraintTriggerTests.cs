@@ -15,8 +15,11 @@ public class RunningRecordEventsConstraintTriggerTests : ConstraintTriggerTestsB
     {
     }
 
-    [Fact]
-    public async Task RunningRecordEvent_ShouldSuccess_WhenRunningRecordExists()
+    [Theory]
+    [InlineData(EventAction.Created)]
+    [InlineData(EventAction.Updated)]
+    [InlineData(EventAction.Removed)]
+    public async Task RunningRecordEvent_ShouldSuccess_WhenRunningRecordExists(EventAction action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
@@ -40,7 +43,29 @@ public class RunningRecordEventsConstraintTriggerTests : ConstraintTriggerTestsB
         {
             Id = "id",
             UserId = user.Id,
-            Action = EventAction.Created,
+            Action = action,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+
+        await Context.Events.AddAsync(@event);
+
+        await Context.ShouldNotThrowExceptionAsync();
+    }
+
+    [Fact]
+    public async Task RunningRecordEvent_ShouldSuccess_WhenRunningRecordNotExistsAndActionIsRemoved()
+    {
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+
+        var user = factory.User;
+
+        await Context.Users.AddAsync(user);
+
+        var @event = new RunningRecordEventEntity
+        {
+            Id = "id",
+            UserId = user.Id,
+            Action = EventAction.Removed,
             CreatedAt = DateTimeOffset.UtcNow
         };
 

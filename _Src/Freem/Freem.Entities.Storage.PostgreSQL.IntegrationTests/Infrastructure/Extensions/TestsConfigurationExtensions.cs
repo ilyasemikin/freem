@@ -6,6 +6,9 @@ internal static class TestsConfigurationExtensions
 {
     public static StorageConfiguration ToStorageConfiguration(this TestsConfiguration configuration)
     {
-        return new StorageConfiguration(configuration.ConnectionString);
+        return new StorageConfiguration(configuration.ConnectionString)
+        {
+            EnableServiceProviderCaching = false
+        };
     }
 }
