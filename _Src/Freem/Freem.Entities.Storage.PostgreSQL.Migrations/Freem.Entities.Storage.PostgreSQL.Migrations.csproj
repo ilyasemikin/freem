@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
+    <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
+    <ProjectReference Include="..\Freem.Storage.Migrations\Freem.Storage.Migrations.csproj" />
   </ItemGroup>
 
 </Project>

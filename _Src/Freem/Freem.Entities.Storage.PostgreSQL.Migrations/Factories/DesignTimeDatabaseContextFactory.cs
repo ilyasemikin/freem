@@ -3,7 +3,7 @@ using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Freem.Entities.Storage.PostgreSQL.Migrations;
+namespace Freem.Entities.Storage.PostgreSQL.Migrations.Factories;
 
 internal class DesignTimeDatabaseContextFactory : IDesignTimeDbContextFactory<DatabaseContext>
 {
