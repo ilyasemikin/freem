@@ -8,7 +8,7 @@ public sealed class ConstantsInjector
 {
     private const string ConstantGroupName = "name";
     
-    private static readonly Regex ConstantRegex = new(@"\${(?<name>[A-Za-z].+)}");
+    private static readonly Regex ConstantRegex = new(@"\${(?<name>[A-Za-z.]+)}");
     
     private readonly ConstantValuesCollection _values;
 

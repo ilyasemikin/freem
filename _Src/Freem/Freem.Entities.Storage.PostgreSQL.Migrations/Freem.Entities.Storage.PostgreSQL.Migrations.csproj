@@ -6,10 +6,6 @@
     <Nullable>enable</Nullable>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
   </PropertyGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration.psql" />
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
@@ -22,6 +18,11 @@
     <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
     <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
     <ProjectReference Include="..\Freem.Storage.Migrations\Freem.Storage.Migrations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration\exception_functions.psql" />
+    <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration\triggers.psql" />
   </ItemGroup>
 
 </Project>

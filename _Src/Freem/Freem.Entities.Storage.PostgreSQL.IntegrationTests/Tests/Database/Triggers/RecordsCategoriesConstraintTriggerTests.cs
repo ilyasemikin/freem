@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Relations.Collections;
+using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
@@ -34,7 +35,7 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         await Context.Records.AddAsync(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must have categories count in range"));
+            e => e.Message.Contains(ErrorCodes.RecordsCategoriesInvalidCount));
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         Context.Records.Update(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must have categories count in range [1, 16]"));
+            e => e.Message.Contains(ErrorCodes.RecordsCategoriesInvalidCount));
     }
 
     [Fact]
@@ -94,6 +95,6 @@ public sealed class RecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         await Context.AddRangeAsync(relations);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must have categories count in range [1, 16]"));
+            e => e.Message.Contains(ErrorCodes.RecordsCategoriesInvalidCount));
     }
 }

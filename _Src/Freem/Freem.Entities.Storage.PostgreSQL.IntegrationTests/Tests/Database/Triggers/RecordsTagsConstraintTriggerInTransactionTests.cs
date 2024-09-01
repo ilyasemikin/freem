@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
@@ -66,6 +67,6 @@ public sealed class RecordsTagsConstraintTriggerInTransactionTests : ConstraintT
         await Context.AddAsync(relation);
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must be equils"));
+            e => e.Message.Contains(ErrorCodes.RecordsTagsDifferentUserIds));
     }
 }

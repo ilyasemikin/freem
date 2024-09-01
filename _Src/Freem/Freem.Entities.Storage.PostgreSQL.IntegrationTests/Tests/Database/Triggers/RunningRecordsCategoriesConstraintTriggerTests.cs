@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
@@ -31,7 +32,7 @@ public class RunningRecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         await Context.RunningRecords.AddAsync(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must have categories count in range"));
+            e => e.Message.Contains(ErrorCodes.RunningRecordsCategoriesInvalidCount));
     }
 
     [Fact]
@@ -60,6 +61,6 @@ public class RunningRecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         Context.RunningRecords.Update(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains("P0001") && e.Message.Contains("must have categories count in range"));
+            e => e.Message.Contains(ErrorCodes.RunningRecordsCategoriesInvalidCount));
     }
 }

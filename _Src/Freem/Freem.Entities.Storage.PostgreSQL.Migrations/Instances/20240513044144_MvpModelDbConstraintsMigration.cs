@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts;
+using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Extensions;
 using Freem.Storage.Migrations.Scripts.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -11,20 +12,21 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
     /// <inheritdoc />
     public partial class MvpModelDbConstraintsMigration : Migration
     {
-	    private const string ScriptFileName = "Freem.Entities.Storage.PostgreSQL.Migrations.Instances.Raw.20240513044144_MvpModelDbConstraintsMigration.psql";
+	    public const string ExceptionFunctionsScriptFileName = "Freem.Entities.Storage.PostgreSQL.Migrations.Instances.Raw._20240513044144_MvpModelDbConstraintsMigration.exception_functions.psql";
+	    public const string TriggersScriptFileName = "Freem.Entities.Storage.PostgreSQL.Migrations.Instances.Raw._20240513044144_MvpModelDbConstraintsMigration.triggers.psql";
 	    
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-	        var script = ScriptReader.Read(ScriptFileName, ScriptPart.Declarations);
-	        migrationBuilder.Sql(script);
+	        migrationBuilder.RunScript(ExceptionFunctionsScriptFileName, ScriptPart.Declarations);
+	        migrationBuilder.RunScript(TriggersScriptFileName, ScriptPart.Declarations);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-	        var script = ScriptReader.Read(ScriptFileName, ScriptPart.Droppings);
-	        migrationBuilder.Sql(script);
+	        migrationBuilder.RunScript(TriggersScriptFileName, ScriptPart.Droppings);
+	        migrationBuilder.RunScript(ExceptionFunctionsScriptFileName, ScriptPart.Droppings);
         }
     }
 }
