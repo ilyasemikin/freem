@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Storage.PostgreSQL.Database.Constants;
+﻿namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 
 internal static class ErrorCodes
 {

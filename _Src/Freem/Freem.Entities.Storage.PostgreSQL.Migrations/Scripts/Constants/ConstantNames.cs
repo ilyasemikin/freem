@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 
 namespace Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Constants;
 

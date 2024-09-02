@@ -8,6 +8,8 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +19,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records
 internal sealed class RecordsRepository : IRecordsRepository
 {
     private readonly DatabaseContext _context;
+    private readonly ContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<RecordEvent, Record> _eventFactory;
 
     public RecordsRepository(
         DatabaseContext context,
+        ContextExceptionHandler exceptionHandler,
         IEventEntityFactory<RecordEvent, Record> eventFactory)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(eventFactory);
+        
         _context = context;
+        _exceptionHandler = exceptionHandler;
         _eventFactory = eventFactory;
     }
 
@@ -41,7 +50,7 @@ internal sealed class RecordsRepository : IRecordsRepository
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task UpdateAsync(Record entity, CancellationToken cancellationToken = default)
@@ -65,7 +74,7 @@ internal sealed class RecordsRepository : IRecordsRepository
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task RemoveAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
@@ -82,7 +91,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         var entity = dbEntity.MapToDomainEntity();
         await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Record>> FindByIdAsync(

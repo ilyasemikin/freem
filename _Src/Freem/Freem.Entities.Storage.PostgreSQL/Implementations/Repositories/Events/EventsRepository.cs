@@ -15,6 +15,8 @@ internal class EventsRepository : IEventsRepository
 
     public EventsRepository(DatabaseContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        
         _context = context;
     }
 

@@ -8,6 +8,8 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Sorting.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +19,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 internal sealed class TagsRepository : ITagsRepository
 {
     private readonly DatabaseContext _context;
+    private readonly ContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<TagEvent, Tag> _eventFactory;
 
     public TagsRepository(
         DatabaseContext context,
+        ContextExceptionHandler exceptionHandler,
         IEventEntityFactory<TagEvent, Tag> eventFactory)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(eventFactory);
+        
         _context = context;
+        _exceptionHandler = exceptionHandler;
         _eventFactory = eventFactory;
     }
 
@@ -37,7 +46,7 @@ internal sealed class TagsRepository : ITagsRepository
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task UpdateAsync(Tag entity, CancellationToken cancellationToken = default)
@@ -54,7 +63,7 @@ internal sealed class TagsRepository : ITagsRepository
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
         
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
@@ -68,7 +77,7 @@ internal sealed class TagsRepository : ITagsRepository
         var entity = dbEntity.MapToDomainEntity();
         await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Tag>> FindByIdAsync(

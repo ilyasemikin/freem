@@ -6,6 +6,8 @@ using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +17,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Running
 internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _context;
+    private readonly ContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<RunningRecordEvent, RunningRecord> _eventFactory;
 
     public RunningRecordsRepository(
         DatabaseContext context,
+        ContextExceptionHandler exceptionHandler,
         IEventEntityFactory<RunningRecordEvent, RunningRecord> eventFactory)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(eventFactory);
+        
         _context = context;
+        _exceptionHandler = exceptionHandler;
         _eventFactory = eventFactory;
     }
 
@@ -37,7 +46,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
@@ -58,7 +67,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)
@@ -73,7 +82,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         var entity = dbEntity.MapToDomainEntity();
         await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(

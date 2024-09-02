@@ -3,6 +3,8 @@ using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +13,17 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 internal sealed class UsersRepository : IUsersRepository
 {
     private readonly DatabaseContext _context;
+    private readonly ContextExceptionHandler _exceptionHandler;
 
-    public UsersRepository(DatabaseContext context)
+    public UsersRepository(
+        DatabaseContext context,
+        ContextExceptionHandler exceptionHandler)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exceptionHandler);
+        
         _context = context;
+        _exceptionHandler = exceptionHandler;
     }
 
     public async Task CreateAsync(User entity, CancellationToken cancellationToken = default)
@@ -25,7 +34,7 @@ internal sealed class UsersRepository : IUsersRepository
 
         await _context.Users.AddAsync(dbEntity, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
@@ -38,7 +47,7 @@ internal sealed class UsersRepository : IUsersRepository
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)

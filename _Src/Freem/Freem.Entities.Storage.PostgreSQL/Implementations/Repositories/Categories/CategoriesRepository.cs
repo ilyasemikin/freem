@@ -8,6 +8,8 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories.Extensions;
 using Freem.Sorting.Extensions;
@@ -18,13 +20,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categor
 internal sealed class CategoriesRepository : ICategoriesRepository
 {
     private readonly DatabaseContext _context;
+    private readonly ContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<CategoryEvent, Category> _eventFactory;
 
     public CategoriesRepository(
         DatabaseContext context,
+        ContextExceptionHandler exceptionHandler,
         IEventEntityFactory<CategoryEvent, Category> eventFactory)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(eventFactory);
+        
         _context = context;
+        _exceptionHandler = exceptionHandler;
         _eventFactory = eventFactory;
     }
 
@@ -40,7 +49,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task UpdateAsync(Category entity, CancellationToken cancellationToken = default)
@@ -60,7 +69,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task RemoveAsync(CategoryIdentifier id, CancellationToken cancellationToken = default)
@@ -76,7 +85,7 @@ internal sealed class CategoriesRepository : ICategoriesRepository
         var entity = dbEntity.MapToDomainEntity();
         await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Category>> FindByIdAsync(

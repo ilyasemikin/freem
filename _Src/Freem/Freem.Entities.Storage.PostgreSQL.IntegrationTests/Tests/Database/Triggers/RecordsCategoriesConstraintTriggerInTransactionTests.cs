@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
+using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
