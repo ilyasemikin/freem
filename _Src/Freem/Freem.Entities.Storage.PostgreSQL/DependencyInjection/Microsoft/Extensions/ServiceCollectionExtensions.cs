@@ -6,6 +6,9 @@ using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Abstractions;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -23,9 +26,10 @@ public static class ServiceCollectionExtensions
         return services
             .AddEventEntityFactories()
             .AddDatabaseContext(configuration)
+            .AddDatabaseContextErrorHandler()
             .AddRepositories();
     }
-
+    
     private static IServiceCollection AddDatabaseContext(this IServiceCollection services, StorageConfiguration configuration)
     {
         if (services.ContainsServiceType<DatabaseContext>())
@@ -46,6 +50,14 @@ public static class ServiceCollectionExtensions
             if (configuration.Logger is not null)
                 builder.LogTo(message => configuration.Logger(message));
         });
+    }
+
+    private static IServiceCollection AddDatabaseContextErrorHandler(this IServiceCollection services)
+    {
+        services.TryAddSingleton<IDatabaseStorageExceptionFactory, DefaultDatabaseStorageExceptionFactory>();
+        services.TryAddSingleton<DatabaseContextExceptionHandler>();
+        
+        return services;
     }
     
     private static IServiceCollection AddRepositories(this IServiceCollection services)

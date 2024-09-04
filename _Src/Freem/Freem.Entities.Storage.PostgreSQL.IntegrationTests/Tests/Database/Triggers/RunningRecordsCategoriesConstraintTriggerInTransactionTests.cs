@@ -82,6 +82,6 @@ public sealed class RunningRecordsCategoriesConstraintTriggerInTransactionTests 
         await Context.AddRangeAsync(relations);
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
-            e => e.Message.Contains(ErrorCodes.RunningRecordsCategoriesDifferentUserIds));
+            e => e.Message.Contains(TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds));
     }
 }

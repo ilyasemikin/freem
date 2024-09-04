@@ -19,12 +19,12 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records
 internal sealed class RecordsRepository : IRecordsRepository
 {
     private readonly DatabaseContext _context;
-    private readonly ContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<RecordEvent, Record> _eventFactory;
 
     public RecordsRepository(
         DatabaseContext context,
-        ContextExceptionHandler exceptionHandler,
+        DatabaseContextExceptionHandler exceptionHandler,
         IEventEntityFactory<RecordEvent, Record> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(context);

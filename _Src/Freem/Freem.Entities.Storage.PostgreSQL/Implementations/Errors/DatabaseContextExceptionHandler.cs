@@ -1,15 +1,16 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Errors;
+using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 
-internal sealed class ContextExceptionHandler
+internal sealed class DatabaseContextExceptionHandler
 {
-    private readonly IStorageExceptionFactory _factory;
+    private readonly IDatabaseStorageExceptionFactory _factory;
 
-    public ContextExceptionHandler(IStorageExceptionFactory factory)
+    public DatabaseContextExceptionHandler(IDatabaseStorageExceptionFactory factory)
     {
         _factory = factory;
     }
@@ -32,7 +33,7 @@ internal sealed class ContextExceptionHandler
 
     private void ThrowException(PostgresException exception)
     {
-        if (!Error.TryParse(exception.Message, out var error))
+        if (!IDatabaseError.TryParse(exception.Message, out var error))
             throw exception;
         
         throw _factory.Create(error);

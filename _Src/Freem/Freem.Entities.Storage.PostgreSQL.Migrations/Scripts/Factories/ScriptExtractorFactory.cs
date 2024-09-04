@@ -13,16 +13,16 @@ internal static class ScriptExtractorFactory
     {
         var constants = new ConstantValuesCollectionBuilder()
             .WithConstant(ConstantNames.SchemaName, EnvironmentNames.Schema)
-            .WithConstant(ConstantNames.CategoriesTagsDifferentUserIds, ErrorCodes.CategoriesTagsDifferentUserIds)
-            .WithConstant(ConstantNames.CategoriesTagsInvalidCount, ErrorCodes.CategoriesTagsInvalidCount)
-            .WithConstant(ConstantNames.RecordsTagsDifferentUserIds, ErrorCodes.RecordsTagsDifferentUserIds)
-            .WithConstant(ConstantNames.RecordsTagsInvalidCount, ErrorCodes.RecordsTagsInvalidCount)
-            .WithConstant(ConstantNames.RecordsCategoriesDifferentUserIds, ErrorCodes.RecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RecordsCategoriesInvalidCount, ErrorCodes.RecordsCategoriesInvalidCount)
-            .WithConstant(ConstantNames.RunningRecordsTagsDifferentUserIds, ErrorCodes.RunningRecordsTagsDifferentUserIds)
-            .WithConstant(ConstantNames.RunningRecordsTagsInvalidCount, ErrorCodes.RunningRecordsTagsInvalidCount)
-            .WithConstant(ConstantNames.RunningRecordsCategoriesDifferentUserIds, ErrorCodes.RunningRecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, ErrorCodes.RunningRecordsCategoriesInvalidCount)
+            .WithConstant(ConstantNames.CategoriesTagsDifferentUserIds, TriggerErrorCodes.CategoriesTagsDifferentUserIds)
+            .WithConstant(ConstantNames.CategoriesTagsInvalidCount, TriggerErrorCodes.CategoriesTagsInvalidCount)
+            .WithConstant(ConstantNames.RecordsTagsDifferentUserIds, TriggerErrorCodes.RecordsTagsDifferentUserIds)
+            .WithConstant(ConstantNames.RecordsTagsInvalidCount, TriggerErrorCodes.RecordsTagsInvalidCount)
+            .WithConstant(ConstantNames.RecordsCategoriesDifferentUserIds, TriggerErrorCodes.RecordsCategoriesDifferentUserIds)
+            .WithConstant(ConstantNames.RecordsCategoriesInvalidCount, TriggerErrorCodes.RecordsCategoriesInvalidCount)
+            .WithConstant(ConstantNames.RunningRecordsTagsDifferentUserIds, TriggerErrorCodes.RunningRecordsTagsDifferentUserIds)
+            .WithConstant(ConstantNames.RunningRecordsTagsInvalidCount, TriggerErrorCodes.RunningRecordsTagsInvalidCount)
+            .WithConstant(ConstantNames.RunningRecordsCategoriesDifferentUserIds, TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)
+            .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, TriggerErrorCodes.RunningRecordsCategoriesInvalidCount)
             .Build();
         
         var injector = new ConstantsInjector(constants);

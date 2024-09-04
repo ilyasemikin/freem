@@ -51,6 +51,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Reflection", "Freem.R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests", "Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests\Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests.csproj", "{5ADF4E9B-1C60-4203-8A42-6038ABD7168A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UnitTests", "Freem.Entities.UnitTests\Freem.Entities.UnitTests.csproj", "{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Collections.UnitTests", "Freem.Collections.UnitTests\Freem.Collections.UnitTests.csproj", "{F11A617F-236E-4CD0-9926-72C7F874DB62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +157,14 @@ Global
 		{5ADF4E9B-1C60-4203-8A42-6038ABD7168A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ADF4E9B-1C60-4203-8A42-6038ABD7168A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ADF4E9B-1C60-4203-8A42-6038ABD7168A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F11A617F-236E-4CD0-9926-72C7F874DB62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F11A617F-236E-4CD0-9926-72C7F874DB62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F11A617F-236E-4CD0-9926-72C7F874DB62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F11A617F-236E-4CD0-9926-72C7F874DB62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

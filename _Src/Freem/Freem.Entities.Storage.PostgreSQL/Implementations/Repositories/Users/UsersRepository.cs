@@ -13,11 +13,11 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 internal sealed class UsersRepository : IUsersRepository
 {
     private readonly DatabaseContext _context;
-    private readonly ContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContextExceptionHandler _exceptionHandler;
 
     public UsersRepository(
         DatabaseContext context,
-        ContextExceptionHandler exceptionHandler)
+        DatabaseContextExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(exceptionHandler);

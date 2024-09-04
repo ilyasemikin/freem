@@ -82,6 +82,6 @@ public sealed class RecordsCategoriesConstraintTriggerInTransactionTests : Const
         await Context.AddRangeAsync(relations);
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
-            e => e.Message.Contains(ErrorCodes.RecordsCategoriesDifferentUserIds));
+            e => e.Message.Contains(TriggerErrorCodes.RecordsCategoriesDifferentUserIds));
     }
 }

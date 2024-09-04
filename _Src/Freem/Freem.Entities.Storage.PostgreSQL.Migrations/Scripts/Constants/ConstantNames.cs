@@ -7,14 +7,14 @@ internal static class ConstantNames
 {
     public const string SchemaName = $"{nameof(EnvironmentNames)}.{nameof(EnvironmentNames.Schema)}";
     
-    public const string CategoriesTagsDifferentUserIds = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.CategoriesTagsDifferentUserIds)}";
-    public const string CategoriesTagsInvalidCount = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.CategoriesTagsInvalidCount)}";
-    public const string RecordsTagsDifferentUserIds = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RecordsTagsDifferentUserIds)}";
-    public const string RecordsTagsInvalidCount = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RecordsTagsInvalidCount)}";
-    public const string RecordsCategoriesDifferentUserIds = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RecordsCategoriesDifferentUserIds)}";
-    public const string RecordsCategoriesInvalidCount = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RecordsCategoriesInvalidCount)}";
-    public const string RunningRecordsTagsDifferentUserIds = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RunningRecordsTagsDifferentUserIds)}";
-    public const string RunningRecordsTagsInvalidCount = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RunningRecordsTagsInvalidCount)}";
-    public const string RunningRecordsCategoriesDifferentUserIds = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RunningRecordsCategoriesDifferentUserIds)}";
-    public const string RunningRecordsCategoriesInvalidCount = $"{nameof(ErrorCodes)}.{nameof(ErrorCodes.RunningRecordsCategoriesInvalidCount)}";
+    public const string CategoriesTagsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.CategoriesTagsDifferentUserIds)}";
+    public const string CategoriesTagsInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.CategoriesTagsInvalidCount)}";
+    public const string RecordsTagsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsTagsDifferentUserIds)}";
+    public const string RecordsTagsInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsTagsInvalidCount)}";
+    public const string RecordsCategoriesDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsCategoriesDifferentUserIds)}";
+    public const string RecordsCategoriesInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsCategoriesInvalidCount)}";
+    public const string RunningRecordsTagsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsTagsDifferentUserIds)}";
+    public const string RunningRecordsTagsInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsTagsInvalidCount)}";
+    public const string RunningRecordsCategoriesDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)}";
+    public const string RunningRecordsCategoriesInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesInvalidCount)}";
 }

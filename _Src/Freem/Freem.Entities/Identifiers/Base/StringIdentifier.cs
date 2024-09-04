@@ -13,12 +13,23 @@ public abstract class StringIdentifier : IEntityIdentifier
         Value = value;
     }
 
+    public bool Equals(IEntityIdentifier? other)
+    {
+        if (other is null)
+            return false;
+        
+        return other.GetType() == GetType() && Value == other.Value;
+    }
+
     public override bool Equals(object? obj)
     {
-        if (obj is not StringIdentifier other)
+        if (obj is null) 
             return false;
-
-        return other.GetType() == GetType() && other.Value == Value;
+        if (ReferenceEquals(this, obj)) 
+            return true;
+        if (obj.GetType() != GetType()) 
+            return false;
+        return Equals((StringIdentifier)obj);
     }
 
     public override int GetHashCode()
@@ -26,5 +37,8 @@ public abstract class StringIdentifier : IEntityIdentifier
         return Value.GetHashCode();
     }
 
-    public static explicit operator string(StringIdentifier identifier) => identifier.Value;
+    public static explicit operator string(StringIdentifier identifier)
+    {
+        return identifier.Value;
+    }
 }

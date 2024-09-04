@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Storage.PostgreSQL.Database.Errors;
+﻿namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Models;
 
 internal sealed class ErrorParameter : IEquatable<ErrorParameter>
 {

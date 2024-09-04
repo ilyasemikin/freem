@@ -17,12 +17,12 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Running
 internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _context;
-    private readonly ContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<RunningRecordEvent, RunningRecord> _eventFactory;
 
     public RunningRecordsRepository(
         DatabaseContext context,
-        ContextExceptionHandler exceptionHandler,
+        DatabaseContextExceptionHandler exceptionHandler,
         IEventEntityFactory<RunningRecordEvent, RunningRecord> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -1,6 +1,6 @@
 ﻿namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 
-internal static class ErrorCodes
+internal static class TriggerErrorCodes
 {
     public const string CategoriesTagsDifferentUserIds = "CategoriesTagsDifferentUserIds";
     public const string CategoriesTagsInvalidCount = "CategoriesTagsInvalidCount";

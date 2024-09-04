@@ -20,12 +20,12 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categor
 internal sealed class CategoriesRepository : ICategoriesRepository
 {
     private readonly DatabaseContext _context;
-    private readonly ContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<CategoryEvent, Category> _eventFactory;
 
     public CategoriesRepository(
         DatabaseContext context,
-        ContextExceptionHandler exceptionHandler,
+        DatabaseContextExceptionHandler exceptionHandler,
         IEventEntityFactory<CategoryEvent, Category> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -5,7 +5,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 internal static class ContextExceptionHandlerExtensions
 {
     public static async Task HandleSaveChangesAsync(
-        this ContextExceptionHandler handler, 
+        this DatabaseContextExceptionHandler handler, 
         DatabaseContext database, 
         CancellationToken cancellationToken)
     {

@@ -33,7 +33,7 @@ public class RunningRecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         await Context.RunningRecords.AddAsync(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains(ErrorCodes.RunningRecordsCategoriesInvalidCount));
+            e => e.Message.Contains(TriggerErrorCodes.RunningRecordsCategoriesInvalidCount));
     }
 
     [Fact]
@@ -62,6 +62,6 @@ public class RunningRecordsCategoriesConstraintTriggerTests : ConstraintTriggerT
         Context.RunningRecords.Update(record);
 
         await Context.ShouldThrowExceptionAsync<PostgresException>(
-            e => e.Message.Contains(ErrorCodes.RunningRecordsCategoriesInvalidCount));
+            e => e.Message.Contains(TriggerErrorCodes.RunningRecordsCategoriesInvalidCount));
     }
 }

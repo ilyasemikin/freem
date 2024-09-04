@@ -68,6 +68,28 @@ public sealed class CategoriesTagsConstraintTriggerInTransactionTests : Constrai
         Context.Add(relation);
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
-            e => e.Message.Contains(ErrorCodes.CategoriesTagsDifferentUserIds));
+            e => e.Message.Contains(TriggerErrorCodes.CategoriesTagsDifferentUserIds));
+    }
+
+    [Fact]
+    public async Task Categories_Should()
+    {
+        var firstFactory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+
+        var user = firstFactory.User;
+        var category = firstFactory.CreateCategory();
+        
+        Context.Users.Add(user);
+        Context.Categories.Add(category);
+
+        var relation = new CategoryTagRelationEntity
+        {
+            CategoryId = category.Id,
+            TagId = "tag_id"
+        };
+
+        Context.Add(relation);
+
+        await Context.ShouldThrowExceptionAsync<DbUpdateException>(e => e.Message == "");
     }
 }

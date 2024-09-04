@@ -68,6 +68,6 @@ public sealed class RunningRecordsTagsConstraintTriggerInTransactionTests : Cons
         await Context.AddAsync(relation);
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
-            e => e.Message.Contains(ErrorCodes.RunningRecordsTagsDifferentUserIds));
+            e => e.Message.Contains(TriggerErrorCodes.RunningRecordsTagsDifferentUserIds));
     }
 }

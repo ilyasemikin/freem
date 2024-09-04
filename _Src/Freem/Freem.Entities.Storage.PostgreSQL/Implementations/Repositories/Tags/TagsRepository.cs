@@ -19,12 +19,12 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 internal sealed class TagsRepository : ITagsRepository
 {
     private readonly DatabaseContext _context;
-    private readonly ContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContextExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<TagEvent, Tag> _eventFactory;
 
     public TagsRepository(
         DatabaseContext context,
-        ContextExceptionHandler exceptionHandler,
+        DatabaseContextExceptionHandler exceptionHandler,
         IEventEntityFactory<TagEvent, Tag> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(context);
