@@ -1,6 +1,5 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Errors;
+﻿using Freem.Converters.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -8,11 +7,11 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 
 internal sealed class DatabaseContextExceptionHandler
 {
-    private readonly IDatabaseStorageExceptionFactory _factory;
+    private readonly ConvertersCollection<IDatabaseError, Exception> _converters;
 
-    public DatabaseContextExceptionHandler(IDatabaseStorageExceptionFactory factory)
+    public DatabaseContextExceptionHandler(ConvertersCollection<IDatabaseError, Exception> converters)
     {
-        _factory = factory;
+        _converters = converters;
     }
 
     public async Task Handle(Func<Task> action)
@@ -33,9 +32,10 @@ internal sealed class DatabaseContextExceptionHandler
 
     private void ThrowException(PostgresException exception)
     {
-        if (!IDatabaseError.TryParse(exception.Message, out var error))
+        if (!IDatabaseError.TryParse(exception.Message, out var error) || 
+            !_converters.TryConvert(error, out var dbException))
             throw exception;
-        
-        throw _factory.Create(error);
+
+        throw dbException;
     }
 }

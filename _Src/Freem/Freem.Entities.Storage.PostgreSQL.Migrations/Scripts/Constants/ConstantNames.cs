@@ -17,4 +17,15 @@ internal static class ConstantNames
     public const string RunningRecordsTagsInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsTagsInvalidCount)}";
     public const string RunningRecordsCategoriesDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)}";
     public const string RunningRecordsCategoriesInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesInvalidCount)}";
+
+    public const string CategoryIdTriggerErrorParameterName = "TriggerErrorParameters.CategoryIdTriggerErrorParameterName";
+    public const string RecordIdTriggerErrorParameterName = "TriggerErrorParameters.RecordIdTriggerErrorParameterName";
+    public const string TagIdTriggerErrorParameterName = "TriggerErrorParameters.TagIdTriggerErrorParameterName";
+    public const string UserIdTriggerErrorParameterName = "TriggerErrorParameters.UserIdTriggerErrorParameterName";
+    public const string ActualCountTriggerErrorParameterName = "TriggerErrorParameters.ActualCountTriggerErrorParameterName";
+    
+    public const string MinRelatedTagsCount = "Limits.MinRelatedTagsCount";
+    public const string MaxRelatedTagsCount = "Limits.MaxRelatedTagsCount";
+    public const string MinRelatedCategoriesCount = "Limits.MinRelatedCategoriesCount";
+    public const string MaxRelatedCategoriesCount = "Limits.MaxRelatedCategoriesCount";
 }

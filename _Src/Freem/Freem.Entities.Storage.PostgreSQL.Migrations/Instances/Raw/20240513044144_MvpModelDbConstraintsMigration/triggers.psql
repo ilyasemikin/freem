@@ -16,7 +16,7 @@ begin
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.CategoriesTagsDifferentUserIds}', 
 	        'category.user_id must be equals tags.user_id',
-	        array[('category_id', new.category_id), ('tag_id', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	        array[('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', new.category_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
 	return new;
@@ -37,11 +37,11 @@ declare
 begin
 	select count(*) from ${EnvironmentNames.Schema}.categories_tags where category_id = id into tags_count;
 
-	if tags_count > 64 then
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.CategoriesTagsInvalidCount}', 
-        	'categories must have tags in range [0, 64]',
-        	array[('id', id), ('tags_count', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+        	'categories must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+        	array[('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;
@@ -96,7 +96,7 @@ begin
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RecordsTagsDifferentUserIds}', 
         	'records.user_id must be equals tags.user_id',
-        	array[('record_id', new.record_id), ('tag_id', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+        	array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
 	return new;
@@ -117,11 +117,11 @@ declare
 begin
 	select count(*) from ${EnvironmentNames.Schema}.records_tags where record_id = id into tags_count;
 
-	if tags_count > 64 then
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
     	    '${TriggerErrorCodes.RecordsTagsInvalidCount}', 
-            'records must have tags in range [0, 64]',
-            array[('id', id), ('tags_count', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            'records must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;
@@ -174,7 +174,7 @@ begin
 		call ${EnvironmentNames.Schema}.throw_exception(
             '${TriggerErrorCodes.RunningRecordsTagsDifferentUserIds}', 
             'running_records.user_id must be equals tags.user_id',
-            array[('user_id', new.user_id), ('tag_id', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
 	return new;
@@ -195,11 +195,11 @@ declare
 begin
 	select count(*) from ${EnvironmentNames.Schema}.running_records where user_id = id into tags_count;
 
-	if tags_count > 64 then
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RunningRecordsTagsInvalidCount}', 
-            'running_records must have tags in range [0, 64]',
-            array[('id', id), ('tags_count', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            'running_records must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;
@@ -254,7 +254,7 @@ begin
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RecordsCategoriesDifferentUserIds}', 
         	'records.user_id must be equals categories.user_id',
-        	array[('record_id', new.record_id), ('category_id', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+        	array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id), ('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
 	return new;
@@ -275,11 +275,11 @@ declare
 begin
 	select count(*) from ${EnvironmentNames.Schema}.records_categories where record_id = id into categories_count;
 
-	if categories_count < 1 or categories_count > 16 then
+	if categories_count < ${Limits.MinRelatedCategoriesCount} or categories_count > ${Limits.MaxRelatedCategoriesCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RecordsCategoriesInvalidCount}', 
-            'running_records must have tags in range [1, 16]',
-            array[('id', id), ('categories_count', categories_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            'running_records must have tags in range [${Limits.MinRelatedCategoriesCount}, ${Limits.MaxRelatedCategoriesCount}]',
+            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', categories_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;
@@ -369,7 +369,7 @@ begin
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds}', 
         	'running_records.user_id must be equals categories.user_id',
-        	array[('user_id', new.user_id), ('category_id', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+        	array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id), ('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
 	return new;
@@ -390,11 +390,11 @@ declare
 begin
 	select count(*) from ${EnvironmentNames.Schema}.running_records_categories where user_id = id into categories_count;
 
-	if categories_count < 1 or categories_count > 16 then
+	if categories_count < ${Limits.MinRelatedCategoriesCount} or categories_count > ${Limits.MaxRelatedCategoriesCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RunningRecordsCategoriesInvalidCount}', 
-            'running_records must have categories in range [1, 16]',
-            array[('id', id), ('categories_count', categories_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            'running_records must have categories in range [${Limits.MinRelatedCategoriesCount}, ${Limits.MaxRelatedCategoriesCount}]',
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', categories_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;

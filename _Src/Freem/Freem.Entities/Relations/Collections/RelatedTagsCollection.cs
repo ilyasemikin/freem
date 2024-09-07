@@ -5,10 +5,11 @@ namespace Freem.Entities.Relations.Collections;
 
 public sealed class RelatedTagsCollection : RelatedEntitiesCollection<Tag, TagIdentifier>
 {
+    public const int MinTagsCount = 0;
     public const int MaxTagsCount = 64;
 
     public RelatedTagsCollection(IEnumerable<TagIdentifier> identifiers, IEnumerable<Tag> entities) 
-        : base(identifiers, entities, maxCount: MaxTagsCount)
+        : base(identifiers, entities, MinTagsCount, MaxTagsCount)
     {
     }
 

@@ -1,5 +1,4 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
@@ -69,27 +68,5 @@ public sealed class CategoriesTagsConstraintTriggerInTransactionTests : Constrai
 
         await Context.ShouldThrowExceptionAsync<DbUpdateException, PostgresException>(
             e => e.Message.Contains(TriggerErrorCodes.CategoriesTagsDifferentUserIds));
-    }
-
-    [Fact]
-    public async Task Categories_Should()
-    {
-        var firstFactory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
-
-        var user = firstFactory.User;
-        var category = firstFactory.CreateCategory();
-        
-        Context.Users.Add(user);
-        Context.Categories.Add(category);
-
-        var relation = new CategoryTagRelationEntity
-        {
-            CategoryId = category.Id,
-            TagId = "tag_id"
-        };
-
-        Context.Add(relation);
-
-        await Context.ShouldThrowExceptionAsync<DbUpdateException>(e => e.Message == "");
     }
 }

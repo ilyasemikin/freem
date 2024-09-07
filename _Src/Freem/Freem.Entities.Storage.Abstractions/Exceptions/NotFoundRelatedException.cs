@@ -6,39 +6,32 @@ namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
 public sealed class NotFoundRelatedException : StorageException
 {
-    public IEntityIdentifier Id { get; }
-
-    public string RelatedName { get; }
     public IReadOnlyList<IEntityIdentifier> RelatedIds { get; }
 
-    public NotFoundRelatedException(IEntityIdentifier id, string relatedName, IEntityIdentifier relatedId)
-        : base(GenerateMessage(id, relatedName, relatedId))
+    public NotFoundRelatedException(IEntityIdentifier relatedId)
+        : base(GenerateMessage(relatedId))
     {
-        Id = id;
-        RelatedName = relatedName;
         RelatedIds = [relatedId];
     }
-
-    public NotFoundRelatedException(IEntityIdentifier id, string relatedName, params IEntityIdentifier[] relatedIds)
-        : base(GenerateMessage(id, relatedName, relatedIds))
+    
+    public NotFoundRelatedException(params IEntityIdentifier[] relatedIds)
+        : base(GenerateMessage(relatedIds))
     {
-        Id = id;
-        RelatedName = relatedName;
         RelatedIds = relatedIds;
     }
 
-    private static string GenerateMessage(IEntityIdentifier id, string relatedName, IEntityIdentifier relatedId)
+    private static string GenerateMessage(IEntityIdentifier relatedId)
     {
-        return $"Related {relatedName.ToQuotedString()} with id = {relatedId.ToQuotedString()} not found for id = {id.ToQuotedString()}";
+        return $"Related id = {relatedId.ToQuotedString()} not found";
     }
 
-    private static string GenerateMessage(IEntityIdentifier id, string relatedName, IReadOnlyList<IEntityIdentifier> relatedIds)
+    private static string GenerateMessage(IReadOnlyList<IEntityIdentifier> relatedIds)
     {
         return relatedIds.Count switch
         {
-            0 => $"Related {relatedName.ToQuotedString()} ids not found for id = {id.ToQuotedString()}",
-            1 => GenerateMessage(id, relatedName, relatedIds[0]),
-            _ => $"Related {relatedName.ToQuotedString()} with ids = {relatedIds.ToListString()} for id = {id.ToQuotedString()}"
+            0 => $"Related ids not found",
+            1 => GenerateMessage(relatedIds[0]),
+            _ => $"Related with ids = {relatedIds.ToListString()}"
         };
     }
 }

@@ -1,27 +1,34 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
+using Freem.Entities.Storage.PostgreSQL.Database.Models;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 
 internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
 {
     private static readonly Regex MessageRegex = new(
-        @"insert or update on table ""(?<Table>[a-z_]+)"" violates foreign key constraint ""(?<ForeignKey>[a-z_]+)""");
+        @"insert or update on table ""(?<ConstaintTable>[a-z_]+)"" violates foreign key constraint ""(?<ConstaintName>[a-z_]+)""\r?\n\r?\n" +
+        @"DETAIL: Key \((?<Key>[a-z_]+)\)=\((?<Value>[a-z_]+)\) is not present in table ""(?<Table>[a-z_]+)""",
+        RegexOptions.Compiled);
 
-    private const string TableNameGroupName = "Table";
-    private const string ForeignKeyGroupName = "ForeignKey";
+    private const string ConstraintTableGroupName = "ConstaintTable";
+    private const string ConstraintNameGroupName = "ConstaintName";
+
+    private const string TableGroupName = "Table";
+    private const string KeyGroupName = "Key";
+    private const string ValueGroupName = "Value";
     
-    public string TableName { get; }
-    public string ForeignKeyName { get; }
-
-    public DatabaseForeignKeyConstraintError(string tableName, string foreignKeyName)
+    public ConstraintInfo Constraint { get; }
+    public DatabaseColumnWithValue Column { get; }
+    
+    public DatabaseForeignKeyConstraintError(ConstraintInfo constraint, DatabaseColumnWithValue column)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(foreignKeyName);
+        ArgumentNullException.ThrowIfNull(constraint);
+        ArgumentNullException.ThrowIfNull(column);
         
-        TableName = tableName;
-        ForeignKeyName = foreignKeyName;
+        Constraint = constraint;
+        Column = column;
     }
     
     public bool Equals(IDatabaseError? other)
@@ -36,12 +43,12 @@ internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
     
     private bool Equals(DatabaseForeignKeyConstraintError other)
     {
-        return TableName == other.TableName && ForeignKeyName == other.ForeignKeyName;
+        return Constraint.Equals(other.Constraint) && Column.Equals(other.Column);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(TableName, ForeignKeyName);
+        return HashCode.Combine(Constraint, Column);
     }
     
     public static bool TryParse(string input, [NotNullWhen(true)] out DatabaseForeignKeyConstraintError? error)
@@ -51,15 +58,79 @@ internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
         var match = MessageRegex.Match(input);
         if (!match.Success)
             return false;
-        
-        if (!match.Groups.TryGetValue(TableNameGroupName, out var tableNameGroup) ||
-            !match.Groups.TryGetValue(ForeignKeyGroupName, out var foreignKeyNameGroup))
-            return false;
 
-        var tableName = tableNameGroup.Value;
-        var foreignKeyName = foreignKeyNameGroup.Value;
+        if (!TryExtractConstraint(match, out var constraint))
+            return false;
+        if (!TryExtractColumn(match, out var column))
+            return false;
         
-        error = new DatabaseForeignKeyConstraintError(tableName, foreignKeyName);
+        error = new DatabaseForeignKeyConstraintError(constraint, column);
         return true;
+
+        static bool TryExtractConstraint(Match match, [NotNullWhen(true)] out ConstraintInfo? constraint)
+        {
+            constraint = null;
+            if (!match.Groups.TryGetValue(ConstraintTableGroupName, out var tableNameGroup) ||
+                !match.Groups.TryGetValue(ConstraintNameGroupName, out var foreignKeyNameGroup))
+                return false;
+
+            var constantTable = tableNameGroup.Value;
+            var constraintName = foreignKeyNameGroup.Value;
+            
+            constraint = new ConstraintInfo(constantTable, constraintName);
+            return true;
+        }
+
+        static bool TryExtractColumn(Match match, [NotNullWhen(true)] out DatabaseColumnWithValue? columnWithValue)
+        {
+            columnWithValue = null;
+            if (!match.Groups.TryGetValue(TableGroupName, out var tableGroup) ||
+                !match.Groups.TryGetValue(KeyGroupName, out var keyGroup) ||
+                !match.Groups.TryGetValue(ValueGroupName, out var valueGroup))
+                return false;
+        
+            var table = tableGroup.Value;
+            var key = keyGroup.Value;
+            var value = valueGroup.Value;
+            
+            var column = new DatabaseColumn(table, key);
+            
+            columnWithValue = new DatabaseColumnWithValue(column, value);
+            return true;
+        }
+    }
+
+    public sealed class ConstraintInfo : IEquatable<ConstraintInfo>
+    {
+        public string Table { get; }
+        public string Name { get; }
+
+        public ConstraintInfo(string table, string name)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(table);
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+            
+            Table = table;
+            Name = name;
+        }
+
+        public bool Equals(ConstraintInfo? other)
+        {
+            if (other is null) 
+                return false;
+            if (ReferenceEquals(this, other)) 
+                return true;
+            return Table == other.Table && Name == other.Name;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj) || obj is ConstraintInfo other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Table, Name);
+        }
     }
 }

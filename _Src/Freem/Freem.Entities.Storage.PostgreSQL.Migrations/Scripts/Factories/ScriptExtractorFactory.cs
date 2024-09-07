@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+﻿using Freem.Entities.Relations.Collections;
+using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Constants;
 using Freem.Storage.Migrations.Constants.Collections.Builders;
@@ -11,7 +12,9 @@ internal static class ScriptExtractorFactory
 {
     public static ScriptExtractor Create()
     {
-        var constants = new ConstantValuesCollectionBuilder()
+        var builder = new ConstantValuesCollectionBuilder();
+            
+        builder
             .WithConstant(ConstantNames.SchemaName, EnvironmentNames.Schema)
             .WithConstant(ConstantNames.CategoriesTagsDifferentUserIds, TriggerErrorCodes.CategoriesTagsDifferentUserIds)
             .WithConstant(ConstantNames.CategoriesTagsInvalidCount, TriggerErrorCodes.CategoriesTagsInvalidCount)
@@ -22,10 +25,24 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.RunningRecordsTagsDifferentUserIds, TriggerErrorCodes.RunningRecordsTagsDifferentUserIds)
             .WithConstant(ConstantNames.RunningRecordsTagsInvalidCount, TriggerErrorCodes.RunningRecordsTagsInvalidCount)
             .WithConstant(ConstantNames.RunningRecordsCategoriesDifferentUserIds, TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, TriggerErrorCodes.RunningRecordsCategoriesInvalidCount)
-            .Build();
+            .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, TriggerErrorCodes.RunningRecordsCategoriesInvalidCount);
+
+        builder
+            .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsCollection.MinTagsCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsCollection.MaxTagsCount.ToString())
+            .WithConstant(ConstantNames.MinRelatedCategoriesCount, RelatedCategoriesCollection.MinCategoriesCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedCategoriesCount, RelatedCategoriesCollection.MaxCategoriesCount.ToString());
+
+        builder
+            .WithConstant(ConstantNames.CategoryIdTriggerErrorParameterName, TriggerErrorParameters.CategoryId)
+            .WithConstant(ConstantNames.RecordIdTriggerErrorParameterName, TriggerErrorParameters.RecordId)
+            .WithConstant(ConstantNames.TagIdTriggerErrorParameterName, TriggerErrorParameters.TagId)
+            .WithConstant(ConstantNames.UserIdTriggerErrorParameterName, TriggerErrorParameters.UserId)
+            .WithConstant(ConstantNames.ActualCountTriggerErrorParameterName, TriggerErrorParameters.ActualCount);
         
-        var injector = new ConstantsInjector(constants);
+        var collection = builder.Build();
+        
+        var injector = new ConstantsInjector(collection);
         return new ScriptExtractor(injector);
     }
 }

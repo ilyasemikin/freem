@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using Freem.Collections.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Models;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 
@@ -22,20 +23,20 @@ internal sealed class TriggerConstraintError : IDatabaseError
     
     public string Code { get; }
     public string Message { get; }
-    public IReadOnlyList<ErrorParameter> Parameters { get; }
+    public ParameterCollection Parameters { get; }
 
-    public TriggerConstraintError(string code, string message, IEnumerable<ErrorParameter>? parameters = null)
+    public TriggerConstraintError(string code, string message, ParameterCollection? parameters = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
         ArgumentException.ThrowIfNullOrWhiteSpace(message);
 
         Code = code;
         Message = message;
-        Parameters = parameters?.ToArray() ?? [];
+        Parameters = parameters ?? new ParameterCollection([]);
     }
 
-    public TriggerConstraintError(string code, string message, params ErrorParameter[] parameters)
-        : this(code, message, (IEnumerable<ErrorParameter>)parameters)
+    public TriggerConstraintError(string code, string message, params Parameter[] parameters)
+        : this(code, message, new ParameterCollection(parameters))
     {
     }
     
@@ -53,7 +54,7 @@ internal sealed class TriggerConstraintError : IDatabaseError
     {
         return Code == other.Code && 
                Message == other.Message &&
-               Parameters.SequenceEqual(other.Parameters);
+               Parameters.Equals(other.Parameters);
     }
 
     public override int GetHashCode()
@@ -78,7 +79,7 @@ internal sealed class TriggerConstraintError : IDatabaseError
             !match.Groups.TryGetValue(MessageGroupName, out var messageGroup))
             return false;
 
-        IEnumerable<ErrorParameter>? parameters = null;
+        ParameterCollection? parameters = null;
         if (match.Groups.TryGetValue(ParametersGroupName, out var parametersGroup) &&
             parametersGroup.Captures.Count > 0 &&
             !TryParseParameters(parametersGroup.Value, out parameters))
@@ -92,7 +93,7 @@ internal sealed class TriggerConstraintError : IDatabaseError
     
     private static bool TryParseParameters(
         string input, 
-        [NotNullWhen(true)] out IEnumerable<ErrorParameter>? parameters)
+        [NotNullWhen(true)] out ParameterCollection? parameters)
     {
         parameters = null;
         
@@ -113,17 +114,99 @@ internal sealed class TriggerConstraintError : IDatabaseError
         if (count == 0)
             return false;
 
-        var result = new List<ErrorParameter>();
+        var result = new List<Parameter>();
         for (var i = 0; i < count; i++)
         {
             var parameterName = nameCaptures[i].Value;
             var parameterValue = valueCaptures[i].Value;
             
-            var parameter = new ErrorParameter(parameterName, parameterValue);
+            var parameter = new Parameter(parameterName, parameterValue);
             result.Add(parameter);
         }
 
-        parameters = result;
+        parameters = new ParameterCollection(result);
         return true;
+    }
+
+    public sealed class ParameterCollection : IEnumerable<Parameter>, IEquatable<ParameterCollection>
+    {
+        private readonly IReadOnlyDictionary<string, Parameter> _parameters;
+
+        public Parameter this[string name] => _parameters[name];
+
+        public ParameterCollection(IEnumerable<Parameter> parameters)
+        {
+            ArgumentNullException.ThrowIfNull(parameters);
+            
+            _parameters = parameters.ToDictionary(p => p.Name);
+        }
+
+        public bool Equals(ParameterCollection? other)
+        {
+            if (other is null) 
+                return false;
+            if (ReferenceEquals(this, other)) 
+                return true;
+            return _parameters.Values.UnorderedEquals(other._parameters.Values);
+        }
+
+        public IEnumerator<Parameter> GetEnumerator()
+        {
+            return _parameters.Values.GetEnumerator();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj) || obj is ParameterCollection other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return _parameters.GetHashCode();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+    
+    public sealed class Parameter : IEquatable<Parameter>
+    {
+        public string Name { get; }
+        public string Value { get; }
+
+        public Parameter(string name, string value)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+            ArgumentException.ThrowIfNullOrWhiteSpace(value);
+            
+            Name = name;
+            Value = value;
+        }
+
+        public bool Equals(Parameter? other)
+        {
+            if (other is null) 
+                return false;
+            if (ReferenceEquals(this, other)) 
+                return true;
+            return Name == other.Name && Value == other.Value;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return ReferenceEquals(this, obj) || obj is Parameter other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Value);
+        }
+
+        public override string ToString()
+        {
+            return Name + "=" + Value;
+        }
     }
 }

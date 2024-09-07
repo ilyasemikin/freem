@@ -1,8 +1,6 @@
-﻿using Freem.Entities.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
-using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
 using Xunit;

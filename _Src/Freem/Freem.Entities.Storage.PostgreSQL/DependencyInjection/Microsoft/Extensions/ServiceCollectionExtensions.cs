@@ -1,14 +1,20 @@
-﻿using Freem.DependencyInjection.Microsoft.Extensions;
+﻿using Freem.Converters.Abstractions;
+using Freem.Converters.DependencyInjection.Microsoft.Extensions;
+using Freem.DependencyInjection.Microsoft.Extensions;
+using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Factories.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
+using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
+using Freem.Entities.Storage.PostgreSQL.Database.Models;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Factories.Implementations;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -54,7 +60,22 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddDatabaseContextErrorHandler(this IServiceCollection services)
     {
-        services.TryAddSingleton<IDatabaseStorageExceptionFactory, DefaultDatabaseStorageExceptionFactory>();
+        services
+            .TryAddSingleton<
+                IPossibleConverter<DatabaseColumnWithValue, IEntityIdentifier>,
+                DatabaseColumnToIdentifierPossibleConverter>();
+
+        services.TryAddSingleton<
+            IPossibleConverter<DatabaseForeignKeyConstraintError, Exception>,
+            DatabaseForeignKeyConstraintErrorToExceptionConverter>();
+        services.TryAddSingleton<
+            IConverter<TriggerConstraintError, Exception>,
+            TriggerConstraintErrorToExceptionConverter>();
+
+        services.AddConvertersCollection<IDatabaseError, Exception>((provider, builder) => builder
+            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseForeignKeyConstraintError, Exception>>())
+            .Add(provider.GetRequiredService<IConverter<TriggerConstraintError, Exception>>()));
+        
         services.TryAddSingleton<DatabaseContextExceptionHandler>();
         
         return services;

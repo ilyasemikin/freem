@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
-using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts;
-using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Extensions;
+﻿using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Extensions;
 using Freem.Storage.Migrations.Scripts.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
 

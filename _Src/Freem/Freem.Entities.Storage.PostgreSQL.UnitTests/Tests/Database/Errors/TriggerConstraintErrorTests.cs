@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
-using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Models;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Tests.Database.Errors;
 
@@ -67,7 +66,9 @@ public sealed class TriggerConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassInputWithOneParameter()
     {
         const string input = "[Code] {key=value}: Message";
-        var expected = new TriggerConstraintError("Code", "Message", new ErrorParameter("key", "value"));
+        var expected = new TriggerConstraintError(
+            "Code", "Message", 
+            new TriggerConstraintError.Parameter("key", "value"));
 
         var success = TriggerConstraintError.TryParse(input, out var result);
         
@@ -81,8 +82,8 @@ public sealed class TriggerConstraintErrorTests
         const string input = "[Code] {key1=value1;key2=value2}: Message";
         var expected = new TriggerConstraintError(
             "Code", "Message", 
-            new ErrorParameter("key1", "value1"),
-            new ErrorParameter("key2", "value2"));
+            new TriggerConstraintError.Parameter("key1", "value1"),
+            new TriggerConstraintError.Parameter("key2", "value2"));
         
         var success = TriggerConstraintError.TryParse(input, out var result);
         
@@ -95,8 +96,8 @@ public sealed class TriggerConstraintErrorTests
     {
         var error = new TriggerConstraintError(
             "Code", "Message", 
-            new ErrorParameter("key1", "value1"),
-            new ErrorParameter("key2", "value2"));
+            new TriggerConstraintError.Parameter("key1", "value1"),
+            new TriggerConstraintError.Parameter("key2", "value2"));
         
         var @string = error.ToString();
         
