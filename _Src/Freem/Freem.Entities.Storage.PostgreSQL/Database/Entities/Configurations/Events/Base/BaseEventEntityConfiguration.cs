@@ -12,7 +12,19 @@ internal sealed class BaseEventEntityConfiguration : IEntityTypeConfiguration<Ba
     public void Configure(EntityTypeBuilder<BaseEventEntity> builder)
     {
         builder
-            .ToTable(EntitiesNames.Events.Table);
+            .ToTable(EntitiesNames.Events.Table, table =>
+            {
+                table.HasCheckConstraint(
+                    EntitiesNames.Events.Constraints.UserIdCheck,
+                    $"{EntitiesNames.Events.Properties.UserId} is not null");
+
+                table.HasCheckConstraint(
+                    EntitiesNames.Events.Constraints.EventTypeCheck,
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Categories.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is not null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Records.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is not null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.RunningRecords.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Tags.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is not null)");
+            });
 
         builder
             .HasDiscriminator(e => e.EventType)

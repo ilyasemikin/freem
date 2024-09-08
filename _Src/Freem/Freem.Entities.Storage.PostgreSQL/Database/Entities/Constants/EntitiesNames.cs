@@ -135,6 +135,8 @@ internal static class EntitiesNames
         public static class Constraints
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
+            public const string UserIdCheck = $"{Table}_{Users.Table}_{NamingConvention.CheckSuffix}";
+            public const string EventTypeCheck = $"{Table}_{Properties.EventType}_{NamingConvention.CheckSuffix}";
         }
         
         public static class Models
@@ -169,7 +171,7 @@ internal static class EntitiesNames
 
         public static class Tags
         {
-            public const string EventType = "tags";
+            public const string EventType = "tag";
 
             public static class Properties
             {
