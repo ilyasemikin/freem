@@ -17,6 +17,14 @@ internal static class ConstantNames
     public const string RunningRecordsTagsInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsTagsInvalidCount)}";
     public const string RunningRecordsCategoriesDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)}";
     public const string RunningRecordsCategoriesInvalidCount = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsCategoriesInvalidCount)}";
+    public const string EventsUserNotExist = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.EventsUserNotExist)}";
+    public const string CategoriesEventsCategoryNotExist = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.CategoriesEventsCategoryNotExist)}";
+    public const string RecordsEventsRecordNotExist = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsEventsRecordNotExist)}";
+    public const string RunningRecordsEventsUserNotExist = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RunningRecordsEventsUserNotExist)}";
+    public const string TagsEventsTagNotExist = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.TagsEventsTagNotExist)}";
+    public const string CategoriesEventsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.CategoriesEventsDifferentUserIds)}";
+    public const string RecordsEventsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.RecordsEventsDifferentUserIds)}";
+    public const string TagsEventsDifferentUserIds = $"{nameof(TriggerErrorCodes)}.{nameof(TriggerErrorCodes.TagsEventsDifferentUserIds)}";
 
     public const string CategoryIdTriggerErrorParameterName = "TriggerErrorParameters.CategoryIdTriggerErrorParameterName";
     public const string RecordIdTriggerErrorParameterName = "TriggerErrorParameters.RecordIdTriggerErrorParameterName";

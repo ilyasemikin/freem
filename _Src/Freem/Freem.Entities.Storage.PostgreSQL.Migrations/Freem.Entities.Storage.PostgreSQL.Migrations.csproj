@@ -26,4 +26,8 @@
     <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration\triggers.psql" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Instances\Raw\20240907231045_EventsDbConstraintsMigration\triggers.psql" />
+  </ItemGroup>
+
 </Project>

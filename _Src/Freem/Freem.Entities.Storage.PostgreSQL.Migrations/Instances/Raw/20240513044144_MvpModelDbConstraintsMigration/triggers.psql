@@ -278,7 +278,7 @@ begin
 	if categories_count < ${Limits.MinRelatedCategoriesCount} or categories_count > ${Limits.MaxRelatedCategoriesCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RecordsCategoriesInvalidCount}', 
-            'running_records must have tags in range [${Limits.MinRelatedCategoriesCount}, ${Limits.MaxRelatedCategoriesCount}]',
+            'running_records must have categories in range [${Limits.MinRelatedCategoriesCount}, ${Limits.MaxRelatedCategoriesCount}]',
             array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', categories_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;

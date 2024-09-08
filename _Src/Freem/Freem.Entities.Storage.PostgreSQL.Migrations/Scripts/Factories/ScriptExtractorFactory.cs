@@ -15,18 +15,34 @@ internal static class ScriptExtractorFactory
         var builder = new ConstantValuesCollectionBuilder();
             
         builder
-            .WithConstant(ConstantNames.SchemaName, EnvironmentNames.Schema)
+            .WithConstant(ConstantNames.SchemaName, EnvironmentNames.Schema);
+            
+        builder
             .WithConstant(ConstantNames.CategoriesTagsDifferentUserIds, TriggerErrorCodes.CategoriesTagsDifferentUserIds)
-            .WithConstant(ConstantNames.CategoriesTagsInvalidCount, TriggerErrorCodes.CategoriesTagsInvalidCount)
+            .WithConstant(ConstantNames.CategoriesTagsInvalidCount, TriggerErrorCodes.CategoriesTagsInvalidCount);
+        
+        builder
             .WithConstant(ConstantNames.RecordsTagsDifferentUserIds, TriggerErrorCodes.RecordsTagsDifferentUserIds)
             .WithConstant(ConstantNames.RecordsTagsInvalidCount, TriggerErrorCodes.RecordsTagsInvalidCount)
             .WithConstant(ConstantNames.RecordsCategoriesDifferentUserIds, TriggerErrorCodes.RecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RecordsCategoriesInvalidCount, TriggerErrorCodes.RecordsCategoriesInvalidCount)
+            .WithConstant(ConstantNames.RecordsCategoriesInvalidCount, TriggerErrorCodes.RecordsCategoriesInvalidCount);
+            
+        builder
             .WithConstant(ConstantNames.RunningRecordsTagsDifferentUserIds, TriggerErrorCodes.RunningRecordsTagsDifferentUserIds)
             .WithConstant(ConstantNames.RunningRecordsTagsInvalidCount, TriggerErrorCodes.RunningRecordsTagsInvalidCount)
             .WithConstant(ConstantNames.RunningRecordsCategoriesDifferentUserIds, TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)
             .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, TriggerErrorCodes.RunningRecordsCategoriesInvalidCount);
 
+        builder
+            .WithConstant(ConstantNames.EventsUserNotExist, TriggerErrorCodes.EventsUserNotExist)
+            .WithConstant(ConstantNames.CategoriesEventsCategoryNotExist, TriggerErrorCodes.CategoriesEventsCategoryNotExist)
+            .WithConstant(ConstantNames.RecordsEventsRecordNotExist, TriggerErrorCodes.RecordsEventsRecordNotExist)
+            .WithConstant(ConstantNames.RunningRecordsEventsUserNotExist, TriggerErrorCodes.RunningRecordsEventsUserNotExist)
+            .WithConstant(ConstantNames.TagsEventsTagNotExist, TriggerErrorCodes.TagsEventsTagNotExist)
+            .WithConstant(ConstantNames.CategoriesEventsDifferentUserIds, TriggerErrorCodes.CategoriesEventsDifferentUserIds)
+            .WithConstant(ConstantNames.RecordsEventsDifferentUserIds, TriggerErrorCodes.RecordsEventsDifferentUserIds)
+            .WithConstant(ConstantNames.TagsEventsDifferentUserIds, TriggerErrorCodes.TagsEventsDifferentUserIds);
+        
         builder
             .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsCollection.MinTagsCount.ToString())
             .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsCollection.MaxTagsCount.ToString())

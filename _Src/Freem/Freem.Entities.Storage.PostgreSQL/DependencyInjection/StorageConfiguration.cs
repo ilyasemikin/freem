@@ -9,6 +9,7 @@ public sealed class StorageConfiguration
     public LoggerAction? Logger { get; init; }
 
     public bool EnableServiceProviderCaching { get; init; } = true;
+    public bool SensitiveDataLogging { get; init; } = false;
     
     public StorageConfiguration(string connectionString)
     {

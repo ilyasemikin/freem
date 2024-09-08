@@ -15,6 +15,7 @@ internal static class DatabaseContextFactory
         var storageConfiguration = new StorageConfiguration(connectionString)
         {
             EnableServiceProviderCaching = false,
+            SensitiveDataLogging = true,
             Logger = logger is not null
                 ? message => logger(message)
                 : null

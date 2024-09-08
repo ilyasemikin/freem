@@ -53,6 +53,11 @@ public static class ServiceCollectionExtensions
                 })
                 .EnableServiceProviderCaching(configuration.EnableServiceProviderCaching);
 
+            if (configuration.SensitiveDataLogging)
+                builder
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors();
+            
             if (configuration.Logger is not null)
                 builder.LogTo(message => configuration.Logger(message));
         });

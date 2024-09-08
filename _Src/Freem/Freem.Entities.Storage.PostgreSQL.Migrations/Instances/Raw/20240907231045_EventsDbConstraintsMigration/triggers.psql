@@ -1,0 +1,110 @@
+﻿-- Begin events triggers
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.events_check_related_entity()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	user_related_id text;
+	related_id text;
+	related_user_id text;
+begin 
+	select id from ${EnvironmentNames.Schema}.users where id = new.user_id into user_related_id;
+	if user_related_id is null then
+		call ${EnvironmentNames.Schema}.throw_exception(
+			'${TriggerErrorCodes.EventsUserNotExist}',
+			'events.user_id must be valid users id',
+			array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+	
+	if new.action = 'removed' then
+		return new;
+	end if;
+	
+	if new.category_id is not null then
+	begin
+		select id, user_id from ${EnvironmentNames.Schema}.categories where id = new.category_id into related_id, related_user_id;
+	
+		if related_id is null then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.CategoriesEventsCategoryNotExist}',
+				'events.category_id must have valid categories id',
+				array[('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	
+		if related_user_id <> new.user_id then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.CategoriesEventsDifferentUserIds}',
+				'events.category_id must equal categories.id',
+				array[('${TriggerErrorParameters.CategoryIdTriggerErrorParameterName}', new.category_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	end;
+	elsif new.record_id is not null then
+	begin
+		select id, user_id from ${EnvironmentNames.Schema}.records where id = new.record_id into related_id, related_user_id;
+	
+		if related_id is null then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.RecordsEventsRecordNotExist}',
+				'events.record_id must have valid records id',
+				array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	
+		if related_user_id <> new.user_id then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.RecordsEventsDifferentUserIds}',
+				'events.record_id must equal records.id',
+				array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	end;
+	elsif new.tag_id is not null then
+	begin
+		select id, user_id from ${EnvironmentNames.Schema}.tags where id = new.tag_id into related_id, related_user_id;
+		
+		if related_id is null then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.TagsEventsTagNotExist}',
+				'events.tag_id must have valid tags id',
+				array[('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	
+		if related_user_id <> new.user_id then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.TagsEventsDifferentUserIds}',
+				'events.tag_id must equal tags.id',
+				array[('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	end;
+	elsif new.category_id is null and new.record_id is null and new.tag_id is null then
+	begin
+		select user_id from ${EnvironmentNames.Schema}.running_records where user_id = new.user_id into related_id;
+	
+		if related_id is null then
+			call ${EnvironmentNames.Schema}.throw_exception(
+				'${TriggerErrorCodes.RunningRecordsEventsUserNotExist}',
+				'events.user_id must have valid running_records user_id',
+				array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+		end if;
+	end;
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_related_entity_exists_trigger
+	after insert
+	on ${EnvironmentNames.Schema}.events
+	deferrable initially deferred
+	for each row 
+	execute procedure ${EnvironmentNames.Schema}.events_check_related_entity();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger check_related_entity_exists_trigger on ${EnvironmentNames.Schema}.events;
+drop function ${EnvironmentNames.Schema}.events_check_related_entity_exists;
+
+-- End dropping
+-- End events triggers

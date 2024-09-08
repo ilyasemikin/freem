@@ -8,7 +8,8 @@ internal static class TestsConfigurationExtensions
     {
         return new StorageConfiguration(configuration.ConnectionString)
         {
-            EnableServiceProviderCaching = false
+            EnableServiceProviderCaching = false,
+            SensitiveDataLogging = true
         };
     }
 }

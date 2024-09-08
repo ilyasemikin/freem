@@ -14,4 +14,14 @@ internal static class TriggerErrorCodes
     public const string RunningRecordsTagsInvalidCount = "RunningRecordsTagsInvalidCount";
     public const string RunningRecordsCategoriesDifferentUserIds = "RunningRecordsCategoriesDifferentUserIds";
     public const string RunningRecordsCategoriesInvalidCount = "RunningRecordsCategoriesInvalidCount";
+    
+    public const string EventsUserNotExist = "EventsUserNotExists";
+    public const string CategoriesEventsCategoryNotExist = "CategoriesEventsCategoryNotExist";
+    public const string RecordsEventsRecordNotExist = "RecordsEventsRecordNotExist";
+    public const string RunningRecordsEventsUserNotExist = "RunningRecordsEventsUserNotExist";
+    public const string TagsEventsTagNotExist = "TagsEventsTagNotExist";
+    
+    public const string CategoriesEventsDifferentUserIds = "CategoriesEventsDifferentUserIds";
+    public const string RecordsEventsDifferentUserIds = "RecordsEventsDifferentUserIds";
+    public const string TagsEventsDifferentUserIds = "TagsEventsDifferentUserIds";
 }
