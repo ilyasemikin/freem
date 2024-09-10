@@ -11,7 +11,7 @@ internal sealed class TagEntity : IAuditableEntity, IRowVersionableEntity
     public required string Name { get; set; }
 
     public UserEntity? User { get; set; }
-    public ICollection<CategoryEntity>? Categories { get; set; }
+    public ICollection<ActivityEntity>? Activities { get; set; }
     public ICollection<RecordEntity>? Records { get; set; }
     public ICollection<RunningRecordEntity>? RunningRecords { get; set; }
 

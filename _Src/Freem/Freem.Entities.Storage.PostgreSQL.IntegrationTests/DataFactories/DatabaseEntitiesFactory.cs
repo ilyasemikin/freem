@@ -18,11 +18,11 @@ internal sealed class DatabaseEntitiesFactory
         _fixture.Customize<TagEntity>(builder => builder
             .With(e => e.UserId, userId)
             .Without(e => e.User)
-            .Without(e => e.Categories)
+            .Without(e => e.Activities)
             .Without(e => e.Records)
             .Without(e => e.RunningRecords));
 
-        _fixture.Customize<CategoryEntity>(builder => builder
+        _fixture.Customize<ActivityEntity>(builder => builder
             .With(e => e.UserId, userId)
             .Without(e => e.User)
             .Without(e => e.Tags));
@@ -32,13 +32,13 @@ internal sealed class DatabaseEntitiesFactory
             .With(e => e.StartAt, DateTimeOffset.UtcNow - TimeSpan.FromHours(10))
             .With(e => e.EndAt, DateTimeOffset.UtcNow)
             .Without(e => e.User)
-            .Without(e => e.Categories)
+            .Without(e => e.Activities)
             .Without(e => e.Tags));
 
         _fixture.Customize<RunningRecordEntity>(builder => builder
             .With(e => e.UserId, userId)
             .Without(e => e.User)
-            .Without(e => e.Categories)
+            .Without(e => e.Activities)
             .Without(e => e.Tags));
 
         User = _fixture
@@ -65,16 +65,16 @@ internal sealed class DatabaseEntitiesFactory
         return _fixture.Create<TagEntity>();
     }
 
-    public IReadOnlyList<CategoryEntity> CreateCategories(int count)
+    public IReadOnlyList<ActivityEntity> CreateActivities(int count)
     {
         return _fixture
-            .CreateMany<CategoryEntity>(count)
+            .CreateMany<ActivityEntity>(count)
             .ToArray();
     }
 
-    public CategoryEntity CreateCategory()
+    public ActivityEntity CreateActivity()
     {
-        return _fixture.Create<CategoryEntity>();
+        return _fixture.Create<ActivityEntity>();
     }
 
     public IReadOnlyList<RecordEntity> CreateRecords(int count)

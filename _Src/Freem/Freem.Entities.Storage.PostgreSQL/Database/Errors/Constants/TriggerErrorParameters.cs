@@ -2,7 +2,7 @@
 
 public static class TriggerErrorParameters
 {
-    public const string CategoryId = "category_id";
+    public const string ActivityId = "activity_id";
     public const string RecordId = "record_id";
     public const string TagId = "tag_id";
     public const string UserId = "user_id";

@@ -26,7 +26,7 @@ public sealed class ServiceCollectionExtensionsTests
     
     public static TheoryData<Type> RepositoryTypes = new()
     {
-        typeof(ICategoriesRepository),
+        typeof(IActivitiesRepository),
         typeof(IRecordsRepository),
         typeof(IRunningRecordRepository),
         typeof(ITagsRepository),

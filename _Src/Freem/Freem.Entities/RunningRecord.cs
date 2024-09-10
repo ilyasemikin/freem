@@ -7,7 +7,7 @@ namespace Freem.Entities;
 
 public class RunningRecord : 
     IEntity<UserIdentifier>,
-    IEntityRelation<Category, CategoryIdentifier>, 
+    IEntityRelation<Activity, ActivityIdentifier>, 
     IEntityRelation<Tag, TagIdentifier>
 {
     public const int MaxNameLength = Record.MaxNameLength;
@@ -18,10 +18,10 @@ public class RunningRecord :
 
     public UserIdentifier Id => UserId;
     public UserIdentifier UserId { get; }
-    public RelatedCategoriesCollection Categories { get; }
+    public RelatedActivitiesCollection Activities { get; }
     public RelatedTagsCollection Tags { get; }
     
-    IReadOnlyRelatedEntitiesCollection<Category, CategoryIdentifier> IEntityRelation<Category, CategoryIdentifier>.RelatedEntities => Categories;
+    IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier> IEntityRelation<Activity, ActivityIdentifier>.RelatedEntities => Activities;
     IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
     public string? Name
@@ -52,15 +52,15 @@ public class RunningRecord :
 
     public RunningRecord(
         UserIdentifier userId,
-        RelatedCategoriesCollection categories,
+        RelatedActivitiesCollection activities,
         RelatedTagsCollection tags,
         DateTimeOffset startAt)
     {
-        ArgumentNullException.ThrowIfNull(categories);
+        ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(tags);
 
         UserId = userId;
-        Categories = categories;
+        Activities = activities;
         Tags = tags;
 
         StartAt = startAt;

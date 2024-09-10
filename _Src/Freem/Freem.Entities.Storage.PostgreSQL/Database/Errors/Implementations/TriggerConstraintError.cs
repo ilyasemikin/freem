@@ -141,6 +141,13 @@ internal sealed class TriggerConstraintError : IDatabaseError
             _parameters = parameters.ToDictionary(p => p.Name);
         }
 
+        public ParameterCollection(params Parameter[] parameters)
+        {
+            ArgumentNullException.ThrowIfNull(parameters);
+            
+            _parameters = parameters.ToDictionary(p => p.Name);
+        }
+
         public bool Equals(ParameterCollection? other)
         {
             if (other is null) 

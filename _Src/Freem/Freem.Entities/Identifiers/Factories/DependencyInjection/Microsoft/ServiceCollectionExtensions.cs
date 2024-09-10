@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddGuidEntityIdentifierFactories(this IServiceCollection services)
     {
-        services.TryAddSingleton<IEntityIdentifierFactory<CategoryIdentifier>, GuidCategoryIdentifierEntityFactory>();
+        services.TryAddSingleton<IEntityIdentifierFactory<ActivityIdentifier>, GuidActivityIdentifierEntityFactory>();
         services.TryAddSingleton<IEntityIdentifierFactory<RecordIdentifier>, GuidRecordIdentifierEntityFactory>();
         services.TryAddSingleton<IEntityIdentifierFactory<TagIdentifier>, GuidTagIdentifierFactory>();
         services.TryAddSingleton<IEntityIdentifierFactory<UserIdentifier>, GuidUserIdentifierFactory>();

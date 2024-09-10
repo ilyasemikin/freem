@@ -20,15 +20,15 @@ internal sealed class BaseEventEntityConfiguration : IEntityTypeConfiguration<Ba
 
                 table.HasCheckConstraint(
                     EntitiesNames.Events.Constraints.EventTypeCheck,
-                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Categories.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is not null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
-                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Records.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is not null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
-                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.RunningRecords.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or" +
-                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Tags.EventType}' and {EntitiesNames.Events.Categories.Properties.CategoryId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is not null)");
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Activities.EventType}' and {EntitiesNames.Events.Activities.Properties.ActivityId} is not null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or " +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Records.EventType}' and {EntitiesNames.Events.Activities.Properties.ActivityId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is not null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or"  +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.RunningRecords.EventType}' and {EntitiesNames.Events.Activities.Properties.ActivityId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is null) or " +
+                    $"({EntitiesNames.Events.Properties.EventType} = '{EntitiesNames.Events.Tags.EventType}' and {EntitiesNames.Events.Activities.Properties.ActivityId} is null and {EntitiesNames.Events.Records.Properties.RecordId} is null and {EntitiesNames.Events.Tags.Properties.TagId} is not null)");
             });
 
         builder
             .HasDiscriminator(e => e.EventType)
-            .HasValue<CategoryEventEntity>(EntitiesNames.Events.Categories.EventType)
+            .HasValue<ActivityEventEntity>(EntitiesNames.Events.Activities.EventType)
             .HasValue<RecordEventEntity>(EntitiesNames.Events.Records.EventType)
             .HasValue<RunningRecordEventEntity>(EntitiesNames.Events.RunningRecords.EventType)
             .HasValue<TagEventEntity>(EntitiesNames.Events.Tags.EventType)

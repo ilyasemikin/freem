@@ -22,12 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration\exception_functions.psql" />
-    <EmbeddedResource Include="Instances\Raw\20240513044144_MvpModelDbConstraintsMigration\triggers.psql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Instances\Raw\20240907231045_EventsDbConstraintsMigration\triggers.psql" />
+    <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\entities_triggers.psql" />
+    <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\events_triggers.psql" />
+    <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\exception_functions.psql" />
   </ItemGroup>
 
 </Project>

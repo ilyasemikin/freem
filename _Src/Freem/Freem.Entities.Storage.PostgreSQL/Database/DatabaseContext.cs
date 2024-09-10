@@ -9,7 +9,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Database;
 
 internal sealed class DatabaseContext : DbContext
 {
-    public DbSet<CategoryEntity> Categories => Set<CategoryEntity>();
+    public DbSet<ActivityEntity> Activities => Set<ActivityEntity>();
 
     public DbSet<RecordEntity> Records => Set<RecordEntity>();
     public DbSet<RunningRecordEntity> RunningRecords => Set<RunningRecordEntity>();

@@ -34,10 +34,10 @@ public sealed class DatabaseForeignKeyConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassValid()
     {
         const string input =
-            $"23503: insert or update on table \"categories_tags\" violates foreign key constraint \"categories_tags_tags_fk\"\n\n" +
+            $"23503: insert or update on table \"activities_tags\" violates foreign key constraint \"activities_tags_tags_fk\"\n\n" +
             $"DETAIL: Key (tag_id)=(tag_id) is not present in table \"tags\".";
 
-        var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("categories_tags", "categories_tags_tags_fk");
+        var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("activities_tags", "activities_tags_tags_fk");
         var column = new DatabaseColumn("tags", "tag_id");
         var columnWithValue = new DatabaseColumnWithValue(column, "tag_id");
 
@@ -53,10 +53,10 @@ public sealed class DatabaseForeignKeyConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassValidWithWinNewLine()
     {
         const string input =
-            $"23503: insert or update on table \"categories_tags\" violates foreign key constraint \"categories_tags_tags_fk\"\r\n\r\n" +
+            $"23503: insert or update on table \"activities_tags\" violates foreign key constraint \"activities_tags_tags_fk\"\r\n\r\n" +
             $"DETAIL: Key (tag_id)=(tag_id) is not present in table \"tags\".";
 
-        var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("categories_tags", "categories_tags_tags_fk");
+        var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("activities_tags", "activities_tags_tags_fk");
         var column = new DatabaseColumn("tags", "tag_id");
         var columnWithValue = new DatabaseColumnWithValue(column, "tag_id");
 

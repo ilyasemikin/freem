@@ -71,7 +71,7 @@ public sealed class TagEventsConstraintTriggerTests : ConstraintTriggerTestsBase
     [Theory]
     [InlineData(EventAction.Created)]
     [InlineData(EventAction.Updated)]
-    public async Task TagEvent_ShouldThrowException_WhenCategoryDoesNotExist(EventAction action)
+    public async Task TagEvent_ShouldThrowException_WhenActivityDoesNotExist(EventAction action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
         

@@ -41,11 +41,11 @@ internal sealed class RecordsRepository : IRecordsRepository
         ArgumentNullException.ThrowIfNull(entity);
         
         var dbEntity = entity.MapToDatabaseEntity();
-        var dbCategoryRelations = entity.CreateDatabaseRecordCategoryRelations();
+        var dbActivityRelations = entity.CreateDatabaseRecordActivityRelations();
         var dbTagRelations = entity.CreateDatabaseRecordTagRelations();
 
         await _context.Records.AddAsync(dbEntity, cancellationToken);
-        await _context.AddRangeAsync(dbCategoryRelations, cancellationToken);
+        await _context.AddRangeAsync(dbActivityRelations, cancellationToken);
         await _context.AddRangeAsync(dbTagRelations, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
@@ -69,7 +69,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         dbEntity.StartAt = entity.Period.StartAt;
         dbEntity.EndAt = entity.Period.EndAt;
 
-        await _context.UpdateRelatedCategoriesAsync(entity, cancellationToken);
+        await _context.UpdateRelatedActivitiesAsync(entity, cancellationToken);
         await _context.UpdateRelatedTagsAsync(entity, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
@@ -101,7 +101,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         ArgumentNullException.ThrowIfNull(id);
         
         return await _context.Records
-            .Include(e => e.Categories)
+            .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(e => e.Id == id.Value, RecordMapper.MapToDomainEntity, cancellationToken);
     }
@@ -113,7 +113,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         ArgumentNullException.ThrowIfNull(ids);
         
         return await _context.Records
-            .Include(e => e.Categories)
+            .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
                 e => e.Id == ids.RecordId.Value && e.UserId == ids.UserId.Value, 

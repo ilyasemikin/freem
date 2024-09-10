@@ -71,9 +71,9 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
             .IsRequired();
 
         builder
-            .HasMany(e => e.Categories)
+            .HasMany(e => e.Activities)
             .WithMany()
-            .UsingEntity<RecordCategoryRelationEntity>();
+            .UsingEntity<RecordActivityRelationEntity>();
 
         builder
             .HasMany(e => e.Tags)

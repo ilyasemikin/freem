@@ -20,9 +20,9 @@ internal static class RunningRecordMapper
     {
         var userId = new UserIdentifier(entity.UserId);
 
-        var categories = entity.Categories.MapToRelatedCategoriesCollection();
+        var activities = entity.Activities.MapToRelatedActivitiesCollection();
         var tags = entity.Tags.MapToRelatedTagsCollection();
         
-        return new RunningRecord(userId, categories, tags, entity.StartAt);
+        return new RunningRecord(userId, activities, tags, entity.StartAt);
     }
 }

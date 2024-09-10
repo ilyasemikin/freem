@@ -13,7 +13,7 @@ internal sealed class RunningRecordEntity : IAuditableEntity, IRowVersionableEnt
     public DateTimeOffset StartAt { get; set; }
 
     public UserEntity? User { get; set; }
-    public ICollection<CategoryEntity>? Categories { get; set; }
+    public ICollection<ActivityEntity>? Activities { get; set; }
     public ICollection<TagEntity>? Tags { get; set; }
     
     public DateTimeOffset CreatedAt { get; set; }

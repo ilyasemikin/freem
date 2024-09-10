@@ -5,17 +5,17 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Running
 
 internal static class RunningRecordRelationFactory
 {
-    public static IEnumerable<RunningRecordCategoryRelationEntity> CreateDatabaseRunningRecordCategoryRelations(this RunningRecord entity)
+    public static IEnumerable<RunningRecordActivityRelationEntity> CreateDatabaseRunningRecordActivityRelations(this RunningRecord entity)
     {
-        return entity.Categories.Identifiers.Select(categoryId => CreateDatabaseRunningRecordCategoryRelation(entity.Id, categoryId.Value));
+        return entity.Activities.Identifiers.Select(activityId => CreateDatabaseRunningRecordActivityRelation(entity.Id, activityId.Value));
     }
 
-    public static RunningRecordCategoryRelationEntity CreateDatabaseRunningRecordCategoryRelation(UserIdentifier runningRecordUserId, string categoryIdString)
+    public static RunningRecordActivityRelationEntity CreateDatabaseRunningRecordActivityRelation(UserIdentifier runningRecordUserId, string activityIdString)
     {
-        return new RunningRecordCategoryRelationEntity
+        return new RunningRecordActivityRelationEntity
         {
             RunningRecordUserId = runningRecordUserId.Value,
-            CategoryId = categoryIdString
+            ActivityId = activityIdString
         };
     }
 

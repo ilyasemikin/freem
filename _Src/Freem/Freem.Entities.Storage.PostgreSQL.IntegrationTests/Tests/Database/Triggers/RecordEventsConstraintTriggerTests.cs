@@ -27,17 +27,17 @@ public sealed class RecordEventsConstraintTriggerTests : ConstraintTriggerTestsB
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
-        var category = factory.CreateCategory();
+        var activity = factory.CreateActivity();
         var record = factory.CreateRecord();
 
         await Context.Users.AddAsync(user);
-        await Context.Categories.AddAsync(category);
+        await Context.Activities.AddAsync(activity);
         await Context.Records.AddAsync(record);
 
-        var relation = new RecordCategoryRelationEntity
+        var relation = new RecordActivityRelationEntity
         {
             RecordId = record.Id,
-            CategoryId = category.Id
+            ActivityId = activity.Id
         };
 
         await Context.AddAsync(relation);
@@ -114,17 +114,17 @@ public sealed class RecordEventsConstraintTriggerTests : ConstraintTriggerTestsB
         var secondFactory = DatabaseEntitiesFactory.CreateSecondUserEntitiesFactory();
         
         var firstUser = firstFactory.User;
-        var category = firstFactory.CreateCategory();
+        var activity = firstFactory.CreateActivity();
         var record = firstFactory.CreateRecord();
 
-        var relation = new RecordCategoryRelationEntity
+        var relation = new RecordActivityRelationEntity
         {
             RecordId = record.Id,
-            CategoryId = category.Id
+            ActivityId = activity.Id
         };
         
         await Context.Users.AddAsync(firstUser);
-        await Context.Categories.AddAsync(category);
+        await Context.Activities.AddAsync(activity);
         await Context.Records.AddAsync(record);
         await Context.AddAsync(relation);
         

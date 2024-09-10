@@ -54,9 +54,9 @@ internal sealed class RunningRecordEntityTypeConfiguration : IEntityTypeConfigur
             .IsRequired();
 
         builder
-            .HasMany(e => e.Categories)
+            .HasMany(e => e.Activities)
             .WithMany()
-            .UsingEntity<RunningRecordCategoryRelationEntity>();
+            .UsingEntity<RunningRecordActivityRelationEntity>();
 
         builder
             .HasMany(e => e.Tags)

@@ -23,11 +23,11 @@ internal static class RecordMapper
         var id = new RecordIdentifier(entity.Id);
         var userId = new UserIdentifier(entity.UserId);
 
-        var categories = entity.Categories.MapToRelatedCategoriesCollection();
+        var activities = entity.Activities.MapToRelatedActivitiesCollection();
         var tags = entity.Tags.MapToRelatedTagsCollection();
 
         var period = new DateTimePeriod(entity.StartAt, entity.EndAt);
 
-        return new Record(id, userId, categories, tags, period);
+        return new Record(id, userId, activities, tags, period);
     }
 }

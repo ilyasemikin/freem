@@ -27,17 +27,17 @@ public sealed class RunningRecordEventsConstraintTriggerTests : ConstraintTrigge
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
 
         var user = factory.User;
-        var category = factory.CreateCategory();
+        var activity = factory.CreateActivity();
         var record = factory.CreateRunningRecord();
 
         await Context.Users.AddAsync(user);
-        await Context.Categories.AddAsync(category);
+        await Context.Activities.AddAsync(activity);
         await Context.RunningRecords.AddAsync(record);
 
-        var relation = new RunningRecordCategoryRelationEntity
+        var relation = new RunningRecordActivityRelationEntity
         {
             RunningRecordUserId = record.UserId,
-            CategoryId = category.Id
+            ActivityId = activity.Id
         };
 
         await Context.AddAsync(relation);

@@ -7,17 +7,17 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records
 
 internal static class RelationsDatabaseContextExtensions
 {
-    public static async Task UpdateRelatedCategoriesAsync(
+    public static async Task UpdateRelatedActivitiesAsync(
         this DatabaseContext context,
         Record entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<Category, CategoryIdentifier, RecordCategoryRelationEntity>(
+        await context.UpdateRelatedEntitiesAsync<Activity, ActivityIdentifier, RecordActivityRelationEntity>(
             entity,
             e => e.RecordId == entity.Id.Value,
             e => e.RecordId,
-            ids => e => ids.Contains(e.CategoryId),
-            id => RecordRelationFactory.CreateDatabaseRecordCategoryRelation(entity.Id, id),
+            ids => e => ids.Contains(e.ActivityId),
+            id => RecordRelationFactory.CreateDatabaseRecordActivityRelation(entity.Id, id),
             cancellationToken);
     }
     

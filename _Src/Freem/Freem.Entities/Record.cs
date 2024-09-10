@@ -8,7 +8,7 @@ namespace Freem.Entities;
 
 public class Record : 
     IEntity<RecordIdentifier>, 
-    IEntityRelation<Category, CategoryIdentifier>, 
+    IEntityRelation<Activity, ActivityIdentifier>, 
     IEntityRelation<Tag, TagIdentifier>
 {
     public const int MaxNameLength = 128;
@@ -19,10 +19,10 @@ public class Record :
 
     public RecordIdentifier Id { get; }
     public UserIdentifier UserId { get; }
-    public RelatedCategoriesCollection Categories { get; }
+    public RelatedActivitiesCollection Activities { get; }
     public RelatedTagsCollection Tags { get; }
 
-    IReadOnlyRelatedEntitiesCollection<Category, CategoryIdentifier> IEntityRelation<Category, CategoryIdentifier>.RelatedEntities => Categories;
+    IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier> IEntityRelation<Activity, ActivityIdentifier>.RelatedEntities => Activities;
     IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
     public string? Name
@@ -54,18 +54,18 @@ public class Record :
     public Record(
         RecordIdentifier id,
         UserIdentifier userId,
-        RelatedCategoriesCollection categories,
+        RelatedActivitiesCollection activities,
         RelatedTagsCollection tags,
         DateTimePeriod period)
     {
-        ArgumentNullException.ThrowIfNull(categories);
+        ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(period);
 
         Id = id;
         UserId = userId;
         
-        Categories = categories;
+        Activities = activities;
         Tags = tags;
         
         Period = period;

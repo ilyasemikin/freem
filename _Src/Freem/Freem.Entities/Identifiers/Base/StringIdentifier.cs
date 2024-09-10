@@ -37,6 +37,11 @@ public abstract class StringIdentifier : IEntityIdentifier
         return Value.GetHashCode();
     }
 
+    public override string ToString()
+    {
+        return Value;
+    }
+
     public static explicit operator string(StringIdentifier identifier)
     {
         return identifier.Value;

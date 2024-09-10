@@ -17,9 +17,9 @@ internal static class ModelBuilderExtensions
     {
         builder.ApplyRelationEnttitiesConfiguration();
 
-        builder.HasPostgresEnum<CategoryStatus>(EnvironmentNames.Schema, EntitiesNames.Categories.Models.Status);
+        builder.HasPostgresEnum<ActivityStatus>(EnvironmentNames.Schema, EntitiesNames.Activities.Models.Status);
         
-        builder.ApplyConfiguration<CategoryEntity, CategoryEntityTypeConfiguration>();
+        builder.ApplyConfiguration<ActivityEntity, ActivityEntityTypeConfiguration>();
         
         builder.ApplyConfiguration<RecordEntity, RecordEntityTypeConfiguration>();
         builder.ApplyConfiguration<RunningRecordEntity, RunningRecordEntityTypeConfiguration>();
@@ -33,7 +33,7 @@ internal static class ModelBuilderExtensions
             EntitiesNames.Events.Models.Action);
         
         builder.ApplyConfiguration<BaseEventEntity, BaseEventEntityConfiguration>();
-        builder.ApplyConfiguration<CategoryEventEntity, CategoryEventEntityConfiguration>();
+        builder.ApplyConfiguration<ActivityEventEntity, ActivityEventEntityConfiguration>();
         builder.ApplyConfiguration<RecordEventEntity, RecordEventEntityConfiguration>();
         builder.ApplyConfiguration<RunningRecordEventEntity, RunningRecordEventEntityConfiguration>();
         builder.ApplyConfiguration<TagEventEntity, TagEventEntityConfiguration>();

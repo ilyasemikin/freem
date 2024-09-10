@@ -5,17 +5,17 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records
 
 internal static class RecordRelationFactory
 {
-    public static IEnumerable<RecordCategoryRelationEntity> CreateDatabaseRecordCategoryRelations(this Record entity)
+    public static IEnumerable<RecordActivityRelationEntity> CreateDatabaseRecordActivityRelations(this Record entity)
     {
-        return entity.Categories.Identifiers.Select(id => CreateDatabaseRecordCategoryRelation(entity.Id, id.Value));
+        return entity.Activities.Identifiers.Select(id => CreateDatabaseRecordActivityRelation(entity.Id, id.Value));
     }
 
-    public static RecordCategoryRelationEntity CreateDatabaseRecordCategoryRelation(RecordIdentifier recordId, string categoryIdString)
+    public static RecordActivityRelationEntity CreateDatabaseRecordActivityRelation(RecordIdentifier recordId, string activityIdString)
     {
-        return new RecordCategoryRelationEntity
+        return new RecordActivityRelationEntity
         {
             RecordId = recordId.Value,
-            CategoryId = categoryIdString,
+            ActivityId = activityIdString,
         };
     }
 

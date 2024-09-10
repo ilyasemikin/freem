@@ -15,7 +15,7 @@ using Freem.Entities.Storage.PostgreSQL.Database.Models;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
@@ -92,7 +92,7 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<ITagsRepository, TagsRepository>();
         services.TryAddTransient<IRecordsRepository, RecordsRepository>();
         services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
-        services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
+        services.TryAddTransient<IActivitiesRepository, ActivitiesRepository>();
         services.TryAddTransient<IEventsRepository, EventsRepository>();
         
         return services;

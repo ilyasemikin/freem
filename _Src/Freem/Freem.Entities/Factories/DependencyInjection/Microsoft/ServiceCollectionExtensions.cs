@@ -20,8 +20,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddFactories(this IServiceCollection services)
     {
         services.TryAddSingleton<
-            IEventEntityFactory<CategoryEvent, Category>, 
-            CategoryEventEntityFactory>();
+            IEventEntityFactory<ActivityEvent, Activity>, 
+            ActivityEventEntityFactory>();
         
         services.TryAddSingleton<
             IEventEntityFactory<RecordEvent, Record>, 

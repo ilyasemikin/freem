@@ -46,9 +46,9 @@ internal static class EntitiesNames
         }
     }
 
-    public static class Categories
+    public static class Activities
     {
-        public const string Table = "categories";
+        public const string Table = "activities";
 
         public static class Properties
         {
@@ -69,7 +69,7 @@ internal static class EntitiesNames
 
         public static class Models
         {
-            public const string Status = "category_status";
+            public const string Status = "activity_status";
         }
     }
 
@@ -144,13 +144,13 @@ internal static class EntitiesNames
             public const string Action = "event_action";
         }
 
-        public static class Categories
+        public static class Activities
         {
-            public const string EventType = "category";
+            public const string EventType = "activity";
 
             public static class Properties
             {
-                public const string CategoryId = "category_id";
+                public const string ActivityId = "activity_id";
             }
         }
 

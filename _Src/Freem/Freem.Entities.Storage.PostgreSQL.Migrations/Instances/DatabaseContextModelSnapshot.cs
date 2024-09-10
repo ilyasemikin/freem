@@ -21,11 +21,11 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                 .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "category_status", new[] { "active", "archived" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "activity_status", new[] { "active", "archived" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "event_action", new[] { "created", "updated", "removed" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text")
@@ -48,7 +48,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("xmin");
 
                     b.Property<int>("Status")
-                        .HasColumnType("core_entities.category_status")
+                        .HasColumnType("core_entities.activity_status")
                         .HasColumnName("status");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
@@ -61,12 +61,12 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("categories_pk");
+                        .HasName("activities_pk");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("categories_user_id_idx");
+                        .HasDatabaseName("activities_user_id_idx");
 
-                    b.ToTable("categories", "core_entities");
+                    b.ToTable("activities", "core_entities");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity", b =>
@@ -103,7 +103,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable("events", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'category' and category_id is not null and record_id is null and tag_id is null) or(event_type = 'record' and category_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and category_id is null and record_id is null and tag_id is null) or(event_type = 'tag' and category_id is null and record_id is null and tag_id is not null)");
+                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
 
                             t.HasCheckConstraint("events_users_check", "user_id is not null");
                         });
@@ -169,45 +169,42 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         });
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.CategoryTagRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.ActivityTagRelationEntity", b =>
                 {
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("category_id");
+                        .HasColumnName("activity_id");
 
                     b.Property<string>("TagId")
                         .HasColumnType("text")
                         .HasColumnName("tag_id");
 
-                    b.HasKey("CategoryId", "TagId")
-                        .HasName("categories_tags_pk");
+                    b.HasKey("ActivityId", "TagId")
+                        .HasName("activities_tags_pk");
 
                     b.HasIndex("TagId")
-                        .HasDatabaseName("categories_tags_tag_id_idx");
+                        .HasDatabaseName("activities_tags_tag_id_idx");
 
-                    b.ToTable("categories_tags", "core_entities", t =>
-                        {
-                            t.HasTrigger("check_categories_tags_user_ids_trigger");
-                        });
+                    b.ToTable("activities_tags", "core_entities");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordCategoryRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordActivityRelationEntity", b =>
                 {
                     b.Property<string>("RecordId")
                         .HasColumnType("text")
                         .HasColumnName("record_id");
 
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("category_id");
+                        .HasColumnName("activity_id");
 
-                    b.HasKey("RecordId", "CategoryId")
-                        .HasName("records_categories_pk");
+                    b.HasKey("RecordId", "ActivityId")
+                        .HasName("records_activities_pk");
 
-                    b.HasIndex("CategoryId")
-                        .HasDatabaseName("records_categories_category_id_idx");
+                    b.HasIndex("ActivityId")
+                        .HasDatabaseName("records_activities_activity_id_idx");
 
-                    b.ToTable("records_categories", "core_entities");
+                    b.ToTable("records_activities", "core_entities");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordTagRelationEntity", b =>
@@ -232,23 +229,23 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         });
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordCategoryRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordActivityRelationEntity", b =>
                 {
                     b.Property<string>("RunningRecordUserId")
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("ActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("category_id");
+                        .HasColumnName("activity_id");
 
-                    b.HasKey("RunningRecordUserId", "CategoryId")
-                        .HasName("running_records_categories_pk");
+                    b.HasKey("RunningRecordUserId", "ActivityId")
+                        .HasName("running_records_activities_pk");
 
-                    b.HasIndex("CategoryId")
-                        .HasDatabaseName("running_records_categories_category_id_idx");
+                    b.HasIndex("ActivityId")
+                        .HasDatabaseName("running_records_activities_activity_id_idx");
 
-                    b.ToTable("running_records_categories", "core_entities");
+                    b.ToTable("running_records_activities", "core_entities");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordTagRelationEntity", b =>
@@ -392,23 +389,23 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.ToTable("users", "core_entities");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.CategoryEventEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.ActivityEventEntity", b =>
                 {
                     b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
 
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("ActivityId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("category_id");
+                        .HasColumnName("activity_id");
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'category' and category_id is not null and record_id is null and tag_id is null) or(event_type = 'record' and category_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and category_id is null and record_id is null and tag_id is null) or(event_type = 'tag' and category_id is null and record_id is null and tag_id is not null)");
+                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
 
                             t.HasCheckConstraint("events_users_check", "user_id is not null");
                         });
 
-                    b.HasDiscriminator().HasValue("category");
+                    b.HasDiscriminator().HasValue("activity");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.RecordEventEntity", b =>
@@ -422,7 +419,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'category' and category_id is not null and record_id is null and tag_id is null) or(event_type = 'record' and category_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and category_id is null and record_id is null and tag_id is null) or(event_type = 'tag' and category_id is null and record_id is null and tag_id is not null)");
+                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
 
                             t.HasCheckConstraint("events_users_check", "user_id is not null");
                         });
@@ -436,7 +433,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'category' and category_id is not null and record_id is null and tag_id is null) or(event_type = 'record' and category_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and category_id is null and record_id is null and tag_id is null) or(event_type = 'tag' and category_id is null and record_id is null and tag_id is not null)");
+                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
 
                             t.HasCheckConstraint("events_users_check", "user_id is not null");
                         });
@@ -455,7 +452,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable(t =>
                         {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'category' and category_id is not null and record_id is null and tag_id is null) or(event_type = 'record' and category_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and category_id is null and record_id is null and tag_id is null) or(event_type = 'tag' and category_id is null and record_id is null and tag_id is not null)");
+                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
 
                             t.HasCheckConstraint("events_users_check", "user_id is not null");
                         });
@@ -463,14 +460,14 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.HasDiscriminator().HasValue("tag");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
                 {
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("categories_users_fk");
+                        .HasConstraintName("activities_users_fk");
 
                     b.Navigation("User");
                 });
@@ -487,44 +484,44 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.CategoryTagRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.ActivityTagRelationEntity", b =>
                 {
-                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", "Category")
+                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", "Activity")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("categories_tags_categories_fk");
+                        .HasConstraintName("activities_tags_activities_fk");
 
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.TagEntity", "Tag")
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("categories_tags_tags_fk");
+                        .HasConstraintName("activities_tags_tags_fk");
 
-                    b.Navigation("Category");
+                    b.Navigation("Activity");
 
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordCategoryRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RecordActivityRelationEntity", b =>
                 {
-                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", "Category")
+                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", "Activity")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("records_categories_categories_fk");
+                        .HasConstraintName("records_activities_activities_fk");
 
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.RecordEntity", "Record")
                         .WithMany()
                         .HasForeignKey("RecordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("records_categories_records_fk");
+                        .HasConstraintName("records_activities_records_fk");
 
-                    b.Navigation("Category");
+                    b.Navigation("Activity");
 
                     b.Navigation("Record");
                 });
@@ -550,23 +547,23 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordCategoryRelationEntity", b =>
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.RunningRecordActivityRelationEntity", b =>
                 {
-                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.CategoryEntity", "Category")
+                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", "Activity")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("running_records_categories_categories_fk");
+                        .HasConstraintName("running_records_activities_activities_fk");
 
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.RunningRecordEntity", "RunningRecord")
                         .WithMany()
                         .HasForeignKey("RunningRecordUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("running_records_categories_running_records_fk");
+                        .HasConstraintName("running_records_activities_running_records_fk");
 
-                    b.Navigation("Category");
+                    b.Navigation("Activity");
 
                     b.Navigation("RunningRecord");
                 });

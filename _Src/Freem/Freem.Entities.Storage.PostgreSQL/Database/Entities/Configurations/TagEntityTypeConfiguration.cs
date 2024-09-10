@@ -60,9 +60,9 @@ internal sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<TagE
             .IsRequired();
 
         builder
-            .HasMany(e => e.Categories)
+            .HasMany(e => e.Activities)
             .WithMany(e => e.Tags)
-            .UsingEntity<CategoryTagRelationEntity>();
+            .UsingEntity<ActivityTagRelationEntity>();
 
         builder
             .HasMany(e => e.Records)

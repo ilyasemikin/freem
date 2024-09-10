@@ -18,39 +18,39 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.SchemaName, EnvironmentNames.Schema);
             
         builder
-            .WithConstant(ConstantNames.CategoriesTagsDifferentUserIds, TriggerErrorCodes.CategoriesTagsDifferentUserIds)
-            .WithConstant(ConstantNames.CategoriesTagsInvalidCount, TriggerErrorCodes.CategoriesTagsInvalidCount);
+            .WithConstant(ConstantNames.ActivitiesTagsDifferentUserIds, TriggerErrorCodes.ActivitiesTagsDifferentUserIds)
+            .WithConstant(ConstantNames.ActivitiesTagsInvalidCount, TriggerErrorCodes.ActivitiesTagsInvalidCount);
         
         builder
             .WithConstant(ConstantNames.RecordsTagsDifferentUserIds, TriggerErrorCodes.RecordsTagsDifferentUserIds)
             .WithConstant(ConstantNames.RecordsTagsInvalidCount, TriggerErrorCodes.RecordsTagsInvalidCount)
-            .WithConstant(ConstantNames.RecordsCategoriesDifferentUserIds, TriggerErrorCodes.RecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RecordsCategoriesInvalidCount, TriggerErrorCodes.RecordsCategoriesInvalidCount);
+            .WithConstant(ConstantNames.RecordsActivitiesDifferentUserIds, TriggerErrorCodes.RecordsActivitiesDifferentUserIds)
+            .WithConstant(ConstantNames.RecordsActivitiesInvalidCount, TriggerErrorCodes.RecordsActivitiesInvalidCount);
             
         builder
             .WithConstant(ConstantNames.RunningRecordsTagsDifferentUserIds, TriggerErrorCodes.RunningRecordsTagsDifferentUserIds)
             .WithConstant(ConstantNames.RunningRecordsTagsInvalidCount, TriggerErrorCodes.RunningRecordsTagsInvalidCount)
-            .WithConstant(ConstantNames.RunningRecordsCategoriesDifferentUserIds, TriggerErrorCodes.RunningRecordsCategoriesDifferentUserIds)
-            .WithConstant(ConstantNames.RunningRecordsCategoriesInvalidCount, TriggerErrorCodes.RunningRecordsCategoriesInvalidCount);
+            .WithConstant(ConstantNames.RunningRecordsActivitiesDifferentUserIds, TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds)
+            .WithConstant(ConstantNames.RunningRecordsActivitiesInvalidCount, TriggerErrorCodes.RunningRecordsActivitiesInvalidCount);
 
         builder
             .WithConstant(ConstantNames.EventsUserNotExist, TriggerErrorCodes.EventsUserNotExist)
-            .WithConstant(ConstantNames.CategoriesEventsCategoryNotExist, TriggerErrorCodes.CategoriesEventsCategoryNotExist)
+            .WithConstant(ConstantNames.ActivitiesEventsActivityNotExist, TriggerErrorCodes.ActivitiesEventsActivityNotExist)
             .WithConstant(ConstantNames.RecordsEventsRecordNotExist, TriggerErrorCodes.RecordsEventsRecordNotExist)
             .WithConstant(ConstantNames.RunningRecordsEventsUserNotExist, TriggerErrorCodes.RunningRecordsEventsUserNotExist)
             .WithConstant(ConstantNames.TagsEventsTagNotExist, TriggerErrorCodes.TagsEventsTagNotExist)
-            .WithConstant(ConstantNames.CategoriesEventsDifferentUserIds, TriggerErrorCodes.CategoriesEventsDifferentUserIds)
+            .WithConstant(ConstantNames.ActivitiesEventsDifferentUserIds, TriggerErrorCodes.ActivitiesEventsDifferentUserIds)
             .WithConstant(ConstantNames.RecordsEventsDifferentUserIds, TriggerErrorCodes.RecordsEventsDifferentUserIds)
             .WithConstant(ConstantNames.TagsEventsDifferentUserIds, TriggerErrorCodes.TagsEventsDifferentUserIds);
         
         builder
             .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsCollection.MinTagsCount.ToString())
             .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsCollection.MaxTagsCount.ToString())
-            .WithConstant(ConstantNames.MinRelatedCategoriesCount, RelatedCategoriesCollection.MinCategoriesCount.ToString())
-            .WithConstant(ConstantNames.MaxRelatedCategoriesCount, RelatedCategoriesCollection.MaxCategoriesCount.ToString());
+            .WithConstant(ConstantNames.MinRelatedActivitiesCount, RelatedActivitiesCollection.MinActivitiesCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedActivitiesCount, RelatedActivitiesCollection.MaxActivitiesCount.ToString());
 
         builder
-            .WithConstant(ConstantNames.CategoryIdTriggerErrorParameterName, TriggerErrorParameters.CategoryId)
+            .WithConstant(ConstantNames.ActivityIdTriggerErrorParameterName, TriggerErrorParameters.ActivityId)
             .WithConstant(ConstantNames.RecordIdTriggerErrorParameterName, TriggerErrorParameters.RecordId)
             .WithConstant(ConstantNames.TagIdTriggerErrorParameterName, TriggerErrorParameters.TagId)
             .WithConstant(ConstantNames.UserIdTriggerErrorParameterName, TriggerErrorParameters.UserId)

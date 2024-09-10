@@ -2,7 +2,7 @@
 using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Categories;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
@@ -17,7 +17,7 @@ internal static class EventMapper
     {
         return entity switch
         {
-            CategoryEventEntity category => CategoryEventMapper.MapToDomainEntity(category),
+            ActivityEventEntity activity => ActivityEventMapper.MapToDomainEntity(activity),
             RecordEventEntity record => RecordEventMapper.MapToDomainEntity(record),
             RunningRecordEventEntity runningRecord => RunningRecordEventMapper.MapToDomainEntity(runningRecord),
             TagEventEntity tag => TagEventMapper.MapToDomainEntity(tag),

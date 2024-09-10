@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using CategoryStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.CategoryStatus;
+using ActivityStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 using EventActionDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.EventAction;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Factories;
@@ -10,7 +10,7 @@ internal static class NpgsqlDataSourceFactory
     {
         var builder = new NpgsqlDataSourceBuilder(connectionString);
         
-        builder.MapEnum<CategoryStatusDb>();
+        builder.MapEnum<ActivityStatusDb>();
         
         builder.MapEnum<EventActionDb>();
 

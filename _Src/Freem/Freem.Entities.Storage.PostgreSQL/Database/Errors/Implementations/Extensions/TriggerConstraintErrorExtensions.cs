@@ -9,9 +9,9 @@ internal static class TriggerConstraintErrorExtensions
         return Convert.ToInt32(parameter.Value);
     }
 
-    public static CategoryIdentifier AsCategoryIdentifier(this TriggerConstraintError.Parameter parameter)
+    public static ActivityIdentifier AsActivityIdentifier(this TriggerConstraintError.Parameter parameter)
     {
-        return new CategoryIdentifier(parameter.Value);
+        return new ActivityIdentifier(parameter.Value);
     }
 
     public static RecordIdentifier AsRecordIdentifier(this TriggerConstraintError.Parameter parameter)

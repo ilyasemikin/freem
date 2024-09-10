@@ -15,7 +15,7 @@ internal sealed class DatabaseColumnToIdentifierPossibleConverter
     private readonly IReadOnlyDictionary<DatabaseColumn, EntityIdentifierFactory> _factories =
         new Dictionary<DatabaseColumn, EntityIdentifierFactory>()
         {
-            [new DatabaseColumn(EntitiesNames.Categories.Table, EntitiesNames.Categories.Properties.Id)] = value => new CategoryIdentifier(value),
+            [new DatabaseColumn(EntitiesNames.Activities.Table, EntitiesNames.Activities.Properties.Id)] = value => new ActivityIdentifier(value),
             [new DatabaseColumn(EntitiesNames.Records.Table, EntitiesNames.Records.Properties.Id)] = value => new RecordIdentifier(value),
             [new DatabaseColumn(EntitiesNames.Tags.Table, EntitiesNames.Tags.Properties.Id)] = value => new TagIdentifier(value),
             [new DatabaseColumn(EntitiesNames.Users.Table, EntitiesNames.Users.Properties.Id)] = value => new UserIdentifier(value)

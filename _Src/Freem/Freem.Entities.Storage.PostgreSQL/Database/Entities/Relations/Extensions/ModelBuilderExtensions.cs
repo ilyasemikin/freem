@@ -8,12 +8,12 @@ internal static class ModelBuilderExtensions
 {
     public static ModelBuilder ApplyRelationEnttitiesConfiguration(this ModelBuilder builder)
     {
-        builder.ApplyConfiguration<CategoryTagRelationEntity, CategoryTagRelationEntityTypeConfiguration>();
+        builder.ApplyConfiguration<ActivityTagRelationEntity, ActivityTagRelationEntityTypeConfiguration>();
         builder.ApplyConfiguration<RecordTagRelationEntity, RecordTagRelationEntityTypeConfiguration>();
         builder.ApplyConfiguration<RunningRecordTagRelationEntity, RunningRecordTagRelationEntityTypeConfiguration>();
 
-        builder.ApplyConfiguration<RecordCategoryRelationEntity, RecordCategoryRelationEntityTypeConfiguration>();
-        builder.ApplyConfiguration<RunningRecordCategoryRelationEntity, RunningRecordCategoryRelationEntityTypeConfiguration>();
+        builder.ApplyConfiguration<RecordActivityRelationEntity, RecordActivityRelationEntityTypeConfiguration>();
+        builder.ApplyConfiguration<RunningRecordActivityRelationEntity, RunningRecordActivityRelationEntityTypeConfiguration>();
 
         return builder;
     }

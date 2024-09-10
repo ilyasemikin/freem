@@ -37,11 +37,11 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
     public async Task CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
         var dbEntity = entity.MapToDatabaseEntity();
-        var dbCategoryRelations = entity.CreateDatabaseRunningRecordCategoryRelations();
+        var dbActivityRelations = entity.CreateDatabaseRunningRecordActivityRelations();
         var dbTagRelations = entity.CreateDatabaseRunningRecordTagRelations();
 
         await _context.RunningRecords.AddAsync(dbEntity, cancellationToken);
-        await _context.AddRangeAsync(dbCategoryRelations, cancellationToken);
+        await _context.AddRangeAsync(dbActivityRelations, cancellationToken);
         await _context.AddRangeAsync(dbTagRelations, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
@@ -62,7 +62,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
         dbEntity.StartAt = entity.StartAt;
 
-        await _context.UpdateRelatedCategoriesAsync(entity, cancellationToken);
+        await _context.UpdateRelatedActivitiesAsync(entity, cancellationToken);
         await _context.UpdateRelatedTagsAsync(entity, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
@@ -90,7 +90,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         CancellationToken cancellationToken)
     {
         return await _context.RunningRecords
-            .Include(e => e.Categories)
+            .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(e => e.UserId == userId.Value, RunningRecordMapper.MapToDomainEntity, cancellationToken);
     }
