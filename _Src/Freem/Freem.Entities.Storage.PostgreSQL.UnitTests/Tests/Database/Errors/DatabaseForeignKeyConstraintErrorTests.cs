@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Models;
+using Npgsql;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Tests.Database.Errors;
 
@@ -33,36 +34,18 @@ public sealed class DatabaseForeignKeyConstraintErrorTests
     [Fact]
     public void TryParse_ShouldSuccess_WhenPassValid()
     {
-        const string input =
-            $"23503: insert or update on table \"activities_tags\" violates foreign key constraint \"activities_tags_tags_fk\"\n\n" +
-            $"DETAIL: Key (tag_id)=(tag_id) is not present in table \"tags\".";
+        const string input = "insert or update on table \"activities_tags\" violates foreign key constraint \"activities_tags_tags_fk\"";
+        const string message = "DETAIL: Key (tag_id)=(Id199bdd05-45a9-40ef-9a28-2d563b16b0df) is not present in table \"tags\".";
 
+        var exception = new PostgresException(input, "Error", "Sample", "Sample", detail: message);
+        
         var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("activities_tags", "activities_tags_tags_fk");
         var column = new DatabaseColumn("tags", "tag_id");
-        var columnWithValue = new DatabaseColumnWithValue(column, "tag_id");
+        var columnWithValue = new DatabaseColumnWithValue(column, "Id199bdd05-45a9-40ef-9a28-2d563b16b0df");
 
         var expected = new DatabaseForeignKeyConstraintError(constraint, columnWithValue);
         
-        var success = DatabaseForeignKeyConstraintError.TryParse(input, out var actual);
-        
-        Assert.True(success);
-        Assert.Equal(expected, actual);
-    }
-    
-    [Fact]
-    public void TryParse_ShouldSuccess_WhenPassValidWithWinNewLine()
-    {
-        const string input =
-            $"23503: insert or update on table \"activities_tags\" violates foreign key constraint \"activities_tags_tags_fk\"\r\n\r\n" +
-            $"DETAIL: Key (tag_id)=(tag_id) is not present in table \"tags\".";
-
-        var constraint = new DatabaseForeignKeyConstraintError.ConstraintInfo("activities_tags", "activities_tags_tags_fk");
-        var column = new DatabaseColumn("tags", "tag_id");
-        var columnWithValue = new DatabaseColumnWithValue(column, "tag_id");
-
-        var expected = new DatabaseForeignKeyConstraintError(constraint, columnWithValue);
-        
-        var success = DatabaseForeignKeyConstraintError.TryParse(input, out var actual);
+        var success = DatabaseForeignKeyConstraintError.TryParse(exception, out var actual);
         
         Assert.True(success);
         Assert.Equal(expected, actual);

@@ -43,7 +43,7 @@ public sealed class EnumerableExtensionsTests
         
         Assert.NotNull(exception);
         Assert.IsType<ArgumentNullException>(exception);
-        Assert.Equal("first", ((ArgumentNullException)exception).ParamName);
+        Assert.Equal("x", ((ArgumentNullException)exception).ParamName);
     }
 
     [Fact]
@@ -53,6 +53,6 @@ public sealed class EnumerableExtensionsTests
         
         Assert.NotNull(exception);
         Assert.IsType<ArgumentNullException>(exception);
-        Assert.Equal("second", ((ArgumentNullException)exception).ParamName);
+        Assert.Equal("y", ((ArgumentNullException)exception).ParamName);
     }
 }

@@ -15,7 +15,7 @@ internal static class RelationsDatabaseContextExtensions
         await context.UpdateRelatedEntitiesAsync<Activity, ActivityIdentifier, RecordActivityRelationEntity>(
             entity,
             e => e.RecordId == entity.Id.Value,
-            e => e.RecordId,
+            e => e.ActivityId,
             ids => e => ids.Contains(e.ActivityId),
             id => RecordRelationFactory.CreateDatabaseRecordActivityRelation(entity.Id, id),
             cancellationToken);
@@ -29,7 +29,7 @@ internal static class RelationsDatabaseContextExtensions
         await context.UpdateRelatedEntitiesAsync<Tag, TagIdentifier, RecordTagRelationEntity>(
             entity,
             e => e.RecordId == entity.Id.Value,
-            e => e.RecordId,
+            e => e.TagId,
             ids => e => ids.Contains(e.TagId),
             id => RecordRelationFactory.CreateDatabaseRecordTagRelation(entity.Id, id),
             cancellationToken);

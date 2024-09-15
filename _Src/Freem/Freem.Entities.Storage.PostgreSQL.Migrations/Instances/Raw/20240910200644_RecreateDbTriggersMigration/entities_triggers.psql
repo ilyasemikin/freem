@@ -267,19 +267,25 @@ create constraint trigger check_records_activities_user_ids_trigger
 	for each row
 	execute procedure ${EnvironmentNames.Schema}.check_records_activities_user_ids();
 
-create or replace procedure ${EnvironmentNames.Schema}.check_record_activities_count(id text)
+create or replace procedure ${EnvironmentNames.Schema}.check_record_activities_count(_id text)
 language PLPGSQL
 as $$
 declare 
+    changed_id text;
 	activities_count int;
 begin
-	select count(*) from ${EnvironmentNames.Schema}.records_activities where record_id = id into activities_count;
+    select id from ${EnvironmentNames.Schema}.records r where id = _id into changed_id;
+	select count(*) from ${EnvironmentNames.Schema}.records_activities where record_id = _id into activities_count;
+
+    if changed_id is null then
+        return;
+    end if;
 
 	if activities_count < ${Limits.MinRelatedActivitiesCount} or activities_count > ${Limits.MaxRelatedActivitiesCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(
 	        '${TriggerErrorCodes.RecordsActivitiesInvalidCount}', 
             'running_records must have activities in range [${Limits.MinRelatedActivitiesCount}, ${Limits.MaxRelatedActivitiesCount}]',
-            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', activities_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', _id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', activities_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 end;
 $$;
@@ -386,9 +392,15 @@ create or replace procedure ${EnvironmentNames.Schema}.check_running_record_acti
 language PLPGSQL
 as $$
 declare
+    changed_id text;
 	activities_count int;
 begin
+    select user_id from ${EnvironmentNames.Schema}.running_records where user_id = id into changed_id;
 	select count(*) from ${EnvironmentNames.Schema}.running_records_activities where user_id = id into activities_count;
+
+    if changed_id is null then
+        return;
+    end if;
 
 	if activities_count < ${Limits.MinRelatedActivitiesCount} or activities_count > ${Limits.MaxRelatedActivitiesCount} then
 	    call ${EnvironmentNames.Schema}.throw_exception(

@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
+using Npgsql;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Tests.Database.Errors;
 
@@ -54,9 +55,10 @@ public sealed class TriggerConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassInputWithoutParameters()
     {
         const string input = "[Code]: Message";
+        var exception = new PostgresException(input, "Error", "Sample", "Sample");
         var expected = new TriggerConstraintError("Code", "Message");
         
-        var success = TriggerConstraintError.TryParse(input, out var result);
+        var success = TriggerConstraintError.TryParse(exception, out var result);
         
         Assert.True(success);
         Assert.Equal(expected, result);
@@ -66,11 +68,12 @@ public sealed class TriggerConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassInputWithOneParameter()
     {
         const string input = "[Code] {key=value}: Message";
+        var exception = new PostgresException(input, "Error", "Sample", "Sample");
         var expected = new TriggerConstraintError(
             "Code", "Message", 
             new TriggerConstraintError.Parameter("key", "value"));
 
-        var success = TriggerConstraintError.TryParse(input, out var result);
+        var success = TriggerConstraintError.TryParse(exception, out var result);
         
         Assert.True(success);
         Assert.Equal(expected, result);
@@ -80,12 +83,13 @@ public sealed class TriggerConstraintErrorTests
     public void TryParse_ShouldSuccess_WhenPassInputWithTwoParameters()
     {
         const string input = "[Code] {key1=value1;key2=value2}: Message";
+        var exception = new PostgresException(input, "Error", "Sample", "Sample");
         var expected = new TriggerConstraintError(
             "Code", "Message", 
             new TriggerConstraintError.Parameter("key1", "value1"),
             new TriggerConstraintError.Parameter("key2", "value2"));
         
-        var success = TriggerConstraintError.TryParse(input, out var result);
+        var success = TriggerConstraintError.TryParse(exception, out var result);
         
         Assert.True(success);
         Assert.Equal(expected, result);
@@ -99,9 +103,10 @@ public sealed class TriggerConstraintErrorTests
             new TriggerConstraintError.Parameter("key1", "value1"),
             new TriggerConstraintError.Parameter("key2", "value2"));
         
-        var @string = error.ToString();
+        var input = error.ToString();
+        var exception = new PostgresException(input, "Error", "Sample", "Sample");
         
-        var success = TriggerConstraintError.TryParse(@string, out var result);
+        var success = TriggerConstraintError.TryParse(exception, out var result);
         
         Assert.True(success);
         Assert.Equal(error, result);

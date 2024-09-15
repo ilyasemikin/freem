@@ -18,20 +18,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records
 
 internal sealed class RecordsRepository : IRecordsRepository
 {
-    private readonly DatabaseContext _context;
-    private readonly DatabaseContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContext _database;
+    private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
     private readonly IEventEntityFactory<RecordEvent, Record> _eventFactory;
 
     public RecordsRepository(
-        DatabaseContext context,
-        DatabaseContextExceptionHandler exceptionHandler,
+        DatabaseContext database,
+        DatabaseContextWriteExceptionHandler exceptionHandler,
         IEventEntityFactory<RecordEvent, Record> eventFactory)
     {
-        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(eventFactory);
         
-        _context = context;
+        _database = database;
         _exceptionHandler = exceptionHandler;
         _eventFactory = eventFactory;
     }
@@ -44,20 +44,21 @@ internal sealed class RecordsRepository : IRecordsRepository
         var dbActivityRelations = entity.CreateDatabaseRecordActivityRelations();
         var dbTagRelations = entity.CreateDatabaseRecordTagRelations();
 
-        await _context.Records.AddAsync(dbEntity, cancellationToken);
-        await _context.AddRangeAsync(dbActivityRelations, cancellationToken);
-        await _context.AddRangeAsync(dbTagRelations, cancellationToken);
+        await _database.Records.AddAsync(dbEntity, cancellationToken);
+        await _database.AddRangeAsync(dbActivityRelations, cancellationToken);
+        await _database.AddRangeAsync(dbTagRelations, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
-        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
+        var context = new DatabaseContextWriteContext(entity.Id);
+        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
     public async Task UpdateAsync(Record entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         
-        var dbEntity = await _context.Records.FirstOrDefaultAsync(
+        var dbEntity = await _database.Records.FirstOrDefaultAsync(
             e => e.Id == entity.Id.Value && e.UserId == entity.UserId.Value,
             cancellationToken);
         if (dbEntity is null)
@@ -69,29 +70,34 @@ internal sealed class RecordsRepository : IRecordsRepository
         dbEntity.StartAt = entity.Period.StartAt;
         dbEntity.EndAt = entity.Period.EndAt;
 
-        await _context.UpdateRelatedActivitiesAsync(entity, cancellationToken);
-        await _context.UpdateRelatedTagsAsync(entity, cancellationToken);
+        await _database.UpdateRelatedActivitiesAsync(entity, cancellationToken);
+        await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
 
         await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
 
-        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
+        var context = new DatabaseContextWriteContext(entity.Id);
+        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
     public async Task RemoveAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        var dbEntity = await _context.Records.FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
+        var dbEntity = await _database.Records
+            .Include(e => e.Activities)
+            .Include(e => e.Tags)
+            .FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
 
         if (dbEntity is null)
             throw new NotFoundException(id);
 
-        _context.Remove(dbEntity);
+        _database.Remove(dbEntity);
         
         var entity = dbEntity.MapToDomainEntity();
         await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
+        var context = new DatabaseContextWriteContext(id);
+        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Record>> FindByIdAsync(
@@ -100,7 +106,7 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        return await _context.Records
+        return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(e => e.Id == id.Value, RecordMapper.MapToDomainEntity, cancellationToken);
@@ -112,7 +118,7 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         ArgumentNullException.ThrowIfNull(ids);
         
-        return await _context.Records
+        return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
@@ -127,7 +133,7 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         ArgumentNullException.ThrowIfNull(filter);
         
-        return await _context.Records
+        return await _database.Records
             .Where(e => e.UserId == filter.UserId.Value)
             .OrderBy(e => e.StartAt)
             .SliceByLimitAndOffsetFilter(filter)
@@ -138,6 +144,6 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         var eventEntity = _eventFactory.Create(entity, action);
         var dbEventEntity = eventEntity.MapToDatabaseEntity();
-        await _context.Events.AddAsync(dbEventEntity, cancellationToken);
+        await _database.Events.AddAsync(dbEventEntity, cancellationToken);
     }
 }

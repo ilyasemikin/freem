@@ -3,8 +3,8 @@
 namespace Freem.Entities.Abstractions;
 
 public interface IEventEntity<out TIdentifier, out TUserIdentifier> : IEntity<TIdentifier>
-    where TIdentifier : notnull, IEntityIdentifier
-    where TUserIdentifier : notnull, IEntityIdentifier
+    where TIdentifier : IEntityIdentifier
+    where TUserIdentifier : IEntityIdentifier
 {
     TIdentifier EventId { get; }
     TUserIdentifier UserId { get; }

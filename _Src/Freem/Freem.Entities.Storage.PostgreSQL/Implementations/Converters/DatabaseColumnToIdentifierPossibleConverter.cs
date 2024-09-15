@@ -12,19 +12,19 @@ internal sealed class DatabaseColumnToIdentifierPossibleConverter
 {
     private delegate IEntityIdentifier EntityIdentifierFactory(string value);
 
-    private readonly IReadOnlyDictionary<DatabaseColumn, EntityIdentifierFactory> _factories =
-        new Dictionary<DatabaseColumn, EntityIdentifierFactory>()
+    private readonly IReadOnlyDictionary<string, EntityIdentifierFactory> _factories =
+        new Dictionary<string, EntityIdentifierFactory>()
         {
-            [new DatabaseColumn(EntitiesNames.Activities.Table, EntitiesNames.Activities.Properties.Id)] = value => new ActivityIdentifier(value),
-            [new DatabaseColumn(EntitiesNames.Records.Table, EntitiesNames.Records.Properties.Id)] = value => new RecordIdentifier(value),
-            [new DatabaseColumn(EntitiesNames.Tags.Table, EntitiesNames.Tags.Properties.Id)] = value => new TagIdentifier(value),
-            [new DatabaseColumn(EntitiesNames.Users.Table, EntitiesNames.Users.Properties.Id)] = value => new UserIdentifier(value)
+            [EntitiesNames.Activities.Table] = value => new ActivityIdentifier(value),
+            [EntitiesNames.Records.Table] = value => new RecordIdentifier(value),
+            [EntitiesNames.Tags.Table] = value => new TagIdentifier(value),
+            [EntitiesNames.Users.Table] = value => new UserIdentifier(value)
         };
 
     public bool TryConvert(DatabaseColumnWithValue input, [NotNullWhen(true)] out IEntityIdentifier? output)
     {
         output = null;
-        if (!_factories.TryGetValue(input.Column, out var factory))
+        if (!_factories.TryGetValue(input.Column.Table, out var factory))
             return false;
         
         output = factory(input.Value);

@@ -12,7 +12,8 @@ internal static class RunningRecordMapper
         {
             UserId = entity.UserId.Value,
             Name = entity.Name,
-            Description = entity.Description
+            Description = entity.Description,
+            StartAt = entity.StartAt
         };
     }
 
@@ -23,6 +24,12 @@ internal static class RunningRecordMapper
         var activities = entity.Activities.MapToRelatedActivitiesCollection();
         var tags = entity.Tags.MapToRelatedTagsCollection();
         
-        return new RunningRecord(userId, activities, tags, entity.StartAt);
+        var record = new RunningRecord(userId, activities, tags, entity.StartAt);
+        if (entity.Name is not null)
+            record.Name = entity.Name;
+        if (entity.Description is not null)
+            record.Description = entity.Description;
+
+        return record;
     }
 }

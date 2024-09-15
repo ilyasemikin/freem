@@ -3,8 +3,8 @@
 namespace Freem.Entities.Abstractions.Relations.Collection;
 
 public interface IRelatedEntitiesCollection<TEntity, TEntityIdentifier> : IReadOnlyRelatedEntitiesCollection<TEntity, TEntityIdentifier>
-    where TEntity : notnull, IEntity<TEntityIdentifier>
-    where TEntityIdentifier : notnull, IEntityIdentifier
+    where TEntity : IEntity<TEntityIdentifier>
+    where TEntityIdentifier : IEntityIdentifier
 {
     bool TryAdd(TEntityIdentifier identifier);
     bool TryAdd(TEntity entity);

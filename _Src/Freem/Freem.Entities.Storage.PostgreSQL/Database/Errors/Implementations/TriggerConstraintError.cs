@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Freem.Collections.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
+using Npgsql;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 
@@ -70,10 +71,10 @@ internal sealed class TriggerConstraintError : IDatabaseError
             : $"[{Code}]: {Message}";
     }
 
-    public static bool TryParse(string input, [NotNullWhen(true)] out TriggerConstraintError? error)
+    public static bool TryParse(PostgresException exception, [NotNullWhen(true)] out TriggerConstraintError? error)
     {
         error = null;
-        
+        var input = exception.Message;
         var match = InputRegex.Match(input);
         if (!match.Groups.TryGetValue(CodeGroupName, out var codeGroup) ||
             !match.Groups.TryGetValue(MessageGroupName, out var messageGroup))

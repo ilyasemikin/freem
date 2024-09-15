@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Abstractions;
+﻿using Freem.Clones;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
@@ -9,7 +10,8 @@ namespace Freem.Entities;
 public class Record : 
     IEntity<RecordIdentifier>, 
     IEntityRelation<Activity, ActivityIdentifier>, 
-    IEntityRelation<Tag, TagIdentifier>
+    IEntityRelation<Tag, TagIdentifier>,
+    ICloneable<Record>
 {
     public const int MaxNameLength = 128;
     public const int MaxDescriptionLength = 1024;
@@ -69,5 +71,14 @@ public class Record :
         Tags = tags;
         
         Period = period;
+    }
+
+    public Record Clone()
+    {
+        return new Record(Id, UserId, Activities, Tags, Period)
+        {
+            Name = Name,
+            Description = Description
+        };
     }
 }

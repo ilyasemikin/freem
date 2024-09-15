@@ -5,8 +5,8 @@ using Freem.Entities.Storage.Abstractions.Models;
 namespace Freem.Entities.Storage.Abstractions.Base;
 
 public interface ISearchByIdRepository<TEntity, TEntityIdentifier>
-    where TEntity : notnull, IEntity<TEntityIdentifier>
-    where TEntityIdentifier : notnull, IEntityIdentifier
+    where TEntity : IEntity<TEntityIdentifier>
+    where TEntityIdentifier : IEntityIdentifier
 {
     Task<SearchEntityResult<TEntity>> FindByIdAsync(
         TEntityIdentifier id, 

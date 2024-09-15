@@ -12,17 +12,17 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 
 internal sealed class UsersRepository : IUsersRepository
 {
-    private readonly DatabaseContext _context;
-    private readonly DatabaseContextExceptionHandler _exceptionHandler;
+    private readonly DatabaseContext _database;
+    private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
 
     public UsersRepository(
-        DatabaseContext context,
-        DatabaseContextExceptionHandler exceptionHandler)
+        DatabaseContext database,
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
-        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         
-        _context = context;
+        _database = database;
         _exceptionHandler = exceptionHandler;
     }
 
@@ -32,29 +32,31 @@ internal sealed class UsersRepository : IUsersRepository
         
         var dbEntity = entity.MapToDatabaseEntity();
 
-        await _context.Users.AddAsync(dbEntity, cancellationToken);
+        await _database.Users.AddAsync(dbEntity, cancellationToken);
 
-        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
+        var context = new DatabaseContextWriteContext(entity.Id);
+        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
     public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         
-        var dbEntity = await _context.Users.FirstOrDefaultAsync(
+        var dbEntity = await _database.Users.FirstOrDefaultAsync(
             e => e.Id == entity.Id.Value,
             cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
 
-        await _exceptionHandler.HandleSaveChangesAsync(_context, cancellationToken);
+        var context = new DatabaseContextWriteContext(entity.Id);
+        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
     public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        await _context.Users
+        await _database.Users
             .Where(e => e.Id == id.Value)
             .ExecuteDeleteAsync(cancellationToken);
     }
@@ -65,6 +67,6 @@ internal sealed class UsersRepository : IUsersRepository
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        return await _context.Users.FindAsync(e => e.Id == id.Value, UserMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Users.FindAsync(e => e.Id == id.Value, UserMapper.MapToDomainEntity, cancellationToken);
     }
 }

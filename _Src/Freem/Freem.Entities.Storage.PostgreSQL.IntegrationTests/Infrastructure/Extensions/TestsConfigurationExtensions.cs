@@ -4,12 +4,15 @@ namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Exte
 
 internal static class TestsConfigurationExtensions
 {
-    public static StorageConfiguration ToStorageConfiguration(this TestsConfiguration configuration)
+    public static StorageConfiguration ToStorageConfiguration(
+        this TestsConfiguration configuration,
+        StorageConfiguration.LoggerAction? logger = null)
     {
         return new StorageConfiguration(configuration.ConnectionString)
         {
             EnableServiceProviderCaching = false,
-            SensitiveDataLogging = true
+            SensitiveDataLogging = true,
+            Logger = logger
         };
     }
 }

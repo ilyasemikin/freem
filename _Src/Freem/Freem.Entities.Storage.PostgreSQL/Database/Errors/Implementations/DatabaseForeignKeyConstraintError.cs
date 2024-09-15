@@ -2,14 +2,18 @@
 using System.Text.RegularExpressions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Freem.Entities.Storage.PostgreSQL.Database.Models;
+using Npgsql;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 
 internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
 {
     private static readonly Regex MessageRegex = new(
-        @"insert or update on table ""(?<ConstaintTable>[a-z_]+)"" violates foreign key constraint ""(?<ConstaintName>[a-z_]+)""\r?\n\r?\n" +
-        @"DETAIL: Key \((?<Key>[a-z_]+)\)=\((?<Value>[a-z_]+)\) is not present in table ""(?<Table>[a-z_]+)""",
+        @"insert or update on table ""(?<ConstaintTable>[a-z_]+)"" violates foreign key constraint ""(?<ConstaintName>[a-z_]+)",
+        RegexOptions.Compiled);
+
+    private static readonly Regex DetailRegex = new(
+        @"DETAIL: Key \((?<Key>[A-z_]+)\)=\((?<Value>[A-z_0-9-]+)\) is not present in table ""(?<Table>[a-z_]+)""",
         RegexOptions.Compiled);
 
     private const string ConstraintTableGroupName = "ConstaintTable";
@@ -51,17 +55,18 @@ internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
         return HashCode.Combine(Constraint, Column);
     }
     
-    public static bool TryParse(string input, [NotNullWhen(true)] out DatabaseForeignKeyConstraintError? error)
+    public static bool TryParse(PostgresException exception, [NotNullWhen(true)] out DatabaseForeignKeyConstraintError? error)
     {
         error = null;
         
-        var match = MessageRegex.Match(input);
-        if (!match.Success)
+        var messageMatch = MessageRegex.Match(exception.MessageText);
+        var detailMatch = DetailRegex.Match(exception.Message);
+        if (!messageMatch.Success || !detailMatch.Success)
             return false;
 
-        if (!TryExtractConstraint(match, out var constraint))
+        if (!TryExtractConstraint(messageMatch, out var constraint))
             return false;
-        if (!TryExtractColumn(match, out var column))
+        if (!TryExtractColumn(detailMatch, out var column))
             return false;
         
         error = new DatabaseForeignKeyConstraintError(constraint, column);

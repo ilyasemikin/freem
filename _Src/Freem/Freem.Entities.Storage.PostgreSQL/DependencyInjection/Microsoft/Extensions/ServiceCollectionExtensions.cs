@@ -71,17 +71,17 @@ public static class ServiceCollectionExtensions
                 DatabaseColumnToIdentifierPossibleConverter>();
 
         services.TryAddSingleton<
-            IPossibleConverter<DatabaseForeignKeyConstraintError, Exception>,
+            IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>,
             DatabaseForeignKeyConstraintErrorToExceptionConverter>();
         services.TryAddSingleton<
-            IConverter<TriggerConstraintError, Exception>,
+            IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>,
             TriggerConstraintErrorToExceptionConverter>();
 
-        services.AddConvertersCollection<IDatabaseError, Exception>((provider, builder) => builder
-            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseForeignKeyConstraintError, Exception>>())
-            .Add(provider.GetRequiredService<IConverter<TriggerConstraintError, Exception>>()));
+        services.AddConvertersCollection<DatabaseContextWriteContext, IDatabaseError, Exception>((provider, builder) => builder
+            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>>())
+            .Add(provider.GetRequiredService<IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>>()));
         
-        services.TryAddSingleton<DatabaseContextExceptionHandler>();
+        services.TryAddSingleton<DatabaseContextWriteExceptionHandler>();
         
         return services;
     }

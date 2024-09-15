@@ -35,7 +35,12 @@ internal static class ActivityMapper
         var id = new ActivityIdentifier(entity.Id);
         var userId = new UserIdentifier(entity.UserId);
         var tags = MapToDomainRelatedTags(entity);
-        return new Activity(id, userId, tags, MapToDomainEntityStatus(entity.Status));
+        
+        var activity = new Activity(id, userId, tags, MapToDomainEntityStatus(entity.Status));
+        if (entity.Name is not null)
+            activity.Name = entity.Name;
+        
+        return activity;
     }
     
     public static EntityActivityStatus MapToDomainEntityStatus(this DatabaseActivityStatus status)

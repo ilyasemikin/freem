@@ -10,7 +10,7 @@ internal sealed class DatabaseEntitiesFactory
 
     public UserEntity User { get; }
 
-    private DatabaseEntitiesFactory(string userId)
+    internal DatabaseEntitiesFactory(string userId)
     {
         _fixture = new Fixture();
         _fixture.Customizations.Add(new UtcRandomDateTimeSequenceGenerator());
@@ -20,12 +20,14 @@ internal sealed class DatabaseEntitiesFactory
             .Without(e => e.User)
             .Without(e => e.Activities)
             .Without(e => e.Records)
-            .Without(e => e.RunningRecords));
+            .Without(e => e.RunningRecords)
+            .Without(e => e.UpdatedAt));
 
         _fixture.Customize<ActivityEntity>(builder => builder
             .With(e => e.UserId, userId)
             .Without(e => e.User)
-            .Without(e => e.Tags));
+            .Without(e => e.Tags)
+            .Without(e => e.UpdatedAt));
 
         _fixture.Customize<RecordEntity>(builder => builder
             .With(e => e.UserId, userId)
@@ -33,18 +35,21 @@ internal sealed class DatabaseEntitiesFactory
             .With(e => e.EndAt, DateTimeOffset.UtcNow)
             .Without(e => e.User)
             .Without(e => e.Activities)
-            .Without(e => e.Tags));
+            .Without(e => e.Tags)
+            .Without(e => e.UpdatedAt));
 
         _fixture.Customize<RunningRecordEntity>(builder => builder
             .With(e => e.UserId, userId)
             .Without(e => e.User)
             .Without(e => e.Activities)
-            .Without(e => e.Tags));
+            .Without(e => e.Tags)
+            .Without(e => e.UpdatedAt));
 
         User = _fixture
             .Build<UserEntity>()
             .With(e => e.Id, userId)
             .Without(e => e.DeletedAt)
+            .Without(e => e.UpdatedAt)
             .Create();
     }
 

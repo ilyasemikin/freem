@@ -6,17 +6,20 @@ namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
 public sealed class NotFoundRelatedException : StorageException
 {
+    public IEntityIdentifier Id { get; }
     public IReadOnlyList<IEntityIdentifier> RelatedIds { get; }
 
-    public NotFoundRelatedException(IEntityIdentifier relatedId)
+    public NotFoundRelatedException(IEntityIdentifier id, IEntityIdentifier relatedId)
         : base(GenerateMessage(relatedId))
     {
+        Id = id;
         RelatedIds = [relatedId];
     }
     
-    public NotFoundRelatedException(params IEntityIdentifier[] relatedIds)
+    public NotFoundRelatedException(IEntityIdentifier id, params IEntityIdentifier[] relatedIds)
         : base(GenerateMessage(relatedIds))
     {
+        Id = id;
         RelatedIds = relatedIds;
     }
 

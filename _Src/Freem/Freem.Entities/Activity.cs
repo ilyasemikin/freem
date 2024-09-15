@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Abstractions;
+﻿using Freem.Clones;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
@@ -6,7 +7,10 @@ using Freem.Enums.Exceptions;
 
 namespace Freem.Entities;
 
-public class Activity : IEntity<ActivityIdentifier>, IEntityRelation<Tag, TagIdentifier>
+public class Activity : 
+    IEntity<ActivityIdentifier>, 
+    IEntityRelation<Tag, TagIdentifier>, 
+    ICloneable<Activity>
 {
     public const int MaxNameLength = 128;
 
@@ -55,5 +59,14 @@ public class Activity : IEntity<ActivityIdentifier>, IEntityRelation<Tag, TagIde
         UserId = userId;
         Tags = relatedTags;
         Status = status;
+    }
+
+    public Activity Clone()
+    {
+        return new Activity(Id, UserId, Tags, Status)
+        {
+            Name = Name,
+            Status = Status
+        };
     }
 }

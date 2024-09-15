@@ -3,7 +3,7 @@
 namespace Freem.Entities.Abstractions;
 
 public interface IEntity<out TIdentifier>
-    where TIdentifier : notnull, IEntityIdentifier
+    where TIdentifier : IEntityIdentifier
 {
     TIdentifier Id { get; }
 }

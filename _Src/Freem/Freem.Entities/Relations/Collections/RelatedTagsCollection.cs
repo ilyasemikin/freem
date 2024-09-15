@@ -8,6 +8,8 @@ public sealed class RelatedTagsCollection : RelatedEntitiesCollection<Tag, TagId
     public const int MinTagsCount = 0;
     public const int MaxTagsCount = 64;
 
+    public static RelatedTagsCollection Empty { get; } = new();
+    
     public RelatedTagsCollection(IEnumerable<TagIdentifier> identifiers, IEnumerable<Tag> entities) 
         : base(identifiers, entities, MinTagsCount, MaxTagsCount)
     {

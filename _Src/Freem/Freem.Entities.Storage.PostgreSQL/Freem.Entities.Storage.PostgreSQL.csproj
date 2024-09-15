@@ -12,6 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
 	  <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
 	  <ProjectReference Include="..\Freem.Converters\Freem.Converters.csproj" />
 	  <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
@@ -26,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Filler" />
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations" />
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.UnitTests" />
 		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests" />

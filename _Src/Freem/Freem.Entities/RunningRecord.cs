@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Abstractions;
+﻿using Freem.Clones;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Relations.Collections;
@@ -8,7 +9,8 @@ namespace Freem.Entities;
 public class RunningRecord : 
     IEntity<UserIdentifier>,
     IEntityRelation<Activity, ActivityIdentifier>, 
-    IEntityRelation<Tag, TagIdentifier>
+    IEntityRelation<Tag, TagIdentifier>,
+    ICloneable<RunningRecord>
 {
     public const int MaxNameLength = Record.MaxNameLength;
     public const int MaxDescriptionLength = Record.MaxDescriptionLength;
@@ -64,5 +66,14 @@ public class RunningRecord :
         Tags = tags;
 
         StartAt = startAt;
+    }
+
+    public RunningRecord Clone()
+    {
+        return new RunningRecord(UserId, Activities, Tags, StartAt)
+        {
+            Name = Name,
+            Description = Description,
+        };
     }
 }

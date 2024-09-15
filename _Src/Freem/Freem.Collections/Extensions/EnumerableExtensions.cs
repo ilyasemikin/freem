@@ -10,28 +10,53 @@ public static class EnumerableExtensions
         return firstSet.ExceptMutual(secondSet);
     }
 
-    public static bool UnorderedEquals<T>(this IEnumerable<T> first, IEnumerable<T> second)
+    public static bool UnorderedEquals<T>(this IEnumerable<T> x, IEnumerable<T> y)
         where T : IEquatable<T>
     {
-        ArgumentNullException.ThrowIfNull(first);
-        ArgumentNullException.ThrowIfNull(second);
-        
-        var counts = new Dictionary<T, int>();
+        return UnorderedEquals(x, y, EqualityComparer<T>.Default);
+    }
 
-        foreach (var value in first)
+    public static bool UnorderedEquals<T>(this IEnumerable<T> x, IEnumerable<T> y, IEqualityComparer<T> comparer)
+        where T : notnull
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(comparer);
+        
+        var counts = new Dictionary<T, int>(comparer);
+
+        foreach (var value in x)
         {
             if (!counts.TryAdd(value, 1))
                 counts[value]++;
         }
 
-        foreach (var value in second)
+        foreach (var value in y)
         {
             if (!counts.ContainsKey(value))
                 return false;
 
             counts[value]--;
         }
+        
+        return counts.All(p => p.Value == 0);
+    }
 
-        return counts.All(x => x.Value == 0);
+    public static bool NullableUnorderedEquals<T>(this IEnumerable<T>? x, IEnumerable<T>? y)
+        where T : IEquatable<T>
+    {
+        return
+            x is null && y is null ||
+            x is not null && y is not null &&
+            x.UnorderedEquals(y);
+    }
+
+    public static bool NullableUnorderedEquals<T>(this IEnumerable<T>? x, IEnumerable<T>? y, IEqualityComparer<T> comparer)
+        where T : notnull
+    {
+        return
+            x is null && y is null ||
+            x is not null && y is not null &&
+            x.UnorderedEquals(y, comparer);
     }
 }

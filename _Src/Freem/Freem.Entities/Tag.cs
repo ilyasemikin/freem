@@ -1,9 +1,12 @@
-﻿using Freem.Entities.Abstractions;
+﻿using Freem.Clones;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Identifiers;
 
 namespace Freem.Entities;
 
-public class Tag : IEntity<TagIdentifier>
+public class Tag : 
+    IEntity<TagIdentifier>, 
+    ICloneable<Tag>
 {
     public const int MaxNameLength = 128;
 
@@ -34,5 +37,10 @@ public class Tag : IEntity<TagIdentifier>
         Id = id;
         UserId = userId;
         Name = name;
+    }
+
+    public Tag Clone()
+    {
+        return new Tag(Id, UserId, Name);
     }
 }

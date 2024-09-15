@@ -1,9 +1,12 @@
-﻿using Freem.Entities.Abstractions;
+﻿using Freem.Clones;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Identifiers;
 
 namespace Freem.Entities;
 
-public class User : IEntity<UserIdentifier>
+public class User : 
+    IEntity<UserIdentifier>, 
+    ICloneable<User>
 {
     public UserIdentifier Id { get; }
     public string Nickname { get; }
@@ -14,5 +17,10 @@ public class User : IEntity<UserIdentifier>
 
         Id = id;
         Nickname = nickname;
+    }
+
+    public User Clone()
+    {
+        return new User(Id, Nickname);
     }
 }

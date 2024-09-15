@@ -14,6 +14,8 @@ internal static class RecordMapper
             Id = entity.Id.Value,
             Name = entity.Name,
             Description = entity.Description,
+            StartAt = entity.Period.StartAt,
+            EndAt = entity.Period.EndAt,
             UserId = entity.UserId.Value,
         };
     }
@@ -28,6 +30,12 @@ internal static class RecordMapper
 
         var period = new DateTimePeriod(entity.StartAt, entity.EndAt);
 
-        return new Record(id, userId, activities, tags, period);
+        var record = new Record(id, userId, activities, tags, period);
+        if (entity.Name is not null)
+            record.Name = entity.Name;
+        if (entity.Description is not null)
+            record.Description = entity.Description;
+
+        return record;
     }
 }

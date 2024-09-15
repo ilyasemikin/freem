@@ -6,22 +6,22 @@ using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Extensions;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Exceptions;
 using Freem.Exceptions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
-internal sealed class TriggerConstraintErrorToExceptionConverter : IConverter<TriggerConstraintError, Exception>
+internal sealed class TriggerConstraintErrorToExceptionConverter : 
+    IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>
 {
-    public Exception Convert(TriggerConstraintError input)
+    public Exception Convert(DatabaseContextWriteContext context, TriggerConstraintError error)
     {
-        switch (input.Code)
+        switch (error.Code)
         {
             case TriggerErrorCodes.ActivitiesTagsDifferentUserIds:
             case TriggerErrorCodes.RecordsTagsDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsTagsDifferentUserIds:
             {
-                var identifier = input.Parameters[TriggerErrorParameters.TagId].AsTagIdentifier();
+                var identifier = error.Parameters[TriggerErrorParameters.TagId].AsTagIdentifier();
                 return new NotFoundRelatedException(identifier);
             }
             case TriggerErrorCodes.ActivitiesTagsInvalidCount:
@@ -31,12 +31,12 @@ internal sealed class TriggerConstraintErrorToExceptionConverter : IConverter<Tr
                 return new InvalidRelatedEntitiesCountException(
                     RelatedTagsCollection.MinTagsCount,
                     RelatedTagsCollection.MaxTagsCount,
-                    input.Parameters[TriggerErrorParameters.ActualCount].AsInt());
+                    error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.RecordsActivitiesDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds:
             {
-                var identifier = input.Parameters[TriggerErrorParameters.ActivityId].AsActivityIdentifier();
+                var identifier = error.Parameters[TriggerErrorParameters.ActivityId].AsActivityIdentifier();
                 return new NotFoundRelatedException(identifier);
             }
             case TriggerErrorCodes.RecordsActivitiesInvalidCount:
@@ -45,7 +45,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter : IConverter<Tr
                 return new InvalidRelatedEntitiesCountException(
                     RelatedActivitiesCollection.MinActivitiesCount,
                     RelatedActivitiesCollection.MaxActivitiesCount,
-                    input.Parameters[TriggerErrorParameters.ActualCount].AsInt());
+                    error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.EventsUserNotExist:
             case TriggerErrorCodes.ActivitiesEventsActivityNotExist:
@@ -53,18 +53,18 @@ internal sealed class TriggerConstraintErrorToExceptionConverter : IConverter<Tr
             case TriggerErrorCodes.RunningRecordsEventsUserNotExist:
             case TriggerErrorCodes.TagsEventsTagNotExist:
             {
-                var message = GetEventRelatedEntityNotExist(input);
+                var message = GetEventRelatedEntityNotExist(error);
                 return new InternalStorageException(message);
             }
             case TriggerErrorCodes.ActivitiesEventsDifferentUserIds:
             case TriggerErrorCodes.RecordsEventsDifferentUserIds:
             case TriggerErrorCodes.TagsEventsDifferentUserIds:
             {
-                var message = GetEventDifferentUserIdsExceptionMessage(input);
+                var message = GetEventDifferentUserIdsExceptionMessage(error);
                 return new InternalStorageException(message);
             }
             default:
-                throw new UnknownConstantException(input.Code);
+                throw new UnknownConstantException(error.Code);
         }
     }
 
