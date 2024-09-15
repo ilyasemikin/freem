@@ -15,13 +15,15 @@ namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.
 public abstract class BaseRepositoryTests<TRepository> : IDisposable
     where TRepository : notnull
 {
+    private const string DefaultEntitiesUserId = "userId";
+    
     internal DatabaseContext Database { get; }
     internal TRepository Repository { get; }
     internal DatabaseEntitiesFactory EntitiesFactory { get; }
 
     internal BaseRepositoryTests(ITestOutputHelper output)
     {
-        EntitiesFactory = new DatabaseEntitiesFactory("userId");
+        EntitiesFactory = new DatabaseEntitiesFactory(DefaultEntitiesUserId);
         
         var configuration = TestsConfiguration
             .Read()

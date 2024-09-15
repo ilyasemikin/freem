@@ -12,7 +12,7 @@ public interface IActivitiesRepository :
 {
     Task<SearchEntityResult<Activity>> FindAsync(
         ActivityAndUserIdentifiers ids,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 
     Task<SearchEntitiesAsyncResult<Activity>> FindByUserAsync(
         ActivitiesByUserFilter filter, 

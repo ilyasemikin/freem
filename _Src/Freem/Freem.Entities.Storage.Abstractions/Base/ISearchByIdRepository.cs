@@ -4,7 +4,7 @@ using Freem.Entities.Storage.Abstractions.Models;
 
 namespace Freem.Entities.Storage.Abstractions.Base;
 
-public interface ISearchByIdRepository<TEntity, TEntityIdentifier>
+public interface ISearchByIdRepository<TEntity, in TEntityIdentifier>
     where TEntity : IEntity<TEntityIdentifier>
     where TEntityIdentifier : IEntityIdentifier
 {

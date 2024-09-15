@@ -1,5 +1,6 @@
 ﻿using Freem.EFCore.Extensions;
 using Freem.Entities.Identifiers;
+using Freem.Entities.Identifiers.Multiple;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
@@ -176,5 +177,105 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         
         var concreteException = Assert.IsType<NotFoundException>(exception);
         Assert.Equal(id, concreteException.Id);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldSuccess_WhenEntityExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+        var dbTags = EntitiesFactory.CreateTags(2);
+        
+        await Database.AddRangeAsync(dbUser, dbActivity);
+        await Database.AddRangeAsync(dbTags);
+        await Database.SaveChangesAsync();
+
+        // Act
+        var id = new ActivityIdentifier(dbActivity.Id);
+        
+        var result = await Repository.FindByIdAsync(id);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+
+        var activity = result.Entity;
+
+        Assert.Equal(dbActivity.Id, activity.Id.Value);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
+    {
+        // Act
+        var idValue = Guid.NewGuid().ToString();
+        var id = new ActivityIdentifier(idValue);
+
+        var result = await Repository.FindByIdAsync(id);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldSuccess_WhenEntityExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+        
+        await Database.AddRangeAsync(dbUser, dbActivity);
+        await Database.SaveChangesAsync();
+        
+        var activityId = new ActivityIdentifier(dbActivity.Id);
+        var userId = new UserIdentifier(dbUser.Id);
+        
+        var ids = new ActivityAndUserIdentifiers(activityId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+        
+        var activity = result.Entity;
+        
+        Assert.Equal(dbActivity.Id, activity.Id.Value);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task FindAsync_ShouldFailure_WhenPartOfIdsNotExists(bool activityIdExists, bool userIdExists)
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+        
+        await Database.AddRangeAsync(dbUser, dbActivity);
+        await Database.SaveChangesAsync();
+
+        var activityIdValue = activityIdExists ? dbActivity.Id : Guid.NewGuid().ToString();
+        var userIdValue = userIdExists ? dbUser.Id : Guid.NewGuid().ToString();
+        
+        var activityId = new ActivityIdentifier(activityIdValue);
+        var userId = new UserIdentifier(userIdValue);
+        
+        var ids = new ActivityAndUserIdentifiers(activityId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
     }
 }
