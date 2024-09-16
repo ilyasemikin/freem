@@ -1,0 +1,480 @@
+-- Begin check Activities Tags
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.check_activities_tags_user_ids()
+returns trigger
+language PLPGSQL
+as $$
+declare 
+	activity_user_id text;
+	tag_user_id text;
+begin
+	select user_id from ${EnvironmentNames.Schema}.activities where id = new.activity_id into activity_user_id;
+	select user_id from ${EnvironmentNames.Schema}.tags where id = new.tag_id into tag_user_id;
+	
+	if activity_user_id <> tag_user_id then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.ActivitiesTagsDifferentUserIds}', 
+	        'activity.user_id must be equals tags.user_id',
+	        array[('${TriggerErrorParameters.ActivityIdTriggerErrorParameterName}', new.activity_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_activities_tags_user_ids_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.activities_tags
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_activities_tags_user_ids();
+
+create or replace procedure ${EnvironmentNames.Schema}.check_activity_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from ${EnvironmentNames.Schema}.activities_tags where activity_id = id into tags_count;
+
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.ActivitiesTagsInvalidCount}', 
+        	'activities must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+        	array[('${TriggerErrorParameters.ActivityIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_activities_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_activity_tags_count(new.activity_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_activities_tags_count_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.activities_tags
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_activities_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_activities_tags_user_ids_trigger on ${EnvironmentNames.Schema}.activities_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_activities_tags_user_ids;
+
+drop trigger if exists check_activities_tags_count_trigger on ${EnvironmentNames.Schema}.activities_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_activities_tags_count_on_insert_or_insert_relation;
+drop procedure if exists ${EnvironmentNames.Schema}.check_activity_tags_count;
+
+-- End dropping
+-- End check Activities Tags
+
+
+
+-- Begin check Records Tags
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.check_records_tags_user_ids()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	record_user_id text;
+	tag_user_id text;
+begin
+	select user_id from ${EnvironmentNames.Schema}.records where id = new.record_id into record_user_id;
+	select user_id from ${EnvironmentNames.Schema}.tags where id = new.tag_id into tag_user_id;
+
+	if record_user_id <> tag_user_id then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RecordsTagsDifferentUserIds}', 
+        	'records.user_id must be equals tags.user_id',
+        	array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_records_tags_user_ids_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.records_tags
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_records_tags_user_ids();
+
+create or replace procedure ${EnvironmentNames.Schema}.check_record_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from ${EnvironmentNames.Schema}.records_tags where record_id = id into tags_count;
+
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+    	    '${TriggerErrorCodes.RecordsTagsInvalidCount}', 
+            'records must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_records_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_record_tags_count(new.record_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_records_tags_count_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.records_tags
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_records_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_records_tags_user_ids_trigger on ${EnvironmentNames.Schema}.records_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_records_tags_user_ids;
+
+drop trigger if exists check_records_tags_count_trigger on ${EnvironmentNames.Schema}.records_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_records_tags_count_on_insert_or_update_relation;
+drop procedure if exists ${EnvironmentNames.Schema}.check_record_tags_count;
+
+-- End dropping
+-- End check Records Tags
+
+
+
+-- Begin check RunningRecords Tags
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_tags_user_ids()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	tag_user_id text;
+begin
+	select user_id from ${EnvironmentNames.Schema}.tags where id = new.tag_id into tag_user_id;
+
+	if new.user_id <> tag_user_id then
+		call ${EnvironmentNames.Schema}.throw_exception(
+            '${TriggerErrorCodes.RunningRecordsTagsDifferentUserIds}', 
+            'running_records.user_id must be equals tags.user_id',
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id), ('${TriggerErrorParameters.TagIdTriggerErrorParameterName}', new.tag_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_running_records_tags_user_ids_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.running_records_tags
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_tags_user_ids();
+
+create or replace procedure ${EnvironmentNames.Schema}.check_running_records_tags_count(id text)
+language PLPGSQL
+as $$
+declare
+	tags_count int;
+begin
+	select count(*) from ${EnvironmentNames.Schema}.running_records where user_id = id into tags_count;
+
+	if tags_count < ${Limits.MinRelatedTagsCount} or tags_count > ${Limits.MaxRelatedTagsCount} then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RunningRecordsTagsInvalidCount}', 
+            'running_records must have tags in range [${Limits.MinRelatedTagsCount}, ${Limits.MaxRelatedTagsCount}]',
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', tags_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_tags_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_running_records_tags_count(new.user_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_running_records_tags_count_trigger
+	after insert or update 
+	on ${EnvironmentNames.Schema}.running_records_tags
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_tags_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_running_records_tags_user_ids_trigger on ${EnvironmentNames.Schema}.running_records_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_tags_user_ids;
+
+drop trigger if exists check_running_records_tags_count_trigger on ${EnvironmentNames.Schema}.running_records_tags;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_tags_count_on_insert_or_update_relation;
+drop procedure if exists ${EnvironmentNames.Schema}.check_running_records_tags_count;
+
+-- End dropping
+-- End check RunningRecords Tags
+
+
+
+-- Begin check Records Activities
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.check_records_activities_user_ids()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	record_user_id text;
+	activity_user_id text;
+begin
+	select user_id from ${EnvironmentNames.Schema}.records where id = new.record_id into record_user_id;
+	select user_id from ${EnvironmentNames.Schema}.activities where id = new.activity_id into activity_user_id;
+
+	if record_user_id <> activity_user_id then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RecordsActivitiesDifferentUserIds}', 
+        	'records.user_id must be equals activities.user_id',
+        	array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', new.record_id), ('${TriggerErrorParameters.ActivityIdTriggerErrorParameterName}', new.activity_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_records_activities_user_ids_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.records_activities
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_records_activities_user_ids();
+
+create or replace procedure ${EnvironmentNames.Schema}.check_record_activities_count(_id text)
+language PLPGSQL
+as $$
+declare 
+    changed_id text;
+	activities_count int;
+begin
+    select id from ${EnvironmentNames.Schema}.records r where id = _id into changed_id;
+	select count(*) from ${EnvironmentNames.Schema}.records_activities where record_id = _id into activities_count;
+
+    if changed_id is null then
+        return;
+    end if;
+
+	if activities_count < ${Limits.MinRelatedActivitiesCount} or activities_count > ${Limits.MaxRelatedActivitiesCount} then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RecordsActivitiesInvalidCount}', 
+            'running_records must have activities in range [${Limits.MinRelatedActivitiesCount}, ${Limits.MaxRelatedActivitiesCount}]',
+            array[('${TriggerErrorParameters.RecordIdTriggerErrorParameterName}', _id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', activities_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_record()
+returns trigger
+language PLPGSQL
+as $$
+begin 
+	call ${EnvironmentNames.Schema}.check_record_activities_count(new.id);
+	return new;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_or_update_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin 
+	call ${EnvironmentNames.Schema}.check_record_activities_count(new.record_id);
+	return new;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_record_activities_count_on_delete_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_record_activities_count(old.record_id);
+	return old;
+end;
+$$;
+
+create constraint trigger check_record_activities_count_trigger
+	after insert
+	on ${EnvironmentNames.Schema}.records
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_record();
+
+create constraint trigger check_record_activities_count_delete_trigger
+	after delete
+	on ${EnvironmentNames.Schema}.records_activities
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_record_activities_count_on_delete_relation();
+
+create constraint trigger check_record_activities_count_insert_or_update_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.records_activities
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_or_update_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_records_activities_user_ids_trigger on ${EnvironmentNames.Schema}.records_activities;
+drop function if exists ${EnvironmentNames.Schema}.check_records_activities_user_ids;
+drop trigger if exists check_record_activities_count_trigger on ${EnvironmentNames.Schema}.records;
+drop function if exists ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_record;
+drop trigger if exists check_record_activities_count_delete_trigger on ${EnvironmentNames.Schema}.records_activities;
+drop trigger if exists check_record_activities_count_insert_or_update_trigger on ${EnvironmentNames.Schema}.records_activities;
+drop function if exists ${EnvironmentNames.Schema}.check_record_activities_count_on_delete_relation;
+drop function if exists ${EnvironmentNames.Schema}.check_record_activities_count_on_insert_or_update_relation;
+drop procedure if exists ${EnvironmentNames.Schema}.check_record_activities_count;
+
+-- End dropping
+-- End check Records Activities
+
+
+
+-- Begin check RunningRecords Activities
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_activities_user_ids()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	activity_user_id text;
+begin
+	select user_id from ${EnvironmentNames.Schema}.activities where id = new.activity_id into activity_user_id;
+
+	if new.user_id <> activity_user_id then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds}', 
+        	'running_records.user_id must be equals activities.user_id',
+        	array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', new.user_id), ('${TriggerErrorParameters.ActivityIdTriggerErrorParameterName}', new.activity_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	return new;
+end;
+$$;
+
+create constraint trigger check_running_records_activities_user_ids_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.running_records_activities
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_activities_user_ids();
+
+create or replace procedure ${EnvironmentNames.Schema}.check_running_record_activities_count(id text)
+language PLPGSQL
+as $$
+declare
+    changed_id text;
+	activities_count int;
+begin
+    select user_id from ${EnvironmentNames.Schema}.running_records where user_id = id into changed_id;
+	select count(*) from ${EnvironmentNames.Schema}.running_records_activities where user_id = id into activities_count;
+
+    if changed_id is null then
+        return;
+    end if;
+
+	if activities_count < ${Limits.MinRelatedActivitiesCount} or activities_count > ${Limits.MaxRelatedActivitiesCount} then
+	    call ${EnvironmentNames.Schema}.throw_exception(
+	        '${TriggerErrorCodes.RunningRecordsActivitiesInvalidCount}', 
+            'running_records must have activities in range [${Limits.MinRelatedActivitiesCount}, ${Limits.MaxRelatedActivitiesCount}]',
+            array[('${TriggerErrorParameters.UserIdTriggerErrorParameterName}', id), ('${TriggerErrorParameters.ActualCountTriggerErrorParameterName}', activities_count)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_activities_count_on_insert_running_record()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_running_record_activities_count(new.user_id);
+	return new;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_activities_count_on_delete_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_running_record_activities_count(old.user_id);
+	return old;
+end;
+$$;
+
+create or replace function ${EnvironmentNames.Schema}.check_running_records_activities_count_on_iu_relation()
+returns trigger
+language PLPGSQL
+as $$
+begin
+	call ${EnvironmentNames.Schema}.check_running_record_activities_count(new.user_id);
+	return new;
+end;
+$$;
+
+create constraint trigger check_running_records_activities_count_trigger
+	after insert
+	on ${EnvironmentNames.Schema}.running_records
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_activities_count_on_insert_running_record();
+
+create constraint trigger check_running_records_activities_count_delete_trigger
+	after delete
+	on ${EnvironmentNames.Schema}.running_records_activities
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_activities_count_on_delete_relation();
+
+create constraint trigger check_running_records_activities_count_insert_or_update_trigger
+	after insert or update
+	on ${EnvironmentNames.Schema}.running_records_activities
+	deferrable initially deferred
+	for each row
+	execute procedure ${EnvironmentNames.Schema}.check_running_records_activities_count_on_iu_relation();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger if exists check_running_records_activities_user_ids_trigger on ${EnvironmentNames.Schema}.running_records_activities;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_activities_user_ids;
+
+drop trigger if exists check_running_records_activities_count_trigger on ${EnvironmentNames.Schema}.running_records;
+drop trigger if exists check_running_records_activities_count_delete_trigger on ${EnvironmentNames.Schema}.running_records_activities;
+drop trigger if exists check_running_records_activities_count_insert_or_update_trigger on ${EnvironmentNames.Schema}.running_records_activities;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_activities_count_on_insert_running_record;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_activities_count_on_delete_relation;
+drop function if exists ${EnvironmentNames.Schema}.check_running_records_activities_count_on_iu_relation;
+drop procedure if exists ${EnvironmentNames.Schema}.check_running_record_activities_count;
+
+-- End dropping
+-- End check RunningRecords Activities
