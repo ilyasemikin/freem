@@ -1,5 +1,6 @@
 ﻿using Freem.EFCore.Extensions;
 using Freem.Entities.Identifiers;
+using Freem.Entities.Identifiers.Multiple;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
@@ -132,5 +133,103 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         // Assert
         var concreteException = Assert.IsType<NotFoundException>(exception);
         Assert.Equal(id, concreteException.Id);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldSuccess_WhenTagExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbTag = EntitiesFactory.CreateTag();
+        
+        await Database.AddRangeAsync(dbUser, dbTag);
+        await Database.SaveChangesAsync();
+        
+        var tagId = new TagIdentifier(dbTag.Id);
+        
+        // Act
+        var result = await Repository.FindByIdAsync(tagId);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+
+        var tag = result.Entity;
+        
+        Assert.Equal(dbTag.Id, tag.Id.Value);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldFailure_WhenTagDoesNotExist()
+    {
+        // Arrange
+        var tagIdValue = Guid.NewGuid().ToString();
+        var tagId = new TagIdentifier(tagIdValue);
+        
+        // Act
+        var result = await Repository.FindByIdAsync(tagId);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldSuccess_WhenTagExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbTag = EntitiesFactory.CreateTag();
+        
+        await Database.AddRangeAsync(dbUser, dbTag);
+        await Database.SaveChangesAsync();
+        
+        var tagId = new TagIdentifier(dbTag.Id);
+        var userId = new UserIdentifier(dbUser.Id);
+        var ids = new TagAndUserIdentifiers(tagId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+
+        var tag = result.Entity;
+        
+        Assert.NotNull(tag);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task FindAsync_ShouldFailure_WhenPartOfIdsNotExists(bool tagIdExists, bool userIdExists)
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbTag = EntitiesFactory.CreateTag();
+        
+        await Database.AddRangeAsync(dbUser, dbTag);
+        await Database.SaveChangesAsync();
+        
+        var tagIdValue = tagIdExists ? dbTag.Id : Guid.NewGuid().ToString();
+        var userIdValue = userIdExists ? dbUser.Id : Guid.NewGuid().ToString();
+        
+        var tagId = new TagIdentifier(tagIdValue);
+        var userId = new UserIdentifier(userIdValue);
+        
+        var ids = new TagAndUserIdentifiers(tagId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
     }
 }

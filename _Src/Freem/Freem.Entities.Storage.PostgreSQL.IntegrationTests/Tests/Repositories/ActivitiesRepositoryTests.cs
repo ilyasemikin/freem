@@ -184,8 +184,9 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
-        var dbActivity = EntitiesFactory.CreateActivity();
         var dbTags = EntitiesFactory.CreateTags(2);
+        var dbActivity = EntitiesFactory.CreateActivity();
+        dbActivity.Tags = dbTags.ToList();
         
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.AddRangeAsync(dbTags);

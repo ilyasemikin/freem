@@ -279,4 +279,48 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         var concreteException = Assert.IsType<NotFoundException>(exception);
         Assert.Equal(id, concreteException.Id);
     }
+
+    [Fact]
+    public async Task FindByUserIdAsync_ShouldSuccess_WhenEntityExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbRecord = EntitiesFactory.CreateRunningRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.SaveChangesAsync();
+        
+        var userId = new UserIdentifier(dbRecord.UserId);
+        
+        // Act
+        var result = await Repository.FindByUserIdAsync(userId);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+        
+        var record = result.Entity;
+        
+        Assert.Equal(dbRecord.UserId, record.UserId.Value);
+    }
+
+    [Fact]
+    public async Task FindByIdUserAsync_ShouldFailure_WhenEntityDoesNotExist()
+    {
+        // Arrange
+        var idValue = Guid.NewGuid().ToString();
+        var userId = new UserIdentifier(idValue);
+        
+        // Act
+        var result = await Repository.FindByUserIdAsync(userId);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
+    }
 }

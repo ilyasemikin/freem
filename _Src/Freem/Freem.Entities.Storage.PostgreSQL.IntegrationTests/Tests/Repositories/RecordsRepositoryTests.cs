@@ -1,5 +1,6 @@
 ﻿using Freem.EFCore.Extensions;
 using Freem.Entities.Identifiers;
+using Freem.Entities.Identifiers.Multiple;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
@@ -287,5 +288,115 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         
         var concreteException = Assert.IsType<NotFoundException>(exception);
         Assert.Equal(id, concreteException.Id);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldSuccess_WhenEntityExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbTags = EntitiesFactory.CreateTags(2);
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        dbRecord.Tags = dbTags.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.AddRangeAsync(dbTags);
+        await Database.SaveChangesAsync();
+        
+        // Act
+        var id = new RecordIdentifier(dbRecord.Id);
+        
+        var result = await Repository.FindByIdAsync(id);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+
+        var record = result.Entity;
+        
+        Assert.Equal(dbRecord.Id, record.Id.Value);
+    }
+
+    [Fact]
+    public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
+    {
+        // Act
+        var idValue = Guid.NewGuid().ToString();
+        var id = new RecordIdentifier(idValue);
+
+        var result = await Repository.FindByIdAsync(id);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldSuccess_WhenEntityExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.SaveChangesAsync();
+        
+        var recordId = new RecordIdentifier(dbRecord.Id);
+        var userId = new UserIdentifier(dbRecord.UserId);
+        
+        var ids = new RecordAndUserIdentifiers(recordId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Founded);
+        Assert.NotNull(result.Entity);
+        
+        var record = result.Entity;
+        
+        Assert.Equal(dbRecord.Id, record.Id.Value);
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(false, false)]
+    public async Task FindAsync_ShouldFailure_WhenPartOfIdsNotExists(bool recordIdExists, bool userIdExists)
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.SaveChangesAsync();
+
+        var recordIdValue = recordIdExists ? dbRecord.Id : Guid.NewGuid().ToString();
+        var userIdValue = userIdExists ? dbRecord.UserId : Guid.NewGuid().ToString();
+        
+        var recordId = new RecordIdentifier(recordIdValue);
+        var userId = new UserIdentifier(userIdValue);
+        
+        var ids = new RecordAndUserIdentifiers(recordId, userId);
+        
+        // Act
+        var result = await Repository.FindAsync(ids);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.Founded);
+        Assert.Null(result.Entity);
     }
 }

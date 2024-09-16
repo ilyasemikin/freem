@@ -8,5 +8,5 @@ public interface IRunningRecordRepository : IWriteRepository<RunningRecord, User
 {
     Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(
         UserIdentifier userId,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 }
