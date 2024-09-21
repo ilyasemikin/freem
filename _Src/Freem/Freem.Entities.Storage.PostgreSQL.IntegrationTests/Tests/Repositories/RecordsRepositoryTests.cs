@@ -45,12 +45,43 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Repository.CreateAsync(record);
 
         // Assert
-        var dbRecordActual = await Database.Records.FindAsync(record.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbRecordActual = await Database.Records
+            .Include(e => e.Activities)
+            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
         
         Assert.Equal(dbRecord, dbRecordActual);
         Assert.NotNull(dbEvent);
         Assert.Equal(EventAction.Created, dbEvent.Action);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldNotUpdateCreatedEntity_WhenEntityIsNotUpdatedActually()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.SaveChangesAsync();
+
+        var record = dbRecord.MapToDomainEntity();
+        
+        // Act
+        await Repository.UpdateAsync(record);
+        
+        // Assert
+        var dbRecordActual = await Database.Records
+            .Include(e => e.Activities)
+            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        
+        Assert.NotNull(dbRecordActual);
+        Assert.Null(dbRecordActual.UpdatedAt);
+        Assert.Null(dbEvent);
     }
 
     [Fact]
@@ -145,7 +176,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
         
         Assert.NotEqual(dbRecord, dbRecordActual);
         Assert.Equal(dbUpdatedRecord, dbRecordActual);
@@ -266,7 +297,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
         
         Assert.Null(dbRecordActual);
         Assert.NotNull(dbEvent);

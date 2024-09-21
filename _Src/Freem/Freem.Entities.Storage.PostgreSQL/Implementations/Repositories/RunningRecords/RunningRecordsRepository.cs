@@ -6,6 +6,7 @@ using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -18,19 +19,23 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
+    private readonly IEqualityComparer<RunningRecord> _equalityComparer;
     private readonly IEventEntityFactory<RunningRecordEvent, RunningRecord> _eventFactory;
 
     public RunningRecordsRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
+        IEqualityComparer<RunningRecord> equalityComparer,
         IEventEntityFactory<RunningRecordEvent, RunningRecord> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
+        _equalityComparer = equalityComparer;
         _eventFactory = eventFactory;
     }
 
@@ -52,12 +57,14 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
     public async Task UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
-        var dbEntity = await _database.RunningRecords.FirstOrDefaultAsync(
-            e => e.UserId == entity.UserId.Value,
-            cancellationToken);
+        var dbEntity = await _database.RunningRecords.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
 
+        var actualEntity = dbEntity.MapToDomainEntity();
+        if (_equalityComparer.Equals(entity, actualEntity))
+            return;
+        
         dbEntity.Name = entity.Name;
         dbEntity.Description = entity.Description;
 
@@ -74,11 +81,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
     public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)
     {
-        var dbEntity = await _database.RunningRecords
-            .Include(e => e.Activities)
-            .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == id.Value, cancellationToken);
-
+        var dbEntity = await _database.RunningRecords.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
 

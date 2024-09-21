@@ -2,6 +2,7 @@
 using Freem.Converters.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Abstractions.Identifiers;
+using Freem.Entities.Comparers.DependencyInjection.Microsoft;
 using Freem.Entities.Factories.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
@@ -31,6 +32,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddEventEntityFactories()
+            .AddEntitiesEqualityComparers()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddRepositories();

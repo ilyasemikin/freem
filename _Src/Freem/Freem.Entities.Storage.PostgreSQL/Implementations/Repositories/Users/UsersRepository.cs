@@ -3,6 +3,7 @@ using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -14,16 +15,20 @@ internal sealed class UsersRepository : IUsersRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
+    private readonly IEqualityComparer<User> _equalityComparer;
 
     public UsersRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler)
+        DatabaseContextWriteExceptionHandler exceptionHandler,
+        IEqualityComparer<User> equalityComparer)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
+        _equalityComparer = equalityComparer;
     }
 
     public async Task CreateAsync(User entity, CancellationToken cancellationToken = default)
@@ -41,12 +46,14 @@ internal sealed class UsersRepository : IUsersRepository
     public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        
-        var dbEntity = await _database.Users.FirstOrDefaultAsync(
-            e => e.Id == entity.Id.Value,
-            cancellationToken);
+
+        var dbEntity = await _database.Users.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
+
+        var actualEntity = dbEntity.MapToDomainEntity();
+        if (_equalityComparer.Equals(entity, actualEntity))
+            return;
 
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);

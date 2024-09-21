@@ -8,6 +8,7 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -21,19 +22,23 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
+    private readonly IEqualityComparer<Activity> _equalityComparer;
     private readonly IEventEntityFactory<ActivityEvent, Activity> _eventFactory;
 
     public ActivitiesRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
+        IEqualityComparer<Activity> equalityComparer,
         IEventEntityFactory<ActivityEvent, Activity> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
+        _equalityComparer = equalityComparer;
         _eventFactory = eventFactory;
     }
 
@@ -57,12 +62,13 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var dbEntity = await _database.Activities
-            .Include(e => e.Tags)
-            .FirstOrDefaultAsync(
-                e => e.Id == entity.Id.Value && e.UserId == entity.UserId.Value, cancellationToken);
+        var dbEntity = await _database.Activities.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
+
+        var actualEntity = dbEntity.MapToDomainEntity();
+        if (_equalityComparer.Equals(entity, actualEntity))
+            return;
         
         dbEntity.Name = entity.Name;
         dbEntity.Status = entity.Status.MapToDatabaseEntityStatus();
@@ -79,7 +85,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        var dbEntity = await _database.Activities.FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
+        var dbEntity = await _database.Activities.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
 

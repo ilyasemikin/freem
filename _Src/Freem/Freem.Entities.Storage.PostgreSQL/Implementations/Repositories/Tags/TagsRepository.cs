@@ -8,6 +8,7 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -20,19 +21,23 @@ internal sealed class TagsRepository : ITagsRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
+    private readonly IEqualityComparer<Tag> _equalityComparer;
     private readonly IEventEntityFactory<TagEvent, Tag> _eventFactory;
 
     public TagsRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
+        IEqualityComparer<Tag> equalityComparer,
         IEventEntityFactory<TagEvent, Tag> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
+        _equalityComparer = equalityComparer;
         _eventFactory = eventFactory;
     }
 
@@ -53,12 +58,14 @@ internal sealed class TagsRepository : ITagsRepository
     public async Task UpdateAsync(Tag entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        
-        var dbEntity = await _database.Tags.FirstOrDefaultAsync(
-            e => e.Id == entity.Id.Value && e.UserId == entity.UserId.Value, 
-            cancellationToken);
+
+        var dbEntity = await _database.Tags.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
+
+        var actualEntity = dbEntity.MapToDomainEntity();
+        if (_equalityComparer.Equals(actualEntity, entity))
+            return;
 
         dbEntity.Name = entity.Name;
 
@@ -71,8 +78,8 @@ internal sealed class TagsRepository : ITagsRepository
     public async Task RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
-        
-        var dbEntity = await _database.Tags.FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
+
+        var dbEntity = await _database.Tags.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
 

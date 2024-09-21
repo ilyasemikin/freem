@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Abstractions;
+﻿using System.Collections;
+using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Factories;
 using Freem.Entities.Events;
 using Freem.Entities.Identifiers;
@@ -8,6 +9,7 @@ using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -20,19 +22,23 @@ internal sealed class RecordsRepository : IRecordsRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
+    private readonly IEqualityComparer<Record> _equalityComparer;
     private readonly IEventEntityFactory<RecordEvent, Record> _eventFactory;
 
     public RecordsRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
+        IEqualityComparer<Record> equalityComparer,
         IEventEntityFactory<RecordEvent, Record> eventFactory)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
+        _equalityComparer = equalityComparer;
         _eventFactory = eventFactory;
     }
 
@@ -58,12 +64,14 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         ArgumentNullException.ThrowIfNull(entity);
         
-        var dbEntity = await _database.Records.FirstOrDefaultAsync(
-            e => e.Id == entity.Id.Value && e.UserId == entity.UserId.Value,
-            cancellationToken);
+        var dbEntity = await _database.Records.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
 
+        var actualEntity = dbEntity.MapToDomainEntity();
+        if (_equalityComparer.Equals(entity, actualEntity))
+            return;
+        
         dbEntity.Name = entity.Name;
         dbEntity.Description = entity.Description;
 
@@ -83,11 +91,7 @@ internal sealed class RecordsRepository : IRecordsRepository
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        var dbEntity = await _database.Records
-            .Include(e => e.Activities)
-            .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.Id == id.Value, cancellationToken);
-
+        var dbEntity = await _database.Records.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
 

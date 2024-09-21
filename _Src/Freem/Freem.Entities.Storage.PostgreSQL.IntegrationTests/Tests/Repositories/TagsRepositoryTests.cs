@@ -40,7 +40,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         
         // Assert
         var dbTagActual = await Database.Tags.FindAsync(tag.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
         
         Assert.Equal(dbTag, dbTagActual);
         Assert.NotNull(dbEvent);
@@ -69,12 +69,36 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
 
         // Assert
         var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
         
         Assert.NotEqual(dbTag, dbTagActual);
         Assert.Equal(dbUpdatedTag, dbTagActual);
         Assert.NotNull(dbEvent);
         Assert.Equal(EventAction.Updated, dbEvent.Action);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldNotUpdateCreatedEntity_WhenEntityIsNotUpdatedActually()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbTag = EntitiesFactory.CreateTag();
+        
+        await Database.AddRangeAsync(dbUser, dbTag);
+        await Database.SaveChangesAsync();
+
+        var tag = dbTag.MapToDomainEntity();
+        
+        // Act
+        await Repository.UpdateAsync(tag);
+        
+        // Assert
+        var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        
+        Assert.NotNull(dbActualTag);
+        Assert.Null(dbActualTag.UpdatedAt);
+        Assert.Null(dbEvent);
     }
 
     [Fact]
@@ -113,7 +137,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         
         // Assert
         var dbTagActual = await Database.Tags.FindAsync(tag.Id.Value);
-        var dbEvent = await Database.Events.FindEventAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
 
         Assert.Null(dbTagActual);
         Assert.NotNull(dbEvent);
