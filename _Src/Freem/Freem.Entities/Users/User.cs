@@ -1,19 +1,20 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
 using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Users;
 
-public class User : 
+public sealed class User : 
     IEntity<UserIdentifier>, 
     ICloneable<User>
 {
     public UserIdentifier Id { get; }
-    public string Nickname { get; }
+    public Nickname Nickname { get; }
 
-    public User(UserIdentifier id, string nickname)
+    public User(UserIdentifier id, Nickname nickname)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(nickname);
+        ArgumentNullException.ThrowIfNull(nickname);
 
         Id = id;
         Nickname = nickname;

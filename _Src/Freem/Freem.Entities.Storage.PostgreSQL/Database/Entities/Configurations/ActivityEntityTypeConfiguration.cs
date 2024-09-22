@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Activities;
+﻿using Freem.Entities.Activities.Models;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
@@ -26,8 +26,10 @@ internal sealed class ActivityEntityTypeConfiguration : IEntityTypeConfiguration
 
         builder
             .Property(e => e.Name)
-            .HasMaxLength(Activity.MaxNameLength)
-            .HasColumnName(EntitiesNames.Activities.Properties.Name);
+            .HasMaxLength(ActivityName.MaxLength)
+            .HasColumnName(EntitiesNames.Activities.Properties.Name)
+            .HasDefaultValue("Default")
+            .IsRequired();
 
         builder
             .Property(e => e.Status)

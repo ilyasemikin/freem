@@ -3,23 +3,21 @@ using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Relations;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Activities.Models;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
-using Freem.Enums.Exceptions;
 
 namespace Freem.Entities.Activities;
 
-public class Activity : 
+public sealed class Activity : 
     IEntity<ActivityIdentifier>, 
     IEntityRelation<Tag, TagIdentifier>, 
     ICloneable<Activity>
 {
-    public const int MaxNameLength = 128;
-
-    private string _name = string.Empty;
-    private ActivityStatus _status;
+    private ActivityName _activityName = null!;
+    private ActivityStatus _status = null!;
 
     public ActivityIdentifier Id { get; }
     public UserIdentifier UserId { get; }
@@ -27,16 +25,14 @@ public class Activity :
 
     IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
-    public string Name
+    public ActivityName Name
     {
-        get => _name;
+        get => _activityName;
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            if (value.Length > MaxNameLength)
-                throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
-
-            _name = value;
+            
+            _activityName = value;
         }
     }
 
@@ -45,8 +41,8 @@ public class Activity :
         get => _status;
         set
         {
-            InvalidEnumValueException<ActivityStatus>.ThrowIfValueInvalid(value);
-
+            ArgumentNullException.ThrowIfNull(value);
+            
             _status = value;
         }
     }
@@ -54,6 +50,7 @@ public class Activity :
     public Activity(
         ActivityIdentifier id,
         UserIdentifier userId,
+        ActivityName name,
         RelatedTagsCollection relatedTags,
         ActivityStatus status)
     {
@@ -61,15 +58,15 @@ public class Activity :
 
         Id = id;
         UserId = userId;
+        Name = name;
         Tags = relatedTags;
         Status = status;
     }
 
     public Activity Clone()
     {
-        return new Activity(Id, UserId, Tags, Status)
+        return new Activity(Id, UserId, Name, Tags, Status)
         {
-            Name = Name,
             Status = Status
         };
     }

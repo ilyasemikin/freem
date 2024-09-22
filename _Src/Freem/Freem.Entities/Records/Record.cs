@@ -6,6 +6,7 @@ using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Identifiers;
+using Freem.Entities.Records.Models;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
@@ -13,18 +14,12 @@ using Freem.Time.Models;
 
 namespace Freem.Entities.Records;
 
-public class Record : 
+public sealed class Record : 
     IEntity<RecordIdentifier>, 
     IEntityRelation<Activity, ActivityIdentifier>, 
     IEntityRelation<Tag, TagIdentifier>,
     ICloneable<Record>
 {
-    public const int MaxNameLength = 128;
-    public const int MaxDescriptionLength = 1024;
-
-    private string? _name;
-    private string? _description;
-
     public RecordIdentifier Id { get; }
     public UserIdentifier UserId { get; }
     public RelatedActivitiesCollection Activities { get; }
@@ -33,29 +28,8 @@ public class Record :
     IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier> IEntityRelation<Activity, ActivityIdentifier>.RelatedEntities => Activities;
     IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
-    public string? Name
-    {
-        get => _name;
-        set
-        {
-            if (value?.Length > MaxNameLength)
-                throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
-
-            _name = value;
-        }
-    }
-
-    public string? Description
-    {
-        get => _description;
-        set
-        {
-            if (value?.Length > MaxDescriptionLength)
-                throw new ArgumentException($"Length cannot be more than {MaxDescriptionLength}", nameof(value));
-
-            _description = value;
-        }
-    }
+    public RecordName? Name { get; set; }
+    public RecordDescription? Description { get; set; }
 
     public DateTimePeriod Period { get; set; }
 

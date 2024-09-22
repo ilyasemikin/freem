@@ -1,30 +1,26 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
 using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Tags.Models;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Tags;
 
-public class Tag : 
+public sealed class Tag : 
     IEntity<TagIdentifier>,
     ICloneable<Tag>
 {
-    public const int MaxNameLength = 128;
-
-    private string _name = string.Empty;
+    private TagName _name = null!;
 
     public TagIdentifier Id { get; }
     public UserIdentifier UserId { get; }
 
-    public string Name
+    public TagName Name
     {
         get => _name;
         set
         {
-            ArgumentException.ThrowIfNullOrEmpty(nameof(value));
-
-            if (value.Length > MaxNameLength)
-                throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
 
             _name = value;
         }
@@ -33,7 +29,7 @@ public class Tag :
     public Tag(
         TagIdentifier id, 
         UserIdentifier userId, 
-        string name)
+        TagName name)
     {
         Id = id;
         UserId = userId;

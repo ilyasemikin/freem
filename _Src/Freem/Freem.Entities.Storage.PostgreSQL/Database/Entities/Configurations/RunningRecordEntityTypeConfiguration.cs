@@ -1,4 +1,4 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Entities.Records.Models;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +20,12 @@ internal sealed class RunningRecordEntityTypeConfiguration : IEntityTypeConfigur
 
         builder
             .Property(e => e.Name)
-            .HasMaxLength(RunningRecord.MaxNameLength)
+            .HasMaxLength(RecordName.MaxLength)
             .HasColumnName(EntitiesNames.RunningRecords.Properties.Name);
 
         builder
             .Property(e => e.Description)
-            .HasMaxLength(RunningRecord.MaxDescriptionLength)
+            .HasMaxLength(RecordDescription.MaxLength)
             .HasColumnName(EntitiesNames.RunningRecords.Properties.Description);
 
         builder

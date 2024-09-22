@@ -7,7 +7,6 @@ using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Entities.Users.Identifiers;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 

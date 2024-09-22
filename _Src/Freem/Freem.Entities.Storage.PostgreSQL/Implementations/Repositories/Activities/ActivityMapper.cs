@@ -6,7 +6,7 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Tags;
 using Freem.Entities.Users.Identifiers;
 using DatabaseActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
-using EntityActivityStatus = Freem.Entities.Activities.ActivityStatus;
+using EntityActivityStatus = Freem.Entities.Activities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 
@@ -25,10 +25,10 @@ internal static class ActivityMapper
 
     public static DatabaseActivityStatus MapToDatabaseEntityStatus(this EntityActivityStatus status)
     {
-        return status switch
+        return (EntityActivityStatus.Value)status switch
         {
-            EntityActivityStatus.Active => DatabaseActivityStatus.Active,
-            EntityActivityStatus.Archived => DatabaseActivityStatus.Archived,
+            EntityActivityStatus.Value.Active => DatabaseActivityStatus.Active,
+            EntityActivityStatus.Value.Archived => DatabaseActivityStatus.Archived,
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -37,21 +37,18 @@ internal static class ActivityMapper
     {
         var id = new ActivityIdentifier(entity.Id);
         var userId = new UserIdentifier(entity.UserId);
+        var name = entity.Name;
         var tags = MapToDomainRelatedTags(entity);
         
-        var activity = new Activity(id, userId, tags, MapToDomainEntityStatus(entity.Status));
-        if (entity.Name is not null)
-            activity.Name = entity.Name;
-        
-        return activity;
+        return new Activity(id, userId, name, tags, MapToDomainEntityStatus(entity.Status));
     }
     
     public static EntityActivityStatus MapToDomainEntityStatus(this DatabaseActivityStatus status)
     {
         return status switch
         {
-            Database.Entities.Models.ActivityStatus.Active => EntityActivityStatus.Active,
-            Database.Entities.Models.ActivityStatus.Archived => EntityActivityStatus.Archived,
+            Database.Entities.Models.ActivityStatus.Active => EntityActivityStatus.Value.Active,
+            Database.Entities.Models.ActivityStatus.Archived => EntityActivityStatus.Value.Archived,
             _ => throw new ArgumentOutOfRangeException()
         };
     }

@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tests\_Common\" />
+  </ItemGroup>
+
 </Project>

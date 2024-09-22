@@ -1,5 +1,4 @@
-﻿using Freem.Identifiers.Abstractions;
-using Freem.Identifiers.Base;
+﻿using Freem.Identifiers.Base;
 using Freem.Identifiers.UnitTests.Mocks.Identifiers;
 
 namespace Freem.Identifiers.UnitTests.Tests.Base;
@@ -22,15 +21,28 @@ public class StringIdentifierTests
         {
             { new FirstMockStringIdentifier("123"), null, false }
         };
-    
-    public static TheoryData<StringIdentifier, StringIdentifier, bool> EqualsTestCases { get; } =
-        new()
+
+    public static TheoryData<StringIdentifier, StringIdentifier, bool> EqualsTestCases
+    {
+        get
         {
-            { new FirstMockStringIdentifier("123"), new SecondMockStringIdentifier("123"), false },
-            { new FirstMockStringIdentifier("123"), new SecondMockStringIdentifier("456"), false },
-            { new FirstMockStringIdentifier("123"), new FirstMockStringIdentifier("123"), true },
-            { new SecondMockStringIdentifier("456"), new SecondMockStringIdentifier("456"), true }
-        };
+            var data = new TheoryData<StringIdentifier, StringIdentifier, bool>()
+            {
+                { new FirstMockStringIdentifier("123"), new SecondMockStringIdentifier("123"), false },
+                { new FirstMockStringIdentifier("123"), new SecondMockStringIdentifier("456"), false },
+                { new FirstMockStringIdentifier("123"), new FirstMockStringIdentifier("123"), true },
+                { new SecondMockStringIdentifier("456"), new SecondMockStringIdentifier("456"), true }
+            };
+            
+            var firstIdentifier = new FirstMockStringIdentifier("123");
+            data.Add(firstIdentifier, firstIdentifier, true);
+            
+            var secondIdentifier = new SecondMockStringIdentifier("123");
+            data.Add(secondIdentifier, secondIdentifier, true);
+
+            return data;
+        }
+    }
 
     [Theory]
     [MemberData(nameof(NullableEqualsTestCases))]

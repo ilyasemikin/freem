@@ -1,10 +1,10 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Extensions;
 using Microsoft.EntityFrameworkCore;
+using ActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
 

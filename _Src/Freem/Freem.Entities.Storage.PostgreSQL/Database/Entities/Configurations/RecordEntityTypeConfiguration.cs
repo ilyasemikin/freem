@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records;
+﻿using Freem.Entities.Records.Models;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;
@@ -28,12 +28,12 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
 
         builder
             .Property(e => e.Name)
-            .HasMaxLength(Record.MaxNameLength)
+            .HasMaxLength(RecordName.MaxLength)
             .HasColumnName(EntitiesNames.Records.Properties.Name);
 
         builder
             .Property(e => e.Description)
-            .HasMaxLength(Record.MaxDescriptionLength)
+            .HasMaxLength(RecordDescription.MaxLength)
             .HasColumnName(EntitiesNames.Records.Properties.Description);
 
         builder

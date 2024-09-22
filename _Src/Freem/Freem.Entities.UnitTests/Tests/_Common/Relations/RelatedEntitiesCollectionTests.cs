@@ -3,7 +3,8 @@ using Freem.Entities.Common.Relations.Collections.Base;
 using Freem.Entities.UnitTests.Fixtures.Identifiers;
 using Freem.Entities.UnitTests.Mocs.Entities;
 
-namespace Freem.Entities.UnitTests.Tests.Relations;
+// ReSharper disable once CheckNamespace
+namespace Freem.Entities.UnitTests.Tests.Common.Relations;
 
 public sealed class RelatedEntitiesCollectionTests : IClassFixture<EntitiesClassFixture>
 {

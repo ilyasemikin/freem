@@ -5,7 +5,7 @@ using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
-using Freem.Entities.Records;
+using Freem.Entities.Records.Models;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
@@ -18,12 +18,6 @@ public class RunningRecord :
     IEntityRelation<Tag, TagIdentifier>,
     ICloneable<RunningRecord>
 {
-    public const int MaxNameLength = Record.MaxNameLength;
-    public const int MaxDescriptionLength = Record.MaxDescriptionLength;
-
-    private string? _name;
-    private string? _description;
-
     public UserIdentifier Id => UserId;
     public UserIdentifier UserId { get; }
     public RelatedActivitiesCollection Activities { get; }
@@ -32,29 +26,8 @@ public class RunningRecord :
     IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier> IEntityRelation<Activity, ActivityIdentifier>.RelatedEntities => Activities;
     IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier> IEntityRelation<Tag, TagIdentifier>.RelatedEntities => Tags;
 
-    public string? Name
-    {
-        get => _name;
-        set
-        {
-            if (value?.Length > MaxNameLength)
-                throw new ArgumentException($"Length cannot be more than {MaxNameLength}", nameof(value));
-
-            _name = value;
-        }
-    }
-
-    public string? Description
-    {
-        get => _description;
-        set
-        {
-            if (value?.Length > MaxDescriptionLength)
-                throw new ArgumentException($"Length cannot be more than {MaxDescriptionLength}", nameof(value));
-
-            _description = value;
-        }
-    }
+    public RecordName? Name { get; set; }
+    public RecordDescription? Description { get; set; }
 
     public DateTimeOffset StartAt { get; }
 

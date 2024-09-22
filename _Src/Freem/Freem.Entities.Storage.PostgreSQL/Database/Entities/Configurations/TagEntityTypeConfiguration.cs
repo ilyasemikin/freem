@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Tags;
+using Freem.Entities.Tags.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,7 +27,7 @@ internal sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<TagE
         builder
             .Property(e => e.Name)
             .HasColumnName(EntitiesNames.Tags.Properties.Name)
-            .HasMaxLength(Tag.MaxNameLength)
+            .HasMaxLength(TagName.MaxLength)
             .IsRequired();
 
         builder
