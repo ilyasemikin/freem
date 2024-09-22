@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Freem.Clones;
 using Freem.Collections.Extensions;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 using ActivityStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;

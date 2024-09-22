@@ -8,7 +8,6 @@ public class EmbeddedResourcesTests
 {
     [Theory]
     [InlineData(RecreateDbTriggersMigration.EntitiesTriggersScriptFileName)]
-    [InlineData(RecreateDbTriggersMigration.EventsTriggersScriptFileName)]
     [InlineData(RecreateDbTriggersMigration.ExceptionFunctionsScriptFileName)]
     public void EmbeddedResources_ShouldContain(string name)
     {

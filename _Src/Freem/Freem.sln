@@ -63,6 +63,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Exceptions", "Freem.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Clones", "Freem.Clones\Freem.Clones.csproj", "{D2517216-097A-4117-9734-54EE7A042016}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers", "Freem.Identifiers\Freem.Identifiers.csproj", "{A406CE01-DDBE-413C-9737-E065CF3B5974}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers.UnitTests", "Freem.Identifiers.UnitTests\Freem.Identifiers.UnitTests.csproj", "{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -189,6 +193,14 @@ Global
 		{D2517216-097A-4117-9734-54EE7A042016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2517216-097A-4117-9734-54EE7A042016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2517216-097A-4117-9734-54EE7A042016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A406CE01-DDBE-413C-9737-E065CF3B5974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A406CE01-DDBE-413C-9737-E065CF3B5974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A406CE01-DDBE-413C-9737-E065CF3B5974}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A406CE01-DDBE-413C-9737-E065CF3B5974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

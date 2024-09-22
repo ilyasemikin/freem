@@ -1,10 +1,14 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
+using Freem.Identifiers.Base;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Mocks;
 
-internal class SampleIdentifier : IEntityIdentifier
+internal class SampleIdentifier : StringIdentifier, IEntityIdentifier
 {
-    public string Value { get; } = nameof(SampleIdentifier);
+    public SampleIdentifier() 
+        : base("123")
+    {
+    }
     
     public bool Equals(IEntityIdentifier? other)
     {

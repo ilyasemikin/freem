@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions.Base;
-using Freem.Entities.Storage.Abstractions.Exceptions.Extensions;
 
 namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
@@ -25,7 +24,7 @@ public sealed class NotFoundRelatedException : StorageException
 
     private static string GenerateMessage(IEntityIdentifier relatedId)
     {
-        return $"Related id = {relatedId.ToQuotedString()} not found";
+        return $"Related id = \"{relatedId}\" not found";
     }
 
     private static string GenerateMessage(IReadOnlyList<IEntityIdentifier> relatedIds)
@@ -34,7 +33,7 @@ public sealed class NotFoundRelatedException : StorageException
         {
             0 => $"Related ids not found",
             1 => GenerateMessage(relatedIds[0]),
-            _ => $"Related with ids = {relatedIds.ToListString()}"
+            _ => $"Related with ids = [{string.Join(", ", relatedIds.Select(id => $"\"{id}\""))}]"
         };
     }
 }

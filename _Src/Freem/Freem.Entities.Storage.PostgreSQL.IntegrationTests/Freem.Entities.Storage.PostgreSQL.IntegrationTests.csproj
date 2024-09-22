@@ -35,6 +35,7 @@
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
     </ItemGroup>
 
     <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">

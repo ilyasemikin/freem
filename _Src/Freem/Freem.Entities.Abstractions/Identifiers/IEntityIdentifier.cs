@@ -1,6 +1,7 @@
-﻿namespace Freem.Entities.Abstractions.Identifiers;
+﻿using Freem.Identifiers.Abstractions;
 
-public interface IEntityIdentifier : IEquatable<IEntityIdentifier>
+namespace Freem.Entities.Abstractions.Identifiers;
+
+public interface IEntityIdentifier : IIdentifier, IEquatable<IEntityIdentifier>
 {
-    string Value { get; }
 }

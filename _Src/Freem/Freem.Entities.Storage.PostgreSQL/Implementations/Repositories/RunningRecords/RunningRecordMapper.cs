@@ -1,6 +1,7 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 
@@ -10,7 +11,7 @@ internal static class RunningRecordMapper
     {
         return new RunningRecordEntity
         {
-            UserId = entity.UserId.Value,
+            UserId = entity.UserId,
             Name = entity.Name,
             Description = entity.Description,
             StartAt = entity.StartAt

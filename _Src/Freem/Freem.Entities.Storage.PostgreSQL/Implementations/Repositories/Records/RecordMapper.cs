@@ -1,6 +1,8 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Records;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
+using Freem.Entities.Users.Identifiers;
 using Freem.Time.Models;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -11,12 +13,12 @@ internal static class RecordMapper
     {
         return new RecordEntity
         {
-            Id = entity.Id.Value,
+            Id = entity.Id,
             Name = entity.Name,
             Description = entity.Description,
             StartAt = entity.Period.StartAt,
             EndAt = entity.Period.EndAt,
-            UserId = entity.UserId.Value,
+            UserId = entity.UserId,
         };
     }
 

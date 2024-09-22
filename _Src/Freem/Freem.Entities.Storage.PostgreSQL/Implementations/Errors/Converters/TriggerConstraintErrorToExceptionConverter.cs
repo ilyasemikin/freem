@@ -1,7 +1,7 @@
 ﻿using Freem.Converters.Abstractions;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
-using Freem.Entities.Relations.Collections;
+using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;

@@ -1,7 +1,11 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
+using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords.Extensions;
 
@@ -14,7 +18,7 @@ internal static class RelationsDatabaseContextExtensions
     {
         await context.UpdateRelatedEntitiesAsync<Activity, ActivityIdentifier, RunningRecordActivityRelationEntity>(
             entity,
-            e => e.RunningRecordUserId == entity.Id.Value,
+            e => e.RunningRecordUserId == entity.Id,
             e => e.ActivityId,
             ids => e => ids.Contains(e.ActivityId),
             id => RunningRecordRelationFactory.CreateDatabaseRunningRecordActivityRelation(entity.Id, id),
@@ -28,7 +32,7 @@ internal static class RelationsDatabaseContextExtensions
     {
         await context.UpdateRelatedEntitiesAsync<Tag, TagIdentifier, RunningRecordTagRelationEntity>(
             entity,
-            e => e.RunningRecordUserId == entity.Id.Value,
+            e => e.RunningRecordUserId == entity.Id,
             e => e.TagId,
             ids => e => ids.Contains(e.TagId),
             id => RunningRecordRelationFactory.CreateDatabaseRunningRecordTagRelation(entity.Id, id),

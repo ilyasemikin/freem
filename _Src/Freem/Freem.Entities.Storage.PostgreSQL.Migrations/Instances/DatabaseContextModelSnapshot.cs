@@ -22,7 +22,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "activity_status", new[] { "active", "archived" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "event_action", new[] { "created", "updated", "removed" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
@@ -67,50 +66,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasDatabaseName("activities_user_id_idx");
 
                     b.ToTable("activities", "core_entities");
-                });
-
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("Action")
-                        .HasColumnType("core_entities.event_action")
-                        .HasColumnName("action")
-                        .HasColumnOrder(3);
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasColumnOrder(2);
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("event_type");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id")
-                        .HasColumnOrder(1);
-
-                    b.HasKey("Id")
-                        .HasName("events_pk");
-
-                    b.ToTable("events", "core_entities", t =>
-                        {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
-
-                            t.HasCheckConstraint("events_users_check", "user_id is not null");
-                        });
-
-                    b.HasDiscriminator<string>("EventType").IsComplete(true).HasValue("BaseEventEntity");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
@@ -387,77 +342,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasName("users_pk");
 
                     b.ToTable("users", "core_entities");
-                });
-
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.ActivityEventEntity", b =>
-                {
-                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
-
-                    b.Property<string>("ActivityId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("activity_id");
-
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
-
-                            t.HasCheckConstraint("events_users_check", "user_id is not null");
-                        });
-
-                    b.HasDiscriminator().HasValue("activity");
-                });
-
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.RecordEventEntity", b =>
-                {
-                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
-
-                    b.Property<string>("RecordId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("record_id");
-
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
-
-                            t.HasCheckConstraint("events_users_check", "user_id is not null");
-                        });
-
-                    b.HasDiscriminator().HasValue("record");
-                });
-
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.RunningRecordEventEntity", b =>
-                {
-                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
-
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
-
-                            t.HasCheckConstraint("events_users_check", "user_id is not null");
-                        });
-
-                    b.HasDiscriminator().HasValue("running_record");
-                });
-
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.TagEventEntity", b =>
-                {
-                    b.HasBaseType("Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base.BaseEventEntity");
-
-                    b.Property<string>("TagId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("tag_id");
-
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("events_event_type_check", "(event_type = 'activity' and activity_id is not null and record_id is null and tag_id is null) or (event_type = 'record' and activity_id is null and record_id is not null and tag_id is null) or(event_type = 'running_record' and activity_id is null and record_id is null and tag_id is null) or (event_type = 'tag' and activity_id is null and record_id is null and tag_id is not null)");
-
-                            t.HasCheckConstraint("events_users_check", "user_id is not null");
-                        });
-
-                    b.HasDiscriminator().HasValue("tag");
                 });
 
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>

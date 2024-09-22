@@ -28,6 +28,7 @@
       <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
       <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj" />
+      <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions.Base;
-using Freem.Entities.Storage.Abstractions.Exceptions.Extensions;
 
 namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
@@ -16,6 +15,6 @@ public sealed class NotFoundException : StorageException
 
     private static string GenerateMessage(IEntityIdentifier id)
     {
-        return $"Entity with id = {id.ToQuotedString()} not found";
+        return $"Entity with id = \"{id}\" not found";
     }
 }

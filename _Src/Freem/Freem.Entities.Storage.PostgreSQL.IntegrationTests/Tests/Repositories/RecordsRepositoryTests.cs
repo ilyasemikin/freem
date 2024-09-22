@@ -1,13 +1,12 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Identifiers.Multiple;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
@@ -45,14 +44,9 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Repository.CreateAsync(record);
 
         // Assert
-        var dbRecordActual = await Database.Records
-            .Include(e => e.Activities)
-            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.Equal(dbRecord, dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Created, dbEvent.Action);
     }
 
     [Fact]
@@ -74,14 +68,10 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Repository.UpdateAsync(record);
         
         // Assert
-        var dbRecordActual = await Database.Records
-            .Include(e => e.Activities)
-            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.NotNull(dbRecordActual);
         Assert.Null(dbRecordActual.UpdatedAt);
-        Assert.Null(dbEvent);
     }
 
     [Fact]
@@ -99,7 +89,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         // Act
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -126,7 +116,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         // Act
         var record = dbRecord.MapToDomainEntity();
 
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -172,16 +162,10 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Repository.UpdateAsync(record);
 
         // Assert
-        var dbRecordActual = await Database.Records
-            .Include(e => e.Activities)
-            .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.NotEqual(dbRecord, dbRecordActual);
         Assert.Equal(dbUpdatedRecord, dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Updated, dbEvent.Action);
     }
     
     [Fact]
@@ -194,7 +178,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         // Act
         var record = dbRecord.MapToDomainEntity();
 
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -226,7 +210,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -259,7 +243,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -293,15 +277,9 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Repository.RemoveAsync(record.Id);
         
         // Assert
-        var dbRecordActual = await Database.Records
-            .Include(e => e.Activities)
-            .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.Id == record.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RecordEventEntity>(e => e.RecordId == record.Id.Value);
+        var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.Null(dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Removed, dbEvent.Action);
     }
 
     [Fact]
@@ -312,7 +290,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         var id = new RecordIdentifier(idValue);
         
         // Act
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.RemoveAsync(id));
+        var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
         
         // Assert
         Assert.NotNull(exception);
@@ -349,7 +327,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
 
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.Id, record.Id.Value);
+        Assert.Equal(dbRecord.Id, record.Id);
     }
 
     [Fact]
@@ -395,7 +373,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.Id, record.Id.Value);
+        Assert.Equal(dbRecord.Id, record.Id);
     }
 
     [Theory]

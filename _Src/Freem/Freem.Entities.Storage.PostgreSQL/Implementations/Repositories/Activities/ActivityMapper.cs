@@ -1,9 +1,12 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
+using Freem.Entities.Tags;
+using Freem.Entities.Users.Identifiers;
 using DatabaseActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
-using EntityActivityStatus = Freem.Entities.ActivityStatus;
+using EntityActivityStatus = Freem.Entities.Activities.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 
@@ -13,10 +16,10 @@ internal static class ActivityMapper
     {
         return new ActivityEntity
         {
-            Id = activity.Id.Value,
+            Id = activity.Id,
             Name = activity.Name,
             Status = MapToDatabaseEntityStatus(activity.Status),
-            UserId = activity.UserId.Value
+            UserId = activity.UserId
         };
     }
 

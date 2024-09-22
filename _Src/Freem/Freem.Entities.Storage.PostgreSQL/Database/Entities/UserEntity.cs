@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Freem.Clones;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 

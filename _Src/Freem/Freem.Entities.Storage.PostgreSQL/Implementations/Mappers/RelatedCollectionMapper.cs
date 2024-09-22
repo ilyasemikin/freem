@@ -1,7 +1,9 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
+using Freem.Entities.Tags;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 

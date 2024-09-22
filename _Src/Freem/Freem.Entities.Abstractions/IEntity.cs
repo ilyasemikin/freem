@@ -2,8 +2,8 @@
 
 namespace Freem.Entities.Abstractions;
 
-public interface IEntity<out TIdentifier>
-    where TIdentifier : IEntityIdentifier
+public interface IEntity<TEntityIdentifier>
+    where TEntityIdentifier : IEntityIdentifier
 {
-    TIdentifier Id { get; }
+    TEntityIdentifier Id { get; }
 }

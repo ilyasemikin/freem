@@ -1,5 +1,7 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 
@@ -9,9 +11,9 @@ internal static class TagMapper
     {
         return new TagEntity
         {
-            Id = tag.Id.Value,
+            Id = tag.Id,
             Name = tag.Name,
-            UserId = tag.UserId.Value,
+            UserId = tag.UserId,
         };
     }
 

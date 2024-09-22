@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Relations\" />
+	  <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
 	</ItemGroup>
 
 </Project>

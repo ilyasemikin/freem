@@ -1,12 +1,9 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
-using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
@@ -44,12 +41,9 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Repository.CreateAsync(record);
 
         // Assert
-        var dbRecordActual = await Database.RunningRecords.FindAsync(record.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RunningRecordEventEntity>(e => e.UserId == record.UserId.Value);
+        var dbRecordActual = await Database.RunningRecords.FirstOrDefaultAsync(e => e.UserId == record.Id);
 
         Assert.Equal(dbRecord, dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Created, dbEvent.Action);
     }
 
     [Fact]
@@ -134,13 +128,10 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         var dbRecordActual = await Database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == record.UserId.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RunningRecordEventEntity>(e => e.UserId == record.UserId.Value);
+            .FirstOrDefaultAsync(e => e.UserId == record.UserId);
         
         Assert.NotEqual(dbRecord, dbRecordActual);
         Assert.Equal(dbUpdatedRecord, dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Updated, dbEvent.Action);
     }
 
     [Fact]
@@ -165,11 +156,9 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         var dbActualRecord = await Database.RunningRecords
             .Include(e => e.Activities)
             .FirstOrDefaultAsync(e => e.UserId == dbUser.Id);
-        var dbEvent = await Database.Events.FindEntityAsync<RunningRecordEventEntity>(e => e.UserId == dbUser.Id);
         
         Assert.NotNull(dbActualRecord);
         Assert.Null(dbActualRecord.UpdatedAt);
-        Assert.Null(dbEvent);
     }
 
     [Fact]
@@ -284,12 +273,9 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         var dbRecordActual = await Database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == record.UserId.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<RunningRecordEventEntity>(e => e.UserId == record.UserId.Value);
+            .FirstOrDefaultAsync(e => e.UserId == record.UserId);
         
         Assert.Null(dbRecordActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Removed, dbEvent.Action);
     }
 
     [Fact]
@@ -334,7 +320,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.UserId, record.UserId.Value);
+        Assert.Equal(dbRecord.UserId, record.UserId);
     }
 
     [Fact]

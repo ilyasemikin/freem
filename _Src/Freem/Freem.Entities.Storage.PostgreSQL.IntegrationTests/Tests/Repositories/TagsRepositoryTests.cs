@@ -1,13 +1,11 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Identifiers.Multiple;
 using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
-using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
@@ -39,12 +37,9 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         await Repository.CreateAsync(tag);
         
         // Assert
-        var dbTagActual = await Database.Tags.FindAsync(tag.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
-        
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
+
         Assert.Equal(dbTag, dbTagActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Created, dbEvent.Action);
     }
 
     [Fact]
@@ -68,13 +63,10 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         await Repository.UpdateAsync(tag);
 
         // Assert
-        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
         
         Assert.NotEqual(dbTag, dbTagActual);
         Assert.Equal(dbUpdatedTag, dbTagActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Updated, dbEvent.Action);
     }
 
     [Fact]
@@ -93,12 +85,10 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         await Repository.UpdateAsync(tag);
         
         // Assert
-        var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
         
         Assert.NotNull(dbActualTag);
         Assert.Null(dbActualTag.UpdatedAt);
-        Assert.Null(dbEvent);
     }
 
     [Fact]
@@ -136,12 +126,9 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         await Repository.RemoveAsync(tag.Id);
         
         // Assert
-        var dbTagActual = await Database.Tags.FindAsync(tag.Id.Value);
-        var dbEvent = await Database.Events.FindEntityAsync<TagEventEntity>(e => e.TagId == tag.Id.Value);
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
 
         Assert.Null(dbTagActual);
-        Assert.NotNull(dbEvent);
-        Assert.Equal(EventAction.Removed, dbEvent.Action);
     }
 
     [Fact]
@@ -181,7 +168,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
 
         var tag = result.Entity;
         
-        Assert.Equal(dbTag.Id, tag.Id.Value);
+        Assert.Equal(dbTag.Id, tag.Id);
     }
 
     [Fact]

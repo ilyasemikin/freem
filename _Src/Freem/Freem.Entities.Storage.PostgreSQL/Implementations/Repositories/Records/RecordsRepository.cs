@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using Freem.Entities.Abstractions;
-using Freem.Entities.Abstractions.Factories;
-using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Identifiers.Multiple;
+﻿using Freem.Entities.Records;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
@@ -23,23 +20,19 @@ internal sealed class RecordsRepository : IRecordsRepository
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
     private readonly IEqualityComparer<Record> _equalityComparer;
-    private readonly IEventEntityFactory<RecordEvent, Record> _eventFactory;
 
     public RecordsRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Record> equalityComparer,
-        IEventEntityFactory<RecordEvent, Record> eventFactory)
+        IEqualityComparer<Record> equalityComparer)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
         _equalityComparer = equalityComparer;
-        _eventFactory = eventFactory;
     }
 
     public async Task CreateAsync(Record entity, CancellationToken cancellationToken = default)
@@ -53,8 +46,6 @@ internal sealed class RecordsRepository : IRecordsRepository
         await _database.Records.AddAsync(dbEntity, cancellationToken);
         await _database.AddRangeAsync(dbActivityRelations, cancellationToken);
         await _database.AddRangeAsync(dbTagRelations, cancellationToken);
-
-        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
@@ -81,8 +72,6 @@ internal sealed class RecordsRepository : IRecordsRepository
         await _database.UpdateRelatedActivitiesAsync(entity, cancellationToken);
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
 
-        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
-
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
@@ -97,9 +86,6 @@ internal sealed class RecordsRepository : IRecordsRepository
 
         _database.Remove(dbEntity);
         
-        var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
-
         var context = new DatabaseContextWriteContext(id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
@@ -113,7 +99,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(e => e.Id == id.Value, RecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.Id == id, RecordMapper.MapToDomainEntity, cancellationToken);
     }
     
     public async Task<SearchEntityResult<Record>> FindAsync(
@@ -126,7 +112,7 @@ internal sealed class RecordsRepository : IRecordsRepository
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
-                e => e.Id == ids.RecordId.Value && e.UserId == ids.UserId.Value, 
+                e => e.Id == ids.RecordId && e.UserId == ids.UserId, 
                 RecordMapper.MapToDomainEntity,
                 cancellationToken);
     }
@@ -138,16 +124,9 @@ internal sealed class RecordsRepository : IRecordsRepository
         ArgumentNullException.ThrowIfNull(filter);
         
         return await _database.Records
-            .Where(e => e.UserId == filter.UserId.Value)
+            .Where(e => e.UserId == filter.UserId)
             .OrderBy(e => e.StartAt)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
-    }
-
-    private async Task WriteEventAsync(Record entity, EventAction action, CancellationToken cancellationToken)
-    {
-        var eventEntity = _eventFactory.Create(entity, action);
-        var dbEventEntity = eventEntity.MapToDatabaseEntity();
-        await _database.Events.AddAsync(dbEventEntity, cancellationToken);
     }
 }

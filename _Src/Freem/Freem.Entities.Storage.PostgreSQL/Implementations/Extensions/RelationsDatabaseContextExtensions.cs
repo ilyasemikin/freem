@@ -1,10 +1,10 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Freem.Collections.Extensions;
 using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Abstractions.Identifiers.Extensions;
+using Freem.Entities.Abstractions.Relations;
+using Freem.Entities.Storage.PostgreSQL.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 
@@ -24,7 +24,8 @@ internal static class RelationsDatabaseContextExtensions
     {
         var existedIds = context.FindRelatedIds(whereExpression, idSelectorExpression);
 
-        var (idsToRemove, idsToAdd) = existedIds.ExceptMutual(entity.RelatedEntities.Identifiers.AsValues());
+        var ids = entity.RelatedEntities.Identifiers.Select(id => id.ToString()!);
+        var (idsToRemove, idsToAdd) = existedIds.ExceptMutual(ids);
 
         var removeFilter = removeFilterFactory(idsToRemove);
         await context.RemoveRelationsAsync(removeFilter, cancellationToken);

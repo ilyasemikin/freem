@@ -1,19 +1,16 @@
-﻿using Freem.Entities.Abstractions;
-using Freem.Entities.Abstractions.Factories;
-using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Identifiers.Multiple;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
+using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Sorting.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 
@@ -22,23 +19,19 @@ internal sealed class TagsRepository : ITagsRepository
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
     private readonly IEqualityComparer<Tag> _equalityComparer;
-    private readonly IEventEntityFactory<TagEvent, Tag> _eventFactory;
 
     public TagsRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Tag> equalityComparer,
-        IEventEntityFactory<TagEvent, Tag> eventFactory)
+        IEqualityComparer<Tag> equalityComparer)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
         _equalityComparer = equalityComparer;
-        _eventFactory = eventFactory;
     }
 
     public async Task CreateAsync(Tag entity, CancellationToken cancellationToken = default)
@@ -48,8 +41,6 @@ internal sealed class TagsRepository : ITagsRepository
         var dbEntity = entity.MapToDatabaseEntity();
 
         await _database.Tags.AddAsync(dbEntity, cancellationToken);
-
-        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
@@ -69,8 +60,6 @@ internal sealed class TagsRepository : ITagsRepository
 
         dbEntity.Name = entity.Name;
 
-        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
-        
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
@@ -84,11 +73,8 @@ internal sealed class TagsRepository : ITagsRepository
             throw new NotFoundException(id);
 
         _database.Remove(dbEntity);
-        
-        var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
-        var context = new DatabaseContextWriteContext(entity.Id);
+        var context = new DatabaseContextWriteContext(id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
@@ -98,7 +84,7 @@ internal sealed class TagsRepository : ITagsRepository
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        return await _database.Tags.FindAsync(e => e.Id == id.Value, TagMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Tags.FindAsync(e => e.Id == id, TagMapper.MapToDomainEntity, cancellationToken);
     }
     
     public async Task<SearchEntityResult<Tag>> FindAsync(
@@ -108,7 +94,7 @@ internal sealed class TagsRepository : ITagsRepository
         ArgumentNullException.ThrowIfNull(ids);
         
         return await _database.Tags.FindAsync(
-            e => e.Id == ids.TagId.Value && e.UserId == ids.UserId.Value,
+            e => e.Id == ids.TagId && e.UserId == ids.UserId,
             TagMapper.MapToDomainEntity, 
             cancellationToken);
     }
@@ -120,16 +106,9 @@ internal sealed class TagsRepository : ITagsRepository
         ArgumentNullException.ThrowIfNull(filter);
         
         return await _database.Tags
-            .Where(e => e.UserId == filter.UserId.Value)
+            .Where(e => e.UserId == filter.UserId)
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
-    }
-
-    private async Task WriteEventAsync(Tag entity, EventAction action, CancellationToken cancellationToken)
-    {
-        var eventEntity = _eventFactory.Create(entity, action);
-        var dbEventEntity = eventEntity.MapToDatabaseEntity();
-        await _database.AddAsync(dbEventEntity, cancellationToken);
     }
 }

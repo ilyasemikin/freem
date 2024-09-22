@@ -1,5 +1,4 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
@@ -7,6 +6,8 @@ using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
+using Freem.Entities.Users;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
@@ -64,7 +65,7 @@ internal sealed class UsersRepository : IUsersRepository
         ArgumentNullException.ThrowIfNull(id);
         
         await _database.Users
-            .Where(e => e.Id == id.Value)
+            .Where(e => e.Id == id)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
@@ -74,6 +75,6 @@ internal sealed class UsersRepository : IUsersRepository
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        return await _database.Users.FindAsync(e => e.Id == id.Value, UserMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Users.FindAsync(e => e.Id == id, UserMapper.MapToDomainEntity, cancellationToken);
     }
 }

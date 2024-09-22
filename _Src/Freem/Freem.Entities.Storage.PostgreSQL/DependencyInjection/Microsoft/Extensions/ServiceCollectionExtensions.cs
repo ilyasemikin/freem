@@ -1,27 +1,25 @@
 ﻿using Freem.Converters.Abstractions;
 using Freem.Converters.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
+using Freem.Entities._Common.DependencyInjection;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Comparers.DependencyInjection.Microsoft;
-using Freem.Entities.Factories.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
 using Freem.Entities.Storage.PostgreSQL.Database.Models;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
@@ -31,7 +29,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPostgreSqlStorage(this IServiceCollection services, StorageConfiguration configuration)
     {
         return services
-            .AddEventEntityFactories()
             .AddEntitiesEqualityComparers()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
@@ -95,7 +92,6 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<IRecordsRepository, RecordsRepository>();
         services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
         services.TryAddTransient<IActivitiesRepository, ActivitiesRepository>();
-        services.TryAddTransient<IEventsRepository, EventsRepository>();
         
         return services;
     }

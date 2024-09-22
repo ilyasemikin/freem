@@ -30,8 +30,7 @@ public sealed class ServiceCollectionExtensionsTests
         typeof(IRecordsRepository),
         typeof(IRunningRecordRepository),
         typeof(ITagsRepository),
-        typeof(IUsersRepository),
-        typeof(IEventsRepository)
+        typeof(IUsersRepository)
     };
 
     [Theory]

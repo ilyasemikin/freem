@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Relations.Collections;
+﻿using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Constants;

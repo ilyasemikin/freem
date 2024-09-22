@@ -1,11 +1,9 @@
-﻿using Freem.Entities.Abstractions;
-using Freem.Entities.Abstractions.Factories;
-using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Identifiers.Multiple;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
@@ -23,23 +21,19 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
     private readonly IEqualityComparer<Activity> _equalityComparer;
-    private readonly IEventEntityFactory<ActivityEvent, Activity> _eventFactory;
 
     public ActivitiesRepository(
         DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Activity> equalityComparer,
-        IEventEntityFactory<ActivityEvent, Activity> eventFactory)
+        IEqualityComparer<Activity> equalityComparer)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        ArgumentNullException.ThrowIfNull(eventFactory);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
         _equalityComparer = equalityComparer;
-        _eventFactory = eventFactory;
     }
 
     public async Task CreateAsync(Activity entity, CancellationToken cancellationToken = default)
@@ -51,8 +45,6 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
 
         await _database.Activities.AddAsync(dbEntity, cancellationToken);
         await _database.AddRangeAsync(dbRelations, cancellationToken);
-
-        await WriteEventAsync(entity, EventAction.Created, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
@@ -75,8 +67,6 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
 
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
 
-        await WriteEventAsync(entity, EventAction.Updated, cancellationToken);
-
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
@@ -90,9 +80,6 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
             throw new NotFoundException(id);
 
         _database.Remove(dbEntity);
-        
-        var entity = dbEntity.MapToDomainEntity();
-        await WriteEventAsync(entity, EventAction.Removed, cancellationToken);
 
         var context = new DatabaseContextWriteContext(id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
@@ -106,7 +93,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
         
         return await _database.Activities
             .Include(e => e.Tags)
-            .FindAsync(e => e.Id == id.Value, ActivityMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.Id == id, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Activity>> FindAsync(
@@ -118,7 +105,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
         return await _database.Activities
             .Include(e => e.Tags)
             .FindAsync(
-                e => e.Id == ids.ActivityId.Value && e.UserId == ids.UserId.Value,
+                e => e.Id == ids.ActivityId && e.UserId == ids.UserId,
                 ActivityMapper.MapToDomainEntity, 
                 cancellationToken);
     }
@@ -130,16 +117,9 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
         ArgumentNullException.ThrowIfNull(filter);
         
         return await _database.Activities
-            .Where(e => e.UserId == filter.UserId.Value)
+            .Where(e => e.UserId == filter.UserId)
             .OrderBy(filter.Sorting, ActivityFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
-    }
-
-    private async Task WriteEventAsync(Activity entity, EventAction action, CancellationToken cancellationToken)
-    {
-        var eventEntity = _eventFactory.Create(entity, action);
-        var dbEventEntity = eventEntity.MapToDatabaseEntity();
-        await _database.Events.AddAsync(dbEventEntity, cancellationToken);
     }
 }

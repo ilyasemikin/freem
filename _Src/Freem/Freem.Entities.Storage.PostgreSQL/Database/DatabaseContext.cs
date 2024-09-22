@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database;
 
@@ -17,8 +16,6 @@ internal sealed class DatabaseContext : DbContext
     public DbSet<TagEntity> Tags => Set<TagEntity>();
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
-
-    public DbSet<BaseEventEntity> Events => Set<BaseEventEntity>();
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)

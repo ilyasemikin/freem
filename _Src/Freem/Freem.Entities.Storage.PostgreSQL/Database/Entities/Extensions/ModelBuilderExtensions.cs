@@ -1,11 +1,8 @@
 ﻿using Freem.EFCore.Extensions;
+using Freem.Entities.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations.Events.Base;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Events.Base;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,16 +24,6 @@ internal static class ModelBuilderExtensions
         builder.ApplyConfiguration<TagEntity, TagEntityTypeConfiguration>();
         
         builder.ApplyConfiguration<UserEntity, UserEntityTypeConfiguration>();
-
-        builder.HasPostgresEnum<EventAction>(
-            EnvironmentNames.Schema,
-            EntitiesNames.Events.Models.Action);
-        
-        builder.ApplyConfiguration<BaseEventEntity, BaseEventEntityConfiguration>();
-        builder.ApplyConfiguration<ActivityEventEntity, ActivityEventEntityConfiguration>();
-        builder.ApplyConfiguration<RecordEventEntity, RecordEventEntityConfiguration>();
-        builder.ApplyConfiguration<RunningRecordEventEntity, RunningRecordEventEntityConfiguration>();
-        builder.ApplyConfiguration<TagEventEntity, TagEventEntityConfiguration>();
         
         return builder;
     }

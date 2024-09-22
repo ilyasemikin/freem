@@ -1,5 +1,6 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+using Freem.Entities.Users;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 
@@ -9,7 +10,7 @@ internal static class UserMapper
     {
         return new UserEntity
         {
-            Id = user.Id.Value,
+            Id = user.Id,
             Nickname = user.Nickname
         };
     }
