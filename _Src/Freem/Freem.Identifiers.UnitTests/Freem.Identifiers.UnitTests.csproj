@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
     </ItemGroup>
 
 </Project>

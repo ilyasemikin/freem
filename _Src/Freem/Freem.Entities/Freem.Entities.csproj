@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
-		<ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
-		<ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj" />
-		<ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
-		<ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj"/>
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0"/>
+    </ItemGroup>
 </Project>

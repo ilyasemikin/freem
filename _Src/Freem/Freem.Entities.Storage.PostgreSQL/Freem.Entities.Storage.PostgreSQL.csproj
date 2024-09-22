@@ -1,38 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4"/>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
-	  <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
-	  <ProjectReference Include="..\Freem.Converters\Freem.Converters.csproj" />
-	  <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
-	  <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
-	  <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
-	  <ProjectReference Include="..\Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj" />
-	  <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
-	  <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj" />
-	  <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
-	  <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj" />
-	  <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj" />
-	  <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj"/>
+        <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj"/>
+        <ProjectReference Include="..\Freem.Converters\Freem.Converters.csproj"/>
+        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj"/>
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
+        <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj"/>
+        <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Filler" />
-		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations" />
-		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.UnitTests" />
-		<InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests" />
-		<InternalsVisibleTo Include="Freem.Sandbox" />
-	</ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Filler"/>
+        <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations"/>
+        <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.UnitTests"/>
+        <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests"/>
+        <InternalsVisibleTo Include="Freem.Sandbox"/>
+    </ItemGroup>
 
 </Project>
