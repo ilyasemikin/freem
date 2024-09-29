@@ -27,6 +27,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Freem.AutoFixture\Freem.AutoFixture.csproj"/>
         <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj"/>
+        <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj" />
         <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj"/>
         <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
         <ProjectReference Include="..\Freem.EFCore.Extensions\Freem.EFCore.Extensions.csproj"/>
@@ -36,6 +37,7 @@
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
+        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
     </ItemGroup>
 
     <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">

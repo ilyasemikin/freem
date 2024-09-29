@@ -24,4 +24,9 @@ public sealed class TagIdentifier : StringIdentifier, IEntityIdentifier
     {
         return base.GetHashCode();
     }
+
+    public static implicit operator TagIdentifier(string value)
+    {
+        return new TagIdentifier(value);
+    }
 }

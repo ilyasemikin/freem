@@ -2,10 +2,12 @@
 using Freem.Converters.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities._Common.DependencyInjection;
+using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
@@ -14,10 +16,13 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -32,6 +37,7 @@ public static class ServiceCollectionExtensions
             .AddEntitiesEqualityComparers()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
+            .AddEventsConverters()
             .AddRepositories();
     }
     
@@ -84,6 +90,19 @@ public static class ServiceCollectionExtensions
         
         return services;
     }
+
+    private static IServiceCollection AddEventsConverters(this IServiceCollection services)
+    {
+        services.TryAddSingleton<
+            IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity>, 
+            EventEntityToDatabaseEntityConverter>();
+        
+        services.TryAddTransient<
+            IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>>,
+            DatabaseEntityToEventEntityConverter>();
+        
+        return services;
+    }
     
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
@@ -92,6 +111,7 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<IRecordsRepository, RecordsRepository>();
         services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
         services.TryAddTransient<IActivitiesRepository, ActivitiesRepository>();
+        services.TryAddTransient<IEventsRepository, EventsRepository>();
         
         return services;
     }

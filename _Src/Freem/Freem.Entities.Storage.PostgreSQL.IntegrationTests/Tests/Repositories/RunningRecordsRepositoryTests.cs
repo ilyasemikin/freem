@@ -1,4 +1,5 @@
 ﻿using Freem.EFCore.Extensions;
+using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
@@ -61,7 +62,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         // Act
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -86,7 +87,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         // Act
         var record = dbRecord.MapToDomainEntity();
             
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -171,7 +172,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         // Act
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -203,7 +204,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -236,7 +237,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
         
         // Assert
         Assert.NotNull(exception);
@@ -282,11 +283,10 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var idValue = Guid.NewGuid().ToString();
-        var id = new UserIdentifier(idValue);
+        var id = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
 
         // Act
-        var exception = await Xunit.Record.ExceptionAsync(() => Repository.RemoveAsync(id));
+        var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
         
         // Assert
         Assert.NotNull(exception);
@@ -296,7 +296,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
     }
 
     [Fact]
-    public async Task FindByUserIdAsync_ShouldSuccess_WhenEntityExists()
+    public async Task FindByIdAsync_ShouldSuccess_WhenEntityExists()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -308,10 +308,10 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var userId = new UserIdentifier(dbRecord.UserId);
+        var userId = (RunningRecordIdentifier)dbRecord.UserId;
         
         // Act
-        var result = await Repository.FindByUserIdAsync(userId);
+        var result = await Repository.FindByIdAsync(userId);
         
         // Assert
         Assert.NotNull(result);
@@ -320,18 +320,18 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var record = result.Entity;
         
+        Assert.Equal(dbRecord.UserId, record.Id);
         Assert.Equal(dbRecord.UserId, record.UserId);
     }
 
     [Fact]
-    public async Task FindByIdUserAsync_ShouldFailure_WhenEntityDoesNotExist()
+    public async Task FindByIdAsync_ShouldFailure_WhenEntityDoesNotExist()
     {
         // Arrange
-        var idValue = Guid.NewGuid().ToString();
-        var userId = new UserIdentifier(idValue);
+        var userId = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
         
         // Act
-        var result = await Repository.FindByUserIdAsync(userId);
+        var result = await Repository.FindByIdAsync(userId);
         
         // Assert
         Assert.NotNull(result);

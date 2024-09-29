@@ -6,6 +6,7 @@ internal static class EntitiesNames
 {
     public static class Users
     {
+        public const string EntityName = "user";
         public const string Table = "users";
 
         public static class Properties
@@ -25,6 +26,7 @@ internal static class EntitiesNames
 
     public static class Tags
     {
+        public const string EntityName = "tag";
         public const string Table = "tags";
 
         public static class Properties
@@ -48,6 +50,7 @@ internal static class EntitiesNames
 
     public static class Activities
     {
+        public const string EntityName = "activity";
         public const string Table = "activities";
 
         public static class Properties
@@ -75,6 +78,7 @@ internal static class EntitiesNames
 
     public static class Records
     {
+        public const string EntityName = "record";
         public const string Table = "records";
 
         public static class Properties
@@ -100,6 +104,7 @@ internal static class EntitiesNames
 
     public static class RunningRecords
     {
+        public const string EntityName = "running_record";
         public const string Table = "running_records";
 
         public static class Properties
@@ -116,6 +121,29 @@ internal static class EntitiesNames
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string UsersForeignKey = $"{Table}_{NamingConvention.ForeignKeySuffix}";
+        }
+    }
+
+    public static class Events
+    {
+        public const string Table = "events";
+
+        public static class Properties
+        {
+            public const string Id = "id";
+            public const string UserId = "user_id";
+            public const string EntityName = "entity_name";
+            public const string EntityId = "entity_id";
+            public const string Action = "action";
+            public const string AdditionalData = "additional_data";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
+        }
+
+        public static class Constraints
+        {
+            public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
+            public const string EntityNameCheck = $"{Table}_{Properties.EntityName}_{NamingConvention.CheckSuffix}";
         }
     }
 }

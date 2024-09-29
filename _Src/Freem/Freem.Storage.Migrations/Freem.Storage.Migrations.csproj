@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj" />
         <ProjectReference Include="..\Freem.TextProcessing\Freem.TextProcessing.csproj"/>
     </ItemGroup>
 

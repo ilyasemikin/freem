@@ -24,4 +24,9 @@ public sealed class ActivityIdentifier : StringIdentifier, IEntityIdentifier
     {
         return base.GetHashCode();
     }
+
+    public static implicit operator ActivityIdentifier(string value)
+    {
+        return new ActivityIdentifier(value);
+    }
 }

@@ -15,7 +15,7 @@ public sealed class GuidStringIdentifierGeneratorsAdder
         _types = new HashSet<Type>();
     }
     
-    public GuidStringIdentifierGeneratorsAdder Add<TIdentifier>(
+    public GuidStringIdentifierGeneratorsAdder AddGenerator<TIdentifier>(
         GuidStringIdentifierGenerator<TIdentifier>.Factory factory)
         where TIdentifier : StringIdentifier
     {

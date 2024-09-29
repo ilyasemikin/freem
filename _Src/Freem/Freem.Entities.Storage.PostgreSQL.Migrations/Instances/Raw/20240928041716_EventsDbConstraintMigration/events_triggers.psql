@@ -1,0 +1,67 @@
+﻿-- Begin events triggers
+-- Begin declaration
+
+create or replace function ${EnvironmentNames.Schema}.events_check_related_entity()
+returns trigger
+language PLPGSQL
+as $$
+declare
+	founded_user_id text;
+	founded_related_entity_id text;
+begin
+	select id from ${EnvironmentNames.Schema}.users where id = new.user_id into founded_user_id;
+	if founded_user_id is null then
+		call ${EnvironmentNames.Schema}.throw_exception(
+			'EventsRelatedEntityNotExists', 
+			'users.user_id not found', 
+			array[('${TriggerErrorParameters.EventEntityParameterName}', 'user'), ('${TriggerErrorParameters.EventEntityIdParameterName}', new.user_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+
+	if new.entity_name = '${EventEntityName.Activity}' then
+		select id from ${EnvironmentNames.Schema}.activities where id = new.entity_id into founded_related_entity_id;
+	end if;
+
+	if new.entity_name = '${EventEntityName.Record}' then
+		select id from ${EnvironmentNames.Schema}.records where id = new.entity_id into founded_related_entity_id;
+	end if;
+
+	if new.entity_name = '${EventEntityName.RunningRecord}' then
+		select user_id from ${EnvironmentNames.Schema}.running_records where user_id = new.entity_id into founded_related_entity_id;
+	end if;
+
+	if new.entity_name = '${EventEntityName.Tag}' then
+		select id from ${EnvironmentNames.Schema}.tags where id = new.entity_id into founded_related_entity_id;
+	end if;
+	
+	if new.entity_name = '${EventEntityName.User}' then
+	    if new.entity_id = founded_user_id then
+	        founded_related_entity_id = founded_user_id;
+	    end if;
+	end if; 
+
+	if founded_related_entity_id is null then
+		call ${EnvironmentNames.Schema}.throw_exception(
+			'EventsRelatedEntityNotExists', 
+			'entity_id must exists', 
+			array[('${TriggerErrorParameters.EventEntityParameterName}', new.entity_name), ('${TriggerErrorParameters.EventEntityIdParameterName}', new.entity_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
+	end if;
+	
+	return new;
+end;
+$$;
+
+create constraint trigger check_related_entity_exists_trigger
+	after insert
+	on ${EnvironmentNames.Schema}.events
+	deferrable initially deferred
+	for each row 
+	execute procedure ${EnvironmentNames.Schema}.events_check_related_entity();
+
+-- End declaration
+-- Begin dropping
+
+drop trigger check_related_entity_exists_trigger on ${EnvironmentNames.Schema}.events;
+drop function ${EnvironmentNames.Schema}.events_check_related_entity;
+
+-- End dropping
+-- End events triggers

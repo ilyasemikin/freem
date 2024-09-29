@@ -15,13 +15,5 @@ internal static class TriggerErrorCodes
     public const string RunningRecordsActivitiesDifferentUserIds = "RunningRecordsActivitiesDifferentUserIds";
     public const string RunningRecordsActivitiesInvalidCount = "RunningRecordsActivitiesInvalidCount";
     
-    public const string EventsUserNotExist = "EventsUserNotExists";
-    public const string ActivitiesEventsActivityNotExist = "ActivitiesEventsActivityNotExist";
-    public const string RecordsEventsRecordNotExist = "RecordsEventsRecordNotExist";
-    public const string RunningRecordsEventsUserNotExist = "RunningRecordsEventsUserNotExist";
-    public const string TagsEventsTagNotExist = "TagsEventsTagNotExist";
-    
-    public const string ActivitiesEventsDifferentUserIds = "ActivitiesEventsDifferentUserIds";
-    public const string RecordsEventsDifferentUserIds = "RecordsEventsDifferentUserIds";
-    public const string TagsEventsDifferentUserIds = "TagsEventsDifferentUserIds";
+    public const string EventsRelatedEntityNotExists = "EventsRelatedEntityNotExists";
 }

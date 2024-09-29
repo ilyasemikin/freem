@@ -24,4 +24,9 @@ public sealed class RecordIdentifier : StringIdentifier, IEntityIdentifier
     {
         return base.GetHashCode();
     }
+
+    public static implicit operator RecordIdentifier(string value)
+    {
+        return new RecordIdentifier(value);
+    }
 }

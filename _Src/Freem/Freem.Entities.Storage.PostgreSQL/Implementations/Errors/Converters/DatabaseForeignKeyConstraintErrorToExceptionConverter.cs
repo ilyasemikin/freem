@@ -23,7 +23,7 @@ internal sealed class DatabaseForeignKeyConstraintErrorToExceptionConverter :
         if (!_columnToIdentifierConverter.TryConvert(error.Column, out var identifier))
             return false;
 
-        output = new NotFoundRelatedException(context.ProcessedEntityId, identifier);
+        output = new NotFoundRelatedException(context.ProcessedId, identifier);
         return true;
     }
 }

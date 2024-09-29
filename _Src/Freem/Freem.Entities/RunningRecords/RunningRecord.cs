@@ -6,6 +6,7 @@ using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Models;
+using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
@@ -13,12 +14,12 @@ using Freem.Entities.Users.Identifiers;
 namespace Freem.Entities.RunningRecords;
 
 public class RunningRecord : 
-    IEntity<UserIdentifier>,
+    IEntity<RunningRecordIdentifier>,
     IEntityRelation<Activity, ActivityIdentifier>, 
     IEntityRelation<Tag, TagIdentifier>,
     ICloneable<RunningRecord>
 {
-    public UserIdentifier Id => UserId;
+    public RunningRecordIdentifier Id => UserId;
     public UserIdentifier UserId { get; }
     public RelatedActivitiesCollection Activities { get; }
     public RelatedTagsCollection Tags { get; }

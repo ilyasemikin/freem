@@ -23,8 +23,9 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\entities_triggers.psql"/>
-        <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\events_triggers.psql"/>
         <EmbeddedResource Include="Instances\Raw\20240910200644_RecreateDbTriggersMigration\exception_functions.psql"/>
+
+        <EmbeddedResource Include="Instances\Raw\20240928041716_EventsDbConstraintMigration\events_triggers.psql" />
     </ItemGroup>
 
 </Project>

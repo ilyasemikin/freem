@@ -25,6 +25,8 @@ internal static class ModelBuilderExtensions
         
         builder.ApplyConfiguration<UserEntity, UserEntityTypeConfiguration>();
         
+        builder.ApplyConfiguration<EventEntity, EventEntityTypeConfiguration>();
+        
         return builder;
     }
 }

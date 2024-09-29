@@ -1,15 +1,16 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
+using Freem.Identifiers.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 
 internal sealed class DatabaseContextWriteContext
 {
-    public IEntityIdentifier ProcessedEntityId { get; }
+    public IIdentifier ProcessedId { get; }
 
-    public DatabaseContextWriteContext(IEntityIdentifier processedEntityId)
+    public DatabaseContextWriteContext(IIdentifier processedId)
     {
-        ArgumentNullException.ThrowIfNull(processedEntityId);
+        ArgumentNullException.ThrowIfNull(processedId);
         
-        ProcessedEntityId = processedEntityId;
+        ProcessedId = processedId;
     }
 }

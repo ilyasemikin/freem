@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using Freem.Exceptions;
 using Freem.Storage.Migrations.Constants.Collections;
-using Freem.Storage.Migrations.Constants.Injection.Exceptions;
 
 namespace Freem.Storage.Migrations.Constants.Injection;
 
@@ -30,7 +30,7 @@ public sealed class ConstantsInjector
         var name = group.Value;
         
         if (!_values.TryGetValue(name, out var value))
-            throw new UnknownConstantException(name, match.Index, match.Length);
+            throw new UnknownConstantException(name);
 
         return value;
     }

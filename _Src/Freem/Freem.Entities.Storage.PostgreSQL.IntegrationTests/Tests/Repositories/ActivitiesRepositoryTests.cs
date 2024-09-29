@@ -172,8 +172,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var idValue = Guid.NewGuid().ToString();
-        var id = new ActivityIdentifier(idValue);
+        var id = IdentifiersGenerator.Generate<ActivityIdentifier>();
         
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
@@ -199,7 +198,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         await Database.SaveChangesAsync();
 
         // Act
-        var id = new ActivityIdentifier(dbActivity.Id);
+        var id = (ActivityIdentifier)dbActivity.Id;
         
         var result = await Repository.FindByIdAsync(id);
         
@@ -217,8 +216,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
     public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
     {
         // Act
-        var idValue = Guid.NewGuid().ToString();
-        var id = new ActivityIdentifier(idValue);
+        var id = IdentifiersGenerator.Generate<ActivityIdentifier>();
 
         var result = await Repository.FindByIdAsync(id);
         
@@ -238,8 +236,8 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.SaveChangesAsync();
         
-        var activityId = new ActivityIdentifier(dbActivity.Id);
-        var userId = new UserIdentifier(dbUser.Id);
+        var activityId = (ActivityIdentifier)dbActivity.Id;
+        var userId = (UserIdentifier)dbUser.Id;
         
         var ids = new ActivityAndUserIdentifiers(activityId, userId);
         
@@ -269,11 +267,12 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.SaveChangesAsync();
 
-        var activityIdValue = activityIdExists ? dbActivity.Id : Guid.NewGuid().ToString();
-        var userIdValue = userIdExists ? dbUser.Id : Guid.NewGuid().ToString();
-        
-        var activityId = new ActivityIdentifier(activityIdValue);
-        var userId = new UserIdentifier(userIdValue);
+        var activityId = activityIdExists
+            ? (ActivityIdentifier)dbActivity.Id
+            : IdentifiersGenerator.Generate<ActivityIdentifier>();
+        var userId = userIdExists 
+            ? (UserIdentifier)dbUser.Id 
+            : IdentifiersGenerator.Generate<UserIdentifier>();
         
         var ids = new ActivityAndUserIdentifiers(activityId, userId);
         

@@ -9,7 +9,7 @@ internal static class SearchQueryableExtensions
     public static async Task<SearchEntityResult<TEntity>> FindAsync<TDatabaseEntity, TEntity>(
         this IQueryable<TDatabaseEntity> queryable,
         Expression<Func<TDatabaseEntity, bool>> predicate,
-        Func<TDatabaseEntity, TEntity> mapper,
+        Func<TDatabaseEntity, TEntity?> mapper,
         CancellationToken cancellationToken = default)
             where TDatabaseEntity : class
     {
@@ -21,6 +21,9 @@ internal static class SearchQueryableExtensions
             return SearchEntityResult<TEntity>.NotFound();
 
         var entity = mapper(dbEntity);
+        if (entity is null)
+            return SearchEntityResult<TEntity>.NotFound();
+        
         return SearchEntityResult<TEntity>.Found(entity);
     }
 }

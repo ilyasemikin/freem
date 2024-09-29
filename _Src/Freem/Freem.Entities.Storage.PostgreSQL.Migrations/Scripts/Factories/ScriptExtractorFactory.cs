@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Constants;
 using Freem.Storage.Migrations.Constants.Collections.Builders;
@@ -34,14 +35,14 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.RunningRecordsActivitiesInvalidCount, TriggerErrorCodes.RunningRecordsActivitiesInvalidCount);
 
         builder
-            .WithConstant(ConstantNames.EventsUserNotExist, TriggerErrorCodes.EventsUserNotExist)
-            .WithConstant(ConstantNames.ActivitiesEventsActivityNotExist, TriggerErrorCodes.ActivitiesEventsActivityNotExist)
-            .WithConstant(ConstantNames.RecordsEventsRecordNotExist, TriggerErrorCodes.RecordsEventsRecordNotExist)
-            .WithConstant(ConstantNames.RunningRecordsEventsUserNotExist, TriggerErrorCodes.RunningRecordsEventsUserNotExist)
-            .WithConstant(ConstantNames.TagsEventsTagNotExist, TriggerErrorCodes.TagsEventsTagNotExist)
-            .WithConstant(ConstantNames.ActivitiesEventsDifferentUserIds, TriggerErrorCodes.ActivitiesEventsDifferentUserIds)
-            .WithConstant(ConstantNames.RecordsEventsDifferentUserIds, TriggerErrorCodes.RecordsEventsDifferentUserIds)
-            .WithConstant(ConstantNames.TagsEventsDifferentUserIds, TriggerErrorCodes.TagsEventsDifferentUserIds);
+            .WithConstant(ConstantNames.EventsRelatedEntityNotExists, TriggerErrorCodes.EventsRelatedEntityNotExists);
+        
+        builder
+            .WithConstant(ConstantNames.EventActivityEntityName, EntitiesNames.Activities.EntityName)
+            .WithConstant(ConstantNames.EventRecordEntityName, EntitiesNames.Records.EntityName)
+            .WithConstant(ConstantNames.EventRunningRecordEntityName, EntitiesNames.RunningRecords.EntityName)
+            .WithConstant(ConstantNames.EventTagEntityName, EntitiesNames.Tags.EntityName)
+            .WithConstant(ConstantNames.EventUserEntityName, EntitiesNames.Users.EntityName);
         
         builder
             .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsCollection.MinTagsCount.ToString())
@@ -54,7 +55,9 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.RecordIdTriggerErrorParameterName, TriggerErrorParameters.RecordId)
             .WithConstant(ConstantNames.TagIdTriggerErrorParameterName, TriggerErrorParameters.TagId)
             .WithConstant(ConstantNames.UserIdTriggerErrorParameterName, TriggerErrorParameters.UserId)
-            .WithConstant(ConstantNames.ActualCountTriggerErrorParameterName, TriggerErrorParameters.ActualCount);
+            .WithConstant(ConstantNames.ActualCountTriggerErrorParameterName, TriggerErrorParameters.ActualCount)
+            .WithConstant(ConstantNames.EventEntityNameParameterName, TriggerErrorParameters.EventEntityName)
+            .WithConstant(ConstantNames.EventEntityIdParameterName, TriggerErrorParameters.EventEntityId);
         
         var collection = builder.Build();
         

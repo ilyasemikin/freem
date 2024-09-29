@@ -24,4 +24,9 @@ public sealed class UserIdentifier : StringIdentifier, IEntityIdentifier
     {
         return base.GetHashCode();
     }
+
+    public static implicit operator UserIdentifier(string value)
+    {
+        return new UserIdentifier(value);
+    }
 }

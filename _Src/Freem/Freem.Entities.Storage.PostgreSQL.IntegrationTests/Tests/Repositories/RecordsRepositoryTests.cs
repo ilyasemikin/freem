@@ -285,8 +285,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var idValue = Guid.NewGuid().ToString();
-        var id = new RecordIdentifier(idValue);
+        var id = IdentifiersGenerator.Generate<RecordIdentifier>();
         
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
@@ -315,7 +314,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.SaveChangesAsync();
         
         // Act
-        var id = new RecordIdentifier(dbRecord.Id);
+        var id = (RecordIdentifier)dbRecord.Id;
         
         var result = await Repository.FindByIdAsync(id);
         
@@ -333,8 +332,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
     public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
     {
         // Act
-        var idValue = Guid.NewGuid().ToString();
-        var id = new RecordIdentifier(idValue);
+        var id = IdentifiersGenerator.Generate<RecordIdentifier>();
 
         var result = await Repository.FindByIdAsync(id);
         
@@ -357,8 +355,8 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var recordId = new RecordIdentifier(dbRecord.Id);
-        var userId = new UserIdentifier(dbRecord.UserId);
+        var recordId = (RecordIdentifier)dbRecord.Id;
+        var userId = (UserIdentifier)dbRecord.UserId;
         
         var ids = new RecordAndUserIdentifiers(recordId, userId);
         
@@ -390,12 +388,13 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbUser, dbRecord);
         await Database.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
-
-        var recordIdValue = recordIdExists ? dbRecord.Id : Guid.NewGuid().ToString();
-        var userIdValue = userIdExists ? dbRecord.UserId : Guid.NewGuid().ToString();
         
-        var recordId = new RecordIdentifier(recordIdValue);
-        var userId = new UserIdentifier(userIdValue);
+        var recordId = recordIdExists
+            ? (RecordIdentifier)dbRecord.Id
+            : IdentifiersGenerator.Generate<RecordIdentifier>();
+        var userId = userIdExists 
+            ? (UserIdentifier)dbUser.Id 
+            : IdentifiersGenerator.Generate<UserIdentifier>();
         
         var ids = new RecordAndUserIdentifiers(recordId, userId);
         

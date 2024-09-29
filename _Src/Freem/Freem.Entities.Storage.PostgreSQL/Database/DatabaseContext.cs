@@ -16,6 +16,8 @@ internal sealed class DatabaseContext : DbContext
     public DbSet<TagEntity> Tags => Set<TagEntity>();
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
+    
+    public DbSet<EventEntity> Events => Set<EventEntity>();
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)

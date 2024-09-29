@@ -18,6 +18,7 @@ internal static class DatabaseContextExtensions
                                         TRUNCATE TABLE {EnvironmentNames.Schema}.{EntitiesNames.Activities.Table} CASCADE;
                                         TRUNCATE TABLE {EnvironmentNames.Schema}.{EntitiesNames.Records.Table} CASCADE;
                                         TRUNCATE TABLE {EnvironmentNames.Schema}.{EntitiesNames.RunningRecords.Table} CASCADE;
+                                        TRUNCATE TABLE {EnvironmentNames.Schema}.{EntitiesNames.Events.Table} CASCADE;
 
                                         COMMIT;
                                         """);

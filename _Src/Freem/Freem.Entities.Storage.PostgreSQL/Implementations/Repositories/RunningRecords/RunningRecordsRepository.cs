@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.RunningRecords;
+using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Repositories;
@@ -35,6 +36,8 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
     public async Task CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+        
         var dbEntity = entity.MapToDatabaseEntity();
         var dbActivityRelations = entity.CreateDatabaseRunningRecordActivityRelations();
         var dbTagRelations = entity.CreateDatabaseRunningRecordTagRelations();
@@ -49,6 +52,8 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 
     public async Task UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+        
         var dbEntity = await _database.RunningRecords.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
@@ -69,8 +74,10 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task RemoveAsync(UserIdentifier id, CancellationToken cancellationToken = default)
+    public async Task RemoveAsync(RunningRecordIdentifier id, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(id);
+        
         var dbEntity = await _database.RunningRecords.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
@@ -81,13 +88,15 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<RunningRecord>> FindByUserIdAsync(
-        UserIdentifier userId,
+    public async Task<SearchEntityResult<RunningRecord>> FindByIdAsync(
+        RunningRecordIdentifier id,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(id);
+        
         return await _database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(e => e.UserId == userId, RunningRecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.UserId == id, RunningRecordMapper.MapToDomainEntity, cancellationToken);
     }
 }
