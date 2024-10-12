@@ -87,7 +87,7 @@ internal sealed class TagsRepository : ITagsRepository
         return await _database.Tags.FindAsync(e => e.Id == id, TagMapper.MapToDomainEntity, cancellationToken);
     }
     
-    public async Task<SearchEntityResult<Tag>> FindAsync(
+    public async Task<SearchEntityResult<Tag>> FindByMultipleIdAsync(
         TagAndUserIdentifiers ids, 
         CancellationToken cancellationToken = default)
     {
@@ -99,7 +99,7 @@ internal sealed class TagsRepository : ITagsRepository
             cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Tag>> FindByUserAsync(
+    public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
         TagsByUserFilter filter, 
         CancellationToken cancellationToken = default)
     {

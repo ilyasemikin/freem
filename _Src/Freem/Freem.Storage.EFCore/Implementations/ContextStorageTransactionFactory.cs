@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Storage.EFCore.Implementations;
 
-internal sealed class ContaxtStorageTransactionFactory<TDbContext> : IStorageTransactionFactory
+internal sealed class ContextStorageTransactionFactory<TDbContext> : IStorageTransactionFactory
     where TDbContext : DbContext
 {
     private readonly TDbContext _context;
 
-    public ContaxtStorageTransactionFactory(TDbContext context)
+    public ContextStorageTransactionFactory(TDbContext context)
     {
         _context = context;
     }

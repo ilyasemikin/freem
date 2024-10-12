@@ -2,7 +2,7 @@
 
 namespace Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;
 
-public interface ILimitFilter
+public interface ILimitFilter : IFilter
 {
     Limit Limit { get; }
 }

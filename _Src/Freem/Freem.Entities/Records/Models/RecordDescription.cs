@@ -54,8 +54,8 @@ public sealed class RecordDescription : IEquatable<RecordDescription>
         return new RecordDescription(value);
     }
 
-    public static implicit operator string(RecordDescription value)
+    public static implicit operator string?(RecordDescription? value)
     {
-        return value._value;
+        return value?._value;
     }
 }

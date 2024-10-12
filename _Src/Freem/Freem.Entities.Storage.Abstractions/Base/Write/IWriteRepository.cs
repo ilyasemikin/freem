@@ -1,13 +1,12 @@
 ﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Identifiers;
 
-namespace Freem.Entities.Storage.Abstractions.Base;
+namespace Freem.Entities.Storage.Abstractions.Base.Write;
 
-public interface IWriteRepository<TEntity, TEntityIdentifier>
+public interface IWriteRepository<in TEntity, in TEntityIdentifier> : ICreateRepository<TEntity, TEntityIdentifier>
     where TEntity : IEntity<TEntityIdentifier>
     where TEntityIdentifier : IEntityIdentifier
 {
-    Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task RemoveAsync(TEntityIdentifier id, CancellationToken cancellationToken = default);
 }

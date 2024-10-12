@@ -96,7 +96,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
             .FindAsync(e => e.Id == id, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<Activity>> FindAsync(
+    public async Task<SearchEntityResult<Activity>> FindByMultipleIdAsync(
         ActivityAndUserIdentifiers ids, 
         CancellationToken cancellationToken)
     {
@@ -110,7 +110,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
                 cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Activity>> FindByUserAsync(
+    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(
         ActivitiesByUserFilter filter, 
         CancellationToken cancellationToken = default)
     {

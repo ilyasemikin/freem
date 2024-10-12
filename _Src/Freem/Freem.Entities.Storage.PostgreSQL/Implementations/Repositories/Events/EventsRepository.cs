@@ -1,21 +1,14 @@
-﻿using System.Text.Json;
-using Freem.Converters.Abstractions;
+﻿using Freem.Converters.Abstractions;
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
@@ -44,8 +37,9 @@ internal sealed class EventsRepository : IEventsRepository
         _entityConverter = entityConverter;
     }
 
-    public async Task CreateAsync<TEvent>(TEvent entity, CancellationToken cancellationToken = default) 
-        where TEvent : class, IEntityEvent<IEntityIdentifier, UserIdentifier>
+    public async Task CreateAsync(
+        IEntityEvent<IEntityIdentifier, UserIdentifier> entity, 
+        CancellationToken cancellationToken = default) 
     {
         ArgumentNullException.ThrowIfNull(entity);
         
@@ -56,24 +50,17 @@ internal sealed class EventsRepository : IEventsRepository
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
     }
-
-    public async Task<SearchEntityResult<TEvent>> FindByIdAsync<TEvent>(
+    
+    public async Task<SearchEntityResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindByIdAsync(
         EventIdentifier id, 
-        CancellationToken cancellationToken = default) 
-        where TEvent : class, IEntityEvent<IEntityIdentifier, UserIdentifier>
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        return await _database.Events
-            .FindAsync(e => e.Id == id, Convert, cancellationToken);
-
-        TEvent? Convert(EventEntity entity)
-        {
-            return _entityConverter.Convert(entity) as TEvent;
-        }
+        return await _database.Events.FindAsync(e => e.Id == id, _entityConverter.Convert, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindAfterAsync(
+    public async Task<SearchEntitiesAsyncResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindAsync(
         EventsAfterTimeFilter filter, 
         CancellationToken cancellationToken = default)
     {

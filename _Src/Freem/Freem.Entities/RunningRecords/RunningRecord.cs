@@ -1,11 +1,15 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Relations;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Models;
+using Freem.Entities.RunningRecords.Events.Started;
+using Freem.Entities.RunningRecords.Events.Stopped;
+using Freem.Entities.RunningRecords.Events.Updated;
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
@@ -46,6 +50,21 @@ public class RunningRecord :
         Tags = tags;
 
         StartAt = startAt;
+    }
+
+    public RunningRecordStartedEvent BuildStartedEvent(EventIdentifier eventId)
+    {
+        return new RunningRecordStartedEvent(eventId, Id);
+    }
+
+    public RunningRecordStoppedEvent BuildStoppedEvent(EventIdentifier eventId)
+    {
+        return new RunningRecordStoppedEvent(eventId, Id);
+    }
+
+    public RunningRecordUpdatedEvent BuildUpdatedEvent(EventIdentifier eventId)
+    {
+        return new RunningRecordUpdatedEvent(eventId, Id);
     }
 
     public RunningRecord Clone()

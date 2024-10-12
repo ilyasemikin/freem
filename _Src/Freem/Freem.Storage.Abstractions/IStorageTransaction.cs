@@ -2,6 +2,6 @@
 
 public interface IStorageTransaction : IAsyncDisposable
 {
-    Task CommitAsync(CancellationToken cancellationToken);
-    Task AbortAsync(CancellationToken cancellationToken);
+    Task CommitAsync(CancellationToken cancellationToken = default);
+    Task AbortAsync(CancellationToken cancellationToken = default);
 }

@@ -4,11 +4,10 @@ using Freem.Entities.Abstractions.Identifiers;
 
 namespace Freem.Entities.Abstractions.Events;
 
-public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier>
+public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier> : IEntity<EventIdentifier>
     where TEntityIdentifier : IEntityIdentifier
     where TUserEntityIdentifier : IEntityIdentifier
 {
-    EventIdentifier Id { get; }
     TEntityIdentifier EntityId { get; }
     TUserEntityIdentifier UserEntityId { get; }
 

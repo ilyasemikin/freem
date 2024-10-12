@@ -200,7 +200,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         var ids = new TagAndUserIdentifiers(tagId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);
@@ -231,7 +231,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         var ids = new TagAndUserIdentifiers(tagId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);

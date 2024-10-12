@@ -23,6 +23,7 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningReco
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 using Freem.Entities.Users.Identifiers;
+using Freem.Storage.EFCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -38,6 +39,7 @@ public static class ServiceCollectionExtensions
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
+            .AddStorageTransactions<DatabaseContext>()
             .AddRepositories();
     }
     

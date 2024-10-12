@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-using Freem.Collections.Extensions;
+﻿using Freem.Collections.Extensions;
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Activities.Events.Created;
 using Freem.Entities.Activities.Events.Removed;
 using Freem.Entities.Activities.Events.Updated;
@@ -15,7 +13,6 @@ using Freem.Entities.RunningRecords.Events.Started;
 using Freem.Entities.RunningRecords.Events.Stopped;
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Entities.Tags.Events.Created;
 using Freem.Entities.Tags.Events.Removed;
@@ -23,10 +20,7 @@ using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events.SignedIn;
 using Freem.Entities.Users.Identifiers;
-using Freem.Identifiers.Implementations.Generators;
 using Freem.Reflection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -92,7 +86,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         // Act
         await Repository.CreateAsync(@event);
 
-        var result = await Repository.FindByIdAsync<IEntityEvent<ActivityIdentifier, UserIdentifier>>(id);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.True(result.Founded);
@@ -137,7 +131,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         // Act
         await Repository.CreateAsync(@event);
         
-        var result = await Repository.FindByIdAsync<IEntityEvent<RecordIdentifier, UserIdentifier>>(id);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.True(result.Founded);
@@ -180,7 +174,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         // Act
         await Repository.CreateAsync(@event);
         
-        var result = await Repository.FindByIdAsync<IEntityEvent<RunningRecordIdentifier, UserIdentifier>>(id);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.True(result.Founded);
@@ -221,7 +215,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         // Act
         await Repository.CreateAsync(@event);
         
-        var result = await Repository.FindByIdAsync<IEntityEvent<TagIdentifier, UserIdentifier>>(id);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.True(result.Founded);
@@ -258,7 +252,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         // Act
         await Repository.CreateAsync(@event);
 
-        var result = await Repository.FindByIdAsync<IEntityEvent<UserIdentifier, UserIdentifier>>(id);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.True(result.Founded);

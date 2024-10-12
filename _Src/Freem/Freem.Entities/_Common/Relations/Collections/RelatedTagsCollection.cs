@@ -31,4 +31,9 @@ public sealed class RelatedTagsCollection : RelatedEntitiesCollection<Tag, TagId
         : this([], entities)
     {
     }
+
+    public void Update(RelatedTagsCollection other)
+    {
+        base.Update(other);
+    }
 }

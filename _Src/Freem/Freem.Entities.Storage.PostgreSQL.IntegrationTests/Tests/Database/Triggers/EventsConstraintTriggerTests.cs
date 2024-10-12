@@ -9,8 +9,6 @@ using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertio
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
 using Freem.Entities.Tags.Events;
 using Freem.Entities.Users.Events;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Npgsql;
 using Xunit;
 using Xunit.Abstractions;

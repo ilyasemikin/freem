@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base;
-using Freem.Entities.Storage.Abstractions.Models;
+using Freem.Entities.Storage.Abstractions.Base.Search;
+using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 
@@ -9,13 +9,8 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 
 public interface IActivitiesRepository :
     IWriteRepository<Activity, ActivityIdentifier>,
-    ISearchByIdRepository<Activity, ActivityIdentifier>
+    ISearchByIdRepository<Activity, ActivityIdentifier>,
+    ISearchByMultipleIdsRepository<Activity, ActivityIdentifier, ActivityAndUserIdentifiers>,
+    IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesByUserFilter>
 {
-    Task<SearchEntityResult<Activity>> FindAsync(
-        ActivityAndUserIdentifiers ids,
-        CancellationToken cancellationToken = default);
-
-    Task<SearchEntitiesAsyncResult<Activity>> FindByUserAsync(
-        ActivitiesByUserFilter filter, 
-        CancellationToken cancellationToken = default);
 }

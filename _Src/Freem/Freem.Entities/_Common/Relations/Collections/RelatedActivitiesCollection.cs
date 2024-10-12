@@ -29,4 +29,9 @@ public sealed class RelatedActivitiesCollection : RelatedEntitiesCollection<Acti
         : this(Enumerable.Empty<ActivityIdentifier>(), entities)
     {
     }
+
+    public void Update(RelatedActivitiesCollection other)
+    {
+        base.Update(other);
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;
 
-public interface IOffsetFilter
+public interface IOffsetFilter : IFilter
 {
     Offset Offset { get; }
 }

@@ -102,7 +102,7 @@ internal sealed class RecordsRepository : IRecordsRepository
             .FindAsync(e => e.Id == id, RecordMapper.MapToDomainEntity, cancellationToken);
     }
     
-    public async Task<SearchEntityResult<Record>> FindAsync(
+    public async Task<SearchEntityResult<Record>> FindByMultipleIdAsync(
         RecordAndUserIdentifiers ids,
         CancellationToken cancellationToken = default)
     {
@@ -117,7 +117,7 @@ internal sealed class RecordsRepository : IRecordsRepository
                 cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Record>> FindByUserAsync(
+    public async Task<SearchEntitiesAsyncResult<Record>> FindAsync(
         RecordsByUserFilter filter, 
         CancellationToken cancellationToken = default)
     {

@@ -40,8 +40,9 @@ public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEnt
 
         MinCount = minCount;
         MaxCount = maxCount;
-        
-        _entities = GetEntities(identifiers, entities);
+
+        _entities = new Dictionary<TEntityIdentifier, TEntity?>();
+        FillEntities(_entities, identifiers, entities);
 
         if (!IsCountAllowed(_entities.Count))
             throw new InvalidRelatedEntitiesCountException(MinCount, MaxCount, _entities.Count);
@@ -84,6 +85,13 @@ public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEnt
         return _entities.ContainsKey(identifier);
     }
 
+    protected void Update(IReadOnlyRelatedEntitiesCollection<TEntity, TEntityIdentifier> other)
+    {
+        _entities.Clear();
+
+        FillEntities(_entities, other.Identifiers, other.Entities);
+    }
+
     private bool TryAdd(TEntityIdentifier identifier, TEntity? entity)
     {
         if (_entities.ContainsKey(identifier) || !IsCountAllowed(Count + 1))
@@ -98,21 +106,18 @@ public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEnt
         return newCount >= MinCount && newCount <= MaxCount;
     }
 
-    private static Dictionary<TEntityIdentifier, TEntity?> GetEntities(
+    private static void FillEntities(
+        IDictionary<TEntityIdentifier, TEntity?> dictionary,
         IEnumerable<TEntityIdentifier> identifiers, 
         IEnumerable<TEntity> entities)
     {
-        var result = new Dictionary<TEntityIdentifier, TEntity?>();
-
         foreach (var entity in entities)
         {
-            if (!result.TryAdd(entity.Id, entity))
+            if (!dictionary.TryAdd(entity.Id, entity))
                 throw new InvalidOperationException($"Entity with id \"{entity.Id}\" already added");
         }
 
         foreach (var identifier in identifiers)
-            result.TryAdd(identifier, default);
-
-        return result;
+            dictionary.TryAdd(identifier, default);
     }
 }

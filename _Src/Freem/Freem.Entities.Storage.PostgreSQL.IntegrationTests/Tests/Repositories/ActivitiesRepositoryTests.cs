@@ -242,7 +242,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         var ids = new ActivityAndUserIdentifiers(activityId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);
@@ -277,7 +277,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         var ids = new ActivityAndUserIdentifiers(activityId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);

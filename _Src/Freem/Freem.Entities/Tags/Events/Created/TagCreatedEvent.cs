@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Events.Models;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
 

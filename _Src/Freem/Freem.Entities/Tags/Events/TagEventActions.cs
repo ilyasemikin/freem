@@ -1,10 +1,4 @@
-﻿using System.Collections.Frozen;
-using Freem.Entities.Abstractions.Events.Models;
-using Freem.Entities.Tags.Events.Created;
-using Freem.Entities.Tags.Events.Removed;
-using Freem.Entities.Tags.Events.Updated;
-
-namespace Freem.Entities.Tags.Events;
+﻿namespace Freem.Entities.Tags.Events;
 
 public static class TagEventActions
 {

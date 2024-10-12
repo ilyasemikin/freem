@@ -361,7 +361,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         var ids = new RecordAndUserIdentifiers(recordId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);
@@ -399,7 +399,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         var ids = new RecordAndUserIdentifiers(recordId, userId);
         
         // Act
-        var result = await Repository.FindAsync(ids);
+        var result = await Repository.FindByMultipleIdAsync(ids);
         
         // Assert
         Assert.NotNull(result);

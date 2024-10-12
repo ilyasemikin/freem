@@ -1,16 +1,12 @@
-﻿using System.Collections.Frozen;
-using Freem.Entities.Abstractions.Events.Models;
-using Freem.Entities.Activities.Events.Created;
-using Freem.Entities.Activities.Events.Removed;
-using Freem.Entities.Activities.Events.Updated;
-
-namespace Freem.Entities.Activities.Events;
+﻿namespace Freem.Entities.Activities.Events;
 
 public static class ActivityEventActions
 {
     public const string Created = "created";
     public const string Updated = "updated";
     public const string Removed = "removed";
+    public const string Archived = "archived";
+    public const string Unarchived = "unarchived";
 
-    public static IReadOnlyList<string> All { get; } = [Created, Updated, Removed];
+    public static IReadOnlyList<string> All { get; } = [Created, Updated, Removed, Archived, Unarchived];
 }

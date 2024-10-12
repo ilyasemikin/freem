@@ -1,5 +1,4 @@
-﻿using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions.Base;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions.Base;
 using Freem.Identifiers.Abstractions;
 
 namespace Freem.Entities.Storage.Abstractions.Exceptions;

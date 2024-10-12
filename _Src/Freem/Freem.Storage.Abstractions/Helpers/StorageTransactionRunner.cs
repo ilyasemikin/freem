@@ -8,7 +8,7 @@ public sealed class StorageTransactionRunner
     {
         _factory = factory;
     }
-
+    
     public async Task RunAsync(Func<IStorageTransaction, Task> function, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _factory.CreateAsync(cancellationToken);

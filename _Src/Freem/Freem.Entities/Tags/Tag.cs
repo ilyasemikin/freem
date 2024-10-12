@@ -1,5 +1,9 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
+using Freem.Entities.Abstractions.Events.Identifiers;
+using Freem.Entities.Tags.Events.Created;
+using Freem.Entities.Tags.Events.Removed;
+using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Tags.Models;
 using Freem.Entities.Users.Identifiers;
@@ -34,6 +38,21 @@ public sealed class Tag :
         Id = id;
         UserId = userId;
         Name = name;
+    }
+
+    public TagCreatedEvent BuildCreatedEvent(EventIdentifier eventId)
+    {
+        return new TagCreatedEvent(eventId, Id, UserId);
+    }
+
+    public TagUpdatedEvent BuildUpdatedEvent(EventIdentifier eventId)
+    {
+        return new TagUpdatedEvent(eventId, Id, UserId);
+    }
+
+    public TagRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
+    {
+        return new TagRemovedEvent(eventId, Id, UserId);
     }
 
     public Tag Clone()

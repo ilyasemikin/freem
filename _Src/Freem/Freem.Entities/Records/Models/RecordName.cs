@@ -54,8 +54,8 @@ public sealed class RecordName : IEquatable<RecordName>
         return new RecordName(value);
     }
 
-    public static implicit operator string(RecordName value)
+    public static implicit operator string?(RecordName? value)
     {
-        return value._value;
+        return value?._value;
     }
 }

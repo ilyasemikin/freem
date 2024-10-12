@@ -67,6 +67,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers", "Freem.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers.UnitTests", "Freem.Identifiers.UnitTests\Freem.Identifiers.UnitTests.csproj", "{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Abstractions", "Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj", "{D7F0882F-60A6-4FB9-BF3D-99000B598180}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Context", "Freem.Entities.UseCases.Context\Freem.Entities.UseCases.Context.csproj", "{13E12C47-F852-4734-B265-B6225D0B9521}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Models", "Freem.Entities.UseCases.Models\Freem.Entities.UseCases.Models.csproj", "{C85E36CD-67AE-42E9-A868-1FC64F5D717E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Events", "Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj", "{806E3726-961C-430B-B0EE-6E3C561512CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.DependencyInjection", "Freem.Entities.UseCases.DependencyInjection\Freem.Entities.UseCases.DependencyInjection.csproj", "{6E25B290-06B7-4B55-8E64-BC393931A1CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Abstractions", "Freem.Locking.Abstractions\Freem.Locking.Abstractions.csproj", "{05CCF510-5A32-426A-8504-6A90C83CDF19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.DependencyInjection.UnitTests", "Freem.Entities.UseCases.DependencyInjection.UnitTests\Freem.Entities.UseCases.DependencyInjection.UnitTests.csproj", "{32CA573A-6E6E-47E8-A648-E8302AC9A619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Redis", "Freem.Locking.Redis\Freem.Locking.Redis.csproj", "{01D19794-F8B4-436D-A59A-CDBF5B0C55F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Redis.IntegrationTests", "Freem.Locking.Redis.IntegrationTests\Freem.Locking.Redis.IntegrationTests.csproj", "{CBD662AF-CF46-4730-9A1F-0435FA1EEF60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Redis.UnitTests", "Freem.Locking.Redis.UnitTests\Freem.Locking.Redis.UnitTests.csproj", "{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +221,46 @@ Global
 		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAFE7F30-4EA6-45F7-9485-3987AA5B73FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E12C47-F852-4734-B265-B6225D0B9521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E12C47-F852-4734-B265-B6225D0B9521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E12C47-F852-4734-B265-B6225D0B9521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E12C47-F852-4734-B265-B6225D0B9521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{806E3726-961C-430B-B0EE-6E3C561512CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{806E3726-961C-430B-B0EE-6E3C561512CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{806E3726-961C-430B-B0EE-6E3C561512CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{806E3726-961C-430B-B0EE-6E3C561512CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E25B290-06B7-4B55-8E64-BC393931A1CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E25B290-06B7-4B55-8E64-BC393931A1CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E25B290-06B7-4B55-8E64-BC393931A1CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E25B290-06B7-4B55-8E64-BC393931A1CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05CCF510-5A32-426A-8504-6A90C83CDF19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05CCF510-5A32-426A-8504-6A90C83CDF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05CCF510-5A32-426A-8504-6A90C83CDF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05CCF510-5A32-426A-8504-6A90C83CDF19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32CA573A-6E6E-47E8-A648-E8302AC9A619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32CA573A-6E6E-47E8-A648-E8302AC9A619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32CA573A-6E6E-47E8-A648-E8302AC9A619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32CA573A-6E6E-47E8-A648-E8302AC9A619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01D19794-F8B4-436D-A59A-CDBF5B0C55F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D19794-F8B4-436D-A59A-CDBF5B0C55F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D19794-F8B4-436D-A59A-CDBF5B0C55F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D19794-F8B4-436D-A59A-CDBF5B0C55F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBD662AF-CF46-4730-9A1F-0435FA1EEF60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD662AF-CF46-4730-9A1F-0435FA1EEF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD662AF-CF46-4730-9A1F-0435FA1EEF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD662AF-CF46-4730-9A1F-0435FA1EEF60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

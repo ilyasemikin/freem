@@ -1,8 +1,5 @@
 ﻿using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities._Common.DependencyInjection;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Database.Extensions;
@@ -12,7 +9,6 @@ using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensio
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Identifiers.Implementations.Generators;
-using Freem.Identifiers.Implementations.Generators.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;

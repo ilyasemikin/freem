@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Storage.Abstractions.Base;
+﻿using Freem.Entities.Storage.Abstractions.Base.Search;
+using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 

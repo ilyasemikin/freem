@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+    <ProjectReference Include="..\Freem.Locking.Abstractions\Freem.Locking.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Freem.Locking.Redis.UnitTests"/>
+    <InternalsVisibleTo Include="Freem.Locking.Redis.IntegrationTests"/>
+  </ItemGroup>
+</Project>
