@@ -106,7 +106,8 @@ public sealed class ServiceCollectionExtensionsTests
         var services = new ServiceCollection();
         services.AddConvertersCollection<IInputEntity, IOutputEntity>((_, _) => { }, lifetime);
 
-        services.TryGetDescriptor<ConvertersCollection<IInputEntity, IOutputEntity>>(out var descriptor);
+        var descriptor = services.FirstOrDefault(
+            service => service.ServiceType == typeof(ConvertersCollection<IInputEntity, IOutputEntity>));
         
         Assert.NotNull(descriptor);
         Assert.Equal(lifetime, descriptor.Lifetime);
@@ -118,8 +119,9 @@ public sealed class ServiceCollectionExtensionsTests
     {
         var services = new ServiceCollection();
         services.AddConvertersCollection<IInputEntity, IOutputEntity>(_ => { }, lifetime);
-
-        services.TryGetDescriptor<ConvertersCollection<IInputEntity, IOutputEntity>>(out var descriptor);
+        
+        var descriptor = services.FirstOrDefault(
+            service => service.ServiceType == typeof(ConvertersCollection<IInputEntity, IOutputEntity>));
         
         Assert.NotNull(descriptor);
         Assert.Equal(lifetime, descriptor.Lifetime);

@@ -27,6 +27,8 @@ using Freem.Entities.UseCases.Records.Update;
 using Freem.Entities.UseCases.Records.Update.Models;
 using Freem.Entities.UseCases.RunningRecords.Get;
 using Freem.Entities.UseCases.RunningRecords.Get.Models;
+using Freem.Entities.UseCases.RunningRecords.Remove;
+using Freem.Entities.UseCases.RunningRecords.Remove.Models;
 using Freem.Entities.UseCases.RunningRecords.Start;
 using Freem.Entities.UseCases.RunningRecords.Start.Models;
 using Freem.Entities.UseCases.RunningRecords.Stop;
@@ -60,7 +62,7 @@ public static class ServiceCollectionExtensions
             .AddEventsUseCases();
     }
 
-    public static IServiceCollection AddActivitiesUseCases(this IServiceCollection services)
+    private static IServiceCollection AddActivitiesUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateActivityRequest, CreateActivityResponse>, CreateActivityUseCase>();
         services.TryAddTransient<IUseCase<UpdateActivityRequest>, UpdateActivityUseCase>();
@@ -74,7 +76,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddTagsUseCases(this IServiceCollection services)
+    private static IServiceCollection AddTagsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateTagRequest, CreateTagResponse>, CreateTagUseCase>();
         services.TryAddTransient<IUseCase<UpdateTagRequest>, UpdateTagUseCase>();
@@ -86,7 +88,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddRecordsUseCases(this IServiceCollection services)
+    private static IServiceCollection AddRecordsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateRecordRequest, CreateRecordResponse>, CreateRecordUseCase>();
         services.TryAddTransient<IUseCase<UpdateRecordRequest>, UpdateRecordUseCase>();
@@ -98,18 +100,19 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddRunningRecordsUseCases(this IServiceCollection services)
+    private static IServiceCollection AddRunningRecordsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<StartRunningRecordRequest>, StartRunningRecordUseCase>();
         services.TryAddTransient<IUseCase<StopRunningRecordRequest>, StopRunningRecordUseCase>();
         services.TryAddTransient<IUseCase<UpdateRunningRecordRequest>, UpdateRunningRecordUseCase>();
+        services.TryAddTransient<IUseCase<RemoveRunningRecordRequest>, RemoveRunningRecordUseCase>();
 
         services.TryAddTransient<IUseCase<GetRunningRecordRequest, GetRunningRecordResponse>, GetRunningRecordUseCase>();
         
         return services;
     }
 
-    public static IServiceCollection AddEventsUseCases(this IServiceCollection services)
+    private static IServiceCollection AddEventsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<ListEventRequest, ListEventResponse>, ListEventUseCase>();
         

@@ -483,4 +483,6 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
+# Integration tests configurations
 Freem/Freem.Entities.Storage.PostgreSQL.IntegrationTests/configuration.json
+Freem/Freem.Locking.Redis.IntegrationTests/configuration.json

@@ -23,9 +23,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj" />
       <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
       <ProjectReference Include="..\Freem.Locking.Abstractions\Freem.Locking.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj" />
+      <ProjectReference Include="..\Freem.Timeouts\Freem.Timeouts.csproj" />
     </ItemGroup>
 
+    <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)"/>
+    </Target>
+    
 </Project>

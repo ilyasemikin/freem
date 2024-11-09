@@ -21,8 +21,7 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<IIdentifierGenerator<SimpleLockIdentifier>>(
             _ => new GuidStringIdentifierGenerator<SimpleLockIdentifier>(value => new SimpleLockIdentifier(value)));
         
-        services.TryAddTransient<SimpleDistributedLocker>();
-        services.AddTransientExistedService<IDistributedLocker, SimpleDistributedLocker>();
+        services.TryAddTransientServiceWithImplementedInterfaces<SimpleDistributedLocker>();
         
         return services;
     }

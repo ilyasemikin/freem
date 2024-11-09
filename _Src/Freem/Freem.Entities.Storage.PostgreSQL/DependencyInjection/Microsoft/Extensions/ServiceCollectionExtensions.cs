@@ -4,6 +4,16 @@ using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities._Common.DependencyInjection;
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
+using Freem.Entities.Activities;
+using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Records;
+using Freem.Entities.Records.Identifiers;
+using Freem.Entities.RunningRecords;
+using Freem.Entities.RunningRecords.Identifiers;
+using Freem.Entities.Storage.Abstractions.Base.Search;
+using Freem.Entities.Storage.Abstractions.Base.Write;
+using Freem.Entities.Storage.Abstractions.Models.Filters;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
@@ -22,6 +32,9 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
+using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.Storage.EFCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +58,7 @@ public static class ServiceCollectionExtensions
     
     private static IServiceCollection AddDatabaseContext(this IServiceCollection services, StorageConfiguration configuration)
     {
-        if (services.ContainsServiceType<DatabaseContext>())
+        if (services.Any(service => service.ServiceType == typeof(DatabaseContext)))
             return services;
         
         var dataSource = NpgsqlDataSourceFactory.Create(configuration.ConnectionString);
@@ -108,12 +121,12 @@ public static class ServiceCollectionExtensions
     
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.TryAddTransient<IUsersRepository, UsersRepository>();
-        services.TryAddTransient<ITagsRepository, TagsRepository>();
-        services.TryAddTransient<IRecordsRepository, RecordsRepository>();
-        services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
-        services.TryAddTransient<IActivitiesRepository, ActivitiesRepository>();
-        services.TryAddTransient<IEventsRepository, EventsRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<UsersRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<TagsRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<RecordsRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<RunningRecordsRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<ActivitiesRepository>();
+        services.TryAddTransientServiceWithImplementedInterfaces<EventsRepository>();
         
         return services;
     }

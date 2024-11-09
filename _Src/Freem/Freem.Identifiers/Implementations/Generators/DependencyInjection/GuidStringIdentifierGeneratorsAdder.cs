@@ -12,7 +12,7 @@ public sealed class GuidStringIdentifierGeneratorsAdder
     internal GuidStringIdentifierGeneratorsAdder(IServiceCollection services)
     {
         _services = services;
-        _types = new HashSet<Type>();
+        _types = [];
     }
     
     public GuidStringIdentifierGeneratorsAdder AddGenerator<TIdentifier>(

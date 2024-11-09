@@ -53,7 +53,11 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
             await _executor.ExecuteAsync(context, stopRunningRecordRequest, cancellationToken);
         }
 
-        var record = new RunningRecord(context.UserId, request.Activities, request.Tags, request.StartAt);
+        var record = new RunningRecord(context.UserId, request.Activities, request.Tags, request.StartAt)
+        {
+            Name = request.Name,
+            Description = request.Description
+        };
 
         await _transactionRunner.RunAsync(async () =>
         {

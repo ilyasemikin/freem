@@ -7,6 +7,7 @@ using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Models;
+using Freem.Entities.RunningRecords.Events.Removed;
 using Freem.Entities.RunningRecords.Events.Started;
 using Freem.Entities.RunningRecords.Events.Stopped;
 using Freem.Entities.RunningRecords.Events.Updated;
@@ -65,6 +66,11 @@ public class RunningRecord :
     public RunningRecordUpdatedEvent BuildUpdatedEvent(EventIdentifier eventId)
     {
         return new RunningRecordUpdatedEvent(eventId, Id);
+    }
+
+    public RunningRecordRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
+    {
+        return new RunningRecordRemovedEvent(eventId, Id);
     }
 
     public RunningRecord Clone()

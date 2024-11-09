@@ -2,8 +2,10 @@
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Activities.Events;
+using Freem.Entities.Activities.Events.Arhived;
 using Freem.Entities.Activities.Events.Created;
 using Freem.Entities.Activities.Events.Removed;
+using Freem.Entities.Activities.Events.Unarchived;
 using Freem.Entities.Activities.Events.Updated;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Events;
@@ -12,8 +14,10 @@ using Freem.Entities.Records.Events.Removed;
 using Freem.Entities.Records.Events.Updated;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.RunningRecords.Events;
+using Freem.Entities.RunningRecords.Events.Removed;
 using Freem.Entities.RunningRecords.Events.Started;
 using Freem.Entities.RunningRecords.Events.Stopped;
+using Freem.Entities.RunningRecords.Events.Updated;
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
@@ -52,6 +56,8 @@ internal sealed class DatabaseEntityToEventEntityConverter
             ActivityEventActions.Created => new ActivityCreatedEvent(entity.Id, entity.EntityId, entity.UserId),
             ActivityEventActions.Updated => new ActivityUpdatedEvent(entity.Id, entity.EntityId, entity.UserId),
             ActivityEventActions.Removed => new ActivityRemovedEvent(entity.Id, entity.EntityId, entity.UserId),
+            ActivityEventActions.Archived => new ActivityArchivedEvent(entity.Id, entity.EntityId, entity.UserId),
+            ActivityEventActions.Unarchived => new ActivityUnarchivedEvent(entity.Id, entity.EntityId, entity.UserId),
             _ => throw new UnknownConstantException(entity.Action)
         };
     }
@@ -73,6 +79,8 @@ internal sealed class DatabaseEntityToEventEntityConverter
         {
             RunningRecordEventActions.Started => new RunningRecordStartedEvent(entity.Id, entity.EntityId),
             RunningRecordEventActions.Stopped => new RunningRecordStoppedEvent(entity.Id, entity.EntityId),
+            RunningRecordEventActions.Updated => new RunningRecordUpdatedEvent(entity.Id, entity.EntityId),
+            RunningRecordEventActions.Removed => new RunningRecordRemovedEvent(entity.Id, entity.EntityId),
             _ => throw new UnknownConstantException(entity.Action)
         };
     }

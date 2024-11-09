@@ -1,16 +1,21 @@
 ﻿using Freem.Collections.Extensions;
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
+using Freem.Entities.Activities.Events.Arhived;
 using Freem.Entities.Activities.Events.Created;
 using Freem.Entities.Activities.Events.Removed;
+using Freem.Entities.Activities.Events.Unarchived;
 using Freem.Entities.Activities.Events.Updated;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Events.Created;
 using Freem.Entities.Records.Events.Removed;
 using Freem.Entities.Records.Events.Updated;
 using Freem.Entities.Records.Identifiers;
+using Freem.Entities.RunningRecords;
+using Freem.Entities.RunningRecords.Events.Removed;
 using Freem.Entities.RunningRecords.Events.Started;
 using Freem.Entities.RunningRecords.Events.Stopped;
+using Freem.Entities.RunningRecords.Events.Updated;
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
@@ -62,7 +67,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         {
             (id, entityId, userId) => new ActivityCreatedEvent(id, entityId, userId),
             (id, entityId, userId) => new ActivityUpdatedEvent(id, entityId, userId),
-            (id, entityId, userId) => new ActivityRemovedEvent(id, entityId, userId)
+            (id, entityId, userId) => new ActivityRemovedEvent(id, entityId, userId),
+            (id, entityId, userId) => new ActivityArchivedEvent(id, entityId, userId),
+            (id, entityId, userId) => new ActivityUnarchivedEvent(id, entityId, userId),
         };
 
     [Theory]
@@ -147,7 +154,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         new()
         {
             (id, recordId) => new RunningRecordStartedEvent(id, recordId),
-            (id, recordId) => new RunningRecordStoppedEvent(id, recordId) 
+            (id, recordId) => new RunningRecordStoppedEvent(id, recordId),
+            (id, recordId) => new RunningRecordUpdatedEvent(id, recordId),
+            (id, recordId) => new RunningRecordRemovedEvent(id, recordId),
         };
 
     [Theory]

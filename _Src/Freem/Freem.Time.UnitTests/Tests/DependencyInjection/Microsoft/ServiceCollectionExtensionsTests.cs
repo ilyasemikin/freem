@@ -26,7 +26,7 @@ public class ServiceCollectionExtensionsTests
         services.AddUtcCurrentTimeGetter();
         services.AddUtcCurrentTimeGetter();
 
-        var count = services.CountByServiceType<ICurrentTimeGetter>();
+        var count = services.Count(service => service.ServiceType == typeof(ICurrentTimeGetter));
         Assert.That(count, Is.EqualTo(1));
     }
 }
