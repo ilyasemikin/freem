@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Freem.Entities.UseCases.Context\Freem.Entities.UseCases.Context.csproj" />
+      <ProjectReference Include="..\Freem.Entities.UseCases.Exceptions\Freem.Entities.UseCases.Exceptions.csproj" />
+      <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
     </ItemGroup>
-
 </Project>

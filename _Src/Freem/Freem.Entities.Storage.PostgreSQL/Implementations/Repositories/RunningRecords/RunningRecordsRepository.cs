@@ -73,7 +73,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task RemoveAsync(RunningRecordIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(RunningRecordIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         

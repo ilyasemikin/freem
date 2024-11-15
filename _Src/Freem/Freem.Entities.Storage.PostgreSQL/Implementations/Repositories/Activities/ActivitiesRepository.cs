@@ -71,7 +71,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task RemoveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         

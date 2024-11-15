@@ -4,10 +4,9 @@ using Freem.Entities.Activities.Models;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.Create.Models;
-using Freem.Entities.UseCases.Context;
 using Freem.Identifiers.Abstractions.Generators;
-using Freem.Locking.Abstractions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
@@ -19,23 +18,23 @@ internal sealed class CreateActivityUseCase : IUseCase<CreateActivityRequest, Cr
 
     private readonly IIdentifierGenerator<ActivityIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Activity, ActivityIdentifier> _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateActivityUseCase(
         IIdentifierGenerator<ActivityIdentifier> identifierGenerator, 
         ICreateRepository<Activity, ActivityIdentifier> repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _identifierGenerator = identifierGenerator;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -43,13 +42,15 @@ internal sealed class CreateActivityUseCase : IUseCase<CreateActivityRequest, Cr
         UseCaseExecutionContext context, CreateActivityRequest request, 
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         var id = _identifierGenerator.Generate();
         var activity = new Activity(id, context.UserId, request.Name, request.Tags, DefaultActivityStatus);
 
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(activity, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => activity.BuildCreatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => activity.BuildCreatedEvent(eventId), cancellationToken);
         }, cancellationToken);
 
         return new CreateActivityResponse(activity);

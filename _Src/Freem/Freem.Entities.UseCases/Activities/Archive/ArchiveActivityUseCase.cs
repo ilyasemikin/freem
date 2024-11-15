@@ -3,8 +3,8 @@ using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.Archive.Models;
-using Freem.Entities.UseCases.Context;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
@@ -16,23 +16,23 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public ArchiveActivityUseCase(
         IDistributedLocker locker,
         IActivitiesRepository repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -40,6 +40,8 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
         UseCaseExecutionContext context, ArchiveActivityRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
@@ -53,7 +55,7 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(activity, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => activity.BuildArchivedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(activity.BuildArchivedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

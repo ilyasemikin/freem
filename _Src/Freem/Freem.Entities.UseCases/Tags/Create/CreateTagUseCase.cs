@@ -3,7 +3,7 @@ using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Tags.Create.Models;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
@@ -15,23 +15,23 @@ internal sealed class CreateTagUseCase : IUseCase<CreateTagRequest, CreateTagRes
 {
     private readonly IIdentifierGenerator<TagIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Tag, TagIdentifier> _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateTagUseCase(
         IIdentifierGenerator<TagIdentifier> identifierGenerator, 
         ICreateRepository<Tag, TagIdentifier> repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
         
         _identifierGenerator = identifierGenerator;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -39,13 +39,15 @@ internal sealed class CreateTagUseCase : IUseCase<CreateTagRequest, CreateTagRes
         UseCaseExecutionContext context, CreateTagRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         var id = _identifierGenerator.Generate();
         var tag = new Tag(id, context.UserId, request.Name);
 
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(tag, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => tag.BuildCreatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => tag.BuildCreatedEvent(eventId), cancellationToken);
         }, cancellationToken);
 
         return new CreateTagResponse(tag);

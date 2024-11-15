@@ -1,4 +1,4 @@
-﻿using Freem.Entities.UseCases.Context;
+﻿using Freem.Entities.UseCases.Abstractions.Context;
 
 namespace Freem.Entities.UseCases.Abstractions;
 

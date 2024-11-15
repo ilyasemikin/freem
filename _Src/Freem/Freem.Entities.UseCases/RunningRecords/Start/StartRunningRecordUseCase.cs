@@ -2,7 +2,7 @@
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.RunningRecords.Start.Models;
 using Freem.Entities.UseCases.RunningRecords.Stop.Models;
 using Freem.Locking.Abstractions;
@@ -17,26 +17,26 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
     private readonly IUseCaseExecutor _executor;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StartRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
         IUseCaseExecutor executor, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(executor);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(_transactionRunner);
 
         _locker = locker;
         _repository = repository;
         _executor = executor;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -44,6 +44,8 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
         UseCaseExecutionContext context, StartRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
@@ -62,7 +64,7 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(record, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => record.BuildStartedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => record.BuildStartedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

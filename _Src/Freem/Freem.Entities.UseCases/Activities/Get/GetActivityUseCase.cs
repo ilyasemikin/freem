@@ -3,8 +3,8 @@ using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.Get.Models;
-using Freem.Entities.UseCases.Context;
 
 namespace Freem.Entities.UseCases.Activities.Get;
 
@@ -24,6 +24,8 @@ internal sealed class GetActivityUseCase : IUseCase<GetActivityRequest, GetActiv
         UseCaseExecutionContext context, GetActivityRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         return new GetActivityResponse(result.Entity);

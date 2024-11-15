@@ -1,10 +1,9 @@
-﻿using Freem.Entities.UseCases.Abstractions.Types;
-using Freem.Entities.UseCases.Context;
+﻿using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Types;
 
 namespace Freem.Entities.UseCases.Abstractions;
 
 public interface IUseCase<in TRequest, TResponse>
-    
 {
     Task<TResponse> ExecuteAsync(
         UseCaseExecutionContext context, TRequest request, 

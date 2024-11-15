@@ -267,7 +267,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         // Act
         var record = dbRecord.MapToDomainEntity();
         
-        await Repository.RemoveAsync(record.Id);
+        await Repository.DeleteAsync(record.Id);
         
         // Assert
         var dbRecordActual = await Database.RunningRecords
@@ -285,7 +285,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         var id = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
 
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
+        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
         
         // Assert
         Assert.NotNull(exception);

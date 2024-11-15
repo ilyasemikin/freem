@@ -160,7 +160,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         // Act
         var activity = dbActivity.MapToDomainEntity();
         
-        await Repository.RemoveAsync(activity.Id);
+        await Repository.DeleteAsync(activity.Id);
         
         // Assert
         var dbActivityActual = await Database.Activities.FindEntityAsync(activity.Id);
@@ -175,7 +175,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         var id = IdentifiersGenerator.Generate<ActivityIdentifier>();
         
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
+        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
         
         // Assert
         Assert.NotNull(exception);

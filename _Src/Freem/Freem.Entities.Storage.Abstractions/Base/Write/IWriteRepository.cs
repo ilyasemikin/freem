@@ -8,5 +8,5 @@ public interface IWriteRepository<in TEntity, in TEntityIdentifier> : ICreateRep
     where TEntityIdentifier : IEntityIdentifier
 {
     Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
-    Task RemoveAsync(TEntityIdentifier id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(TEntityIdentifier id, CancellationToken cancellationToken = default);
 }

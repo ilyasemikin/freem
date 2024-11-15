@@ -2,7 +2,7 @@
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.RunningRecords.Get.Models;
 
 namespace Freem.Entities.UseCases.RunningRecords.Get;
@@ -22,6 +22,8 @@ internal class GetRunningRecordUseCase : IUseCase<GetRunningRecordRequest, GetRu
         UseCaseExecutionContext context, GetRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         return new GetRunningRecordResponse(result.Entity);
     }

@@ -123,7 +123,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         // Act
         var tag = dbTag.MapToDomainEntity();
         
-        await Repository.RemoveAsync(tag.Id);
+        await Repository.DeleteAsync(tag.Id);
         
         // Assert
         var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
@@ -138,7 +138,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         var id = IdentifiersGenerator.Generate<TagIdentifier>();
         
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.RemoveAsync(id));
+        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
         
         // Assert
         var concreteException = Assert.IsType<NotFoundException>(exception);

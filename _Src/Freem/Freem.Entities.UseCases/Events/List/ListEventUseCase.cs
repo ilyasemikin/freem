@@ -4,7 +4,7 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.List.Models;
 using Freem.Entities.Users.Identifiers;
 
@@ -26,16 +26,18 @@ internal sealed class ListEventUseCase : IUseCase<ListEventRequest, ListEventRes
         UseCaseExecutionContext context, ListEventRequest request,
         CancellationToken cancellationToken = default)
     {
-        var filter = Map(context, request);
+        context.ThrowsIfUnauthorized();
+        
+        var filter = Map();
         var result = await _repository.FindAsync(filter, cancellationToken);
         return new ListEventResponse(result, result.TotalCount);
-    }
-
-    private static EventsAfterTimeFilter Map(UseCaseExecutionContext context, ListEventRequest request)
-    {
-        return new EventsAfterTimeFilter(context.UserId, request.After)
+        
+        EventsAfterTimeFilter Map()
         {
-            Limit = request.Limit
-        };
+            return new EventsAfterTimeFilter(context.UserId, request.After)
+            {
+                Limit = request.Limit
+            };
+        }
     }
 }

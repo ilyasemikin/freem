@@ -76,7 +76,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task RemoveAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         

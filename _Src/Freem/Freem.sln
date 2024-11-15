@@ -69,8 +69,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers.UnitTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Abstractions", "Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj", "{D7F0882F-60A6-4FB9-BF3D-99000B598180}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Context", "Freem.Entities.UseCases.Context\Freem.Entities.UseCases.Context.csproj", "{13E12C47-F852-4734-B265-B6225D0B9521}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Models", "Freem.Entities.UseCases.Models\Freem.Entities.UseCases.Models.csproj", "{C85E36CD-67AE-42E9-A868-1FC64F5D717E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Events", "Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj", "{806E3726-961C-430B-B0EE-6E3C561512CE}"
@@ -88,6 +86,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Redis.UnitTests", "Freem.Locking.Redis.UnitTests\Freem.Locking.Redis.UnitTests.csproj", "{A3AFD939-8E4F-4FF5-A006-20CE0183BF57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Timeouts", "Freem.Timeouts\Freem.Timeouts.csproj", "{26F48C06-96F4-4ED6-A943-0FEEF2453B68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Exceptions", "Freem.Entities.UseCases.Exceptions\Freem.Entities.UseCases.Exceptions.csproj", "{78647515-183F-4CF5-9C54-2582715C9710}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -227,10 +227,6 @@ Global
 		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7F0882F-60A6-4FB9-BF3D-99000B598180}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13E12C47-F852-4734-B265-B6225D0B9521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13E12C47-F852-4734-B265-B6225D0B9521}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13E12C47-F852-4734-B265-B6225D0B9521}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13E12C47-F852-4734-B265-B6225D0B9521}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C85E36CD-67AE-42E9-A868-1FC64F5D717E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -267,6 +263,10 @@ Global
 		{26F48C06-96F4-4ED6-A943-0FEEF2453B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26F48C06-96F4-4ED6-A943-0FEEF2453B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26F48C06-96F4-4ED6-A943-0FEEF2453B68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78647515-183F-4CF5-9C54-2582715C9710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78647515-183F-4CF5-9C54-2582715C9710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78647515-183F-4CF5-9C54-2582715C9710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78647515-183F-4CF5-9C54-2582715C9710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Records.Remove.Models;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
@@ -15,23 +15,23 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveRecordUseCase(
         IDistributedLocker locker,
         IRecordsRepository repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
         
         _locker = locker;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -39,6 +39,8 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
         UseCaseExecutionContext context, RemoveRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
@@ -50,8 +52,8 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
 
         await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.RemoveAsync(record.Id, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
+            await _repository.DeleteAsync(record.Id, cancellationToken);
+            await _eventProducer.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

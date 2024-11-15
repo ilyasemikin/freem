@@ -1,7 +1,6 @@
-﻿using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.RunningRecords.Remove.Models;
 using Freem.Locking.Abstractions;
@@ -15,18 +14,18 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveRunningRecordUseCase(
         IDistributedLocker locker, 
         IRunningRecordRepository repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         _locker = locker;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -34,6 +33,8 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
         UseCaseExecutionContext context, RemoveRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
 
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
@@ -44,8 +45,8 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
         
         await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.RemoveAsync(record.Id, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
+            await _repository.DeleteAsync(record.Id, cancellationToken);
+            await _eventProducer.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

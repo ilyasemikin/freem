@@ -1,12 +1,15 @@
 ﻿using Freem.Entities.Abstractions.Events;
+using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.Events.Abstractions;
 
-internal interface IEventPublisher
+internal interface IEventProducer
 {
+    delegate IEntityEvent<IEntityIdentifier, UserIdentifier> EventFactory(EventIdentifier eventId);
+    
     Task PublishAsync(
-        IEntityEvent<IEntityIdentifier, UserIdentifier> @event,
+        EventFactory factory, 
         CancellationToken cancellationToken = default);
 }

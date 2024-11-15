@@ -3,8 +3,8 @@ using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.List.Models;
-using Freem.Entities.UseCases.Context;
 
 namespace Freem.Entities.UseCases.Activities.List;
 
@@ -24,6 +24,8 @@ internal sealed class ListActivityUseCase : IUseCase<ListActivityRequest, ListAc
         UseCaseExecutionContext context, ListActivityRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         var filter = Map(context, request);
         var result = await _repository.FindAsync(filter, cancellationToken);
         return new ListActivityResponse(result, result.TotalCount);

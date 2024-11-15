@@ -64,7 +64,7 @@ internal sealed class TagsRepository : ITagsRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(TagIdentifier id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 

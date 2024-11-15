@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.RunningRecords.Update.Models;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
@@ -14,23 +14,23 @@ internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -38,6 +38,8 @@ internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
         UseCaseExecutionContext context, UpdateRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
@@ -57,7 +59,7 @@ internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(record, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => record.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => record.BuildUpdatedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

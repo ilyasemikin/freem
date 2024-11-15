@@ -2,8 +2,8 @@
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.Update.Models;
-using Freem.Entities.UseCases.Context;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
@@ -15,23 +15,23 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
-    private readonly IEventPublisher _eventPublisher;
+    private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateActivityUseCase(
         IDistributedLocker locker,
         IActivitiesRepository repository, 
-        IEventPublisher eventPublisher, 
+        IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(eventPublisher);
+        ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
-        _eventPublisher = eventPublisher;
+        _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
@@ -39,6 +39,8 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
         UseCaseExecutionContext context, UpdateActivityRequest request,
         CancellationToken cancellationToken = default)
     {
+        context.ThrowsIfUnauthorized();
+        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
@@ -55,7 +57,7 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(activity, cancellationToken);
-            await _eventPublisher.PublishAsync(eventId => activity.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => activity.BuildUpdatedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

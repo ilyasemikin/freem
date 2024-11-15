@@ -3,7 +3,7 @@ using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Tags.List.Models;
 
 namespace Freem.Entities.UseCases.Tags.List;
@@ -23,17 +23,19 @@ internal sealed class ListTagUseCase : IUseCase<ListTagRequest, ListTagResponse>
         UseCaseExecutionContext context, ListTagRequest request,
         CancellationToken cancellationToken = default)
     {
-        var filter = Map(context, request);
+        context.ThrowsIfUnauthorized();
+        
+        var filter = Map();
         var result = await _repository.FindAsync(filter, cancellationToken);
         return new ListTagResponse(result, result.TotalCount);
-    }
-
-    private static TagsByUserFilter Map(UseCaseExecutionContext context, ListTagRequest request)
-    {
-        return new TagsByUserFilter(context.UserId)
+        
+        TagsByUserFilter Map()
         {
-            Limit = request.Limit,
-            Offset = request.Offset
-        };
+            return new TagsByUserFilter(context.UserId)
+            {
+                Limit = request.Limit,
+                Offset = request.Offset
+            };
+        }
     }
 }
