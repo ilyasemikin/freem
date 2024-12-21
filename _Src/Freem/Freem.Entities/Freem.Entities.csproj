@@ -9,8 +9,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj"/>
+        <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
         <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Validation\Freem.Entities.Validation.csproj" />
         <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>

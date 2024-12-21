@@ -20,6 +20,8 @@ internal sealed class UserEntity :
     
     public DateTimeOffset? DeletedAt { get; set; }
     
+    public UserPasswordCredentialsEntity? PasswordCredentials { get; set; }
+    
     [Timestamp]
     public uint RowVersion { get; private set; }
 

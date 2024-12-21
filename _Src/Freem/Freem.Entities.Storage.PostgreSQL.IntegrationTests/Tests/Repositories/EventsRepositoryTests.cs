@@ -23,6 +23,8 @@ using Freem.Entities.Tags.Events.Created;
 using Freem.Entities.Tags.Events.Removed;
 using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users.Events.PasswordCredentialsAdded;
+using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SignedIn;
 using Freem.Entities.Users.Identifiers;
 using Freem.Reflection;
@@ -239,6 +241,8 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
     public static TheoryData<UserEventGenerator> ValidUserEventsCase =>
         new()
         {
+            (id, userId) => new UserRegisteredEvent(id, userId),
+            (id, userId) => new UserPasswordCredentialsChangedEvent(id, userId),
             (id, userId) => new UserSignedInEvent(id, userId)
         };
 

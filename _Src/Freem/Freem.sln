@@ -89,6 +89,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Timeouts", "Freem.Tim
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Exceptions", "Freem.Entities.UseCases.Exceptions\Freem.Entities.UseCases.Exceptions.csproj", "{78647515-183F-4CF5-9C54-2582715C9710}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Credentials.Password", "Freem.Credentials.Password\Freem.Credentials.Password.csproj", "{B7C22E87-9049-490B-A8CB-4FAFF0D76CD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Crypto.Hashes", "Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj", "{3DDA37B2-E634-4811-BB06-CB2B74564CA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Validation", "Freem.Entities.Validation\Freem.Entities.Validation.csproj", "{7117D86A-BFE1-4314-8F95-4E4479D0D497}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -267,6 +273,18 @@ Global
 		{78647515-183F-4CF5-9C54-2582715C9710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78647515-183F-4CF5-9C54-2582715C9710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78647515-183F-4CF5-9C54-2582715C9710}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C22E87-9049-490B-A8CB-4FAFF0D76CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C22E87-9049-490B-A8CB-4FAFF0D76CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C22E87-9049-490B-A8CB-4FAFF0D76CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C22E87-9049-490B-A8CB-4FAFF0D76CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DDA37B2-E634-4811-BB06-CB2B74564CA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DDA37B2-E634-4811-BB06-CB2B74564CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DDA37B2-E634-4811-BB06-CB2B74564CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DDA37B2-E634-4811-BB06-CB2B74564CA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7117D86A-BFE1-4314-8F95-4E4479D0D497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7117D86A-BFE1-4314-8F95-4E4479D0D497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7117D86A-BFE1-4314-8F95-4E4479D0D497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7117D86A-BFE1-4314-8F95-4E4479D0D497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

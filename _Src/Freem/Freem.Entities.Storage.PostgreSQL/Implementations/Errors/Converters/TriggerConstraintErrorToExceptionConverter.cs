@@ -60,7 +60,8 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
                     EntitiesNames.RunningRecords.EntityName => identifierParameter.AsRunningRecordIdentifier(),
                     EntitiesNames.Tags.EntityName => identifierParameter.AsTagIdentifier(),
                     EntitiesNames.Users.EntityName => identifierParameter.AsUserIdentifier(),
-                    _ => throw new InvalidOperationException($"Unknown entity name {entityName}")
+                    EntitiesNames.UsersLoginCredentials.EntityName => identifierParameter.AsUserIdentifier(),
+                    _ => throw new InvalidOperationException($"Unknown entity name \"{entityName}\"")
                 };
                 
                 return new NotFoundRelatedException(context.ProcessedId, identifier);

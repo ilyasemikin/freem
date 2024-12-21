@@ -9,6 +9,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
+        <ProjectReference Include="..\Freem.Credentials.Password\Freem.Credentials.Password.csproj" />
+        <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj" />

@@ -37,5 +37,12 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
         builder
             .HasKey(e => e.Id)
             .HasName(EntitiesNames.Users.Constraints.PrimaryKey);
+
+        builder
+            .HasOne(e => e.PasswordCredentials)
+            .WithOne(e => e.User)
+            .HasForeignKey<UserPasswordCredentialsEntity>(e => e.UserId)
+            .HasConstraintName(EntitiesNames.UsersLoginCredentials.Constraints.UsersForeignKey)
+            .IsRequired();
     }
 }

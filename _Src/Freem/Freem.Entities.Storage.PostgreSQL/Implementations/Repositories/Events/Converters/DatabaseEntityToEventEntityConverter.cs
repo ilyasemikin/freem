@@ -27,6 +27,8 @@ using Freem.Entities.Tags.Events.Removed;
 using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events;
+using Freem.Entities.Users.Events.PasswordCredentialsAdded;
+using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SignedIn;
 using Freem.Entities.Users.Identifiers;
 using Freem.Exceptions;
@@ -100,6 +102,8 @@ internal sealed class DatabaseEntityToEventEntityConverter
     {
         return entity.Action switch
         {
+            UserEventActions.Registered => new UserRegisteredEvent(entity.Id, entity.UserId),
+            UserEventActions.LoginCredentialsChanged => new UserPasswordCredentialsChangedEvent(entity.Id, entity.UserId),
             UserEventActions.SignedIn => new UserSignedInEvent(entity.Id, entity.UserId),
             _ => throw new UnknownConstantException(entity.Action)
         };

@@ -48,9 +48,9 @@ internal sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<TagE
 
         builder
             .HasIndex(e => new { e.Name, e.UserId })
-            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameUserIdIndex)
+            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameIndex)
             .IsUnique()
-            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameUserIdUnique);
+            .HasDatabaseName(EntitiesNames.Tags.Constraints.NameUnique);
 
         builder
             .HasOne(e => e.User)
