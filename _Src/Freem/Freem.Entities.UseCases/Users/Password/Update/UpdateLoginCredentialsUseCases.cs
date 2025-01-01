@@ -4,14 +4,15 @@ using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.Abstractions;
-using Freem.Entities.UseCases.Users.UpdateLoginCredentials.Models;
+using Freem.Entities.UseCases.Users.Password.Update.Models;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Models;
 using Freem.Locking.Abstractions;
+using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
-namespace Freem.Entities.UseCases.Users.UpdateLoginCredentials;
+namespace Freem.Entities.UseCases.Users.Password.Update;
 
 internal sealed class UpdateLoginCredentialsUseCases : IUseCase<ChangeLoginCredentialsRequest>
 {
@@ -54,6 +55,8 @@ internal sealed class UpdateLoginCredentialsUseCases : IUseCase<ChangeLoginCrede
     {
         context.ThrowsIfUnauthorized();
 
+        await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
+
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Founded)
             throw new InvalidOperationException();
@@ -62,15 +65,15 @@ internal sealed class UpdateLoginCredentialsUseCases : IUseCase<ChangeLoginCrede
         if (user.PasswordCredentials is null)
             throw new InvalidOperationException();
         
-        var passwordHashAlgorithm = await _passwordHashAlgorithmGetter.GetAsync(cancellationToken);
         var oldPasswordRawHash = _passwordRawHasher.Hash(
-            passwordHashAlgorithm,
+            user.PasswordCredentials.PasswordHash.Algorithm,
             request.OldPassword.AsBytes(),
             user.PasswordCredentials.PasswordHash.Salt);
 
         if (oldPasswordRawHash != user.PasswordCredentials.PasswordHash)
             throw new InvalidOperationException();
 
+        var passwordHashAlgorithm = await _passwordHashAlgorithmGetter.GetAsync(cancellationToken);
         var salt = _saltGenerator.Generate();
         var newPasswordRawHash = _passwordRawHasher.Hash(passwordHashAlgorithm, request.NewPassword.AsBytes(), salt);
 

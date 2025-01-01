@@ -69,7 +69,7 @@ public static class ServiceCollectionExtensions
                 .UseNpgsql(dataSource, options =>
                 {
                     options.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
-                    options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable);
+                    options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
                 })
                 .EnableServiceProviderCaching(configuration.EnableServiceProviderCaching);
 

@@ -25,18 +25,14 @@ internal sealed class ListActivityUseCase : IUseCase<ListActivityRequest, ListAc
         CancellationToken cancellationToken = default)
     {
         context.ThrowsIfUnauthorized();
-        
-        var filter = Map(context, request);
+
+        var filter = new ActivitiesByUserFilter(context.UserId)
+        {
+            Offset = request.Offset,
+            Limit = request.Limit
+        };
+            
         var result = await _repository.FindAsync(filter, cancellationToken);
         return new ListActivityResponse(result, result.TotalCount);
-    }
-
-    private static ActivitiesByUserFilter Map(UseCaseExecutionContext context, ListActivityRequest request)
-    {
-        return new ActivitiesByUserFilter(context.UserId)
-        {
-            Limit = request.Limit,
-            Offset = request.Offset
-        };
     }
 }

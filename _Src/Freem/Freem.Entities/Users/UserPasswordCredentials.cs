@@ -4,12 +4,12 @@ namespace Freem.Entities.Users;
 
 public sealed class UserPasswordCredentials
 {
-    public string Login { get; }
+    public Login Login { get; }
     public PasswordHash PasswordHash { get; }
 
-    public UserPasswordCredentials(string login, PasswordHash passwordHash)
+    public UserPasswordCredentials(Login login, PasswordHash passwordHash)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(login);
+        ArgumentNullException.ThrowIfNull(login);
         ArgumentNullException.ThrowIfNull(passwordHash);
 
         Login = login;

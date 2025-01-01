@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
         RedisConfiguration configuration)
     {
         services.TryAddSingleton<IConnectionMultiplexer>(
-            _ => ConnectionMultiplexer.Connect(configuration.Configuration));
+            _ => ConnectionMultiplexer.Connect(configuration.ConnectionString));
 
         services.TryAddTransient<IIdentifierGenerator<SimpleLockIdentifier>>(
             _ => new GuidStringIdentifierGenerator<SimpleLockIdentifier>(value => new SimpleLockIdentifier(value)));

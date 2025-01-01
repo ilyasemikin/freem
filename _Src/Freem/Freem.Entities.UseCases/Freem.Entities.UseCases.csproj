@@ -15,7 +15,6 @@
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.Context\Freem.Entities.UseCases.Context.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Models\Freem.Entities.UseCases.Models.csproj" />
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
@@ -24,10 +23,16 @@
         <ProjectReference Include="..\Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj" />
         <ProjectReference Include="..\Freem.Timeouts\Freem.Timeouts.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+        <ProjectReference Include="..\Freem.Tokens.JWT\Freem.Tokens.JWT.csproj" />
+        <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />
     </ItemGroup>
     
     <ItemGroup>
         <InternalsVisibleTo Include="Freem.Entities.UseCases.DependencyInjection"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Users\Password\" />
     </ItemGroup>
     
 </Project>

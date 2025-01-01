@@ -3,7 +3,7 @@ using Freem.Credentials.Password.Abstractions;
 
 namespace Freem.Credentials.Password.Implementations;
 
-public class GuidSaltGenerator : ISaltGenerator
+public sealed class GuidSaltGenerator : ISaltGenerator
 {
     public byte[] Generate()
     {

@@ -45,6 +45,14 @@ using Freem.Entities.UseCases.Tags.Remove;
 using Freem.Entities.UseCases.Tags.Remove.Models;
 using Freem.Entities.UseCases.Tags.Update;
 using Freem.Entities.UseCases.Tags.Update.Models;
+using Freem.Entities.UseCases.Users.Password.Login;
+using Freem.Entities.UseCases.Users.Password.Login.Models;
+using Freem.Entities.UseCases.Users.Password.Register;
+using Freem.Entities.UseCases.Users.Password.Register.Models;
+using Freem.Entities.UseCases.Users.Password.Update;
+using Freem.Entities.UseCases.Users.Password.Update.Models;
+using Freem.Entities.UseCases.Users.Tokens.Refresh;
+using Freem.Entities.UseCases.Users.Tokens.Refresh.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -59,7 +67,9 @@ public static class ServiceCollectionExtensions
             .AddTagsUseCases()
             .AddRecordsUseCases()
             .AddRunningRecordsUseCases()
-            .AddEventsUseCases();
+            .AddEventsUseCases()
+            .AddUsersPasswordUseCases()
+            .AddUsersTokensUseCases();
     }
 
     private static IServiceCollection AddActivitiesUseCases(this IServiceCollection services)
@@ -115,6 +125,22 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddEventsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<ListEventRequest, ListEventResponse>, ListEventUseCase>();
+        
+        return services;
+    }
+
+    private static IServiceCollection AddUsersPasswordUseCases(this IServiceCollection services)
+    {
+        services.TryAddTransient<IUseCase<LoginUserPasswordRequest, LoginUserPasswordResponse>, LoginUserPasswordUseCase>();
+        services.TryAddTransient<IUseCase<RegisterUserPasswordRequest>, RegisterUserPasswordUseCase>();
+        services.TryAddTransient<IUseCase<ChangeLoginCredentialsRequest>, UpdateLoginCredentialsUseCases>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddUsersTokensUseCases(this IServiceCollection services)
+    {
+        services.TryAddTransient<IUseCase<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>, RefreshUserAccessTokenUseCase>();
         
         return services;
     }

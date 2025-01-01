@@ -2,10 +2,10 @@
 
 public sealed class RedisConfiguration
 {
-    public string Configuration { get; }
+    public string ConnectionString { get; }
     
-    public RedisConfiguration(string configuration)
+    public RedisConfiguration(string connectionString)
     {
-        Configuration = configuration;
+        ConnectionString = connectionString;
     }
 }

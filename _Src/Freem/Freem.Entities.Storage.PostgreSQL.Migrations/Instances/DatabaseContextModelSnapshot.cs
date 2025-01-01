@@ -117,7 +117,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable("events", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("events_entity_name_check", "entity_name = 'activity' and (action = 'created' or action = 'updated' or action = 'removed' or action = 'archived' or action = 'unarchived') or entity_name = 'record' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'running_record' and (action = 'started' or action = 'stopped' or action = 'updated' or action = 'removed') or entity_name = 'tag' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'user' and (action = 'signed_in')");
+                            t.HasCheckConstraint("events_entity_name_check", "entity_name = 'activity' and (action = 'created' or action = 'updated' or action = 'removed' or action = 'archived' or action = 'unarchived') or entity_name = 'record' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'running_record' and (action = 'started' or action = 'stopped' or action = 'updated' or action = 'removed') or entity_name = 'tag' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'user' and (action = 'registered' or action = 'password_credentials_changed' or action = 'signed_in')");
                         });
                 });
 
@@ -397,6 +397,57 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.ToTable("users", "core_entities");
                 });
 
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserPasswordCredentialsEntity", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("user_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("HashAlgorithm")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash_algorithm");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("login");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password_salt");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("UserId")
+                        .HasName("user_password_credentials_pk");
+
+                    b.HasIndex("Login")
+                        .IsUnique()
+                        .HasDatabaseName("user_password_credentials_login_unique");
+
+                    b.ToTable("user_password_credentials", "core_entities");
+                });
+
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
                 {
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
@@ -548,6 +599,23 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                         .HasConstraintName("tags_users_fk");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserPasswordCredentialsEntity", b =>
+                {
+                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
+                        .WithOne("PasswordCredentials")
+                        .HasForeignKey("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserPasswordCredentialsEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("user_password_credentials_users_fk");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", b =>
+                {
+                    b.Navigation("PasswordCredentials");
                 });
 #pragma warning restore 612, 618
         }

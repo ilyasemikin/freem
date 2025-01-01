@@ -2,6 +2,8 @@
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Users.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 
@@ -24,9 +26,9 @@ internal static class UserMapper
         {
             UserId = userId,
             Login = credentials.Login,
-            HashAlgorithm = credentials.HashAlgorithm,
-            PasswordHash = credentials.PasswordHash,
-            PasswordSalt = credentials.SaltHash
+            HashAlgorithm = credentials.PasswordHash.Algorithm,
+            PasswordHash = credentials.PasswordHash.ValueBase64,
+            PasswordSalt = credentials.PasswordHash.SaltBase64
         };
     }
 
@@ -42,6 +44,7 @@ internal static class UserMapper
     public static UserPasswordCredentials MapToDomainEntity(this UserPasswordCredentialsEntity entity)
     {
         var algorithm = new HashAlgorithm(entity.HashAlgorithm);
-        return new UserPasswordCredentials(entity.Login, algorithm, entity.PasswordHash, entity.PasswordSalt);
+        var hash = new PasswordHash(algorithm, entity.PasswordHash, entity.PasswordSalt);
+        return new UserPasswordCredentials(entity.Login, hash);
     }
 }

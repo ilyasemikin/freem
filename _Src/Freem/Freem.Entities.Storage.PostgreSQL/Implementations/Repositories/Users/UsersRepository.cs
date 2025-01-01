@@ -8,6 +8,7 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Users.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
@@ -74,7 +75,18 @@ internal sealed class UsersRepository : IUsersRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
-        
+
         return await _database.Users.FindAsync(e => e.Id == id, UserMapper.MapToDomainEntity, cancellationToken);
+    }
+
+    public async Task<SearchEntityResult<User>> FindByLoginAsync(
+        Login login, 
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(login);
+
+        return await _database.Users
+            .Include(e => e.PasswordCredentials)
+            .FindAsync(e => e.PasswordCredentials!.Login == login, UserMapper.MapToDomainEntity, cancellationToken);
     }
 }

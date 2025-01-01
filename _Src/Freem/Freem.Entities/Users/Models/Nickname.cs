@@ -62,7 +62,7 @@ public sealed class Nickname :
     
     public Nickname Clone()
     {
-        return new Nickname(_value);
+        return this;
     }
 
     public static implicit operator Nickname(string value)

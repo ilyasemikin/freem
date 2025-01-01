@@ -48,7 +48,7 @@ public sealed class PasswordHash
         for (var i = 0; i < bytes.Count; i++)
             if (hash.Value[i] != bytes[i])
                 return false;
-
+        
         return true;
     }
 

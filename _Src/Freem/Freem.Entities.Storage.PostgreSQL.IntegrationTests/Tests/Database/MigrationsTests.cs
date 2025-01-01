@@ -21,4 +21,14 @@ public sealed class MigrationsTests
 
         Assert.False(hasChanges);
     }
+
+    [Fact]
+    public void Migrations_ShouldAllApplied()
+    {
+        var hasPending = _context.Database
+            .GetPendingMigrations()
+            .Any();
+
+        Assert.False(hasPending);
+    }
 }

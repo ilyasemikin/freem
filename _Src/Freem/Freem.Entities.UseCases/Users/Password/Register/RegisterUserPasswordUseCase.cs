@@ -1,11 +1,10 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
 using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.Abstractions;
-using Freem.Entities.UseCases.Users.Register.Models;
+using Freem.Entities.UseCases.Users.Password.Register.Models;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.Entities.Users.Models;
@@ -13,9 +12,9 @@ using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
-namespace Freem.Entities.UseCases.Users.Register;
+namespace Freem.Entities.UseCases.Users.Password.Register;
 
-internal sealed class RegisterUserUseCase : IUseCase<RegisterUserRequest>
+internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswordRequest>
 {
     private readonly IIdentifierGenerator<UserIdentifier> _identifierGenerator;
     private readonly ICreateRepository<User, UserIdentifier> _repository;
@@ -25,7 +24,7 @@ internal sealed class RegisterUserUseCase : IUseCase<RegisterUserRequest>
     private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
-    public RegisterUserUseCase(
+    public RegisterUserPasswordUseCase(
         IIdentifierGenerator<UserIdentifier> identifierGenerator, 
         ICreateRepository<User, UserIdentifier> repository, 
         ICurrentPasswordHashAlgorithmGetter passwordHashAlgorithmGetter, 
@@ -52,7 +51,7 @@ internal sealed class RegisterUserUseCase : IUseCase<RegisterUserRequest>
     }
 
     public async Task ExecuteAsync(
-        UseCaseExecutionContext context, RegisterUserRequest request,
+        UseCaseExecutionContext context, RegisterUserPasswordRequest request,
         CancellationToken cancellationToken = default)
     {
         var id = _identifierGenerator.Generate();

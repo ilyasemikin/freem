@@ -65,14 +65,9 @@ public sealed class Password :
     {
         return !(left == right);
     }
-    
-    public static implicit operator string(Password password)
-    {
-        return password._value;
-    }
 
     public Password Clone()
     {
-        return new Password(_value);
+        return this;
     }
 }
