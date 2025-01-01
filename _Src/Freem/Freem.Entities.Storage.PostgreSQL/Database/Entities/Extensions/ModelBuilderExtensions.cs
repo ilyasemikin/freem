@@ -25,6 +25,7 @@ internal static class ModelBuilderExtensions
         
         builder.ApplyConfiguration<UserEntity, UserEntityTypeConfiguration>();
         builder.ApplyConfiguration<UserPasswordCredentialsEntity, UserLoginCredentialsEntityTypeConfiguration>();
+        builder.ApplyConfiguration<UserTelegramIntegrationEntity, UserTelegramIntegrationEntityTypeConfiguration>();
         
         builder.ApplyConfiguration<EventEntity, EventEntityTypeConfiguration>();
         

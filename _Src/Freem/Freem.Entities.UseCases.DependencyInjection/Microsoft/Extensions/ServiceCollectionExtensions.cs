@@ -45,6 +45,8 @@ using Freem.Entities.UseCases.Tags.Remove;
 using Freem.Entities.UseCases.Tags.Remove.Models;
 using Freem.Entities.UseCases.Tags.Update;
 using Freem.Entities.UseCases.Tags.Update.Models;
+using Freem.Entities.UseCases.Users.Password.Add;
+using Freem.Entities.UseCases.Users.Password.Add.Models;
 using Freem.Entities.UseCases.Users.Password.Login;
 using Freem.Entities.UseCases.Users.Password.Login.Models;
 using Freem.Entities.UseCases.Users.Password.Register;
@@ -131,9 +133,10 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddUsersPasswordUseCases(this IServiceCollection services)
     {
+        services.TryAddTransient<IUseCase<AddUserPasswordRequest, AddUserPasswordResponse>, AddUserPasswordUseCase>();
         services.TryAddTransient<IUseCase<LoginUserPasswordRequest, LoginUserPasswordResponse>, LoginUserPasswordUseCase>();
         services.TryAddTransient<IUseCase<RegisterUserPasswordRequest>, RegisterUserPasswordUseCase>();
-        services.TryAddTransient<IUseCase<ChangeLoginCredentialsRequest>, UpdateLoginCredentialsUseCases>();
+        services.TryAddTransient<IUseCase<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>, UpdateLoginCredentialsUseCases>();
 
         return services;
     }

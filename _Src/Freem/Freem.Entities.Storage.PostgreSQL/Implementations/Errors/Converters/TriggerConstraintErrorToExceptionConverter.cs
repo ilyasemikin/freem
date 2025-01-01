@@ -61,6 +61,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
                     EntitiesNames.Tags.EntityName => identifierParameter.AsTagIdentifier(),
                     EntitiesNames.Users.EntityName => identifierParameter.AsUserIdentifier(),
                     EntitiesNames.UsersLoginCredentials.EntityName => identifierParameter.AsUserIdentifier(),
+                    EntitiesNames.UserTelegramIntegration.EntityName => identifierParameter.AsUserIdentifier(),
                     _ => throw new InvalidOperationException($"Unknown entity name \"{entityName}\"")
                 };
                 

@@ -31,8 +31,4 @@
         <InternalsVisibleTo Include="Freem.Entities.UseCases.DependencyInjection"/>
     </ItemGroup>
     
-    <ItemGroup>
-      <Folder Include="Users\Password\" />
-    </ItemGroup>
-    
 </Project>

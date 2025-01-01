@@ -16,14 +16,14 @@ internal sealed class UserPasswordCredentialsEntity :
     public required string PasswordHash { get; init; }
     public required string PasswordSalt { get; init; }
     
-    public UserEntity? User { get; set; }
-    
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
     
     [Timestamp]
     public uint RowVersion { get; private set; }
 
+    public UserEntity? User { get; set; }
+    
     public UserPasswordCredentialsEntity Clone()
     {
         return new UserPasswordCredentialsEntity

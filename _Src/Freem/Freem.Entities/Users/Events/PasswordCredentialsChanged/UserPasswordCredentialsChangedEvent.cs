@@ -2,7 +2,7 @@
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Entities.Users.Events.PasswordCredentialsAdded;
+namespace Freem.Entities.Users.Events.PasswordCredentialsChanged;
 
 public sealed class UserPasswordCredentialsChangedEvent : EntityEvent<UserIdentifier, UserIdentifier>
 {

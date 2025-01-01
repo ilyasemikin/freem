@@ -49,6 +49,28 @@ internal static class EntitiesNames
         }
     }
 
+    public static class UserTelegramIntegration
+    {
+        public const string EntityName = "user_telegram_integration";
+        public const string Table = "user_telegram_integrations";
+
+        public static class Properties
+        {
+            public const string UserId = "user_id";
+            public const string TelegramUserId = "telegram_user_id";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
+        }
+
+        public static class Constraints
+        {
+            public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
+            public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
+            public const string TelegramUserIdIndex = $"{Table}_{Properties.TelegramUserId}_{NamingConvention.IndexSuffix}";
+            public const string TelegramUserIdUnique = $"{Table}_{Properties.TelegramUserId}_{NamingConvention.UniqueSuffix}";
+        }
+    }
+
     public static class Tags
     {
         public const string EntityName = "tag";
