@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.Database;
-using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Database.Extensions;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;

@@ -8,7 +8,7 @@ public interface IUseCaseExecutor
         UseCaseExecutionContext context, TRequest request, 
         CancellationToken cancellationToken = default);
 
-    Task ExecuteAsync<TRequest, TResponse>(
+    Task<TResponse> ExecuteAsync<TRequest, TResponse>(
         UseCaseExecutionContext context, TRequest request,
         CancellationToken cancellationToken = default);
 }

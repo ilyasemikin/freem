@@ -1,9 +1,8 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database;
-using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Database.Extensions;
+namespace Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 
 internal static class DatabaseContextExtensions
 {

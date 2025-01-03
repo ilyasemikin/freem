@@ -3,8 +3,8 @@ using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Users.Password.Login.Models;
-using Freem.Tokens.JWT.AccessTokens;
-using Freem.Tokens.JWT.RefreshTokens;
+using Freem.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Tokens.JWT.Implementations.RefreshTokens;
 
 namespace Freem.Entities.UseCases.Users.Password.Login;
 

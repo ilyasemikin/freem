@@ -6,8 +6,13 @@ namespace Freem.Entities.UseCases.Abstractions.Context;
 
 public sealed class UseCaseExecutionContext
 {
-    public UserIdentifier? UserId { get; init; }
+    public UserIdentifier? UserId { get; }
 
+    public UseCaseExecutionContext(UserIdentifier? userId = null)
+    {
+        UserId = userId;
+    }
+    
     [MemberNotNull(nameof(UserId))]
     public void ThrowsIfUnauthorized()
     {

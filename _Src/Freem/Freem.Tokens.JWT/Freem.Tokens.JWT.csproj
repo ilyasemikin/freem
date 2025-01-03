@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
     <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Implementations\" />
+  </ItemGroup>
 </Project>

@@ -1,22 +1,27 @@
 ﻿using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
-using Freem.Tokens.JWT.RefreshTokens.Models;
+using Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Freem.Tokens.JWT.RefreshTokens;
+namespace Freem.Tokens.JWT.Implementations.RefreshTokens;
 
 public sealed class RefreshTokenValidator
 {
     private readonly JsonWebTokenHandler _handler;
+    private readonly RefreshTokenSettings _settings;
     private readonly ITokensBlacklist _blacklist;
 
-    public RefreshTokenValidator(ITokensBlacklist blacklist)
+    public RefreshTokenValidator(
+        RefreshTokenSettings settings,
+        ITokensBlacklist blacklist)
     {
+        ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(blacklist);
         
         _handler = new JsonWebTokenHandler();
         
+        _settings = settings;
         _blacklist = blacklist;
     }
 

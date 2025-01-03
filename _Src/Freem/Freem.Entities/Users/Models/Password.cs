@@ -70,4 +70,14 @@ public sealed class Password :
     {
         return this;
     }
+
+    public static implicit operator Password(string value)
+    {
+        return new Password(value);
+    }
+
+    public static implicit operator string(Password value)
+    {
+        return value._value;
+    }
 }

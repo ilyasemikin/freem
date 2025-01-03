@@ -1,20 +1,22 @@
 ﻿using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
-using Freem.Tokens.JWT.AccessTokens.Models;
+using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Freem.Tokens.JWT.AccessTokens;
+namespace Freem.Tokens.JWT.Implementations.AccessTokens;
 
 public sealed class AccessTokenValidator
 {
     private readonly JsonWebTokenHandler _handler;
+    private readonly AccessTokenSettings _settings;
     
-    public AccessTokenValidator(ITokensBlacklist blacklist)
+    public AccessTokenValidator(AccessTokenSettings settings)
     {
-        ArgumentNullException.ThrowIfNull(blacklist);
-        
+        ArgumentNullException.ThrowIfNull(settings);
+
         _handler = new JsonWebTokenHandler();
+        _settings = settings;
     }
 
     public async Task<AccessTokenValidationResult> ValidateAsync(

@@ -1,8 +1,8 @@
 ﻿using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities._Common.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensions;

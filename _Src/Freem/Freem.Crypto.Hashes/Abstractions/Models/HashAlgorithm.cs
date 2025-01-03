@@ -18,6 +18,11 @@ public sealed class HashAlgorithm
     {
         return _name.GetHashCode();
     }
+    
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is HashAlgorithm other && _name == other._name;
+    }
 
     public static implicit operator string(HashAlgorithm algorithm)
     {

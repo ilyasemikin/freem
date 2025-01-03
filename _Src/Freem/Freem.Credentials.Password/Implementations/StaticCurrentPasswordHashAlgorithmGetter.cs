@@ -7,6 +7,13 @@ public sealed class StaticCurrentPasswordHashAlgorithmGetter : ICurrentPasswordH
 {
     private readonly HashAlgorithm _algorithm;
 
+    public StaticCurrentPasswordHashAlgorithmGetter(string hashAlgorithmName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(hashAlgorithmName);
+
+        _algorithm = new HashAlgorithm(hashAlgorithmName);
+    }
+    
     public StaticCurrentPasswordHashAlgorithmGetter(HashAlgorithm algorithm)
     {
         ArgumentNullException.ThrowIfNull(algorithm);

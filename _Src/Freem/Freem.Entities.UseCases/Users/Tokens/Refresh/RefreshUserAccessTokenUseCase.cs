@@ -5,8 +5,8 @@ using Freem.Entities.UseCases.Users.Tokens.Refresh.Models;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
-using Freem.Tokens.JWT.AccessTokens;
-using Freem.Tokens.JWT.RefreshTokens;
+using Freem.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Tokens.JWT.Implementations.RefreshTokens;
 
 namespace Freem.Entities.UseCases.Users.Tokens.Refresh;
 

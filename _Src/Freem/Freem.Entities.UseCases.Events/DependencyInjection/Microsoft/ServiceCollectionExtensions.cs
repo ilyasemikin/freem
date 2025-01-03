@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<EventConsumerTypesCollection>(_ => builder.Create());
         services.TryAddSingleton<IEventConsumersResolver, MicrosoftDependencyInjectionEventConsumersResolver>();
         
+        services.TryAddSingleton<IEventProducer, EventProducer>();
         services.TryAddSingleton<IEventPublisher, EventPublisher>();
         
         return builder;

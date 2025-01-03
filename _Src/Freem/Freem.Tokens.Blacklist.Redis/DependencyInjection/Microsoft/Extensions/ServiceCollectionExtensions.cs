@@ -7,7 +7,7 @@ namespace Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddRedisTokesBlacklist(
+    public static IServiceCollection AddRedisTokensBlacklist(
         this IServiceCollection services, 
         RedisConfiguration configuration)
     {

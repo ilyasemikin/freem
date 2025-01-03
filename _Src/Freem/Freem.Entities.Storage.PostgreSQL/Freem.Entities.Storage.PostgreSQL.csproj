@@ -35,6 +35,7 @@
         <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.Migrations"/>
         <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.UnitTests"/>
         <InternalsVisibleTo Include="Freem.Entities.Storage.PostgreSQL.IntegrationTests"/>
+        <InternalsVisibleTo Include="Freem.Entities.UseCases.IntegrationTests"/>
         <InternalsVisibleTo Include="Freem.Sandbox"/>
     </ItemGroup>
 

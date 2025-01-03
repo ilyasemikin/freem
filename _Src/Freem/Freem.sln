@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.Post
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Storage.EFCore", "Freem.Storage.EFCore\Freem.Storage.EFCore.csproj", "{758EE40D-C306-437C-AEF6-E9C11C219135}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Sandbox", "Freem.Sandbox\Freem.Sandbox.csproj", "{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.IntegrationTests", "Freem.Entities.Storage.PostgreSQL.IntegrationTests\Freem.Entities.Storage.PostgreSQL.IntegrationTests.csproj", "{8893DD9E-D0D5-4872-90C0-E247A53D64A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Configurations", "Freem.Configurations\Freem.Configurations.csproj", "{C004D9B2-7021-474C-8FB8-1F7DEA454477}"
@@ -99,6 +97,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Tokens", "Freem.Token
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Tokens.Blacklist.Redis", "Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj", "{EB44524E-3100-4B6F-BB31-690FC1FF36AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.IntegrationTests", "Freem.Entities.UseCases.IntegrationTests\Freem.Entities.UseCases.IntegrationTests.csproj", "{35EAA7E3-8911-4731-9399-6F97E7C37208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Local", "Freem.Locking.Local\Freem.Locking.Local.csproj", "{77FF541A-606C-498E-960C-2A2322D825A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Executors", "Freem.Entities.UseCases.Executors\Freem.Entities.UseCases.Executors.csproj", "{11F95398-D4E8-4364-9C4E-077BE461BD03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,10 +141,6 @@ Global
 		{758EE40D-C306-437C-AEF6-E9C11C219135}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{758EE40D-C306-437C-AEF6-E9C11C219135}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{758EE40D-C306-437C-AEF6-E9C11C219135}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D5A33DD-999B-4404-AB8F-706AE91AB5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8893DD9E-D0D5-4872-90C0-E247A53D64A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -297,6 +297,18 @@ Global
 		{EB44524E-3100-4B6F-BB31-690FC1FF36AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB44524E-3100-4B6F-BB31-690FC1FF36AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB44524E-3100-4B6F-BB31-690FC1FF36AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35EAA7E3-8911-4731-9399-6F97E7C37208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35EAA7E3-8911-4731-9399-6F97E7C37208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35EAA7E3-8911-4731-9399-6F97E7C37208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35EAA7E3-8911-4731-9399-6F97E7C37208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77FF541A-606C-498E-960C-2A2322D825A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FF541A-606C-498E-960C-2A2322D825A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FF541A-606C-498E-960C-2A2322D825A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FF541A-606C-498E-960C-2A2322D825A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
