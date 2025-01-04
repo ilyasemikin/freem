@@ -4,9 +4,11 @@ namespace Freem.Entities.Activities.Models;
 
 public sealed class ActivityStatus : IEquatable<ActivityStatus>
 {
-
     private readonly Value _value;
 
+    public static ActivityStatus Active { get; } = Value.Active;
+    public static ActivityStatus Archived { get; } = Value.Archived;
+    
     public ActivityStatus(Value value)
     {
         InvalidEnumValueException<Value>.ThrowIfValueInvalid(value);

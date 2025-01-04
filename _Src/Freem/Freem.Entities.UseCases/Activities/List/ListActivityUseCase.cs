@@ -5,6 +5,7 @@ using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.List.Models;
+using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Activities.List;
 
@@ -33,6 +34,7 @@ internal sealed class ListActivityUseCase : IUseCase<ListActivityRequest, ListAc
         };
             
         var result = await _repository.FindAsync(filter, cancellationToken);
-        return new ListActivityResponse(result, result.TotalCount);
+        var activities = await result.ToArrayAsync(cancellationToken);
+        return new ListActivityResponse(activities, result.TotalCount);
     }
 }

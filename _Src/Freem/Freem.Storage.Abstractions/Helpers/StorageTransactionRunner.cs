@@ -20,7 +20,7 @@ public sealed class StorageTransactionRunner
         }
         catch
         {
-            await transaction.AbortAsync(cancellationToken);
+            await transaction.TryAbortAsync(cancellationToken);
             throw;
         }
     }

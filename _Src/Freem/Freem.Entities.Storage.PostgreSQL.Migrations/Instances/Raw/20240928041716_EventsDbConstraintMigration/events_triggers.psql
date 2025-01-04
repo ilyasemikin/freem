@@ -17,6 +17,10 @@ begin
 			array[('${TriggerErrorParameters.EventEntityParameterName}', 'user'), ('${TriggerErrorParameters.EventEntityIdParameterName}', new.user_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
+	if new.action = 'removed' then
+	    return new;
+	end if;
+
 	if new.entity_name = '${EventEntityName.Activity}' then
 		select id from ${EnvironmentNames.Schema}.activities where id = new.entity_id into founded_related_entity_id;
 	end if;
@@ -38,7 +42,7 @@ begin
 	        founded_related_entity_id = founded_user_id;
 	    end if;
 	end if; 
-
+	
 	if founded_related_entity_id is null then
 		call ${EnvironmentNames.Schema}.throw_exception(
 			'EventsRelatedEntityNotExists', 

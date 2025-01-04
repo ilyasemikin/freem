@@ -1,26 +1,39 @@
-﻿using Freem.Entities.Activities;
+﻿using System.Collections;
+using Freem.Entities.Activities;
 using Freem.Entities.UseCases.Models.Filter;
 
 namespace Freem.Entities.UseCases.Activities.List.Models;
 
-public sealed class ListActivityResponse : IAsyncEnumerable<Activity>
+public sealed class ListActivityResponse : IEnumerable<Activity>
 {
-    private readonly IAsyncEnumerable<Activity> _entities;
-
+    public IReadOnlyList<Activity> Activities { get; }
     public TotalCount TotalCount { get; }
-    
-    public ListActivityResponse(IAsyncEnumerable<Activity> entities, TotalCount totalCount)
+
+    public ListActivityResponse(IReadOnlyList<Activity> activities, TotalCount totalCount)
     {
-        ArgumentNullException.ThrowIfNull(entities);
+        ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(totalCount);
         
-        _entities = entities;
-        
+        Activities = activities;
         TotalCount = totalCount;
     }
     
-    public IAsyncEnumerator<Activity> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    public ListActivityResponse(IEnumerable<Activity> activities, TotalCount totalCount)
     {
-        return _entities.GetAsyncEnumerator(cancellationToken);
+        ArgumentNullException.ThrowIfNull(activities);
+        ArgumentNullException.ThrowIfNull(totalCount);
+        
+        Activities = activities.ToArray();
+        TotalCount = totalCount;
+    }
+
+    public IEnumerator<Activity> GetEnumerator()
+    {
+        return Activities.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

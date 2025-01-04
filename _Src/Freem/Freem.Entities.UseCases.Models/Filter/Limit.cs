@@ -15,6 +15,7 @@ public struct Limit
     public Limit(int value = DefaultIntValue)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, MaxIntValue);
         
         _value = value;
     }

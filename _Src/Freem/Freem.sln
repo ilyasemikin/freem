@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Locking.Local", "Free
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases.Executors", "Freem.Entities.UseCases.Executors\Freem.Entities.UseCases.Executors.csproj", "{11F95398-D4E8-4364-9C4E-077BE461BD03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Linq", "Freem.Linq\Freem.Linq.csproj", "{B88A65C4-A82A-4C0E-A6B2-837B6BCA20C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -309,6 +311,10 @@ Global
 		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11F95398-D4E8-4364-9C4E-077BE461BD03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B88A65C4-A82A-4C0E-A6B2-837B6BCA20C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B88A65C4-A82A-4C0E-A6B2-837B6BCA20C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B88A65C4-A82A-4C0E-A6B2-837B6BCA20C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B88A65C4-A82A-4C0E-A6B2-837B6BCA20C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

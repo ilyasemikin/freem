@@ -7,7 +7,8 @@ namespace Freem.Storage.EFCore.Implementations;
 internal sealed class ContextStorageTransaction<TDbContext> : IStorageTransaction
     where TDbContext : DbContext
 {
-    private bool _disposed = false;
+    private bool _disposed;
+    private bool _completed;
 
     private readonly TDbContext _context;
     private readonly IDbContextTransaction _transaction;
@@ -20,12 +21,34 @@ internal sealed class ContextStorageTransaction<TDbContext> : IStorageTransactio
 
     public async Task CommitAsync(CancellationToken cancellationToken)
     {
+        _completed = true;
         await _transaction.CommitAsync(cancellationToken);
     }
 
     public async Task AbortAsync(CancellationToken cancellationToken)
     {
+        _completed = true;
         await _transaction.RollbackAsync(cancellationToken);
+    }
+
+    public async Task<bool> TryCommitAsync(CancellationToken cancellationToken = default)
+    {
+        if (_completed)
+            return false;
+
+        _completed = true;
+        await _transaction.CommitAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> TryAbortAsync(CancellationToken cancellationToken = default)
+    {
+        if (_completed)
+            return false;
+
+        _completed = true;
+        await _transaction.RollbackAsync(cancellationToken);
+        return true;
     }
 
     public async ValueTask DisposeAsync()
