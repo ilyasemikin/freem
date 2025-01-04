@@ -6,6 +6,8 @@ namespace Freem.Entities.UseCases.Abstractions.Context;
 
 public sealed class UseCaseExecutionContext
 {
+    public static UseCaseExecutionContext Empty { get; } = new();
+    
     public UserIdentifier? UserId { get; }
 
     public UseCaseExecutionContext(UserIdentifier? userId = null)

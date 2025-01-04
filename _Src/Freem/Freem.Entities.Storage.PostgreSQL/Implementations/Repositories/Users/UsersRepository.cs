@@ -76,7 +76,9 @@ internal sealed class UsersRepository : IUsersRepository
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        return await _database.Users.FindAsync(e => e.Id == id, UserMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Users
+            .Include(e => e.PasswordCredentials)
+            .FindAsync(e => e.Id == id, UserMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<SearchEntityResult<User>> FindByLoginAsync(

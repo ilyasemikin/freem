@@ -13,6 +13,7 @@ using Freem.Locking.Local.DependencyInjection;
 using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
+using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
 using Freem.Tokens.JWT.DependencyInjection;
 using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
 using Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
@@ -23,37 +24,46 @@ namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
 public sealed class ServicesContext
 {
-    private readonly IServiceProvider _services;
+    private const string TokensBlacklistRedisKey = "refresh_blacklist";
+
+    private const string TokensIssuer = "test";
+    private const string TokensAudience = "test";
+    private const string TokensSecurityKey = "0123456789_0123456789_0123456789";
+    
+    private static TimeSpan TokensExpiration { get; } = TimeSpan.FromDays(1);
     
     public RequestExecutor RequestExecutor { get; }
     public DataManager DataManager { get; }
 
     public ServicesContext()
     {
-        _services = BuildServiceProvider();
+        var configuration = TestsConfiguration.Read();
+        var services = BuildServiceProvider(configuration);
         
-        RequestExecutor = new RequestExecutor(_services);
-        DataManager = new DataManager(_services);
+        RequestExecutor = new RequestExecutor(services);
+        DataManager = new DataManager(configuration, services);
     }
     
-    private static IServiceProvider BuildServiceProvider()
+    private static IServiceProvider BuildServiceProvider(TestsConfiguration configuration)
     {
         var services = new ServiceCollection();
-
-        var configuration = TestsConfiguration.Read();
 
         var storageConfiguration = new StorageConfiguration(configuration.PostgresConnectionString)
         {
             SensitiveDataLogging = true
         };
 
-        var redisConfiguration = new RedisConfiguration(configuration.RedisConnectionString, "refresh_blacklist");
+        var redisConfiguration = new RedisConfiguration(configuration.RedisConnectionString, TokensBlacklistRedisKey);
+
+        var accessTokensSettings = new AccessTokenSettings(TokensIssuer, TokensAudience, TokensExpiration);
+        var refreshTokensSettings = new RefreshTokenSettings(TokensIssuer, TokensAudience, TokensExpiration);
         
         services
             .AddUtcCurrentTimeGetter()
             .AddIdentifiersGenerators()
-            .AddAccessTokens(new AccessTokenSettings("test", "test", TimeSpan.FromDays(1)))
-            .AddRefreshTokens(new RefreshTokenSettings("test", "test", TimeSpan.FromDays(1)))
+            .AddStaticSecurityKeyGetter(TokensSecurityKey)
+            .AddAccessTokens(accessTokensSettings)
+            .AddRefreshTokens(refreshTokensSettings)
             .AddRedisTokensBlacklist(redisConfiguration)
             .AddEmptyLocking()
             .AddPostgreSqlStorage(storageConfiguration)

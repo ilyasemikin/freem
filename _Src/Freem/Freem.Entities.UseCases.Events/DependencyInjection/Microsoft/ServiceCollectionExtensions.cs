@@ -13,10 +13,10 @@ public static class ServiceCollectionExtensions
         var builder = new EventConsumersBuilder(services);
         
         services.TryAddSingleton<EventConsumerTypesCollection>(_ => builder.Create());
-        services.TryAddSingleton<IEventConsumersResolver, MicrosoftDependencyInjectionEventConsumersResolver>();
+        services.TryAddTransient<IEventConsumersResolver, MicrosoftDependencyInjectionEventConsumersResolver>();
         
-        services.TryAddSingleton<IEventProducer, EventProducer>();
-        services.TryAddSingleton<IEventPublisher, EventPublisher>();
+        services.TryAddTransient<IEventProducer, EventProducer>();
+        services.TryAddTransient<IEventPublisher, EventPublisher>();
         
         return builder;
     }

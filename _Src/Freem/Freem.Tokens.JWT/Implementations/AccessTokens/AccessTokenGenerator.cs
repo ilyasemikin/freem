@@ -47,7 +47,9 @@ public sealed class AccessTokenGenerator
             Expires = expires.DateTime
         };
 
+        descriptor.Claims ??= new Dictionary<string, object>();
         descriptor.Claims.Add("UserId", (string)user.Id);
+        descriptor.Claims.Add("TokenId", Guid.NewGuid().ToString("N"));
 
         return _handler.CreateToken(descriptor);
     }

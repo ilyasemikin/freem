@@ -39,15 +39,17 @@ public sealed class RefreshTokenGenerator
 
         var expires = now.Add(_settings.ExpirationPeriod);
 
-        var descriptor = new SecurityTokenDescriptor()
+        var descriptor = new SecurityTokenDescriptor
         {
             SigningCredentials = credentials,
             Issuer = _settings.Issuer,
             Audience = _settings.Audience,
             Expires = expires.DateTime
         };
-        
+
+        descriptor.Claims ??= new Dictionary<string, object>();
         descriptor.Claims.Add("UserId", (string)user.Id);
+        descriptor.Claims.Add("TokenId", Guid.NewGuid().ToString("N"));
 
         return _handler.CreateToken(descriptor);
     }

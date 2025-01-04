@@ -29,7 +29,7 @@ public sealed class AccessTokenValidator
         };
         
         var result = await _handler.ValidateTokenAsync(accessToken, parameters);
-        if (result.IsValid || 
+        if (!result.IsValid || 
             result.Claims.TryGetValue("UserId", out var userIdClaim) || 
             userIdClaim is not string userIdString)
             return AccessTokenValidationResult.Invalid();

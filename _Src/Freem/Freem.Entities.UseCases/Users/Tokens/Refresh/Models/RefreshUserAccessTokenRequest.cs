@@ -2,5 +2,12 @@
 
 public sealed class RefreshUserAccessTokenRequest
 {
-    public required string RefreshToken { get; init; }
+    public string RefreshToken { get; }
+    
+    public RefreshUserAccessTokenRequest(string refreshToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        
+        RefreshToken = refreshToken;
+    }
 }

@@ -14,7 +14,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Users.Password.Register;
 
-internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswordRequest>
+internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswordRequest, RegisterUserPasswordResponse>
 {
     private readonly IIdentifierGenerator<UserIdentifier> _identifierGenerator;
     private readonly ICreateRepository<User, UserIdentifier> _repository;
@@ -50,7 +50,7 @@ internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswor
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<RegisterUserPasswordResponse> ExecuteAsync(
         UseCaseExecutionContext context, RegisterUserPasswordRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -74,5 +74,7 @@ internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswor
             await _eventProducer.PublishAsync(eventId => user.BuildRegisteredEvent(eventId), cancellationToken);
             await _eventProducer.PublishAsync(eventId => user.BuildPasswordCredentialsChangedEvent(eventId), cancellationToken);
         }, cancellationToken);
+
+        return new RegisterUserPasswordResponse(id);
     }
 }

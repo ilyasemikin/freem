@@ -21,14 +21,14 @@ public sealed class TokensBlacklist : ITokensBlacklist
     {
         var db = _connection.GetDatabase();
 
-        await db.SetAddAsync(_key, token);
+        await db.StringSetAsync(_key + token, token);
     }
 
     public async Task<bool> ContainsAsync(string token, CancellationToken cancellationToken)
     {
         var db = _connection.GetDatabase();
 
-        var value = await db.StringGetSetAsync(_key, token);
+        var value = await db.StringGetAsync(_key + token);
         return value.HasValue;
     }
 }
