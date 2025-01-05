@@ -5,6 +5,7 @@ using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Records.List.Models;
+using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Records.List;
 
@@ -26,17 +27,14 @@ internal class ListRecordUseCase : IUseCase<ListRecordRequest, ListRecordRespons
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = Map();
-        var result = await _repository.FindAsync(filter, cancellationToken);
-        return new ListRecordResponse(result, result.TotalCount);
-        
-        RecordsByUserFilter Map()
+        var filter = new RecordsByUserFilter(context.UserId)
         {
-            return new RecordsByUserFilter(context.UserId)
-            {
-                Limit = request.Limit,
-                Offset = request.Offset
-            };
-        }
+            Limit = request.Limit,
+            Offset = request.Offset
+        };
+        
+        var result = await _repository.FindAsync(filter, cancellationToken);
+        var records = await result.ToArrayAsync(cancellationToken);
+        return new ListRecordResponse(records, result.TotalCount);
     }
 }

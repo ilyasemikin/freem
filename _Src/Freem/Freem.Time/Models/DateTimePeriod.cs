@@ -5,7 +5,7 @@ namespace Freem.Time.Models;
 
 public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 {
-    public static DateTimePeriod Empty { get; } = new DateTimePeriod(DateTimeOffset.MinValue, DateTimeOffset.MinValue);
+    public static DateTimePeriod Empty { get; } = new(DateTimeOffset.MinValue, DateTimeOffset.MinValue);
 
     public DateTimeOffset StartAt { get; }
     public DateTimeOffset EndAt { get; }
@@ -45,6 +45,19 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
             return true;
 
         return StartAt == other.StartAt && EndAt == other.EndAt;
+    }
+
+    public bool EqualsUpToSeconds(DateTimePeriod? other)
+    {
+        if (other is null)
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+        
+        return
+            (StartAt - other.StartAt).TotalSeconds < 1 &&
+            (EndAt - other.EndAt).TotalSeconds < 1;
     }
 
     public static bool TryCreate(DateTimeOffset startAt, DateTimeOffset endAt, [NotNullWhen(true)] out DateTimePeriod? period)

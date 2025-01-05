@@ -124,6 +124,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         ArgumentNullException.ThrowIfNull(filter);
         
         return await _database.Records
+            .Include(e => e.Activities)
             .Where(e => e.UserId == filter.UserId)
             .OrderBy(e => e.StartAt)
             .SliceByLimitAndOffsetFilter(filter)

@@ -1,26 +1,39 @@
-﻿using Freem.Entities.Records;
+﻿using System.Collections;
+using Freem.Entities.Records;
 using Freem.Entities.UseCases.Models.Filter;
 
 namespace Freem.Entities.UseCases.Records.List.Models;
 
-public sealed class ListRecordResponse : IAsyncEnumerable<Record>
+public sealed class ListRecordResponse : IEnumerable<Record>
 {
-    private readonly IAsyncEnumerable<Record> _entities;
-    
+    public IReadOnlyList<Record> Records { get; }
     public TotalCount TotalCount { get; }
 
-    public ListRecordResponse(IAsyncEnumerable<Record> entities, TotalCount totalCount)
+    public ListRecordResponse(IReadOnlyList<Record> records, TotalCount totalCount)
     {
-        ArgumentNullException.ThrowIfNull(entities);
+        ArgumentNullException.ThrowIfNull(records);
         ArgumentNullException.ThrowIfNull(totalCount);
 
-        _entities = entities;
-        
+        Records = records;
         TotalCount = totalCount;
     }
-    
-    public IAsyncEnumerator<Record> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+
+    public ListRecordResponse(IEnumerable<Record> records, TotalCount totalCount)
     {
-        return _entities.GetAsyncEnumerator(cancellationToken);
+        ArgumentNullException.ThrowIfNull(records);
+        ArgumentNullException.ThrowIfNull(totalCount);
+        
+        Records = records.ToArray();
+        TotalCount = totalCount;
+    }
+
+    public IEnumerator<Record> GetEnumerator()
+    {
+        return Records.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
