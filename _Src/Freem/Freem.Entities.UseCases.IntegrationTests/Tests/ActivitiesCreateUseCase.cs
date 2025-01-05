@@ -9,21 +9,15 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesCreateUseCase : UseCaseTestBase
 {
-    private const string Nickname = "user";
-    private const string Login = "user";
-    private const string Password = "password";
-
     private const string ActivityName = "activity";
 
     private readonly UseCaseExecutionContext _context;
     
-    public ActivitiesCreateUseCase(ServicesContext context) 
-        : base(context)
+    public ActivitiesCreateUseCase(ServicesContext services) 
+        : base(services)
     {
-        var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var response = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
-
-        _context = new UseCaseExecutionContext(response.UserId);
+        var userId = services.Samples.Users.Register();
+        _context = new UseCaseExecutionContext(userId);
     }
 
     [Fact]
@@ -31,7 +25,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     {
         var request = new CreateActivityRequest(ActivityName);
         
-        var response = await Context.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.NotNull(response.Activity);

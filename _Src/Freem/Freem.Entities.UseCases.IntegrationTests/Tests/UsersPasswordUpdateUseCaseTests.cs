@@ -16,11 +16,11 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
 
     private readonly UseCaseExecutionContext _context;
     
-    public UsersPasswordUpdateUseCaseTests(ServicesContext context) 
-        : base(context)
+    public UsersPasswordUpdateUseCaseTests(ServicesContext services) 
+        : base(services)
     {
         var request = new RegisterUserPasswordRequest(Nickname, Login, OldPassword);
-        var response = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
+        var response = Services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
 
         _context = new UseCaseExecutionContext(response.UserId);
     }
@@ -30,7 +30,7 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateLoginCredentialsRequest(OldPassword, NewPassword);
 
-        var response = await Context.RequestExecutor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);

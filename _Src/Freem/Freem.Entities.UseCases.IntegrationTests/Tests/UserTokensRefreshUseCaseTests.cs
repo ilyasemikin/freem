@@ -15,14 +15,14 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
 
     private readonly string _token;
     
-    public UserTokensRefreshUseCaseTests(ServicesContext context) 
-        : base(context)
+    public UserTokensRefreshUseCaseTests(ServicesContext services) 
+        : base(services)
     {
         var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
+        Services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
 
         var loginRequest = new LoginUserPasswordRequest(Login, Password);
-        var response = Context.RequestExecutor.Execute<LoginUserPasswordRequest, LoginUserPasswordResponse>(UseCaseExecutionContext.Empty, loginRequest);
+        var response = Services.RequestExecutor.Execute<LoginUserPasswordRequest, LoginUserPasswordResponse>(UseCaseExecutionContext.Empty, loginRequest);
 
         if (!response.Success)
             throw new InvalidOperationException($"Login unsuccessful");
@@ -35,7 +35,7 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     {
         var request = new RefreshUserAccessTokenRequest(_token);
         
-        var response = await Context.RequestExecutor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
+        var response = await Services.RequestExecutor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
             UseCaseExecutionContext.Empty, 
             request);
         

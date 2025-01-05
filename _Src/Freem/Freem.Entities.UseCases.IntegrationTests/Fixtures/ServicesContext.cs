@@ -8,6 +8,7 @@ using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.Events.DependencyInjection.Microsoft;
 using Freem.Entities.UseCases.Executors.DependencyInjection.Microsoft;
+using Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Locking.Local.DependencyInjection;
 using Freem.Time.DependencyInjection.Microsoft;
@@ -33,6 +34,7 @@ public sealed class ServicesContext
     private static TimeSpan TokensExpiration { get; } = TimeSpan.FromDays(1);
     
     public RequestExecutor RequestExecutor { get; }
+    public SamplesManager Samples { get; }
     public DataManager DataManager { get; }
 
     public ServicesContext()
@@ -41,6 +43,7 @@ public sealed class ServicesContext
         var services = BuildServiceProvider(configuration);
         
         RequestExecutor = new RequestExecutor(services);
+        Samples = new SamplesManager(this);
         DataManager = new DataManager(configuration, services);
     }
     

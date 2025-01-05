@@ -7,8 +7,8 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class UsersPasswordRegisterUseCaseTests : UseCaseTestBase
 {
-    public UsersPasswordRegisterUseCaseTests(ServicesContext context)
-        : base(context)
+    public UsersPasswordRegisterUseCaseTests(ServicesContext services)
+        : base(services)
     {
     }
 
@@ -21,7 +21,7 @@ public sealed class UsersPasswordRegisterUseCaseTests : UseCaseTestBase
         
         var request = new RegisterUserPasswordRequest(nickname, login, password);
         
-        var response = await Context.RequestExecutor.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(
+        var response = await Services.RequestExecutor.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(
             UseCaseExecutionContext.Empty, 
             request);
         

@@ -5,20 +5,20 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 [Collection("Sequential")]
 public abstract class UseCaseTestBase : IClassFixture<ServicesContext>, IDisposable
 {
-    protected ServicesContext Context { get; }
+    protected ServicesContext Services { get; }
 
-    public UseCaseTestBase(ServicesContext context)
+    public UseCaseTestBase(ServicesContext services)
     {
-        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(services);
         
-        Context = context;
+        Services = services;
         
-        Context.DataManager.Clean();
+        Services.DataManager.Clean();
     }
 
     public void Dispose()
     {
-        Context.DataManager.Clean();
+        Services.DataManager.Clean();
         
         GC.SuppressFinalize(this);
     }

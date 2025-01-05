@@ -14,40 +14,21 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RecordsListUseCaseTests : UseCaseTestBase
 {
-    private const string Nickname = "user";
-    private const string Login = "user";
-    private const string Password = "password";
-
-    private const string ActivityName = "activity";
     private const int RecordsCount = 10;
     
     private readonly UseCaseExecutionContext _context;
     private readonly IReadOnlyList<Entities.Records.Record> _records;
     
-    public RecordsListUseCaseTests(ServicesContext context) 
-        : base(context)
+    public RecordsListUseCaseTests(ServicesContext services) 
+        : base(services)
     {
-        var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var registerResponse = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
+        var userId = services.Samples.Users.Register();
+        var activity = services.Samples.Activities.Create(userId);
+        var records = services.Samples.Records
+            .CreateMany(userId, activity.Id, RecordsCount)
+            .ToArray();
 
-        _context = new UseCaseExecutionContext(registerResponse.UserId);
-
-        var activityRequest = new CreateActivityRequest(ActivityName);
-        var activityResponse = Context.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(_context, activityRequest);
-
-        var records = new Entities.Records.Record[RecordsCount];
-        foreach (var index in Enumerable.Range(0, RecordsCount))
-        {
-            var now = DateTimeOffset.UtcNow;
-            var period = new DateTimePeriod(now.AddHours(-1), now);
-            var activities = new RelatedActivitiesCollection([activityResponse.Activity.Id]);
-
-            var recordRequest = new CreateRecordRequest(period, activities);
-            var recordResponse = Context.RequestExecutor.Execute<CreateRecordRequest, CreateRecordResponse>(_context, recordRequest);
-            
-            records[index] = recordResponse.Record;
-        }
-
+        _context = new UseCaseExecutionContext(userId);
         _records = records
             .OrderBy(e => (string)e.Id)
             .ToArray();
@@ -58,7 +39,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListRecordRequest();
         
-        var response = await Context.RequestExecutor.ExecuteAsync<ListRecordRequest, ListRecordResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<ListRecordRequest, ListRecordResponse>(_context, request);
 
         Assert.NotNull(response);
 

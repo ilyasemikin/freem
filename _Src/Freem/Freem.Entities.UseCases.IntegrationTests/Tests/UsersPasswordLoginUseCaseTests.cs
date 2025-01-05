@@ -14,11 +14,11 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
 
     private readonly UseCaseExecutionContext _context;
     
-    public UsersPasswordLoginUseCaseTests(ServicesContext context) 
-        : base(context)
+    public UsersPasswordLoginUseCaseTests(ServicesContext services) 
+        : base(services)
     {
         var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var response = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
+        var response = Services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
 
         _context = new UseCaseExecutionContext(response.UserId);
     }
@@ -28,7 +28,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     {
         var request = new LoginUserPasswordRequest(Login, Password);
 
-        var response = await Context.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -41,7 +41,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     {
         var request = new LoginUserPasswordRequest(Login, "InvalidPassword");
         
-        var response = await Context.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);

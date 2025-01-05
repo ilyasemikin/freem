@@ -13,32 +13,18 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RecordsGetUseCase : UseCaseTestBase
 {
-    private const string Nickname = "user";
-    private const string Login = "user";
-    private const string Password = "password";
-
-    private const string ActivityName = "activity";
-    
     private readonly UseCaseExecutionContext _context;
     private readonly Entities.Records.Record _record;
     
-    public RecordsGetUseCase(ServicesContext context) 
-        : base(context)
+    public RecordsGetUseCase(ServicesContext services) 
+        : base(services)
     {
-        var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var registerResponse = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
+        var userId = services.Samples.Users.Register();
+        var activity = services.Samples.Activities.Create(userId);
+        var record = services.Samples.Records.Create(userId, activity.Id);
 
-        _context = new UseCaseExecutionContext(registerResponse.UserId);
-
-        var activityRequest = new CreateActivityRequest(ActivityName);
-        var activityResponse = Context.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(_context, activityRequest);
-
-        var now = DateTime.UtcNow;
-        var period = new DateTimePeriod(now.AddHours(-1), now);
-        var activities = new RelatedActivitiesCollection([activityResponse.Activity]);
-        var recordRequest = new CreateRecordRequest(period, activities);
-        var recordResponse = Context.RequestExecutor.Execute<CreateRecordRequest, CreateRecordResponse>(_context, recordRequest);
-        _record = recordResponse.Record;
+        _context = new UseCaseExecutionContext(userId);
+        _record = record;
     }
 
     [Fact]
@@ -46,7 +32,7 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     {
         var request = new GetRecordRequest(_record.Id);
 
-        var response = await Context.RequestExecutor.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Founded);

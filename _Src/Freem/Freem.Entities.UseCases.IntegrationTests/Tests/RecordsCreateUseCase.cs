@@ -15,27 +15,17 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RecordsCreateUseCase : UseCaseTestBase
 {
-    private const string Nickname = "user";
-    private const string Login = "user";
-    private const string Password = "password";
-    
-    private const string ActivityName = "activity";
-
     private readonly UseCaseExecutionContext _context;
     private readonly ActivityIdentifier _activityId;
     
-    public RecordsCreateUseCase(ServicesContext context) 
-        : base(context)
+    public RecordsCreateUseCase(ServicesContext services) 
+        : base(services)
     {
-        var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var registerResponse = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
-        
-        _context = new UseCaseExecutionContext(registerResponse.UserId);
+        var userId = services.Samples.Users.Register();
+        var activity = services.Samples.Activities.Create(userId);
 
-        var activityRequest = new CreateActivityRequest(ActivityName);
-        var activityResponse = Context.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(_context, activityRequest);
-
-        _activityId = activityResponse.Activity.Id;
+        _context = new UseCaseExecutionContext(userId);
+        _activityId = activity.Id;
     }
 
     [Fact]
@@ -47,7 +37,7 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
         
         var request = new CreateRecordRequest(period, activities);
         
-        var response = await Context.RequestExecutor.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.NotNull(response.Record.Id);

@@ -11,34 +11,20 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesListUseCase : UseCaseTestBase
 {
-    private const string Nickname = "user";
-    private const string Login = "user";
-    private const string Password = "password";
-
-    private const string ActivityNamePrefix = "activity";
     private const int ActivitiesCount = 10;
 
     private readonly UseCaseExecutionContext _context;
     private readonly IReadOnlyList<Activity> _activities;
     
-    public ActivitiesListUseCase(ServicesContext context) 
-        : base(context)
+    public ActivitiesListUseCase(ServicesContext services) 
+        : base(services)
     {
-        var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var registerResponse = Context.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
+        var userId = services.Samples.Users.Register();
+        var activities = services.Samples.Activities
+            .CreateMany(userId, ActivitiesCount)
+            .ToArray();
 
-        _context = new UseCaseExecutionContext(registerResponse.UserId);
-        
-        var activities = new List<Activity>();
-        foreach (var index in Enumerable.Range(0, ActivitiesCount))
-        {
-            var name = ActivityNamePrefix + index;
-            var activityRequest = new CreateActivityRequest(name);
-            var activityResponse = Context.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(_context, activityRequest);
-
-            activities.Add(activityResponse.Activity);
-        }
-        
+        _context = new UseCaseExecutionContext(userId);
         _activities = activities;
     }
 
@@ -47,7 +33,7 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     {
         var request = new ListActivityRequest();
         
-        var response = await Context.RequestExecutor.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
+        var response = await Services.RequestExecutor.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         
