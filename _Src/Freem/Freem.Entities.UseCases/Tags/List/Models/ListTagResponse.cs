@@ -1,26 +1,39 @@
-﻿using Freem.Entities.Tags;
+﻿using System.Collections;
+using Freem.Entities.Tags;
 using Freem.Entities.UseCases.Models.Filter;
 
 namespace Freem.Entities.UseCases.Tags.List.Models;
 
-public sealed class ListTagResponse : IAsyncEnumerable<Tag>
+public sealed class ListTagResponse : IEnumerable<Tag>
 {
-    private readonly IAsyncEnumerable<Tag> _entities;
-    
+    public IReadOnlyList<Tag> Tags { get; }
     public TotalCount TotalCount { get; }
 
-    public ListTagResponse(IAsyncEnumerable<Tag> entities, TotalCount totalCount)
+    public ListTagResponse(IReadOnlyList<Tag> tags, TotalCount totalCount)
     {
-        ArgumentNullException.ThrowIfNull(entities);
+        ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(totalCount);
-
-        _entities = entities;
-
+        
+        Tags = tags;
         TotalCount = totalCount;
     }
     
-    public IAsyncEnumerator<Tag> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    public ListTagResponse(IEnumerable<Tag> tags, TotalCount totalCount)
     {
-        return _entities.GetAsyncEnumerator(cancellationToken);
+        ArgumentNullException.ThrowIfNull(tags);
+        ArgumentNullException.ThrowIfNull(totalCount);
+
+        Tags = tags.ToArray();
+        TotalCount = totalCount;
+    }
+
+    public IEnumerator<Tag> GetEnumerator()
+    {
+        return Tags.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

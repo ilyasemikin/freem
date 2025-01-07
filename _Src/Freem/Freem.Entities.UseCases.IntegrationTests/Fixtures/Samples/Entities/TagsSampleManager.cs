@@ -26,4 +26,18 @@ public sealed class TagsSampleManager
         var response = _services.RequestExecutor.Execute<CreateTagRequest, CreateTagResponse>(context, request);
         return response.Tag;
     }
+
+    public IEnumerable<Tag> CreateMany(UserIdentifier userId, int count)
+    {
+        var context = new UseCaseExecutionContext(userId);
+
+        foreach (var _ in Enumerable.Range(0, count))
+        {
+            var name = Guid.NewGuid().ToString();
+            var request = new CreateTagRequest(name);
+            
+            var response = _services.RequestExecutor.Execute<CreateTagRequest, CreateTagResponse>(context, request);
+            yield return response.Tag;
+        }
+    }
 }

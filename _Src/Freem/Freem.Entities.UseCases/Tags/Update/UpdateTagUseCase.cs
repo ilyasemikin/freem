@@ -55,7 +55,7 @@ internal sealed class UpdateTagUseCase : IUseCase<UpdateTagRequest>
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(tag, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => tag.BuildRemovedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => tag.BuildUpdatedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

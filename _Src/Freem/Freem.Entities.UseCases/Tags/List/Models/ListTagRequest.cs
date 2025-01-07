@@ -1,10 +1,20 @@
 ﻿using Freem.Entities.UseCases.Models.Filter;
-using Limit = Freem.Entities.Storage.Abstractions.Models.Filters.Models.Limit;
 
 namespace Freem.Entities.UseCases.Tags.List.Models;
 
 public sealed class ListTagRequest
 {
-    public Limit Limit { get; init; }
-    public Offset Offset { get; init; }
+    public Limit Limit { get; }
+    public Offset Offset { get; }
+
+    public ListTagRequest()
+        : this(Limit.DefaultValue, Offset.DefaultValue)
+    {
+    }
+    
+    public ListTagRequest(Limit limit, Offset offset)
+    {
+        Limit = limit;
+        Offset = offset;
+    }
 }

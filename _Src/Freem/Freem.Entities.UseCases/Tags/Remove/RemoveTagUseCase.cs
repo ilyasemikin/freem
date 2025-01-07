@@ -45,7 +45,7 @@ internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest>
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.DeleteAsync(tag.Id, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => tag.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(eventId => tag.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

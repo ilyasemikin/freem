@@ -4,8 +4,8 @@ namespace Freem.Entities.UseCases.Records.List.Models;
 
 public sealed class ListRecordRequest
 {
-    public Limit Limit { get; init; }
-    public Offset Offset { get; init; }
+    public Limit Limit { get; }
+    public Offset Offset { get; }
 
     public ListRecordRequest()
         : this(Limit.DefaultValue, Offset.DefaultValue)

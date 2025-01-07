@@ -5,6 +5,7 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Tags.List.Models;
+using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Tags.List;
 
@@ -25,17 +26,14 @@ internal sealed class ListTagUseCase : IUseCase<ListTagRequest, ListTagResponse>
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = Map();
-        var result = await _repository.FindAsync(filter, cancellationToken);
-        return new ListTagResponse(result, result.TotalCount);
-        
-        TagsByUserFilter Map()
+        var filter = new TagsByUserFilter(context.UserId)
         {
-            return new TagsByUserFilter(context.UserId)
-            {
-                Limit = request.Limit,
-                Offset = request.Offset
-            };
-        }
+            Limit = request.Limit,
+            Offset = request.Offset
+        };
+            
+        var result = await _repository.FindAsync(filter, cancellationToken);
+        var tags = await result.ToArrayAsync(cancellationToken);
+        return new ListTagResponse(tags, result.TotalCount);
     }
 }
