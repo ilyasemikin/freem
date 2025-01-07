@@ -75,10 +75,10 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddActivitiesUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateActivityRequest, CreateActivityResponse>, CreateActivityUseCase>();
-        services.TryAddTransient<IUseCase<UpdateActivityRequest>, UpdateActivityUseCase>();
-        services.TryAddTransient<IUseCase<RemoveActivityRequest>, RemoveActivityUseCase>();
-        services.TryAddTransient<IUseCase<ArchiveActivityRequest>, ArchiveActivityUseCase>();
-        services.TryAddTransient<IUseCase<UnarchiveActivityRequest>, UnarchiveActivityUseCase>();
+        services.TryAddTransient<IUseCase<UpdateActivityRequest, UpdateActivityResponse>, UpdateActivityUseCase>();
+        services.TryAddTransient<IUseCase<RemoveActivityRequest, RemoveActivityResponse>, RemoveActivityUseCase>();
+        services.TryAddTransient<IUseCase<ArchiveActivityRequest, ArchiveActivityResponse>, ArchiveActivityUseCase>();
+        services.TryAddTransient<IUseCase<UnarchiveActivityRequest, UnarchiveActivityResponse>, UnarchiveActivityUseCase>();
         
         services.TryAddTransient<IUseCase<GetActivityRequest, GetActivityResponse>, GetActivityUseCase>();
         services.TryAddTransient<IUseCase<ListActivityRequest, ListActivityResponse>, ListActivityUseCase>();

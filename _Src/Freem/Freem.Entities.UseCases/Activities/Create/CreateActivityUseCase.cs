@@ -53,6 +53,6 @@ internal sealed class CreateActivityUseCase : IUseCase<CreateActivityRequest, Cr
             await _eventProducer.PublishAsync(eventId => activity.BuildCreatedEvent(eventId), cancellationToken);
         }, cancellationToken);
 
-        return new CreateActivityResponse(activity);
+        return CreateActivityResponse.CreateSuccess(activity);
     }
 }

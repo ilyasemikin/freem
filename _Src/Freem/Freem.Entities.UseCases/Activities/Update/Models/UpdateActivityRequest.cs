@@ -19,4 +19,9 @@ public sealed class UpdateActivityRequest
 
         Id = id;
     }
+
+    public bool HasChanges()
+    {
+        return Name is not null || Tags is not null;
+    }
 }

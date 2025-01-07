@@ -12,7 +12,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Activities.Unarchive;
 
-internal sealed class UnarchiveActivityUseCase : IUseCase<UnarchiveActivityRequest>
+internal sealed class UnarchiveActivityUseCase : IUseCase<UnarchiveActivityRequest, UnarchiveActivityResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
@@ -36,7 +36,7 @@ internal sealed class UnarchiveActivityUseCase : IUseCase<UnarchiveActivityReque
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<UnarchiveActivityResponse> ExecuteAsync(
         UseCaseExecutionContext context, UnarchiveActivityRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -47,9 +47,12 @@ internal sealed class UnarchiveActivityUseCase : IUseCase<UnarchiveActivityReque
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityNotFound);
         
         var activity = result.Entity;
+        if (activity.Status == ActivityStatus.Active)
+            return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityInvalidStatus);
+        
         activity.Status = ActivityStatus.Value.Active;
 
         await _transactionRunner.RunAsync(async () =>
@@ -57,5 +60,7 @@ internal sealed class UnarchiveActivityUseCase : IUseCase<UnarchiveActivityReque
             await _repository.UpdateAsync(activity, cancellationToken);
             await _eventProducer.PublishAsync(eventId => activity.BuildUnarchivedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return UnarchiveActivityResponse.CreateSuccess();
     }
 }

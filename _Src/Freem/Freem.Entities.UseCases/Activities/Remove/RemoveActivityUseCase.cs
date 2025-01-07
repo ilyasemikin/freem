@@ -11,7 +11,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Activities.Remove;
 
-internal sealed class RemoveActivityUseCase : IUseCase<RemoveActivityRequest>
+internal sealed class RemoveActivityUseCase : IUseCase<RemoveActivityRequest, RemoveActivityResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
@@ -35,7 +35,7 @@ internal sealed class RemoveActivityUseCase : IUseCase<RemoveActivityRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<RemoveActivityResponse> ExecuteAsync(
         UseCaseExecutionContext context, RemoveActivityRequest request, 
         CancellationToken cancellationToken = default)
     {
@@ -46,7 +46,7 @@ internal sealed class RemoveActivityUseCase : IUseCase<RemoveActivityRequest>
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return RemoveActivityResponse.CreateFailure(RemoveActivityErrorCode.ActivityNotFound);
 
         var activity = result.Entity;
 
@@ -55,5 +55,7 @@ internal sealed class RemoveActivityUseCase : IUseCase<RemoveActivityRequest>
             await _repository.DeleteAsync(activity.Id, cancellationToken);
             await _eventProducer.PublishAsync(eventId => activity.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return RemoveActivityResponse.CreateSuccess();
     }
 }

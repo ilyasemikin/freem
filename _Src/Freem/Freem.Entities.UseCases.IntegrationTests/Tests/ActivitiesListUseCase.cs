@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Activities.Create.Models;
 using Freem.Entities.UseCases.Activities.List.Models;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -36,6 +37,10 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
         
         Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Activities);
+        Assert.NotNull(response.TotalCount);
+        Assert.Null(response.Error);
         
         var orderedActivities = response.Activities
             .OrderBy(activity => (string)activity.Name)
@@ -43,5 +48,16 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
         
         Assert.Equal(ActivitiesCount, (int)response.TotalCount);
         Assert.Equal(_activities, orderedActivities, new ActivityEqualityComparer());
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new ListActivityRequest();
+        
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<ListActivityRequest, ListActivityResponse>(UseCaseExecutionContext.Empty, request));
+        
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

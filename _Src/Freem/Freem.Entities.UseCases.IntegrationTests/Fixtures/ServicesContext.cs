@@ -36,6 +36,7 @@ public sealed class ServicesContext
     public RequestExecutor RequestExecutor { get; }
     public SamplesManager Samples { get; }
     public DataManager DataManager { get; }
+    public Generators Generators { get; }
 
     public ServicesContext()
     {
@@ -45,6 +46,7 @@ public sealed class ServicesContext
         RequestExecutor = new RequestExecutor(services);
         Samples = new SamplesManager(this);
         DataManager = new DataManager(configuration, services);
+        Generators = new Generators(services);
     }
     
     private static IServiceProvider BuildServiceProvider(TestsConfiguration configuration)

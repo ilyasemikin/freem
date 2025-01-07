@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj" />
+      <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj" />
     </ItemGroup>
 
 </Project>

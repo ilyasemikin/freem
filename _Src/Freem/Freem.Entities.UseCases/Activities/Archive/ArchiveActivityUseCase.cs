@@ -12,7 +12,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Activities.Archive;
 
-internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
+internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest, ArchiveActivityResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
@@ -36,7 +36,7 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<ArchiveActivityResponse> ExecuteAsync(
         UseCaseExecutionContext context, ArchiveActivityRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -47,9 +47,12 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return ArchiveActivityResponse.CreateFailure(ArchiveActivityErrorCode.ActivityNotFound);
 
         var activity = result.Entity;
+        if (activity.Status == ActivityStatus.Archived)
+            return ArchiveActivityResponse.CreateFailure(ArchiveActivityErrorCode.ActivityInvalidStatus);
+        
         activity.Status = ActivityStatus.Value.Archived;
 
         await _transactionRunner.RunAsync(async () =>
@@ -57,5 +60,7 @@ internal class ArchiveActivityUseCase : IUseCase<ArchiveActivityRequest>
             await _repository.UpdateAsync(activity, cancellationToken);
             await _eventProducer.PublishAsync(activity.BuildArchivedEvent, cancellationToken);
         }, cancellationToken);
+
+        return ArchiveActivityResponse.CreateSuccess();
     }
 }

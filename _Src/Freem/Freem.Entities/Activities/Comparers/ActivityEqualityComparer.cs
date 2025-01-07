@@ -19,6 +19,7 @@ public sealed class ActivityEqualityComparer : IEqualityComparer<Activity>
         return 
             x.Id.Equals(y.Id) && 
             x.Name.Equals(y.Name) &&
+            x.Status.Equals(y.Status) &&
             x.UserId.Equals(y.UserId) &&
             IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals(x.Tags, y.Tags);
     }

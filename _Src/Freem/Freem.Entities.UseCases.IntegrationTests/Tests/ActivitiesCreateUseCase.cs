@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Activities.Create.Models;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -28,11 +29,24 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
         
         Assert.NotNull(response);
+        Assert.True(response.Success);
         Assert.NotNull(response.Activity);
+        Assert.Null(response.Error);
         
         Assert.Equal(_context.UserId, response.Activity.UserId);
         Assert.Equal(ActivityName, response.Activity.Name);
         Assert.Equal(ActivityStatus.Active, response.Activity.Status);
         Assert.Equal(0, response.Activity.Tags.Count);
+    }
+
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new CreateActivityRequest(ActivityName);
+        
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(UseCaseExecutionContext.Empty, request));
+        
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

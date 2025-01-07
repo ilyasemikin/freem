@@ -35,6 +35,6 @@ internal sealed class ListActivityUseCase : IUseCase<ListActivityRequest, ListAc
             
         var result = await _repository.FindAsync(filter, cancellationToken);
         var activities = await result.ToArrayAsync(cancellationToken);
-        return new ListActivityResponse(activities, result.TotalCount);
+        return ListActivityResponse.CreateSuccess(activities, result.TotalCount);
     }
 }

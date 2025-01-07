@@ -28,6 +28,6 @@ internal sealed class GetActivityUseCase : IUseCase<GetActivityRequest, GetActiv
         
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        return new GetActivityResponse(result.Entity);
+        return GetActivityResponse.Create(result);
     }
 }

@@ -3,6 +3,8 @@ using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Activities.Archive.Models;
 using Freem.Entities.UseCases.Activities.Create.Models;
+using Freem.Entities.UseCases.Activities.Get.Models;
+using Freem.Entities.UseCases.Activities.Unarchive.Models;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;
@@ -22,11 +24,13 @@ public sealed class ActivitiesSampleManager
 
     public Activity Create(UserIdentifier userId)
     {
-        var request = new CreateActivityRequest(ActivityName);
         var context = new UseCaseExecutionContext(userId);
+        var request = new CreateActivityRequest(ActivityName);
         
         var response = _services.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(context, request);
-
+        if (!response.Success)
+            throw new InvalidOperationException("Can't create activity");
+        
         return response.Activity;
     }
 
@@ -39,6 +43,9 @@ public sealed class ActivitiesSampleManager
             var request = new CreateActivityRequest(ActivityName + index);
             
             var response = _services.RequestExecutor.Execute<CreateActivityRequest, CreateActivityResponse>(context, request);
+            if (!response.Success)
+                throw new InvalidOperationException("Can't create activity");
+            
             yield return response.Activity;
         }
     }
@@ -46,8 +53,28 @@ public sealed class ActivitiesSampleManager
     public void Archive(UserIdentifier userId, ActivityIdentifier activityId)
     {
         var context = new UseCaseExecutionContext(userId);
-
         var request = new ArchiveActivityRequest(activityId);
-        _services.RequestExecutor.Execute(context, request);
+        
+        _services.RequestExecutor.Execute<ArchiveActivityRequest, ArchiveActivityResponse>(context, request);
+    }
+
+    public void Unarchive(UserIdentifier userId, ActivityIdentifier activityId)
+    {
+        var context = new UseCaseExecutionContext(userId);
+        var request = new UnarchiveActivityRequest(activityId);
+        
+        _services.RequestExecutor.Execute<UnarchiveActivityRequest, UnarchiveActivityResponse>(context, request);
+    }
+
+    public Activity Get(UserIdentifier userId, ActivityIdentifier activityId)
+    {
+        var context = new UseCaseExecutionContext(userId);
+        var request = new GetActivityRequest(activityId);
+        
+        var response = _services.RequestExecutor.Execute<GetActivityRequest, GetActivityResponse>(context, request);
+        if (!response.Success)
+            throw new InvalidOperationException($"Can't get activity {activityId}");
+        
+        return response.Activity;
     }
 }

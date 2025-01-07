@@ -11,7 +11,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Activities.Update;
 
-internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
+internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest, UpdateActivityResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
@@ -35,18 +35,21 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<UpdateActivityResponse> ExecuteAsync(
         UseCaseExecutionContext context, UpdateActivityRequest request,
         CancellationToken cancellationToken = default)
     {
         context.ThrowsIfUnauthorized();
+
+        if (!request.HasChanges())
+            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.NothingToUpdate);
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.ActivityNotFound);
         
         var activity = result.Entity;
         if (request.Name is not null)
@@ -59,5 +62,7 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest>
             await _repository.UpdateAsync(activity, cancellationToken);
             await _eventProducer.PublishAsync(eventId => activity.BuildUpdatedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return UpdateActivityResponse.CreateSuccess();
     }
 }
