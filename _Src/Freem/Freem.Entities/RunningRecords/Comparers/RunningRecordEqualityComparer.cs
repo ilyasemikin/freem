@@ -3,6 +3,7 @@ using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
+using Freem.Time;
 
 namespace Freem.Entities.RunningRecords.Comparers;
 
@@ -20,7 +21,7 @@ public sealed class RunningRecordEqualityComparer : IEqualityComparer<RunningRec
             return false;
         return 
             x.UserId.Equals(y.UserId) &&
-            x.StartAt.Equals(y.StartAt) &&
+            DateTimeOperations.EqualsUpToSeconds(x.StartAt, y.StartAt) &&
             IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals(x.Activities, y.Activities) &&
             IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals(x.Tags, y.Tags);
     }

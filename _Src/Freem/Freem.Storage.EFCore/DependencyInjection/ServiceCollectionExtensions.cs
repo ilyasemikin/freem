@@ -12,8 +12,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddStorageTransactions<TDbContext>(this IServiceCollection services)
         where TDbContext : DbContext
     {
-        services.TryAddTransient<IStorageTransactionFactory, ContextStorageTransactionFactory<TDbContext>>();
-        services.TryAddTransient<StorageTransactionRunner>();
+        services.TryAddScoped<IStorageTransactionFactory, ContextStorageTransactionFactory<TDbContext>>();
+        services.TryAddScoped<StorageTransactionRunner>();
         
         return services;
     }

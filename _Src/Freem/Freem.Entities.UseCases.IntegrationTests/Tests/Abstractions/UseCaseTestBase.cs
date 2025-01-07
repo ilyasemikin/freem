@@ -3,11 +3,11 @@
 namespace Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 
 [Collection("Sequential")]
-public abstract class UseCaseTestBase : IClassFixture<ServicesContext>, IDisposable
+public abstract class UseCaseTestBase
 {
     protected ServicesContext Services { get; }
 
-    public UseCaseTestBase(ServicesContext services)
+    protected UseCaseTestBase(ServicesContext services)
     {
         ArgumentNullException.ThrowIfNull(services);
         

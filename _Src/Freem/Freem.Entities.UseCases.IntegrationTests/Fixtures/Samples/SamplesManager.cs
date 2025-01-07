@@ -8,6 +8,8 @@ public sealed class SamplesManager
     
     public ActivitiesSampleManager Activities { get; }
     public RecordsSampleManager Records { get; }
+    public RunningRecordsSampleManager RunningRecords { get; }
+    public TagsSampleManager Tags { get; }
 
     public SamplesManager(ServicesContext context)
     {
@@ -16,5 +18,7 @@ public sealed class SamplesManager
         Users = new UsersSampleManager(context);
         Activities = new ActivitiesSampleManager(context);
         Records = new RecordsSampleManager(context);
+        RunningRecords = new RunningRecordsSampleManager(context);
+        Tags = new TagsSampleManager(context);
     }
 }

@@ -58,7 +58,7 @@ internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordReque
 
         await _transactionRunner.RunAsync(async () =>
         {
-            await _executor.ExecuteAsync(context, createRecordRequest, cancellationToken);
+            await _executor.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(context, createRecordRequest, cancellationToken);
             await _eventProducer.PublishAsync(eventId => record.BuildStoppedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }

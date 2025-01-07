@@ -12,7 +12,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.RunningRecords.Start;
 
-internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordRequest>
+internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordRequest, StartRunningRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
@@ -31,7 +31,7 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(executor);
         ArgumentNullException.ThrowIfNull(eventProducer);
-        ArgumentNullException.ThrowIfNull(_transactionRunner);
+        ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
@@ -40,7 +40,7 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<StartRunningRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, StartRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -66,5 +66,7 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
             await _repository.CreateAsync(record, cancellationToken);
             await _eventProducer.PublishAsync(eventId => record.BuildStartedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return new StartRunningRecordResponse(record);
     }
 }

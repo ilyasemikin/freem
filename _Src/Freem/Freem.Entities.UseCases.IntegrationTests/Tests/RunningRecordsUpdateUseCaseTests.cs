@@ -1,50 +1,43 @@
 ﻿using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
-using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Records.Models;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Activities.Create.Models;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.UseCases.Models.Fields;
-using Freem.Entities.UseCases.Records.Create.Models;
-using Freem.Entities.UseCases.Records.Update.Models;
-using Freem.Entities.UseCases.Users.Password.Register.Models;
-using Freem.Time.Models;
+using Freem.Entities.UseCases.RunningRecords.Update.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
-public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
+public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
 {
-    private const string UpdatedName = "record";
-    private const string UpdatedDescription = "description";
-
+    private const string UpdatedName = "record_name";
+    private const string UpdatedDescription = "record_description";
+    
     private readonly UseCaseExecutionContext _context;
-    private readonly RecordIdentifier _recordId;
     private readonly ActivityIdentifier _updatedActivityId;
     private readonly TagIdentifier _updatedTagId;
     
-    public RecordsUpdateUseCaseTests(ServicesContext services) 
+    public RunningRecordsUpdateUseCaseTests(ServicesContext services) 
         : base(services)
     {
         var userId = services.Samples.Users.Register();
         var activity = services.Samples.Activities.Create(userId);
-        var record = services.Samples.Records.Create(userId, activity.Id);
+        services.Samples.RunningRecords.Start(userId, activity.Id);
 
-        var updatedActivity = services.Samples.Activities.Create(userId);
+        var updateActivity = services.Samples.Activities.Create(userId);
         var updateTag = services.Samples.Tags.Create(userId);
         
         _context = new UseCaseExecutionContext(userId);
-        _recordId = record.Id;
-        _updatedActivityId = updatedActivity.Id;
+        _updatedActivityId = updateActivity.Id;
         _updatedTagId = updateTag.Id;
     }
 
     [Fact]
     public async Task ShouldSuccess_WhenUpdateName()
     {
-        var request = new UpdateRecordRequest(_recordId)
+        var request = new UpdateRunningRecordRequest
         {
             Name = new UpdateField<RecordName>(UpdatedName)
         };
@@ -55,7 +48,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenUpdateDescription()
     {
-        var request = new UpdateRecordRequest(_recordId)
+        var request = new UpdateRunningRecordRequest
         {
             Description = new UpdateField<RecordDescription>(UpdatedDescription)
         };
@@ -67,7 +60,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldSuccess_WhenUpdateActivities()
     {
         var activities = new RelatedActivitiesCollection([_updatedActivityId]);
-        var request = new UpdateRecordRequest(_recordId)
+        var request = new UpdateRunningRecordRequest
         {
             Activities = new UpdateField<RelatedActivitiesCollection>(activities)
         };
@@ -79,9 +72,9 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldSuccess_WhenUpdateTags()
     {
         var tags = new RelatedTagsCollection([_updatedTagId]);
-        var request = new UpdateRecordRequest(_recordId)
+        var request = new UpdateRunningRecordRequest
         {
-            Tags = tags
+            Tags = new UpdateField<RelatedTagsCollection>(tags)
         };
         
         await Services.RequestExecutor.ExecuteAsync(_context, request);

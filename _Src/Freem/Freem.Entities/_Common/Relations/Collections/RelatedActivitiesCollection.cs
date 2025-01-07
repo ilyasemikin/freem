@@ -15,11 +15,6 @@ public sealed class RelatedActivitiesCollection : RelatedEntitiesCollection<Acti
     {
     }
 
-    public RelatedActivitiesCollection()
-        : this([], [])
-    {
-    }
-
     public RelatedActivitiesCollection(IEnumerable<ActivityIdentifier> identifiers)
         : this(identifiers, [])
     { 

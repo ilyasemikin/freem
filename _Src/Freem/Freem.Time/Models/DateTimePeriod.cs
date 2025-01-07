@@ -56,8 +56,8 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
             return true;
         
         return
-            (StartAt - other.StartAt).TotalSeconds < 1 &&
-            (EndAt - other.EndAt).TotalSeconds < 1;
+            DateTimeOperations.EqualsUpToSeconds(StartAt, other.StartAt) &&
+            DateTimeOperations.EqualsUpToSeconds(EndAt, other.EndAt);
     }
 
     public static bool TryCreate(DateTimeOffset startAt, DateTimeOffset endAt, [NotNullWhen(true)] out DateTimePeriod? period)
