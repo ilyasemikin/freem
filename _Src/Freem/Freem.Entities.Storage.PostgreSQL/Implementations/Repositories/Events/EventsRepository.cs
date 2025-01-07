@@ -67,7 +67,7 @@ internal sealed class EventsRepository : IEventsRepository
         ArgumentNullException.ThrowIfNull(filter);
 
         return await _database.Events
-            .Where(e => e.CreatedAt > filter.After)
+            .Where(e => filter.After == null || e.CreatedAt > filter.After)
             .OrderBy(e => e.CreatedAt)
             .SliceByLimitFilter(filter)
             .CountAndMapAsync(_entityConverter.Convert, cancellationToken);

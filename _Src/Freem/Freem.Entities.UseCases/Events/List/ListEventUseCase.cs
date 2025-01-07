@@ -7,6 +7,7 @@ using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.List.Models;
 using Freem.Entities.Users.Identifiers;
+using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Events.List;
 
@@ -28,16 +29,13 @@ internal sealed class ListEventUseCase : IUseCase<ListEventRequest, ListEventRes
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = Map();
-        var result = await _repository.FindAsync(filter, cancellationToken);
-        return new ListEventResponse(result, result.TotalCount);
-        
-        EventsAfterTimeFilter Map()
+        var filter = new EventsAfterTimeFilter(context.UserId, request.After)
         {
-            return new EventsAfterTimeFilter(context.UserId, request.After)
-            {
-                Limit = request.Limit
-            };
-        }
+            Limit = request.Limit
+        };
+
+        var result = await _repository.FindAsync(filter, cancellationToken);
+        var events = await result.ToArrayAsync(cancellationToken);
+        return new ListEventResponse(events, result.TotalCount);
     }
 }
