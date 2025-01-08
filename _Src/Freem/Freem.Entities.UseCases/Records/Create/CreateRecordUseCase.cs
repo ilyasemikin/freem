@@ -1,6 +1,11 @@
-﻿using Freem.Entities.Records;
+﻿using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.Records;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
+using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -48,12 +53,34 @@ internal sealed class CreateRecordUseCase : IUseCase<CreateRecordRequest, Create
             Description = request.Description
         };
 
+        try
+        {
+            await RunTransactionAsync(record, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+
+        return CreateRecordResponse.CreateSuccess(record);
+    }
+
+    private async Task RunTransactionAsync(Record record, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => record.BuildCreatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(record.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
+    }
 
-        return new CreateRecordResponse(record);
+    private static CreateRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasActivitiesIdentifiers())
+            return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedActivitiesNotFound);
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedTagsNotFound);
+        
+        return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedUnknownNotFound);
     }
 }

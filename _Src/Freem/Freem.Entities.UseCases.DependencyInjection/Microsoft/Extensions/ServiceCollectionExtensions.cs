@@ -101,8 +101,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddRecordsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateRecordRequest, CreateRecordResponse>, CreateRecordUseCase>();
-        services.TryAddTransient<IUseCase<UpdateRecordRequest>, UpdateRecordUseCase>();
-        services.TryAddTransient<IUseCase<RemoveRecordRequest>, RemoveRecordUseCase>();
+        services.TryAddTransient<IUseCase<UpdateRecordRequest, UpdateRecordResponse>, UpdateRecordUseCase>();
+        services.TryAddTransient<IUseCase<RemoveRecordRequest, RemoveRecordResponse>, RemoveRecordUseCase>();
         
         services.TryAddTransient<IUseCase<GetRecordRequest, GetRecordResponse>, GetRecordUseCase>();
         services.TryAddTransient<IUseCase<ListRecordRequest, ListRecordResponse>, ListRecordUseCase>();

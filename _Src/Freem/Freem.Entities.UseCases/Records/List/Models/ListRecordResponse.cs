@@ -1,39 +1,42 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Records;
+using Freem.Entities.UseCases.Abstractions.Models.Errors;
 using Freem.Entities.UseCases.Models.Filter;
 
 namespace Freem.Entities.UseCases.Records.List.Models;
 
-public sealed class ListRecordResponse : IEnumerable<Record>
+public sealed class ListRecordResponse
 {
-    public IReadOnlyList<Record> Records { get; }
-    public TotalCount TotalCount { get; }
+    [MemberNotNullWhen(true, nameof(Records))]
+    [MemberNotNullWhen(true, nameof(TotalCount))]
+    [MemberNotNullWhen(false, nameof(Error))]
+    public bool Success { get; }
+    
+    public IReadOnlyList<Record>? Records { get; }
+    public TotalCount? TotalCount { get; }
+    
+    public Error<ListRecordErrorCode>? Error { get; }
 
-    public ListRecordResponse(IReadOnlyList<Record> records, TotalCount totalCount)
+    private ListRecordResponse(
+        IReadOnlyList<Record>? records = null, 
+        TotalCount? totalCount = null, 
+        Error<ListRecordErrorCode>? error = null)
     {
-        ArgumentNullException.ThrowIfNull(records);
-        ArgumentNullException.ThrowIfNull(totalCount);
-
+        Success = error is null;
         Records = records;
         TotalCount = totalCount;
+        Error = error;
     }
 
-    public ListRecordResponse(IEnumerable<Record> records, TotalCount totalCount)
+    public static ListRecordResponse CreateSuccess(IReadOnlyList<Record> records, TotalCount totalCount)
     {
-        ArgumentNullException.ThrowIfNull(records);
-        ArgumentNullException.ThrowIfNull(totalCount);
-        
-        Records = records.ToArray();
-        TotalCount = totalCount;
+        return new ListRecordResponse(records, totalCount);
     }
 
-    public IEnumerator<Record> GetEnumerator()
+    public static ListRecordResponse CreateFailure(ListRecordErrorCode code, string? message = null)
     {
-        return Records.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
+        var error = new Error<ListRecordErrorCode>(code, message);
+        return new ListRecordResponse(error: error);
     }
 }

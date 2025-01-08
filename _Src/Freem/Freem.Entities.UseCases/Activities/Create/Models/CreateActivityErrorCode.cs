@@ -2,5 +2,6 @@
 
 public enum CreateActivityErrorCode
 {
-    
+    RelatedTagsNotFound,
+    RelatedUnknownNotFound
 }

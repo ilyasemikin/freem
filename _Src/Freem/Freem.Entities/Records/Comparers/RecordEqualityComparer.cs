@@ -21,7 +21,9 @@ public sealed class RecordEqualityComparer : IEqualityComparer<Record>
         return 
             x.Id.Equals(y.Id) && 
             x.UserId.Equals(y.UserId) && 
-            x.Period.EqualsUpToSeconds(y.Period) && 
+            x.Period.EqualsUpToSeconds(y.Period) &&
+            x.Name == y.Name &&
+            x.Description == y.Description &&
             IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals(x.Activities, y.Activities) &&
             IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals(x.Tags, y.Tags);
     }

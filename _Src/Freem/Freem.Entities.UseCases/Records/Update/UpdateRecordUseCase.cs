@@ -1,5 +1,9 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.Records;
+using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -11,7 +15,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Records.Update;
 
-internal sealed class UpdateRecordUseCase : IUseCase<UpdateRecordRequest>
+internal sealed class UpdateRecordUseCase : IUseCase<UpdateRecordRequest, UpdateRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;
@@ -35,18 +39,21 @@ internal sealed class UpdateRecordUseCase : IUseCase<UpdateRecordRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<UpdateRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, UpdateRecordRequest request,
         CancellationToken cancellationToken = default)
     {
         context.ThrowsIfUnauthorized();
+
+        if (!request.HasChanges())
+            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.NothingToUpdate);
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RecordNotFound);
         
         var record = result.Entity;
         if (request.Name is not null)
@@ -58,10 +65,34 @@ internal sealed class UpdateRecordUseCase : IUseCase<UpdateRecordRequest>
         if (request.Tags is not null)
             record.Tags.Update(request.Tags);
 
+        try
+        {
+            await RunTransactionAsync(record, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+        
+        return UpdateRecordResponse.CreateSuccess();
+    }
+
+    private async Task RunTransactionAsync(Record record, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => record.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
+    }
+
+    private static UpdateRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasActivitiesIdentifiers())
+            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedActivitiesNotFound);
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedTagsNotFound);
+
+        return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedUnknownNotFound);
     }
 }

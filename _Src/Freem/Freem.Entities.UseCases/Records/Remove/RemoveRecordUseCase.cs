@@ -11,7 +11,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Records.Remove;
 
-internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
+internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest, RemoveRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;
@@ -35,7 +35,7 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<RemoveRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, RemoveRecordRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -46,7 +46,7 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
         var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return RemoveRecordResponse.CreateFailure(RemoveRecordErrorCode.RecordNotFound);
 
         var record = result.Entity;
 
@@ -55,5 +55,7 @@ internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest>
             await _repository.DeleteAsync(record.Id, cancellationToken);
             await _eventProducer.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return RemoveRecordResponse.CreateSuccess();
     }
 }

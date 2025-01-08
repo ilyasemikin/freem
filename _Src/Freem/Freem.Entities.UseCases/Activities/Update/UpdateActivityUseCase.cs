@@ -1,5 +1,8 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -57,12 +60,32 @@ internal sealed class UpdateActivityUseCase : IUseCase<UpdateActivityRequest, Up
         if (request.Tags is not null)
             activity.Tags.Update(request.Tags);
 
+        try
+        {
+            await RunTransactionAsync(activity, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+        
+        return UpdateActivityResponse.CreateSuccess();
+    }
+
+    private async Task RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(activity, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => activity.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(activity.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
-        
-        return UpdateActivityResponse.CreateSuccess();
+    }
+
+    private static UpdateActivityResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedTagsNotFound);
+
+        return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedUnknownNotFound);
     }
 }

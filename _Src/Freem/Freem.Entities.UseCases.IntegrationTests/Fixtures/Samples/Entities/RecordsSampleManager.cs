@@ -1,7 +1,9 @@
 ﻿using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Records.Create.Models;
+using Freem.Entities.UseCases.Records.Get.Models;
 using Freem.Entities.Users.Identifiers;
 using Freem.Time.Models;
 using Record = Freem.Entities.Records.Record;
@@ -48,5 +50,17 @@ public sealed class RecordsSampleManager
             
             yield return response.Record;
         }
+    }
+
+    public Record Get(UserIdentifier userId, RecordIdentifier recordId)
+    {
+        var context = new UseCaseExecutionContext(userId);
+        var request = new GetRecordRequest(recordId);
+        
+        var response = _services.RequestExecutor.Execute<GetRecordRequest, GetRecordResponse>(context, request);
+        if (!response.Success)
+            throw new InvalidOperationException("Record not found");
+        
+        return response.Record;
     }
 }

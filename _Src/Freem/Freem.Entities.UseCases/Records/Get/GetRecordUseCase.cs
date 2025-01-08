@@ -27,6 +27,6 @@ internal sealed class GetRecordUseCase : IUseCase<GetRecordRequest, GetRecordRes
         
         var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        return new GetRecordResponse(result.Entity);
+        return GetRecordResponse.Create(result);
     }
 }

@@ -2,6 +2,7 @@
 using Freem.Entities.Records.Comparers;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Activities.Create.Models;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -42,6 +43,10 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ListRecordRequest, ListRecordResponse>(_context, request);
 
         Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Records);
+        Assert.NotNull(response.TotalCount);
+        Assert.Null(response.Error);
 
         var orderedRecords = response.Records
             .OrderBy(record => (string)record.Id)
@@ -49,5 +54,16 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
         
         Assert.Equal(RecordsCount, orderedRecords.Length);
         Assert.Equal(_records, orderedRecords, new RecordEqualityComparer());
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new ListRecordRequest();
+        
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<ListRecordRequest, ListRecordResponse>(UseCaseExecutionContext.Empty, request));
+        
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

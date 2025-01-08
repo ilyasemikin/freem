@@ -1,4 +1,5 @@
-﻿using Freem.Entities.UseCases.Abstractions.Context;
+﻿using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Activities.Create.Models;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -37,6 +38,27 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         Assert.Equal(ActivityName, response.Activity.Name);
         Assert.Equal(ActivityStatus.Active, response.Activity.Status);
         Assert.Equal(0, response.Activity.Tags.Count);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenRelatedTagsDoesNotExist()
+    {
+        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var tags = new RelatedTagsCollection([notExistedTagId]);
+
+        var request = new CreateActivityRequest(ActivityName)
+        {
+            Tags = tags
+        };
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Null(response.Activity);
+        Assert.NotNull(response.Error);
+
+        Assert.Equal(CreateActivityErrorCode.RelatedTagsNotFound, response.Error.Code);
     }
 
     [Fact]

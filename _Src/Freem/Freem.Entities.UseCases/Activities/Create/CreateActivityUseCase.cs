@@ -2,6 +2,8 @@
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Activities.Models;
 using Freem.Entities.Storage.Abstractions.Base.Write;
+using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -47,12 +49,32 @@ internal sealed class CreateActivityUseCase : IUseCase<CreateActivityRequest, Cr
         var id = _identifierGenerator.Generate();
         var activity = new Activity(id, context.UserId, request.Name, request.Tags, DefaultActivityStatus);
 
+        try
+        {
+            await RunTransactionAsync(activity, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+
+        return CreateActivityResponse.CreateSuccess(activity);
+    }
+
+    private async Task RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(activity, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => activity.BuildCreatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(activity.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
+    }
 
-        return CreateActivityResponse.CreateSuccess(activity);
+    private static CreateActivityResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return CreateActivityResponse.CreateFailure(CreateActivityErrorCode.RelatedTagsNotFound);
+
+        return CreateActivityResponse.CreateFailure(CreateActivityErrorCode.RelatedUnknownNotFound);
     }
 }

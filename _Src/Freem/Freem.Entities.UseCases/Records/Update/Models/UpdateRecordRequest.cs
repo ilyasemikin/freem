@@ -21,4 +21,13 @@ public sealed class UpdateRecordRequest
         
         Id = id;
     }
+
+    public bool HasChanges()
+    {
+        return 
+            Name is not null ||
+            Description is not null ||
+            Activities is not null ||
+            Tags is not null;
+    }
 }

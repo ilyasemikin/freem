@@ -4,6 +4,7 @@ using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Models.Filter;
 using Freem.Entities.UseCases.Records.List.Models;
 using Freem.Linq;
 
@@ -35,6 +36,6 @@ internal class ListRecordUseCase : IUseCase<ListRecordRequest, ListRecordRespons
         
         var result = await _repository.FindAsync(filter, cancellationToken);
         var records = await result.ToArrayAsync(cancellationToken);
-        return new ListRecordResponse(records, result.TotalCount);
+        return ListRecordResponse.CreateSuccess(records, result.TotalCount);
     }
 }

@@ -6,7 +6,6 @@ namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;
 
 public sealed class UsersSampleManager
 {
-    private const string Nickname = "user";
     private const string Login = "user";
     private const string Password = "password";
     
@@ -19,9 +18,9 @@ public sealed class UsersSampleManager
         _services = services;
     }
 
-    public UserIdentifier Register()
+    public UserIdentifier Register(string login = Login)
     {
-        var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
+        var request = new RegisterUserPasswordRequest(login, login, Password);
 
         var response = _services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(
             UseCaseExecutionContext.Empty, 

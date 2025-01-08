@@ -39,12 +39,17 @@ public sealed class RecordDescription : IEquatable<RecordDescription>
         return _value;
     }
 
-    public static bool operator ==(RecordDescription left, RecordDescription right)
+    public static bool operator ==(RecordDescription? left, RecordDescription? right)
     {
+        if (left is null && right is null)
+            return true;
+        if (left is null || right is null)
+            return false;
+        
         return left.Equals(right);
     }
 
-    public static bool operator !=(RecordDescription left, RecordDescription right)
+    public static bool operator !=(RecordDescription? left, RecordDescription? right)
     {
         return !(left == right);
     }

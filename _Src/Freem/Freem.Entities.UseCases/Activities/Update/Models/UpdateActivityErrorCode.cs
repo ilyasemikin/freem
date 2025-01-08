@@ -3,5 +3,7 @@
 public enum UpdateActivityErrorCode
 {
     ActivityNotFound,
+    RelatedTagsNotFound,
+    RelatedUnknownNotFound,
     NothingToUpdate,
 }

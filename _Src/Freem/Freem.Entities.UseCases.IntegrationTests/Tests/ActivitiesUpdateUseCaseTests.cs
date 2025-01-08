@@ -98,6 +98,25 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     }
 
     [Fact]
+    public async Task ShouldFailure_WhenTagsDoesNotExist()
+    {
+        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var tags = new RelatedTagsCollection([notExistedTagId]);
+        var request = new UpdateActivityRequest(_activityId)
+        {
+            Tags = tags
+        };
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<UpdateActivityRequest, UpdateActivityResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(UpdateActivityErrorCode.RelatedTagsNotFound, response.Error.Code);
+    }
+
+    [Fact]
     public async Task ShouldFailure_WhenNothingToDo()
     {
         var request = new UpdateActivityRequest(_activityId);

@@ -1,4 +1,6 @@
 ﻿using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Records.Identifiers;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,16 @@ public class Generators
     public ActivityIdentifier CreateActivityIdentifier()
     {
         return Create<ActivityIdentifier>();
+    }
+
+    public RecordIdentifier CreateRecordIdentifier()
+    {
+        return Create<RecordIdentifier>();
+    }
+
+    public TagIdentifier CreateTagIdentifier()
+    {
+        return Create<TagIdentifier>();
     }
 
     private T Create<T>()

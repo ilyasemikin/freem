@@ -39,12 +39,17 @@ public sealed class RecordName : IEquatable<RecordName>
         return _value;
     }
 
-    public static bool operator ==(RecordName left, RecordName right)
+    public static bool operator ==(RecordName? left, RecordName? right)
     {
+        if (left is null && right is null)
+            return true;
+        if (left is null || right is null)
+            return false;
+        
         return left.Equals(right);
     }
 
-    public static bool operator !=(RecordName left, RecordName right)
+    public static bool operator !=(RecordName? left, RecordName? right)
     {
         return !(left == right);
     }
