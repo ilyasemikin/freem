@@ -11,4 +11,13 @@ public sealed class UpdateRunningRecordRequest
     
     public UpdateField<RelatedActivitiesCollection>? Activities { get; init; }
     public UpdateField<RelatedTagsCollection>? Tags { get; init; }
+
+    public bool HasChanges()
+    {
+        return 
+            Name is not null ||
+            Description is not null ||
+            Activities is not null ||
+            Tags is not null;
+    }
 }

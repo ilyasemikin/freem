@@ -10,7 +10,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.RunningRecords.Remove;
 
-internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordRequest>
+internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordRequest, RemoveRunningRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
@@ -23,13 +23,18 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
         IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
+        ArgumentNullException.ThrowIfNull(locker);
+        ArgumentNullException.ThrowIfNull(repository);
+        ArgumentNullException.ThrowIfNull(eventProducer);
+        ArgumentNullException.ThrowIfNull(transactionRunner);
+        
         _locker = locker;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<RemoveRunningRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, RemoveRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -39,7 +44,7 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
 
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return RemoveRunningRecordResponse.CreateFailure(RemoveRunningRecordErrorCode.RunningRecordNotFound);
 
         var record = result.Entity;
         
@@ -48,5 +53,7 @@ internal sealed class RemoveRunningRecordUseCase : IUseCase<RemoveRunningRecordR
             await _repository.DeleteAsync(record.Id, cancellationToken);
             await _eventProducer.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
+
+        return RemoveRunningRecordResponse.CreateSuccess();
     }
 }

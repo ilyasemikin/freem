@@ -113,9 +113,9 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddRunningRecordsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<StartRunningRecordRequest, StartRunningRecordResponse>, StartRunningRecordUseCase>();
-        services.TryAddTransient<IUseCase<StopRunningRecordRequest>, StopRunningRecordUseCase>();
-        services.TryAddTransient<IUseCase<UpdateRunningRecordRequest>, UpdateRunningRecordUseCase>();
-        services.TryAddTransient<IUseCase<RemoveRunningRecordRequest>, RemoveRunningRecordUseCase>();
+        services.TryAddTransient<IUseCase<StopRunningRecordRequest, StopRunningRecordResponse>, StopRunningRecordUseCase>();
+        services.TryAddTransient<IUseCase<UpdateRunningRecordRequest, UpdateRunningRecordResponse>, UpdateRunningRecordUseCase>();
+        services.TryAddTransient<IUseCase<RemoveRunningRecordRequest, RemoveRunningRecordResponse>, RemoveRunningRecordUseCase>();
 
         services.TryAddTransient<IUseCase<GetRunningRecordRequest, GetRunningRecordResponse>, GetRunningRecordUseCase>();
         

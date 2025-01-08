@@ -13,6 +13,8 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
 {
     private const string ActivityName = "activity";
 
+    private const string AnotherUserLogin = "another_user";
+    
     private readonly UseCaseExecutionContext _context;
     
     public ActivitiesCreateUseCase(ServicesContext services) 
@@ -58,6 +60,28 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         Assert.Null(response.Activity);
         Assert.NotNull(response.Error);
 
+        Assert.Equal(CreateActivityErrorCode.RelatedTagsNotFound, response.Error.Code);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
+    {
+        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
+        var tag = Services.Samples.Tags.Create(anotherUserId);
+        var tags = new RelatedTagsCollection([tag]);
+
+        var request = new CreateActivityRequest(ActivityName)
+        {
+            Tags = tags
+        };
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Null(response.Activity);
+        Assert.NotNull(response.Error);
+        
         Assert.Equal(CreateActivityErrorCode.RelatedTagsNotFound, response.Error.Code);
     }
 

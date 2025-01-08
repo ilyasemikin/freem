@@ -1,4 +1,8 @@
-﻿using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.RunningRecords;
+using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -10,7 +14,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.RunningRecords.Update;
 
-internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
+internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest, UpdateRunningRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
@@ -34,17 +38,20 @@ internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<UpdateRunningRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, UpdateRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
         context.ThrowsIfUnauthorized();
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
+
+        if (!request.HasChanges())
+            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.NothingToUpdate);
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RunningRecordNotFound);
         
         var record = result.Entity;
         if (request.Name is not null)
@@ -56,10 +63,34 @@ internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest>
         if (request.Tags is not null)
             record.Tags.Update(request.Tags);
 
+        try
+        {
+            await RunTransactionAsync(record, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+
+        return UpdateRunningRecordResponse.CreateSuccess();
+    }
+    
+    private async Task RunTransactionAsync(RunningRecord record, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => record.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
+    }
+
+    private static UpdateRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasActivitiesIdentifiers())
+            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedActivitiesNotFound);
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedTagsNotFound);
+        
+        return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedUnknownNotFound);
     }
 }

@@ -1,5 +1,8 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.RunningRecords;
+using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -61,12 +64,34 @@ internal sealed class StartRunningRecordUseCase : IUseCase<StartRunningRecordReq
             Description = request.Description
         };
 
+        try
+        {
+            await RunTransactionAsync(record, cancellationToken);
+        }
+        catch (NotFoundRelatedException ex)
+        {
+            return ProcessNotFoundRelatedException(ex);
+        }
+        
+        return StartRunningRecordResponse.CreateSuccess(record);
+    }
+
+    private async Task RunTransactionAsync(RunningRecord record, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => record.BuildStartedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(record.BuildStartedEvent, cancellationToken);
         }, cancellationToken);
+    }
+
+    private static StartRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
+    {
+        if (ex.RelatedIds.HasActivitiesIdentifiers())
+            return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedActivitiesNotFound);
+        if (ex.RelatedIds.HasTagsIdentifiers())
+            return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedTagsNotFound);
         
-        return new StartRunningRecordResponse(record);
+        return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedUnknownNotFound);
     }
 }

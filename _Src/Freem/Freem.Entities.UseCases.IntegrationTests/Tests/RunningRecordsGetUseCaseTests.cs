@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.RunningRecords;
 using Freem.Entities.RunningRecords.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.UseCases.RunningRecords.Get.Models;
@@ -30,8 +31,21 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
-        Assert.True(response.Founded);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Record);
+        Assert.Null(response.Error);
 
         Assert.Equal(_record, response.Record, new RunningRecordEqualityComparer());
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new GetRunningRecordRequest();
+
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(UseCaseExecutionContext.Empty, request));
+
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

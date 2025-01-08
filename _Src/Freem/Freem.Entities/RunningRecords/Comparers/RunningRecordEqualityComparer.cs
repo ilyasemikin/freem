@@ -22,6 +22,8 @@ public sealed class RunningRecordEqualityComparer : IEqualityComparer<RunningRec
         return 
             x.UserId.Equals(y.UserId) &&
             DateTimeOperations.EqualsUpToSeconds(x.StartAt, y.StartAt) &&
+            x.Name == y.Name &&
+            x.Description == y.Description &&
             IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals(x.Activities, y.Activities) &&
             IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals(x.Tags, y.Tags);
     }

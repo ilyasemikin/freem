@@ -20,6 +20,8 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
 {
     private const string NewName = "updated_activity";
+
+    private const string AnotherUserLogin = "another_user";
     
     private readonly UseCaseExecutionContext _context;
     private readonly UserIdentifier _userId;
@@ -102,6 +104,26 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     {
         var notExistedTagId = Services.Generators.CreateTagIdentifier();
         var tags = new RelatedTagsCollection([notExistedTagId]);
+        var request = new UpdateActivityRequest(_activityId)
+        {
+            Tags = tags
+        };
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<UpdateActivityRequest, UpdateActivityResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(UpdateActivityErrorCode.RelatedTagsNotFound, response.Error.Code);
+    }
+    
+    [Fact]
+    public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
+    {
+        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
+        var tag = Services.Samples.Tags.Create(anotherUserId);
+        var tags = new RelatedTagsCollection([tag]);
         var request = new UpdateActivityRequest(_activityId)
         {
             Tags = tags

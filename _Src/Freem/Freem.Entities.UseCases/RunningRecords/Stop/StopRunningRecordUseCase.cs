@@ -13,7 +13,7 @@ using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.RunningRecords.Stop;
 
-internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordRequest>
+internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordRequest, StopRunningRecordResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
@@ -41,7 +41,7 @@ internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordReque
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<StopRunningRecordResponse> ExecuteAsync(
         UseCaseExecutionContext context, StopRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -51,9 +51,14 @@ internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordReque
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Founded)
-            return;
-
+            return StopRunningRecordResponse.CreateFailure(StopRunningRecordErrorCode.NothingToStop);
+        
         var record = result.Entity;
+        if (record.StartAt > request.EndAt)
+            return StopRunningRecordResponse.CreateFailure(
+                StopRunningRecordErrorCode.EndAtToEarly, 
+                $"EndAt must be greater than \"{record.StartAt:O}\".");
+        
         var createRecordRequest = BuildCreateRecordRequest(record, request.EndAt);
 
         await _transactionRunner.RunAsync(async () =>
@@ -61,6 +66,8 @@ internal sealed class StopRunningRecordUseCase : IUseCase<StopRunningRecordReque
             await _executor.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(context, createRecordRequest, cancellationToken);
             await _eventProducer.PublishAsync(eventId => record.BuildStoppedEvent(eventId), cancellationToken);
         }, cancellationToken);
+        
+        return StopRunningRecordResponse.CreateSuccess();
     }
     
     private static CreateRecordRequest BuildCreateRecordRequest(RunningRecord record, DateTimeOffset endAt)
