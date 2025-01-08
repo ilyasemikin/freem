@@ -13,6 +13,8 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     private const string Login = "user";
     private const string Password = "password";
 
+    private const string InvalidToken = "invalid_token";
+    
     private readonly string _token;
     
     public UserTokensRefreshUseCaseTests(ServicesContext services) 
@@ -42,6 +44,25 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
         Assert.True(response.Success);
         Assert.NotNull(response.AccessToken);
         Assert.NotNull(response.RefreshToken);
+        Assert.Null(response.Error);
+        
         Assert.NotEqual(_token, response.RefreshToken);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenUserDoesNotExist()
+    {
+        var request = new RefreshUserAccessTokenRequest(InvalidToken);
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
+            UseCaseExecutionContext.Empty, 
+            request);
+        
+        Assert.False(response.Success);
+        Assert.Null(response.AccessToken);
+        Assert.Null(response.RefreshToken);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(RefreshUserAccessTokenErrorCode.TokenInvalid, response.Error.Code);
     }
 }

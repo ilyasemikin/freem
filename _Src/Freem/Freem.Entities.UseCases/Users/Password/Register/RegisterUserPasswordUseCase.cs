@@ -1,6 +1,7 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
 using Freem.Entities.Storage.Abstractions.Base.Write;
+using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Events.Abstractions;
@@ -67,14 +68,35 @@ internal sealed class RegisterUserPasswordUseCase : IUseCase<RegisterUserPasswor
         {
             PasswordCredentials = credentials
         };
-        
+
+        try
+        {
+            await RunTransactionAsync(user, cancellationToken);
+        }
+        catch (DuplicateKeyStorageException ex)
+        {
+            return ProcessDuplicateKeyStorageException(ex);
+        }
+
+        return RegisterUserPasswordResponse.CreateSuccess(id);
+    }
+
+    private async Task RunTransactionAsync(User user, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(user, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => user.BuildRegisteredEvent(eventId), cancellationToken);
-            await _eventProducer.PublishAsync(eventId => user.BuildPasswordCredentialsChangedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(user.BuildRegisteredEvent, cancellationToken);
+            await _eventProducer.PublishAsync(user.BuildPasswordCredentialsChangedEvent, cancellationToken);
         }, cancellationToken);
+    }
 
-        return new RegisterUserPasswordResponse(id);
+    private static RegisterUserPasswordResponse ProcessDuplicateKeyStorageException(DuplicateKeyStorageException ex)
+    {
+        return ex.Code switch
+        {
+            DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin => RegisterUserPasswordResponse.CreateFailure(RegisterUserPasswordErrorCode.LoginAlreadyUsed),
+            _ => RegisterUserPasswordResponse.CreateFailure(RegisterUserPasswordErrorCode.UnknownError, ex.Message)
+        };
     }
 }

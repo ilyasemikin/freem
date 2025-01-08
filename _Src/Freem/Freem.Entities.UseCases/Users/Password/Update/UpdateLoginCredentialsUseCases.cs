@@ -59,11 +59,11 @@ internal sealed class UpdateLoginCredentialsUseCases : IUseCase<UpdateLoginCrede
 
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Founded)
-            return UpdateLoginCredentialsResponse.Failure();
+            return UpdateLoginCredentialsResponse.CreateFailure(UpdateLoginCredentialsErrorCode.UserNotFound);
 
         var user = result.Entity;
         if (user.PasswordCredentials is null)
-            return UpdateLoginCredentialsResponse.Failure();
+            return UpdateLoginCredentialsResponse.CreateFailure(UpdateLoginCredentialsErrorCode.PasswordCredentialsNotAllowed);
         
         var oldPasswordRawHash = _passwordRawHasher.Hash(
             user.PasswordCredentials.PasswordHash.Algorithm,
@@ -71,7 +71,7 @@ internal sealed class UpdateLoginCredentialsUseCases : IUseCase<UpdateLoginCrede
             user.PasswordCredentials.PasswordHash.Salt);
 
         if (oldPasswordRawHash != user.PasswordCredentials.PasswordHash)
-            return UpdateLoginCredentialsResponse.Failure();
+            return UpdateLoginCredentialsResponse.CreateFailure(UpdateLoginCredentialsErrorCode.InvalidCredentials);
 
         var passwordHashAlgorithm = await _passwordHashAlgorithmGetter.GetAsync(cancellationToken);
         var salt = _saltGenerator.Generate();
@@ -84,9 +84,9 @@ internal sealed class UpdateLoginCredentialsUseCases : IUseCase<UpdateLoginCrede
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(user, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => user.BuildPasswordCredentialsChangedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(user.BuildPasswordCredentialsChangedEvent, cancellationToken);
         }, cancellationToken);
         
-        return UpdateLoginCredentialsResponse.Updated();
+        return UpdateLoginCredentialsResponse.CreateSuccess();
     }
 }

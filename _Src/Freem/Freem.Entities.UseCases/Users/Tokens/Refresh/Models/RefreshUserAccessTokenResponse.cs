@@ -1,27 +1,38 @@
-﻿namespace Freem.Entities.UseCases.Users.Tokens.Refresh.Models;
+﻿using Freem.Entities.UseCases.Abstractions.Models.Errors;
+
+namespace Freem.Entities.UseCases.Users.Tokens.Refresh.Models;
 
 public class RefreshUserAccessTokenResponse
 {
-    public required bool Success { get; init; }
+    public bool Success { get; }
     
-    public string? AccessToken { get; init; }
-    public string? RefreshToken { get; init; }
+    public string? AccessToken { get; }
+    public string? RefreshToken { get; }
+    
+    public Error<RefreshUserAccessTokenErrorCode>? Error { get; }
 
-    public static RefreshUserAccessTokenResponse Failure()
+    private RefreshUserAccessTokenResponse(
+        string? accessToken = null, 
+        string? refreshToken = null, 
+        Error<RefreshUserAccessTokenErrorCode>? error = null)
     {
-        return new RefreshUserAccessTokenResponse
-        {
-            Success = false
-        };
+        Success = error is null;
+        AccessToken = accessToken;
+        RefreshToken = refreshToken;
+        Error = error;
     }
-
-    public static RefreshUserAccessTokenResponse Updated(string accessToken, string refreshToken)
+    
+    public static RefreshUserAccessTokenResponse CreateSuccess(string accessToken, string refreshToken)
     {
-        return new RefreshUserAccessTokenResponse
-        {
-            Success = true,
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
+        ArgumentException.ThrowIfNullOrEmpty(accessToken);
+        ArgumentException.ThrowIfNullOrEmpty(refreshToken);
+        
+        return new RefreshUserAccessTokenResponse(accessToken, refreshToken);
+    }
+    
+    public static RefreshUserAccessTokenResponse CreateFailure(RefreshUserAccessTokenErrorCode code, string? message = null)
+    {
+        var error = new Error<RefreshUserAccessTokenErrorCode>(code, message);
+        return new RefreshUserAccessTokenResponse(error: error);
     }
 }

@@ -1,22 +1,29 @@
-﻿namespace Freem.Entities.UseCases.Users.Password.Update.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Entities.UseCases.Abstractions.Models.Errors;
+
+namespace Freem.Entities.UseCases.Users.Password.Update.Models;
 
 public sealed class UpdateLoginCredentialsResponse
 {
-    public required bool Success { get; init; }
+    [MemberNotNullWhen(false, nameof(Error))]
+    public bool Success { get; }
+    
+    public Error<UpdateLoginCredentialsErrorCode>? Error { get; }
 
-    public static UpdateLoginCredentialsResponse Updated()
+    private UpdateLoginCredentialsResponse(Error<UpdateLoginCredentialsErrorCode>? error = null)
     {
-        return new UpdateLoginCredentialsResponse
-        {
-            Success = true
-        };
+        Success = error is null;
+        Error = error;
     }
     
-    public static UpdateLoginCredentialsResponse Failure()
+    public static UpdateLoginCredentialsResponse CreateSuccess()
     {
-        return new UpdateLoginCredentialsResponse
-        {
-            Success = false
-        };
+        return new UpdateLoginCredentialsResponse();
+    }
+    
+    public static UpdateLoginCredentialsResponse CreateFailure(UpdateLoginCredentialsErrorCode code, string? message = null)
+    {
+        var error = new Error<UpdateLoginCredentialsErrorCode>(code, message);
+        return new UpdateLoginCredentialsResponse(error);
     }
 }

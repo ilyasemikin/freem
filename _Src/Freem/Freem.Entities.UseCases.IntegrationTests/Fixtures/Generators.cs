@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users.Identifiers;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,11 @@ public class Generators
         _services = services;
     }
 
+    public UserIdentifier CreateUserIdentifier()
+    {
+        return Create<UserIdentifier>();
+    }
+    
     public ActivityIdentifier CreateActivityIdentifier()
     {
         return Create<ActivityIdentifier>();

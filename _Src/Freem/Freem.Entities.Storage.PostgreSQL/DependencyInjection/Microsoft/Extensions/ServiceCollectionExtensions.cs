@@ -96,10 +96,14 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<
             IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>,
             TriggerConstraintErrorToExceptionConverter>();
+        services.TryAddSingleton<
+            IPossibleConverter<DatabaseContextWriteContext, DuplicateKeyError, Exception>,
+            DuplicateKeyErrorToExceptionConverter>();
 
         services.AddConvertersCollection<DatabaseContextWriteContext, IDatabaseError, Exception>((provider, builder) => builder
             .Add(provider.GetRequiredService<IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>>())
-            .Add(provider.GetRequiredService<IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>>()));
+            .Add(provider.GetRequiredService<IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>>())
+            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseContextWriteContext, DuplicateKeyError, Exception>>()));
         
         services.TryAddSingleton<DatabaseContextWriteExceptionHandler>();
         

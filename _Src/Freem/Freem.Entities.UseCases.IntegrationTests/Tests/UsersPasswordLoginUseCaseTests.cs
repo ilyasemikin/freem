@@ -12,6 +12,8 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     private const string Login = "user";
     private const string Password = "password";
 
+    private const string NotExistedLogin = "not_existed_user";
+
     private readonly UseCaseExecutionContext _context;
     
     public UsersPasswordLoginUseCaseTests(ServicesContext services) 
@@ -34,10 +36,27 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
         Assert.True(response.Success);
         Assert.NotEmpty(response.AccessToken);
         Assert.NotEmpty(response.RefreshToken);
+        Assert.Null(response.Error);
     }
 
     [Fact]
-    public async Task ShouldFail_WhenPasswordInvalid()
+    public async Task ShouldFailure_WhenLoginNotExisted()
+    {
+        var request = new LoginUserPasswordRequest(NotExistedLogin, Password);
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Null(response.AccessToken);
+        Assert.Null(response.RefreshToken);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(LoginUserPasswordErrorCode.UserNotFound, response.Error.Code);
+    }
+    
+    [Fact]
+    public async Task ShouldFailure_WhenPasswordInvalid()
     {
         var request = new LoginUserPasswordRequest(Login, "InvalidPassword");
         
@@ -45,5 +64,10 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
         
         Assert.NotNull(response);
         Assert.False(response.Success);
+        Assert.Null(response.AccessToken);
+        Assert.Null(response.RefreshToken);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(LoginUserPasswordErrorCode.InvalidCredentials, response.Error.Code);
     }
 }

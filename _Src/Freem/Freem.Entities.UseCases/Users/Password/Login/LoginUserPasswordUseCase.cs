@@ -38,21 +38,21 @@ public sealed class LoginUserPasswordUseCase : IUseCase<LoginUserPasswordRequest
     {
         var result = await _repository.FindByLoginAsync(request.Login, cancellationToken);
         if (!result.Founded)
-            return LoginUserPasswordResponse.Failure();
+            return LoginUserPasswordResponse.CreateFailure(LoginUserPasswordErrorCode.UserNotFound);
 
         var user = result.Entity;
         if (user.PasswordCredentials is null)
-            return LoginUserPasswordResponse.Failure();
+            return LoginUserPasswordResponse.CreateFailure(LoginUserPasswordErrorCode.PasswordCredentialsNotAllowed);
 
         var actualPassword = user.PasswordCredentials.PasswordHash;
         var hash = _passwordRawHasher.Hash(actualPassword.Algorithm, request.Password.AsBytes(), actualPassword.Salt);
         
         if (hash != actualPassword)
-            return LoginUserPasswordResponse.Failure();
+            return LoginUserPasswordResponse.CreateFailure(LoginUserPasswordErrorCode.InvalidCredentials);
 
         var accessToken = _accessTokenGenerator.Generate(user);
         var refreshToken = _refreshTokenGenerator.Generate(user);
         
-        return LoginUserPasswordResponse.Authorize(accessToken, refreshToken);
+        return LoginUserPasswordResponse.CreateSuccess(accessToken, refreshToken);
     }
 }

@@ -9,11 +9,15 @@ namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 internal sealed class DatabaseForeignKeyConstraintError : IDatabaseError
 {
     private static readonly Regex MessageRegex = new(
-        @"insert or update on table ""(?<ConstaintTable>[a-z_]+)"" violates foreign key constraint ""(?<ConstaintName>[a-z_]+)",
+        """
+        insert or update on table "(?<ConstaintTable>[a-z_]+)" violates foreign key constraint "(?<ConstaintName>[a-z_]+)
+        """,
         RegexOptions.Compiled);
 
     private static readonly Regex DetailRegex = new(
-        @"DETAIL: Key \((?<Key>[A-z_]+)\)=\((?<Value>[A-z_0-9-]+)\) is not present in table ""(?<Table>[a-z_]+)""",
+        """
+        DETAIL: Key \((?<Key>[A-z_]+)\)=\((?<Value>[A-z_0-9-]+)\) is not present in table "(?<Table>[a-z_]+)"
+        """,
         RegexOptions.Compiled);
 
     private const string ConstraintTableGroupName = "ConstaintTable";

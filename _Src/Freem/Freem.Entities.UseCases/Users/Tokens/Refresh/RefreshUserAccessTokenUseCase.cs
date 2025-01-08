@@ -44,7 +44,7 @@ internal sealed class RefreshUserAccessTokenUseCase : IUseCase<RefreshUserAccess
     {
         var validationResult = await _refreshTokenValidator.ValidateAsync(request.RefreshToken, cancellationToken);
         if (!validationResult.IsValid)
-            return RefreshUserAccessTokenResponse.Failure();
+            return RefreshUserAccessTokenResponse.CreateFailure(RefreshUserAccessTokenErrorCode.TokenInvalid);
 
         await _tokensBlacklist.AddAsync(request.RefreshToken, cancellationToken);
 
@@ -52,12 +52,12 @@ internal sealed class RefreshUserAccessTokenUseCase : IUseCase<RefreshUserAccess
         var result = await _usersRepository.FindByIdAsync(userId, cancellationToken);
         
         if (!result.Founded)
-            return RefreshUserAccessTokenResponse.Failure();
+            return RefreshUserAccessTokenResponse.CreateFailure(RefreshUserAccessTokenErrorCode.UserNotFound);
 
         var user = result.Entity;
         var accessToken = _accessTokenGenerator.Generate(user);
         var refreshToken = _refreshTokenGenerator.Generate(user);
         
-        return RefreshUserAccessTokenResponse.Updated(accessToken, refreshToken);
+        return RefreshUserAccessTokenResponse.CreateSuccess(accessToken, refreshToken);
     }
 }
