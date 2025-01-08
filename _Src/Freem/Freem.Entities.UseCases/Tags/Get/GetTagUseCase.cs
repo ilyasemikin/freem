@@ -27,6 +27,6 @@ internal sealed class GetTagUseCase : IUseCase<GetTagRequest, GetTagResponse>
         
         var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        return new GetTagResponse(result.Entity);
+        return GetTagResponse.Create(result);
     }
 }

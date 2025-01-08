@@ -17,7 +17,8 @@ public sealed class DuplicateKeyStorageException : StorageException
 
     public enum ErrorCode
     {
-        DuplicateUserLogin
+        DuplicateUserLogin,
+        DuplicateTagName,
     }
 
     private static string GenerateMessage(ErrorCode error)

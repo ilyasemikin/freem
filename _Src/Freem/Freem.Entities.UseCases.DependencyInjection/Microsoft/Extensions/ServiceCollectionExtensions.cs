@@ -89,8 +89,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddTagsUseCases(this IServiceCollection services)
     {
         services.TryAddTransient<IUseCase<CreateTagRequest, CreateTagResponse>, CreateTagUseCase>();
-        services.TryAddTransient<IUseCase<UpdateTagRequest>, UpdateTagUseCase>();
-        services.TryAddTransient<IUseCase<RemoveTagRequest>, RemoveTagUseCase>();
+        services.TryAddTransient<IUseCase<UpdateTagRequest, UpdateTagResponse>, UpdateTagUseCase>();
+        services.TryAddTransient<IUseCase<RemoveTagRequest, RemoveTagResponse>, RemoveTagUseCase>();
         
         services.TryAddTransient<IUseCase<GetTagRequest, GetTagResponse>, GetTagUseCase>();
         services.TryAddTransient<IUseCase<ListTagRequest, ListTagResponse>, ListTagUseCase>();

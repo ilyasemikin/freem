@@ -9,7 +9,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Tags.Remove;
 
-internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest>
+internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest, RemoveTagResponse>
 {
     private readonly ITagsRepository _repository;
     private readonly IEventProducer _eventProducer;
@@ -29,7 +29,7 @@ internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<RemoveTagResponse> ExecuteAsync(
         UseCaseExecutionContext context, RemoveTagRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -38,7 +38,7 @@ internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest>
         var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return RemoveTagResponse.CreateFailure(RemoveTagErrorCode.TagNotFound);
 
         var tag = result.Entity;
 
@@ -47,5 +47,7 @@ internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest>
             await _repository.DeleteAsync(tag.Id, cancellationToken);
             await _eventProducer.PublishAsync(eventId => tag.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
+
+        return RemoveTagResponse.CreateSuccess();
     }
 }

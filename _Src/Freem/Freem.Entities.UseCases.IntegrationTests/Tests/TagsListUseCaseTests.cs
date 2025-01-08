@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Tags;
 using Freem.Entities.Tags.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.UseCases.Tags.List.Models;
@@ -35,12 +36,25 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ListTagRequest, ListTagResponse>(_context, request);
         
         Assert.NotNull(response);
+        Assert.True(response.Success);
         Assert.NotNull(response.Tags);
+        Assert.Null(response.Error);
 
         var tags = response.Tags
             .OrderBy(x => (string)x.Id)
             .ToArray();
         
         Assert.Equal(_tags, tags, new TagEqualityComparer());
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new ListTagRequest();
+
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<ListTagRequest, ListTagResponse>(UseCaseExecutionContext.Empty, request));
+
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

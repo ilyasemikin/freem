@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Storage.Abstractions.Base.Write;
+using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Events.Abstractions;
@@ -44,12 +45,33 @@ internal sealed class CreateTagUseCase : IUseCase<CreateTagRequest, CreateTagRes
         var id = _identifierGenerator.Generate();
         var tag = new Tag(id, context.UserId, request.Name);
 
+        try
+        {
+            await RunTransactionAsync(tag, cancellationToken);
+        }
+        catch (DuplicateKeyStorageException ex)
+        {
+            return ProcessDuplicateKeyStorageException(ex);
+        }
+
+        return CreateTagResponse.CreateSuccess(tag);
+    }
+
+    private async Task RunTransactionAsync(Tag tag, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.CreateAsync(tag, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => tag.BuildCreatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(tag.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
+    }
 
-        return new CreateTagResponse(tag);
+    private static CreateTagResponse ProcessDuplicateKeyStorageException(DuplicateKeyStorageException ex)
+    {
+        return ex.Code switch
+        {
+            DuplicateKeyStorageException.ErrorCode.DuplicateTagName => CreateTagResponse.CreateFailure(CreateTagErrorCode.TagNameAlreadyExists),
+            _ => CreateTagResponse.CreateFailure(CreateTagErrorCode.UnknownError, ex.Message)
+        };
     }
 }

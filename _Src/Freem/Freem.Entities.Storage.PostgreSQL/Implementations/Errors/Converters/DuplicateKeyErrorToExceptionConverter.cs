@@ -12,7 +12,8 @@ internal sealed class DuplicateKeyErrorToExceptionConverter :
     private static readonly IReadOnlyDictionary<string, DuplicateKeyStorageException.ErrorCode> Map
         = new Dictionary<string, DuplicateKeyStorageException.ErrorCode>()
         {
-            [EntitiesNames.UsersLoginCredentials.Constraints.LoginUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin
+            [EntitiesNames.UsersLoginCredentials.Constraints.LoginUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin,
+            [EntitiesNames.Tags.Constraints.NameUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateTagName
         };
 
     public bool TryConvert(

@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Tags;
 using Freem.Entities.Tags.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.Abstractions.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.UseCases.Tags.Get.Models;
@@ -30,9 +31,38 @@ public sealed class TagsGetUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<GetTagRequest, GetTagResponse>(_context, request);
         
         Assert.NotNull(response);
-        Assert.True(response.Founded);
+        Assert.True(response.Success);
         Assert.NotNull(response.Tag);
+        Assert.Null(response.Error);
         
         Assert.Equal(_tag, response.Tag, new TagEqualityComparer());
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenTagDoesNotExist()
+    {
+        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        
+        var request = new GetTagRequest(notExistedTagId);
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<GetTagRequest, GetTagResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Null(response.Tag);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(GetTagErrorCode.TagNotFound, response.Error.Code);
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new GetTagRequest(_tag.Id);
+
+        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
+            .ExecuteAsync<GetTagRequest, GetTagResponse>(UseCaseExecutionContext.Empty, request));
+
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

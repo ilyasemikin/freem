@@ -1,5 +1,7 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tags;
 using Freem.Entities.UseCases.Events.Abstractions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
@@ -11,7 +13,7 @@ using Freem.Storage.Abstractions.Helpers.Extensions;
 
 namespace Freem.Entities.UseCases.Tags.Update;
 
-internal sealed class UpdateTagUseCase : IUseCase<UpdateTagRequest>
+internal sealed class UpdateTagUseCase : IUseCase<UpdateTagRequest, UpdateTagResponse>
 {
     private readonly IDistributedLocker _locker;
     private readonly ITagsRepository _repository;
@@ -35,27 +37,53 @@ internal sealed class UpdateTagUseCase : IUseCase<UpdateTagRequest>
         _transactionRunner = transactionRunner;
     }
 
-    public async Task ExecuteAsync(
+    public async Task<UpdateTagResponse> ExecuteAsync(
         UseCaseExecutionContext context, UpdateTagRequest request,
         CancellationToken cancellationToken = default)
     {
         context.ThrowsIfUnauthorized();
+
+        if (!request.HasChanges())
+            return UpdateTagResponse.CreateFailure(UpdateTagErrorCode.NothingToUpdate);
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
-            throw new Exception();
+            return UpdateTagResponse.CreateFailure(UpdateTagErrorCode.TagNotFound);
 
         var tag = result.Entity;
         if (request.Name is not null)
             tag.Name = request.Name;
-        
+
+        try
+        {
+            await RunTransactionAsync(tag, cancellationToken);
+        }
+        catch (DuplicateKeyStorageException ex)
+        {
+            return ProcessDuplicateKeyStorageException(ex);
+        }
+
+        return UpdateTagResponse.CreateSuccess();
+    }
+
+    private async Task RunTransactionAsync(Tag tag, CancellationToken cancellationToken = default)
+    {
         await _transactionRunner.RunAsync(async () =>
         {
             await _repository.UpdateAsync(tag, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => tag.BuildUpdatedEvent(eventId), cancellationToken);
+            await _eventProducer.PublishAsync(tag.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
+    }
+
+    private static UpdateTagResponse ProcessDuplicateKeyStorageException(DuplicateKeyStorageException ex)
+    {
+        return ex.Code switch
+        {
+            DuplicateKeyStorageException.ErrorCode.DuplicateTagName => UpdateTagResponse.CreateFailure(UpdateTagErrorCode.TagNameAlreadyExists),
+            _ => UpdateTagResponse.CreateFailure(UpdateTagErrorCode.UnknownError, ex.Message)
+        };
     }
 }

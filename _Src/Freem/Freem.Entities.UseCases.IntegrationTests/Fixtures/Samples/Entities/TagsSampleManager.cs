@@ -1,6 +1,8 @@
 ﻿using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Tags.Create.Models;
+using Freem.Entities.UseCases.Tags.Get.Models;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;
@@ -16,14 +18,17 @@ public sealed class TagsSampleManager
         _services = services;
     }
 
-    public Tag Create(UserIdentifier userId)
+    public Tag Create(UserIdentifier userId, string? name = null)
     {
         var context = new UseCaseExecutionContext(userId);
 
-        var name = Guid.NewGuid().ToString();
+        name ??= Guid.NewGuid().ToString();
         var request = new CreateTagRequest(name);
 
         var response = _services.RequestExecutor.Execute<CreateTagRequest, CreateTagResponse>(context, request);
+        if (!response.Success)
+            throw new InvalidOperationException("Can't create tag");
+        
         return response.Tag;
     }
 
@@ -39,5 +44,18 @@ public sealed class TagsSampleManager
             var response = _services.RequestExecutor.Execute<CreateTagRequest, CreateTagResponse>(context, request);
             yield return response.Tag;
         }
+    }
+
+    public Tag Get(UserIdentifier userId, TagIdentifier tagId)
+    {
+        var context = new UseCaseExecutionContext(userId);
+
+        var request = new GetTagRequest(tagId);
+        
+        var response = _services.RequestExecutor.Execute<GetTagRequest, GetTagResponse>(context, request);
+        if (!response.Success)
+            throw new InvalidOperationException("Can't get tag");
+        
+        return response.Tag;
     }
 }

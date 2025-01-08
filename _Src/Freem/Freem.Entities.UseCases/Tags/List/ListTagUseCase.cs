@@ -34,6 +34,6 @@ internal sealed class ListTagUseCase : IUseCase<ListTagRequest, ListTagResponse>
             
         var result = await _repository.FindAsync(filter, cancellationToken);
         var tags = await result.ToArrayAsync(cancellationToken);
-        return new ListTagResponse(tags, result.TotalCount);
+        return ListTagResponse.CreateSuccess(tags, result.TotalCount);
     }
 }

@@ -16,4 +16,9 @@ public sealed class UpdateTagRequest
 
         Id = id;
     }
+
+    public bool HasChanges()
+    {
+        return Name is not null;
+    }
 }

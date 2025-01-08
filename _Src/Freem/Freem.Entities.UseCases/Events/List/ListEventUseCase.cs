@@ -36,6 +36,6 @@ internal sealed class ListEventUseCase : IUseCase<ListEventRequest, ListEventRes
 
         var result = await _repository.FindAsync(filter, cancellationToken);
         var events = await result.ToArrayAsync(cancellationToken);
-        return new ListEventResponse(events, result.TotalCount);
+        return ListEventResponse.CreateSuccess(events, result.TotalCount);
     }
 }
