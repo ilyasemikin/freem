@@ -3,12 +3,9 @@ using Freem.Entities.Records.Comparers;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.Activities.Create.Models;
+using Freem.Entities.UseCases.DTO.Records.List;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Records.Create.Models;
-using Freem.Entities.UseCases.Records.List.Models;
-using Freem.Entities.UseCases.Users.Password.Register.Models;
 using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;

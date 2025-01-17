@@ -1,9 +1,9 @@
 ﻿using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.DTO.Users.Password.Login;
+using Freem.Entities.UseCases.DTO.Users.Password.Register;
+using Freem.Entities.UseCases.DTO.Users.Tokens.Refresh;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Users.Password.Login.Models;
-using Freem.Entities.UseCases.Users.Password.Register.Models;
-using Freem.Entities.UseCases.Users.Tokens.Refresh.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

@@ -2,9 +2,9 @@
 using Freem.Entities.Tags.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.Tags.Get;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Tags.Get.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

@@ -13,6 +13,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.UseCases.DTO.Abstractions\Freem.Entities.UseCases.DTO.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.UseCases.DTO\Freem.Entities.UseCases.DTO.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
     </ItemGroup>
 

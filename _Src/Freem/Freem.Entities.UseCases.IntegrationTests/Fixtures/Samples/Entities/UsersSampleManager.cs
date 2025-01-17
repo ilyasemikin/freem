@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Users.Password.Register.Models;
+using Freem.Entities.UseCases.DTO.Users.Password.Register;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;

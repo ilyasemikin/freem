@@ -2,9 +2,9 @@
 using Freem.Entities.RunningRecords.Comparers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.RunningRecords.Get;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.RunningRecords.Get.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

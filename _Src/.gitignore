@@ -487,3 +487,5 @@ $RECYCLE.BIN/
 Freem/Freem.Entities.Storage.PostgreSQL.IntegrationTests/configuration.json
 Freem/Freem.Locking.Redis.IntegrationTests/configuration.json
 Freem/Freem.Entities.UseCases.IntegrationTests/configuration.json
+
+*.DotSettings

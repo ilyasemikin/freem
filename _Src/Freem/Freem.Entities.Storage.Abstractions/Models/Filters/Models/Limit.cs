@@ -14,4 +14,9 @@ public struct Limit
         
         Value = value;
     }
+
+    public static implicit operator Limit(int value)
+    {
+        return new Limit(value);
+    }
 }

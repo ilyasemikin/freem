@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Abstractions.Context;
+using Freem.Entities.UseCases.DTO.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.UseCases.Executors.Implementations;
@@ -15,19 +16,17 @@ internal sealed class UseCaseExecutor : IUseCaseExecutor
         _services = services;
     }
 
-    public async Task ExecuteAsync<TRequest>(UseCaseExecutionContext context, TRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var @case = _services.GetRequiredService<IUseCase<TRequest>>();
-        
-        await @case.ExecuteAsync(context, request, cancellationToken);
-    }
-
     public async Task<TResponse> ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request,
         CancellationToken cancellationToken = default)
     {
-        var @case = _services.GetRequiredService<IUseCase<TRequest, TResponse>>();
+        var interfaces = typeof(TResponse).GetInterfaces();
+        var responseType = interfaces.FirstOrDefault(e => e.FullName?.Contains("Freem.Entities.UseCases.DTO.Abstractions.IResponse") == true);
+        var errorType = responseType.GetGenericArguments()[0];
+        var caseType = typeof(IUseCase<,,>).MakeGenericType(typeof(TRequest), typeof(TResponse), errorType);
+        var method = caseType.GetMethod("ExecuteAsync");
+
+        var @case = _services.GetRequiredService(caseType);
         
-        return await @case.ExecuteAsync(context, request, cancellationToken);
+        return await (Task<TResponse>)method.Invoke(@case, [context, request, cancellationToken]);
     }
 }

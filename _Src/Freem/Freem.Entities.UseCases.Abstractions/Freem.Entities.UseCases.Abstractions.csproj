@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Freem.Entities.UseCases.DTO.Abstractions\Freem.Entities.UseCases.DTO.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
       <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj" />
     </ItemGroup>

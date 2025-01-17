@@ -13,6 +13,8 @@
         <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.UseCases.DTO.Abstractions\Freem.Entities.UseCases.DTO.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.UseCases.DTO\Freem.Entities.UseCases.DTO.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Models\Freem.Entities.UseCases.Models.csproj" />

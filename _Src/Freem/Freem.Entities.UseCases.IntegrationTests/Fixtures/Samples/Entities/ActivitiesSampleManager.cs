@@ -1,10 +1,10 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Activities.Archive.Models;
-using Freem.Entities.UseCases.Activities.Create.Models;
-using Freem.Entities.UseCases.Activities.Get.Models;
-using Freem.Entities.UseCases.Activities.Unarchive.Models;
+using Freem.Entities.UseCases.DTO.Activities.Archive;
+using Freem.Entities.UseCases.DTO.Activities.Create;
+using Freem.Entities.UseCases.DTO.Activities.Get;
+using Freem.Entities.UseCases.DTO.Activities.Unarchive;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;

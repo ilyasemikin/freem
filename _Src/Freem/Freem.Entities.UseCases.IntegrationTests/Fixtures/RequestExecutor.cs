@@ -35,28 +35,11 @@ public sealed class RequestExecutor
         _services = services;
     }
 
-    public void Execute<TRequest>(UseCaseExecutionContext context, TRequest request)
-    {
-        var task = ExecuteAsync(context, request);
-        var awaiter = task.GetAwaiter();
-        awaiter.GetResult();
-    }
-
     public TResponse Execute<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)
     {
         var task = ExecuteAsync<TRequest, TResponse>(context, request);
         var awaiter = task.GetAwaiter();
         return awaiter.GetResult();
-    }
-    
-    public async Task ExecuteAsync<TRequest>(UseCaseExecutionContext context, TRequest request)
-    {
-        using var scope = _services.CreateScope();
-        var provider = scope.ServiceProvider;
-        
-        var executor = provider.GetRequiredService<IUseCaseExecutor>();
-
-        await executor.ExecuteAsync(context, request);
     }
     
     public async Task<TResponse> ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)

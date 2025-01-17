@@ -10,13 +10,11 @@ internal sealed class ContextStorageTransaction<TDbContext> : IStorageTransactio
     private bool _disposed;
     private bool _completed;
 
-    private readonly TDbContext _context;
     private readonly IDbContextTransaction _transaction;
 
     public ContextStorageTransaction(TDbContext context)
     {
-        _context = context;
-        _transaction = _context.Database.BeginTransaction();
+        _transaction = context.Database.BeginTransaction();
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -57,7 +55,6 @@ internal sealed class ContextStorageTransaction<TDbContext> : IStorageTransactio
             return;
 
         await _transaction.DisposeAsync();
-        await _context.DisposeAsync();
 
         _disposed = true;
 

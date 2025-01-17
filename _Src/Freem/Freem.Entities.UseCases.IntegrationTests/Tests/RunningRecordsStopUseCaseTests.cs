@@ -1,8 +1,8 @@
 ﻿using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.RunningRecords.Stop;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.RunningRecords.Stop.Models;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
@@ -37,6 +37,10 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
+
+        var existed = Services.Samples.RunningRecords.TryGet(_userId, out _);
+        
+        Assert.False(existed);
     }
 
     [Fact]

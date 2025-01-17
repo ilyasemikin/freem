@@ -4,9 +4,10 @@ using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.RunningRecords.Start;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.RunningRecords.Start.Models;
+using Freem.Entities.Users.Identifiers;
 using Freem.Time;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
@@ -16,6 +17,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     private const string AnotherUserLogin = "another_user";
     
     private readonly UseCaseExecutionContext _context;
+    private readonly UserIdentifier _userId;
 
     private readonly DateTimeOffset _startAt;
     private readonly RelatedActivitiesCollection _activities;
@@ -27,6 +29,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var activity = services.Samples.Activities.Create(userId);
 
         _context = new UseCaseExecutionContext(userId);
+        _userId = userId;
 
         _startAt = DateTimeOffset.UtcNow;
         _activities = new RelatedActivitiesCollection([activity.Id]);
@@ -35,6 +38,25 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess()
     {
+        var request = new StartRunningRecordRequest(_startAt, _activities);
+        
+        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.NotNull(response.RunningRecord);
+        Assert.Null(response.Error);
+        
+        Assert.True(DateTimeOperations.EqualsUpToSeconds(_startAt, response.RunningRecord.StartAt));
+        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
+    }
+
+    [Fact]
+    public async Task ShouldSuccess_WhenAnotherRunningRecordExist()
+    {
+        var otherStartAt = _startAt.AddHours(-1);
+        Services.Samples.RunningRecords.Start(_userId, _activities.Identifiers.First(), otherStartAt);
+        
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
         var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);

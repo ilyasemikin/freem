@@ -1,10 +1,11 @@
-﻿using Freem.Entities.Activities.Identifiers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.RunningRecords;
 using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.RunningRecords.Get.Models;
-using Freem.Entities.UseCases.RunningRecords.Remove.Models;
-using Freem.Entities.UseCases.RunningRecords.Start.Models;
+using Freem.Entities.UseCases.DTO.RunningRecords.Get;
+using Freem.Entities.UseCases.DTO.RunningRecords.Remove;
+using Freem.Entities.UseCases.DTO.RunningRecords.Start;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;
@@ -20,15 +21,19 @@ public sealed class RunningRecordsSampleManager
         _services = services;
     }
 
-    public RunningRecord Start(UserIdentifier userId, ActivityIdentifier activityId)
+    public RunningRecord Start(UserIdentifier userId, ActivityIdentifier activityId, DateTimeOffset? startAt = null)
     {
         var context = new UseCaseExecutionContext(userId);
         
         var now = DateTime.UtcNow;
+        startAt ??= now;
         var activities = new RelatedActivitiesCollection([activityId]);
-        var request = new StartRunningRecordRequest(now, activities);
+        var request = new StartRunningRecordRequest(startAt.Value, activities);
 
         var response = _services.RequestExecutor.Execute<StartRunningRecordRequest, StartRunningRecordResponse>(context, request);
+        if (!response.Success)
+            throw new InvalidOperationException("Can't start running record");
+        
         return response.RunningRecord;
     }
 
@@ -52,5 +57,22 @@ public sealed class RunningRecordsSampleManager
             throw new InvalidOperationException("Can't get running record");
         
         return response.Record;
+    }
+    
+    public bool TryGet(UserIdentifier userId, [NotNullWhen(true)] out RunningRecord? record)
+    {
+        var context = new UseCaseExecutionContext(userId);
+
+        var request = new GetRunningRecordRequest();
+        var response = _services.RequestExecutor.Execute<GetRunningRecordRequest, GetRunningRecordResponse>(context, request);
+
+        if (!response.Success)
+        {
+            record = null;
+            return false;
+        }
+
+        record = response.Record;
+        return true;
     }
 }

@@ -18,6 +18,7 @@ public sealed class DuplicateKeyStorageException : StorageException
     public enum ErrorCode
     {
         DuplicateUserLogin,
+        DuplicateRunningRecord,
         DuplicateTagName,
     }
 

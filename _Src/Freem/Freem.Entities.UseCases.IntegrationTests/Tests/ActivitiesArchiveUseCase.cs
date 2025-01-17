@@ -2,7 +2,7 @@
 using Freem.Entities.Activities.Models;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.Activities.Archive.Models;
+using Freem.Entities.UseCases.DTO.Activities.Archive;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.Users.Identifiers;
@@ -34,7 +34,7 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
 
         Assert.NotNull(response);
-        Assert.True(response.IsSuccess);
+        Assert.True(response.Success);
         Assert.Null(response.Error);
 
         var actual = Services.Samples.Activities.Get(_userId, _activityId);
@@ -51,7 +51,7 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
 
         Assert.NotNull(response);
-        Assert.False(response.IsSuccess);
+        Assert.False(response.Success);
         Assert.Equal(ArchiveActivityErrorCode.ActivityNotFound, response.Error.Code);
     }
 
@@ -65,7 +65,7 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
         
         Assert.NotNull(response);
-        Assert.False(response.IsSuccess);
+        Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
         Assert.Equal(ArchiveActivityErrorCode.ActivityInvalidStatus, response.Error.Code);

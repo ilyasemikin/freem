@@ -13,6 +13,7 @@ internal sealed class DuplicateKeyErrorToExceptionConverter :
         = new Dictionary<string, DuplicateKeyStorageException.ErrorCode>()
         {
             [EntitiesNames.UsersLoginCredentials.Constraints.LoginUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin,
+            [EntitiesNames.RunningRecords.Constraints.PrimaryKey] = DuplicateKeyStorageException.ErrorCode.DuplicateRunningRecord,
             [EntitiesNames.Tags.Constraints.NameUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateTagName
         };
 

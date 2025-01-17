@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Events.List.Models;
+using Freem.Entities.UseCases.DTO.Events.List;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 

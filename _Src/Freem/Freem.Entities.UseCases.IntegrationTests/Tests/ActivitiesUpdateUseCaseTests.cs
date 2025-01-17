@@ -7,12 +7,10 @@ using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.Activities.Create.Models;
-using Freem.Entities.UseCases.Activities.Update.Models;
+using Freem.Entities.UseCases.DTO.Abstractions.Models;
+using Freem.Entities.UseCases.DTO.Activities.Update;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Models.Fields;
-using Freem.Entities.UseCases.Users.Password.Register.Models;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;

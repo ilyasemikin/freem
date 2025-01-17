@@ -17,7 +17,7 @@ begin
 			array[('${TriggerErrorParameters.EventEntityParameterName}', 'user'), ('${TriggerErrorParameters.EventEntityIdParameterName}', new.user_id)]::${EnvironmentNames.Schema}.exception_parameter[]);
 	end if;
 
-	if new.action = 'removed' then
+	if new.action = 'removed' or new.action = 'stopped' then
 	    return new;
 	end if;
 

@@ -3,11 +3,9 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Tags.Models;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.Tags.Update;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Models.Fields;
-using Freem.Entities.UseCases.Tags.Create.Models;
-using Freem.Entities.UseCases.Tags.Update.Models;
 using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 

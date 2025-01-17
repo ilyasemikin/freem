@@ -1,9 +1,9 @@
 ﻿using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
 using Freem.Entities.UseCases.Abstractions.Exceptions;
+using Freem.Entities.UseCases.DTO.Tags.Remove;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.UseCases.Tags.Remove.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

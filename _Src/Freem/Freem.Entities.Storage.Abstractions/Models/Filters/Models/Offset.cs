@@ -14,4 +14,9 @@ public struct Offset
         
         Value = value;
     }
+
+    public static implicit operator Offset(int value)
+    {
+        return new Offset(value);
+    }
 }

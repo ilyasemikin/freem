@@ -2,8 +2,8 @@
 using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Records.Create.Models;
-using Freem.Entities.UseCases.Records.Get.Models;
+using Freem.Entities.UseCases.DTO.Records.Create;
+using Freem.Entities.UseCases.DTO.Records.Get;
 using Freem.Entities.Users.Identifiers;
 using Freem.Time.Models;
 using Record = Freem.Entities.Records.Record;
