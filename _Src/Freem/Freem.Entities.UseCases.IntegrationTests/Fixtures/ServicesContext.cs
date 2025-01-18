@@ -6,6 +6,9 @@ using Freem.Entities.Bus.Events.DependencyInjection.Microsoft;
 using Freem.Entities.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
+using Freem.Entities.Tokens.JWT.DependencyInjection;
+using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
@@ -14,9 +17,6 @@ using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
-using Freem.Tokens.JWT.DependencyInjection;
-using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
-using Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -61,7 +61,7 @@ public sealed class ServicesContext
 
         var accessTokensSettings = new AccessTokenSettings(TokensIssuer, TokensAudience, TokensExpiration);
         var refreshTokensSettings = new RefreshTokenSettings(TokensIssuer, TokensAudience, TokensExpiration);
-        
+
         services
             .AddUtcCurrentTimeGetter()
             .AddIdentifiersGenerators()
@@ -71,8 +71,7 @@ public sealed class ServicesContext
             .AddRedisTokensBlacklist(redisConfiguration)
             .AddEmptyLocking()
             .AddPostgreSqlStorage(storageConfiguration)
-            .AddUseCases()
-            .AddUseCaseExecutor();
+            .AddEntitiesUseCases();
 
         services.AddCryptoHashes();
         services.TryAddTransient<PasswordRawHasher>();

@@ -1,13 +1,13 @@
-﻿namespace Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
+﻿namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 
-public sealed class RefreshTokenSettings
+public sealed class AccessTokenSettings
 {
     public string Issuer { get; }
     public string Audience { get; }
     
     public TimeSpan ExpirationPeriod { get; }
-    
-    public RefreshTokenSettings(string issuer, string audience, TimeSpan expirationPeriod)
+
+    public AccessTokenSettings(string issuer, string audience, TimeSpan expirationPeriod)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(issuer);
         ArgumentException.ThrowIfNullOrWhiteSpace(audience);

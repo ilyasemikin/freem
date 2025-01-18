@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Users.Identifiers;
-using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
+﻿using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Freem.Tokens.JWT.Implementations.AccessTokens;
+namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
 
 public sealed class AccessTokenValidator
 {

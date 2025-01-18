@@ -11,7 +11,6 @@ using Freem.Entities.Users.Models;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Password;
 

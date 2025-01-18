@@ -10,7 +10,6 @@ using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 

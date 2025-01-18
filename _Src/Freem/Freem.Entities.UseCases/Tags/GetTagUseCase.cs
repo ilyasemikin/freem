@@ -4,7 +4,6 @@ using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 

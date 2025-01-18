@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+    <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+    <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+    <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj"/>
+  </ItemGroup>
+</Project>

@@ -1,11 +1,11 @@
-﻿using Freem.Entities.Users;
+﻿using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+using Freem.Entities.Users;
 using Freem.Time.Abstractions;
 using Freem.Tokens.Abstractions;
-using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Freem.Tokens.JWT.Implementations.AccessTokens;
+namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
 
 public sealed class AccessTokenGenerator
 {

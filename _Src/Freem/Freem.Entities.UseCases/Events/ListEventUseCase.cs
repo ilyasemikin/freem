@@ -7,7 +7,6 @@ using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.Users.Identifiers;
 using Freem.Linq;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Events;
 

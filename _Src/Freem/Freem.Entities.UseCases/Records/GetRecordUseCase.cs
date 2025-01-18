@@ -4,7 +4,6 @@ using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Get;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
+namespace Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 
 public sealed class RefreshTokenValidationResult
 {

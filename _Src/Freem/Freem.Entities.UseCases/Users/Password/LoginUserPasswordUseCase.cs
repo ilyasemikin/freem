@@ -1,10 +1,9 @@
 ﻿using Freem.Credentials.Password.Implementations;
 using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Password.Login;
-using Freem.Tokens.JWT.Implementations.AccessTokens;
-using Freem.Tokens.JWT.Implementations.RefreshTokens;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Password;
 

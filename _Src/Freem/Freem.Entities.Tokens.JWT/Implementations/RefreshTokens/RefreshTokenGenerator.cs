@@ -1,11 +1,11 @@
-﻿using Freem.Entities.Users;
+﻿using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
+using Freem.Entities.Users;
 using Freem.Time.Abstractions;
 using Freem.Tokens.Abstractions;
-using Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Freem.Tokens.JWT.Implementations.RefreshTokens;
+namespace Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
 
 public sealed class RefreshTokenGenerator
 {

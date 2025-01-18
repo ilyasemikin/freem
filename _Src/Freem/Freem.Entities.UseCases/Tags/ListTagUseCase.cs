@@ -5,7 +5,6 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.List;
 using Freem.Linq;
-using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 

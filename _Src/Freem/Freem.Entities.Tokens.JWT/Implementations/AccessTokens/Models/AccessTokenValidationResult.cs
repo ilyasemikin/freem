@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Tokens.JWT.Implementations.AccessTokens.Models;
+namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 
 public sealed class AccessTokenValidationResult
 {

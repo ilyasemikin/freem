@@ -15,6 +15,7 @@ public sealed class RequestExecutor
     }
 
     public TResponse Execute<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)
+        where TRequest : notnull
     {
         var task = ExecuteAsync<TRequest, TResponse>(context, request);
         var awaiter = task.GetAwaiter();
@@ -22,6 +23,7 @@ public sealed class RequestExecutor
     }
     
     public async Task<TResponse> ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)
+        where TRequest : notnull
     {
         using var scope = _services.CreateScope();
         var provider = scope.ServiceProvider;

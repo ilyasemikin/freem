@@ -1,11 +1,11 @@
-﻿using Freem.Tokens.JWT.Implementations.AccessTokens;
-using Freem.Tokens.JWT.Implementations.AccessTokens.Models;
-using Freem.Tokens.JWT.Implementations.RefreshTokens;
-using Freem.Tokens.JWT.Implementations.RefreshTokens.Models;
+﻿using Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Freem.Tokens.JWT.DependencyInjection;
+namespace Freem.Entities.Tokens.JWT.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
