@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Common.Relations.Collections.Base;
+﻿using Freem.Entities.Relations.Collections.Base;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 
 // ReSharper disable once CheckNamespace
-namespace Freem.Entities.Common.Relations.Collections;
+namespace Freem.Entities.Relations.Collections;
 
 public sealed class RelatedTagsCollection : RelatedEntitiesCollection<Tag, TagIdentifier>
 {

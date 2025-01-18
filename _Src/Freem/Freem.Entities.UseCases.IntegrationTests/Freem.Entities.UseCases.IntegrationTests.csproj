@@ -21,10 +21,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj" />
     <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
-    <ProjectReference Include="..\Freem.Entities.UseCases.DependencyInjection\Freem.Entities.UseCases.DependencyInjection.csproj" />
-    <ProjectReference Include="..\Freem.Entities.UseCases.Executors\Freem.Entities.UseCases.Executors.csproj" />
+    <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj" />
     <ProjectReference Include="..\Freem.Locking.Local\Freem.Locking.Local.csproj" />
     <ProjectReference Include="..\Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj" />
+    <ProjectReference Include="..\Freem.UseCases\Freem.UseCases.csproj" />
   </ItemGroup>
 
   <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">

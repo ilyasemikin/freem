@@ -1,8 +1,7 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Comparers;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.DTO.Activities.Get;
+using Freem.Entities.UseCases.Contracts.Activities.Get;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 

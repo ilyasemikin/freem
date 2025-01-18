@@ -4,14 +4,15 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Events.List;
+using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.Users.Identifiers;
 using Freem.Linq;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Events;
 
-internal sealed class ListEventUseCase : IUseCase<ListEventRequest, ListEventResponse, ListEventErrorCode>
+internal sealed class ListEventUseCase 
+    : IEntitiesUseCase<ListEventRequest, ListEventResponse, ListEventErrorCode>
 {
     private readonly IMultipleSearchByFilterRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier, EventsAfterTimeFilter> _repository;
 

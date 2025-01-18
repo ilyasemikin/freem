@@ -1,6 +1,6 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Tags;

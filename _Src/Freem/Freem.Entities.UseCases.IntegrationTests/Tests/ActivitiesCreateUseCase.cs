@@ -1,7 +1,6 @@
-﻿using Freem.Entities.Common.Relations.Collections;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.DTO.Activities.Create;
+﻿using Freem.Entities.Relations.Collections;
+using Freem.Entities.UseCases.Contracts.Activities.Create;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using ActivityStatus = Freem.Entities.Activities.Models.ActivityStatus;

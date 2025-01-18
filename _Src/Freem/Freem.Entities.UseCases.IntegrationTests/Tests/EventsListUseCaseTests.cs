@@ -1,5 +1,4 @@
-﻿using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Events.List;
+﻿using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 
@@ -25,6 +24,9 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
 
         Assert.NotNull(response);
+        Assert.NotNull(response.Events);
+        Assert.Null(response.Error);
+        
         Assert.NotEmpty(response.Events);
     }
 
@@ -40,6 +42,9 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
         var response = await Services.RequestExecutor.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
         
         Assert.NotNull(response);
+        Assert.NotNull(response.Events);
+        Assert.Null(response.Error);
+        
         Assert.Empty(response.Events);
     }
 }

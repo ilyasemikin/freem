@@ -2,13 +2,13 @@
 using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.RunningRecords.Get;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal class GetRunningRecordUseCase 
-    : IUseCase<GetRunningRecordRequest, GetRunningRecordResponse, GetRunningRecordErrorCode>
+    : IEntitiesUseCase<GetRunningRecordRequest, GetRunningRecordResponse, GetRunningRecordErrorCode>
 {
     private readonly ISearchByIdRepository<RunningRecord, RunningRecordIdentifier> _repository;
 

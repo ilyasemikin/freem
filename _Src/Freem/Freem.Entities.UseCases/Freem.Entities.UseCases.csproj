@@ -12,12 +12,9 @@
         <ProjectReference Include="..\Freem.Credentials.Password\Freem.Credentials.Password.csproj" />
         <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Bus.Events\Freem.Entities.Bus.Events.csproj" />
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
-        <ProjectReference Include="..\Freem.Entities.UseCases.DTO.Abstractions\Freem.Entities.UseCases.DTO.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.DTO\Freem.Entities.UseCases.DTO.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.Events\Freem.Entities.UseCases.Events.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.Abstractions\Freem.Entities.UseCases.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.Models\Freem.Entities.UseCases.Models.csproj" />
+        <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
         <ProjectReference Include="..\Freem.Linq\Freem.Linq.csproj" />
@@ -28,10 +25,17 @@
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
         <ProjectReference Include="..\Freem.Tokens.JWT\Freem.Tokens.JWT.csproj" />
         <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />
+        <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.UseCases\Freem.UseCases.csproj" />
     </ItemGroup>
     
     <ItemGroup>
         <InternalsVisibleTo Include="Freem.Entities.UseCases.DependencyInjection"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="_Common\DependencyInjection\" />
     </ItemGroup>
     
 </Project>

@@ -3,12 +3,13 @@ using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Activities.Get;
+using Freem.Entities.UseCases.Contracts.Activities.Get;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
-internal sealed class GetActivityUseCase : IUseCase<GetActivityRequest, GetActivityResponse, GetActivityErrorCode>
+internal sealed class GetActivityUseCase 
+    : IEntitiesUseCase<GetActivityRequest, GetActivityResponse, GetActivityErrorCode>
 {
     private readonly ISearchByMultipleIdsRepository<Activity, ActivityIdentifier, ActivityAndUserIdentifiers> _repository;
 

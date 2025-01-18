@@ -1,22 +1,22 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
+using Freem.Entities.Bus.Events.Abstractions;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Users.Password.Register;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.Entities.Users.Models;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Password;
 
 internal sealed class RegisterUserPasswordUseCase 
-    : IUseCase<RegisterUserPasswordRequest, RegisterUserPasswordResponse, RegisterUserPasswordErrorCode>
+    : IEntitiesUseCase<RegisterUserPasswordRequest, RegisterUserPasswordResponse, RegisterUserPasswordErrorCode>
 {
     private readonly IIdentifierGenerator<UserIdentifier> _identifierGenerator;
     private readonly ICreateRepository<User, UserIdentifier> _repository;

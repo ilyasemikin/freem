@@ -1,7 +1,7 @@
 ﻿using Freem.Converters.Abstractions;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
-using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
@@ -11,7 +11,7 @@ using Freem.Exceptions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
-internal sealed class TriggerConstraintErrorToExceptionConverter : 
+internal sealed class TriggerConstraintErrorToExceptionConverter :
     IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>
 {
     public Exception Convert(DatabaseContextWriteContext context, TriggerConstraintError error)
@@ -64,7 +64,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
                     EntitiesNames.UserTelegramIntegration.EntityName => identifierParameter.AsUserIdentifier(),
                     _ => throw new InvalidOperationException($"Unknown entity name \"{entityName}\"")
                 };
-                
+
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             default:

@@ -1,6 +1,6 @@
 ﻿using Freem.Clones;
-using Freem.Entities.Validation;
-using Freem.Entities.Validation.Extensions;
+using Freem.Validation;
+using Freem.Validation.Extensions;
 
 namespace Freem.Entities.Users.Models;
 

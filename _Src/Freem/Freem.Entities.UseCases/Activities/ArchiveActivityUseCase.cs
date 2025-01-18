@@ -1,19 +1,19 @@
 ﻿using Freem.Entities.Activities.Models;
+using Freem.Entities.Bus.Events.Abstractions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Activities.Archive;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Activities.Archive;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal class ArchiveActivityUseCase : 
-    IUseCase<ArchiveActivityRequest, ArchiveActivityResponse, ArchiveActivityErrorCode>
+    IEntitiesUseCase<ArchiveActivityRequest, ArchiveActivityResponse, ArchiveActivityErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;

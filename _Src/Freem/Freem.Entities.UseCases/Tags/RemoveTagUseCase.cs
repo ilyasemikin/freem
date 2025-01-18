@@ -1,15 +1,16 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Tags.Remove;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Tags.Remove;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 
-internal sealed class RemoveTagUseCase : IUseCase<RemoveTagRequest, RemoveTagResponse, RemoveTagErrorCode>
+internal sealed class RemoveTagUseCase 
+    : IEntitiesUseCase<RemoveTagRequest, RemoveTagResponse, RemoveTagErrorCode>
 {
     private readonly ITagsRepository _repository;
     private readonly IEventProducer _eventProducer;

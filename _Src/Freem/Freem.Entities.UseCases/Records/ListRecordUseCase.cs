@@ -3,13 +3,14 @@ using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Records.List;
+using Freem.Entities.UseCases.Contracts.Records.List;
 using Freem.Linq;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
-internal class ListRecordUseCase : IUseCase<ListRecordRequest, ListRecordResponse, ListRecordErrorCode>
+internal class ListRecordUseCase 
+    : IEntitiesUseCase<ListRecordRequest, ListRecordResponse, ListRecordErrorCode>
 {
     private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter> _repository;
 

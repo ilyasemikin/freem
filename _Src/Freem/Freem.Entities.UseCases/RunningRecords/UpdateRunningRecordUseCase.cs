@@ -1,20 +1,21 @@
 ﻿using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.Bus.Events.Abstractions;
 using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.RunningRecords.Update;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
-internal class UpdateRunningRecordUseCase : IUseCase<UpdateRunningRecordRequest, UpdateRunningRecordResponse, UpdateRunningRecordErrorCode>
+internal class UpdateRunningRecordUseCase 
+    : IEntitiesUseCase<UpdateRunningRecordRequest, UpdateRunningRecordResponse, UpdateRunningRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;

@@ -1,11 +1,8 @@
-﻿using Freem.Entities.Common.Relations.Collections;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.DTO.Records.Remove;
+﻿using Freem.Entities.Records.Identifiers;
+using Freem.Entities.UseCases.Contracts.Records.Remove;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

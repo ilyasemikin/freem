@@ -10,7 +10,7 @@ using Freem.Entities.Activities.Events.Unarchived;
 using Freem.Entities.Activities.Events.Updated;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Activities.Models;
-using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;

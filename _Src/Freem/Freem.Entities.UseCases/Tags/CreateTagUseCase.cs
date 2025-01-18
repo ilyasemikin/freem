@@ -1,18 +1,19 @@
-﻿using Freem.Entities.Storage.Abstractions.Base.Write;
+﻿using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Tags.Create;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 
-internal sealed class CreateTagUseCase : IUseCase<CreateTagRequest, CreateTagResponse, CreateTagErrorCode>
+internal sealed class CreateTagUseCase 
+    : IEntitiesUseCase<CreateTagRequest, CreateTagResponse, CreateTagErrorCode>
 {
     private readonly IIdentifierGenerator<TagIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Tag, TagIdentifier> _repository;

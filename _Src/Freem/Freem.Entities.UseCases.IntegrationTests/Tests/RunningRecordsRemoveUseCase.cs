@@ -1,6 +1,5 @@
-﻿using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.DTO.RunningRecords.Remove;
+﻿using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.Users.Identifiers;

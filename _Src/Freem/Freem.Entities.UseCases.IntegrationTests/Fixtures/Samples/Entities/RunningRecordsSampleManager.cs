@@ -1,11 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.RunningRecords;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.RunningRecords.Get;
-using Freem.Entities.UseCases.DTO.RunningRecords.Remove;
-using Freem.Entities.UseCases.DTO.RunningRecords.Start;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;

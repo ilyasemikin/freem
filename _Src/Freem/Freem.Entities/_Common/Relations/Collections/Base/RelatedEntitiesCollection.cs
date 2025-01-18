@@ -4,8 +4,7 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
 
-// ReSharper disable once CheckNamespace
-namespace Freem.Entities.Common.Relations.Collections.Base;
+namespace Freem.Entities.Relations.Collections.Base;
 
 public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEntitiesCollection<TEntity, TEntityIdentifier>
     where TEntity : IEntity<TEntityIdentifier>

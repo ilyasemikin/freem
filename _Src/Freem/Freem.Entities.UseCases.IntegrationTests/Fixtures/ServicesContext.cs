@@ -2,12 +2,11 @@
 using Freem.Credentials.Password.Implementations;
 using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities._Common.DependencyInjection;
+using Freem.Entities.Bus.Events.DependencyInjection.Microsoft;
+using Freem.Entities.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.UseCases.Events.DependencyInjection.Microsoft;
-using Freem.Entities.UseCases.Executors.DependencyInjection.Microsoft;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Locking.Local.DependencyInjection;

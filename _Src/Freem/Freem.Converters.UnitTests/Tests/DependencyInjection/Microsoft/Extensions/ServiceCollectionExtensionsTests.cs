@@ -4,7 +4,6 @@ using Freem.Converters.DependencyInjection.Microsoft.Extensions;
 using Freem.Converters.UnitTests.Mocks.Converters;
 using Freem.Converters.UnitTests.Mocks.Entities.Abstractions;
 using Freem.DependencyInjection.Microsoft;
-using Freem.DependencyInjection.Microsoft.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceCollectionExtensions = Freem.Converters.DependencyInjection.Microsoft.Extensions.ServiceCollectionExtensions;
 

@@ -1,21 +1,21 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
+using Freem.Entities.Bus.Events.Abstractions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Users.Password.Update;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Models;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Password;
 
 internal sealed class UpdateLoginCredentialsUseCases 
-    : IUseCase<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse, UpdateLoginCredentialsErrorCode>
+    : IEntitiesUseCase<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse, UpdateLoginCredentialsErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IUsersRepository _repository;

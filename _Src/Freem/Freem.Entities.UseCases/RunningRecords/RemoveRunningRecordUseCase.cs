@@ -1,17 +1,17 @@
-﻿using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.RunningRecords.Remove;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal sealed class RemoveRunningRecordUseCase 
-    : IUseCase<RemoveRunningRecordRequest, RemoveRunningRecordResponse, RemoveRunningRecordErrorCode>
+    : IEntitiesUseCase<RemoveRunningRecordRequest, RemoveRunningRecordResponse, RemoveRunningRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;

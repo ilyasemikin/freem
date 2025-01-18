@@ -1,8 +1,7 @@
 ﻿using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Tags.Create;
-using Freem.Entities.UseCases.DTO.Tags.Get;
+using Freem.Entities.UseCases.Contracts.Tags.Create;
+using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples.Entities;

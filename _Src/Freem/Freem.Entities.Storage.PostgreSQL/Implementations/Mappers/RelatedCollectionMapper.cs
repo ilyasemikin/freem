@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Common.Relations.Collections;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
@@ -18,7 +18,8 @@ internal static class RelatedCollectionMapper
         return new RelatedTagsCollection(tags);
     }
 
-    public static RelatedActivitiesCollection MapToRelatedActivitiesCollection(this IEnumerable<ActivityEntity>? entities)
+    public static RelatedActivitiesCollection MapToRelatedActivitiesCollection(
+        this IEnumerable<ActivityEntity>? entities)
     {
         var activities = Enumerable.Empty<Activity>();
         if (entities is not null)

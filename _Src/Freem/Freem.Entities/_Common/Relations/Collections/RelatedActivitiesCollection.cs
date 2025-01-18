@@ -1,9 +1,8 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Common.Relations.Collections.Base;
+using Freem.Entities.Relations.Collections.Base;
 
-// ReSharper disable once CheckNamespace
-namespace Freem.Entities.Common.Relations.Collections;
+namespace Freem.Entities.Relations.Collections;
 
 public sealed class RelatedActivitiesCollection : RelatedEntitiesCollection<Activity, ActivityIdentifier>
 {

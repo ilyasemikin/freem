@@ -1,20 +1,21 @@
 ﻿using Freem.Entities.Activities.Identifiers.Extensions;
+using Freem.Entities.Bus.Events.Abstractions;
 using Freem.Entities.Records;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Records.Create;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
-internal sealed class CreateRecordUseCase : IUseCase<CreateRecordRequest, CreateRecordResponse, CreateRecordErrorCode>
+internal sealed class CreateRecordUseCase 
+    : IEntitiesUseCase<CreateRecordRequest, CreateRecordResponse, CreateRecordErrorCode>
 {
     private readonly IIdentifierGenerator<RecordIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Record, RecordIdentifier> _repository;

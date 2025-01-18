@@ -1,9 +1,8 @@
 ﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Common.Relations.Collections;
 using Freem.Entities.Records.Identifiers;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Records.Create;
-using Freem.Entities.UseCases.DTO.Records.Get;
+using Freem.Entities.Relations.Collections;
+using Freem.Entities.UseCases.Contracts.Records.Create;
+using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.Entities.Users.Identifiers;
 using Freem.Time.Models;
 using Record = Freem.Entities.Records.Record;

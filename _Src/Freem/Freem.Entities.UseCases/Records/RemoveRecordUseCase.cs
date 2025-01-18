@@ -1,17 +1,18 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Records.Remove;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
-internal sealed class RemoveRecordUseCase : IUseCase<RemoveRecordRequest, RemoveRecordResponse, RemoveRecordErrorCode>
+internal sealed class RemoveRecordUseCase 
+    : IEntitiesUseCase<RemoveRecordRequest, RemoveRecordResponse, RemoveRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;

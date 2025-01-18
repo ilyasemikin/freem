@@ -1,17 +1,17 @@
 ﻿using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Users.Tokens.Refresh;
+using Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
 using Freem.Tokens.JWT.Implementations.AccessTokens;
 using Freem.Tokens.JWT.Implementations.RefreshTokens;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Tokens;
 
 internal sealed class RefreshUserAccessTokenUseCase 
-    : IUseCase<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse, RefreshUserAccessTokenErrorCode>
+    : IEntitiesUseCase<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse, RefreshUserAccessTokenErrorCode>
 {
     private readonly RefreshTokenValidator _refreshTokenValidator;
     private readonly ITokensBlacklist _tokensBlacklist;

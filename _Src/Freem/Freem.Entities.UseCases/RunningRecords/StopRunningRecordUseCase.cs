@@ -1,31 +1,31 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.DTO.Records.Create;
-using Freem.Entities.UseCases.DTO.RunningRecords.Stop;
-using Freem.Entities.UseCases.Events.Abstractions;
+using Freem.Entities.UseCases.Contracts.Records.Create;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 using Freem.Time.Models;
+using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal sealed class StopRunningRecordUseCase 
-    : IUseCase<StopRunningRecordRequest, StopRunningRecordResponse, StopRunningRecordErrorCode>
+    : IEntitiesUseCase<StopRunningRecordRequest, StopRunningRecordResponse, StopRunningRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IUseCaseExecutor _executor;
+    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
     private readonly IEventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StopRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
-        IUseCaseExecutor executor, 
+        IUseCaseExecutor<UseCaseExecutionContext> executor, 
         IEventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

@@ -21,7 +21,7 @@ using Freem.Identifiers.Implementations.Generators.DependencyInjection.Microsoft
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Freem.Entities._Common.DependencyInjection;
+namespace Freem.Entities.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {

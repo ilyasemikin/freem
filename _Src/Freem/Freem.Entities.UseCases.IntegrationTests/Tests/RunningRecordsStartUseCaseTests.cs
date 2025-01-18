@@ -1,10 +1,9 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Common.Relations.Collections;
-using Freem.Entities.UseCases.Abstractions.Context;
-using Freem.Entities.UseCases.Abstractions.Exceptions;
-using Freem.Entities.UseCases.DTO.RunningRecords.Start;
+using Freem.Entities.Relations.Collections;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Entities.Users.Identifiers;

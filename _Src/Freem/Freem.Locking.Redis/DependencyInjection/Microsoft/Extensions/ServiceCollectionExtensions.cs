@@ -1,7 +1,6 @@
 ﻿using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Identifiers.Implementations.Generators;
-using Freem.Locking.Abstractions;
 using Freem.Locking.Redis.Implementations.Simple;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
