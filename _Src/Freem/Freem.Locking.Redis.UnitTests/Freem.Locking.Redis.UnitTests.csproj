@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
+        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
     </ItemGroup>
 

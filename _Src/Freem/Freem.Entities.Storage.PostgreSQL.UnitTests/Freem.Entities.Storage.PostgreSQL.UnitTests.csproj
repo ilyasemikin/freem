@@ -23,12 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
+        <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj"/>
         <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
-        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
     </ItemGroup>

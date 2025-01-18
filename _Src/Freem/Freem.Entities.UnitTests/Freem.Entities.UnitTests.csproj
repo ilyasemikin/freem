@@ -27,7 +27,7 @@
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
-        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
+        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

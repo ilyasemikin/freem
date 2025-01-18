@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
-    <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
-    <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
-    <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
-    <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
+        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <InternalsVisibleTo Include="Freem.Entities.UseCases"/>
-  </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Freem.Entities.UseCases"/>
+    </ItemGroup>
 
 </Project>

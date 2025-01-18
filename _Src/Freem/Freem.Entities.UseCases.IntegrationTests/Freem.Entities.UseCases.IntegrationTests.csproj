@@ -1,34 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.2"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="xunit" Version="2.9.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj" />
-    <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
-    <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj" />
-    <ProjectReference Include="..\Freem.Locking.Local\Freem.Locking.Local.csproj" />
-    <ProjectReference Include="..\Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj" />
-    <ProjectReference Include="..\Freem.UseCases\Freem.UseCases.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj"/>
+        <ProjectReference Include="..\Freem.Credentials.Password\Freem.Credentials.Password.csproj" />
+        <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
+        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Bus.Events\Freem.Entities.Bus.Events.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
+        <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+        <ProjectReference Include="..\Freem.Locking.Local\Freem.Locking.Local.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+        <ProjectReference Include="..\Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj"/>
+        <ProjectReference Include="..\Freem.Tokens.JWT\Freem.Tokens.JWT.csproj" />
+        <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />
+        <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj" />
+    </ItemGroup>
 
-  <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
-    <Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)"/>
-  </Target>
-  
+    <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)"/>
+    </Target>
+
 </Project>

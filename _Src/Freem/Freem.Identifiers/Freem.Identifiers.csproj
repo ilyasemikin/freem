@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj" />
+        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj"/>
     </ItemGroup>
 
 </Project>
