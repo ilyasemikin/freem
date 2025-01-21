@@ -2,5 +2,5 @@
 
 public sealed class GetRunningRecordRequest
 {
-    
+    public static GetRunningRecordRequest Instance { get; } = new();
 }

@@ -7,17 +7,20 @@ using Freem.Entities.UseCases.Users.Password;
 using Freem.Entities.UseCases.Users.Tokens;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Implementations;
+using Freem.UseCases.Implementations.Microsoft;
 using Freem.UseCases.Types.DependencyInjection.Microsoft;
 using Freem.UseCases.Types.DependencyInjection.Microsoft.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddEntitiesUseCases(this IServiceCollection services)
-    { 
-        services.AddTransient<IUseCaseExecutor<UseCaseExecutionContext>, UseCaseExecutor<UseCaseExecutionContext>>();
+    {
+        services.TryAddTransient<IUseCaseResolver, MicrosoftAdapterUseCaseResolver>();
+        services.TryAddTransient<IUseCaseExecutor<UseCaseExecutionContext>, UseCaseExecutor<UseCaseExecutionContext>>();
         services.AddUseCases<UseCaseExecutionContext>(builder => builder
             .AddActivitiesUseCases()
             .AddTagsUseCases()

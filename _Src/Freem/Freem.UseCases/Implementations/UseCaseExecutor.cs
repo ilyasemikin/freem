@@ -8,15 +8,15 @@ public sealed class UseCaseExecutor<TContext> : IUseCaseExecutor<TContext>
     where TContext : class
 {
     private readonly UseCasesTypesCollection _types;
-    private readonly IServiceProvider _services;
+    private readonly IUseCaseResolver _resolver;
 
-    public UseCaseExecutor(UseCasesTypesCollection types, IServiceProvider services)
+    public UseCaseExecutor(UseCasesTypesCollection types, IUseCaseResolver resolver)
     {
         ArgumentNullException.ThrowIfNull(types);
-        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(resolver);
 
         _types = types;
-        _services = services;
+        _resolver = resolver;
     }
 
     public async Task<TResponse> ExecuteAsync<TRequest, TResponse>(
@@ -24,6 +24,9 @@ public sealed class UseCaseExecutor<TContext> : IUseCaseExecutor<TContext>
         CancellationToken cancellationToken = default)
         where TRequest : notnull
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(request);
+        
         var contextType = typeof(TContext);
         var requestType = typeof(TRequest);
 
@@ -32,7 +35,7 @@ public sealed class UseCaseExecutor<TContext> : IUseCaseExecutor<TContext>
 
         var descriptor = invoker.Descriptor;
         var useCaseType = descriptor.AbstractionType;
-        var useCase = _services.GetRequiredService(useCaseType);
+        var useCase = _resolver.Resolve(useCaseType);
 
         var response = await invoker.ExecuteAsync(useCase, context, request, cancellationToken);
         var responseType = response.GetType();

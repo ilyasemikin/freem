@@ -1,10 +1,14 @@
-﻿using Freem.UseCases.Contracts.Abstractions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
 namespace Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 
 public class RefreshUserAccessTokenResponse : IResponse<RefreshUserAccessTokenErrorCode>
 {
+    [MemberNotNullWhen(true, nameof(AccessToken))]
+    [MemberNotNullWhen(true, nameof(RefreshToken))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public string? AccessToken { get; }

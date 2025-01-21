@@ -2,4 +2,5 @@
 
 public sealed class RemoveRunningRecordRequest
 {
+    public static RemoveRunningRecordRequest Instance { get; } = new();
 }

@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Records;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Entities.Records;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
@@ -6,6 +7,8 @@ namespace Freem.Entities.UseCases.Contracts.Records.Create;
 
 public sealed class CreateRecordResponse : IResponse<CreateRecordErrorCode>
 {
+    [MemberNotNullWhen(true, nameof(Record))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Record? Record { get; }
