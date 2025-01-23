@@ -16,13 +16,13 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     public RecordsListUseCaseTests(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-        var records = services.Samples.Records
-            .CreateMany(userId, activity.Id, RecordsCount)
-            .ToArray();
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+        var records = filler.Records.CreateMany(_context, [activity.Id], RecordsCount);
         _records = records
             .OrderBy(e => (string)e.Id)
             .ToArray();

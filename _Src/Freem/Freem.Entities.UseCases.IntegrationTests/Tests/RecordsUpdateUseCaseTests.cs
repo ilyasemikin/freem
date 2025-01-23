@@ -32,18 +32,21 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     public RecordsUpdateUseCaseTests(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-        var record = services.Samples.Records.Create(userId, activity.Id);
+        using var filler = Services.CreateExecutor();
         
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+        var record = filler.Records.Create(_context, [activity.Id]);
+        
         _userId = userId;
         _recordId = record.Id;
         
-        var updatedActivity = services.Samples.Activities.Create(userId);
-        var updateTag = services.Samples.Tags.Create(userId);
-        
+        var updatedActivity = filler.Activities.Create(_context);
         _updatedActivityId = updatedActivity.Id;
+        
+        var updateTag = filler.Tags.Create(_context);
         _updatedTagId = updateTag.Id;
     }
 

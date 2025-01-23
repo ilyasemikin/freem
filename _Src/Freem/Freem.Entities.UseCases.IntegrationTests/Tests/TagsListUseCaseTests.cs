@@ -17,11 +17,12 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     public TagsListUseCaseTests(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var tags = services.Samples.Tags
-            .CreateMany(userId, TagsCount);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var tags = filler.Tags.CreateMany(_context, TagsCount);
         _tags = tags
             .OrderBy(x => (string)x.Id)
             .ToArray();

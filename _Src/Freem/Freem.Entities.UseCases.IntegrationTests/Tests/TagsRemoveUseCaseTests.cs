@@ -14,10 +14,12 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     public TagsRemoveUseCaseTests(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var tag = services.Samples.Tags.Create(userId);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var tag = services.Samples.Tags.Create(userId);
         _tagId = tag.Id;
     }
 

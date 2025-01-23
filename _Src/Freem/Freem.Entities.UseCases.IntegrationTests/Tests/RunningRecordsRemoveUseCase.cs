@@ -13,11 +13,14 @@ public sealed class RunningRecordsRemoveUseCase : UseCaseTestBase
     
     public RunningRecordsRemoveUseCase(ServicesContext services) : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-        services.Samples.RunningRecords.Start(userId, activity.Id);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+        filler.RunningRecords.Start(_context, [activity.Id]);
+        
         _userId = userId;
     }
 

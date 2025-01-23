@@ -18,10 +18,11 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     public UsersPasswordLoginUseCaseTests(ServicesContext services) 
         : base(services)
     {
+        using var filler = Services.CreateExecutor();
+        
         var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        var response = Services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
-
-        _context = new UseCaseExecutionContext(response.UserId);
+        var userId = filler.UsersPassword.Register(request);
+        _context = new UseCaseExecutionContext(userId);
     }
 
     [Fact]

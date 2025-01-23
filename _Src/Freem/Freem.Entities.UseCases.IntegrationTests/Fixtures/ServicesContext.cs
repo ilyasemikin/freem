@@ -31,6 +31,8 @@ public sealed class ServicesContext
     private const string TokensSecurityKey = "0123456789_0123456789_0123456789";
     
     private static TimeSpan TokensExpiration { get; } = TimeSpan.FromDays(1);
+
+    private readonly IServiceProvider _services;
     
     public RequestExecutor RequestExecutor { get; }
     public SamplesManager Samples { get; }
@@ -41,11 +43,18 @@ public sealed class ServicesContext
     {
         var configuration = TestsConfiguration.Read();
         var services = BuildServiceProvider(configuration);
+
+        _services = services;
         
         RequestExecutor = new RequestExecutor(services);
         Samples = new SamplesManager(this);
         DataManager = new DataManager(configuration, services);
         Generators = new Generators(services);
+    }
+
+    public RequestPlainExecutor CreateExecutor()
+    {
+        return RequestPlainExecutor.Create(_services);
     }
     
     private static IServiceProvider BuildServiceProvider(TestsConfiguration configuration)

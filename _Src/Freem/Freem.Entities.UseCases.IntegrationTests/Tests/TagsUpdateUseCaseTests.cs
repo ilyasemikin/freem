@@ -18,11 +18,14 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     
     public TagsUpdateUseCaseTests(ServicesContext services) : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var tag = services.Samples.Tags.Create(userId);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var tag = filler.Tags.Create(_context);
         _tag = tag;
+        
         _userId = userId;
     }
 

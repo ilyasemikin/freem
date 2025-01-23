@@ -17,10 +17,13 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
     public ActivitiesArchiveUseCase(ServicesContext services)
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+
         _userId = userId;
         _activityId = activity.Id;
     }

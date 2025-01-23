@@ -1,4 +1,5 @@
-﻿using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
+﻿using Freem.Entities.RunningRecords;
+using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -11,25 +12,27 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly UserIdentifier _userId;
 
-    private readonly DateTimeOffset _endAt;
+    private readonly RunningRecord _record;
     
     public RunningRecordsStopUseCaseTests(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-        services.Samples.RunningRecords.Start(userId, activity.Id);
-
-        _context = new UseCaseExecutionContext(userId);
-        _userId = userId;
+        using var filler = Services.CreateExecutor();
         
-        _endAt = DateTimeOffset.UtcNow;
+        var userId = filler.UsersPassword.Register();
+        _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+        _record = filler.RunningRecords.Start(_context, [activity.Id]);
+        
+        _userId = userId;
     }
 
     [Fact]
     public async Task ShouldSuccess()
     {
-        var request = new StopRunningRecordRequest(_endAt);
+        var endAt = _record.StartAt.AddDays(1);
+        var request = new StopRunningRecordRequest(endAt);
 
         var response = await Services.RequestExecutor.ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(_context, request);
         
@@ -47,7 +50,8 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
     {
         Services.Samples.RunningRecords.Remove(_userId);
         
-        var request = new StopRunningRecordRequest(_endAt);
+        var endAt = _record.StartAt.AddDays(1);
+        var request = new StopRunningRecordRequest(endAt);
         
         var response = await Services.RequestExecutor.ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(_context, request);
         
@@ -61,8 +65,7 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenEndAtTooEarly()
     {
-        var endAt = _endAt.AddDays(-1);
-        
+        var endAt = _record.StartAt.AddDays(-1);
         var request = new StopRunningRecordRequest(endAt);
         
         var response = await Services.RequestExecutor.ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(_context, request);
@@ -77,7 +80,8 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldThrowException_WhenUnauthorized()
     {
-        var request = new StopRunningRecordRequest(_endAt);
+        var endAt = _record.StartAt.AddDays(1);
+        var request = new StopRunningRecordRequest(endAt);
 
         var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
             .ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(UseCaseExecutionContext.Empty, request));

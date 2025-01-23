@@ -19,16 +19,14 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     public UserTokensRefreshUseCaseTests(ServicesContext services) 
         : base(services)
     {
+        using var filler = Services.CreateExecutor();
+        
         var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
-        Services.RequestExecutor.Execute<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, registerRequest);
+        filler.UsersPassword.Register(registerRequest);
 
         var loginRequest = new LoginUserPasswordRequest(Login, Password);
-        var response = Services.RequestExecutor.Execute<LoginUserPasswordRequest, LoginUserPasswordResponse>(UseCaseExecutionContext.Empty, loginRequest);
-
-        if (!response.Success)
-            throw new InvalidOperationException($"Login unsuccessful");
-        
-        _token = response.RefreshToken;
+        var tokens = filler.UsersPassword.Login(loginRequest);
+        _token = tokens.RefreshToken;
     }
 
     [Fact]

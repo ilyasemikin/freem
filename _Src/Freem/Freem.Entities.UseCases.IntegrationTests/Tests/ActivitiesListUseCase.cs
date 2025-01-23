@@ -17,13 +17,15 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     public ActivitiesListUseCase(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activities = services.Samples.Activities
-            .CreateMany(userId, ActivitiesCount)
-            .ToArray();
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
-        _activities = activities;
+
+        var activities = filler.Activities.CreateMany(_context, ActivitiesCount);
+        _activities = activities
+            .OrderBy(e => (string)e.Name)
+            .ToArray();
     }
 
     [Fact]

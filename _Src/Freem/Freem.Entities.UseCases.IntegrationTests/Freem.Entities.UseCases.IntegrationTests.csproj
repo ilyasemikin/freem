@@ -30,6 +30,7 @@
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Tokens.JWT\Freem.Entities.Tokens.JWT.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
+        <ProjectReference Include="..\Freem.Entities.UseCases.Plain\Freem.Entities.UseCases.Plain.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />

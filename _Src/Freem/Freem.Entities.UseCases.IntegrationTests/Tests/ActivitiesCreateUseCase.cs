@@ -18,7 +18,9 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     public ActivitiesCreateUseCase(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
     }
 

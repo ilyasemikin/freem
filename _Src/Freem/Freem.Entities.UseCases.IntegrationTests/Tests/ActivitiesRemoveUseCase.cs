@@ -10,17 +10,17 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly UserIdentifier _userId;
     private readonly ActivityIdentifier _activityId;
     
     public ActivitiesRemoveUseCase(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
-        _userId = userId;
+        
+        var activity = filler.Activities.Create(_context);
         _activityId = activity.Id;
     }
 

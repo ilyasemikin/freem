@@ -14,11 +14,13 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
     
     public RunningRecordsGetUseCaseTests(ServicesContext services) : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-        var record = services.Samples.RunningRecords.Start(userId, activity.Id);
+        using var filler = Services.CreateExecutor();
         
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
+        var record = filler.RunningRecords.Start(_context, [activity.Id]);
         _record = record;
     }
 

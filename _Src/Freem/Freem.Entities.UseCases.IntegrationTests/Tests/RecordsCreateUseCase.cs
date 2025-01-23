@@ -25,10 +25,12 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
     public RecordsCreateUseCase(ServicesContext services) 
         : base(services)
     {
-        var userId = services.Samples.Users.Register();
-        var activity = services.Samples.Activities.Create(userId);
-
+        using var filler = Services.CreateExecutor();
+        
+        var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
+        
+        var activity = filler.Activities.Create(_context);
         
         var now = DateTime.UtcNow;
         _period = new DateTimePeriod(now.AddHours(-4), now);
