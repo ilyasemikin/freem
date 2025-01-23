@@ -11,17 +11,14 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     private const string TagName = "tag";
     
     private readonly UseCaseExecutionContext _context;
-    private readonly UserIdentifier _userId;
     
-    public TagsCreateUseCaseTests(ServicesContext services) 
-        : base(services)
+    public TagsCreateUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
-        
-        _userId = userId;
     }
 
     [Fact]
@@ -29,7 +26,7 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     {
         var request = new CreateTagRequest(TagName);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -42,11 +39,13 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagNameAlreadyExists()
     {
-        Services.Samples.Tags.Create(_userId, TagName);
+        using var executor = Context.CreateExecutor();
+        var anotherRequest = new CreateTagRequest(TagName);
+        executor.Tags.Create(_context, anotherRequest);
         
         var request = new CreateTagRequest(TagName);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -61,8 +60,8 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     {
         var request = new CreateTagRequest(TagName);
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<CreateTagRequest, CreateTagResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<CreateTagRequest, CreateTagResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }

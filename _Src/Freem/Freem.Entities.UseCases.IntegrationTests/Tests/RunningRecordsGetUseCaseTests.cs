@@ -12,9 +12,9 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly RunningRecord _record;
     
-    public RunningRecordsGetUseCaseTests(ServicesContext services) : base(services)
+    public RunningRecordsGetUseCaseTests(TestContext context) : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -29,7 +29,7 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
     {
         var request = new GetRunningRecordRequest();
 
-        var response = await Services.RequestExecutor.ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -44,8 +44,8 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
     {
         var request = new GetRunningRecordRequest();
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<GetRunningRecordRequest, GetRunningRecordResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }

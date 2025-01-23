@@ -14,10 +14,10 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly IReadOnlyList<Activity> _activities;
     
-    public ActivitiesListUseCase(ServicesContext services) 
-        : base(services)
+    public ActivitiesListUseCase(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -33,7 +33,7 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     {
         var request = new ListActivityRequest();
         
-        var response = await Services.RequestExecutor.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -54,8 +54,8 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     {
         var request = new ListActivityRequest();
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<ListActivityRequest, ListActivityResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<ListActivityRequest, ListActivityResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

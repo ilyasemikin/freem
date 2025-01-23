@@ -14,10 +14,10 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly IReadOnlyList<Tag> _tags;
     
-    public TagsListUseCaseTests(ServicesContext services) 
-        : base(services)
+    public TagsListUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -33,7 +33,7 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListTagRequest();
 
-        var response = await Services.RequestExecutor.ExecuteAsync<ListTagRequest, ListTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListTagRequest, ListTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -52,8 +52,8 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListTagRequest();
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<ListTagRequest, ListTagResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<ListTagRequest, ListTagResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }

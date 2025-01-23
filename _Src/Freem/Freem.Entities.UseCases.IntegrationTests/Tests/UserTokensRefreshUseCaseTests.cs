@@ -16,10 +16,10 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     
     private readonly string _token;
     
-    public UserTokensRefreshUseCaseTests(ServicesContext services) 
-        : base(services)
+    public UserTokensRefreshUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var registerRequest = new RegisterUserPasswordRequest(Nickname, Login, Password);
         filler.UsersPassword.Register(registerRequest);
@@ -34,7 +34,7 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     {
         var request = new RefreshUserAccessTokenRequest(_token);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
+        var response = await Context.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
             UseCaseExecutionContext.Empty, 
             request);
         
@@ -51,7 +51,7 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
     {
         var request = new RefreshUserAccessTokenRequest(InvalidToken);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
+        var response = await Context.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(
             UseCaseExecutionContext.Empty, 
             request);
         

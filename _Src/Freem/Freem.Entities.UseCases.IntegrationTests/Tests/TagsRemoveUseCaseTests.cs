@@ -11,15 +11,15 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly TagIdentifier _tagId;
     
-    public TagsRemoveUseCaseTests(ServicesContext services) 
-        : base(services)
+    public TagsRemoveUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
         
-        var tag = services.Samples.Tags.Create(userId);
+        var tag = filler.Tags.Create(_context);
         _tagId = tag.Id;
     }
 
@@ -28,7 +28,7 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     {
         var request = new RemoveTagRequest(_tagId);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -38,11 +38,11 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagDoesNotExist()
     {
-        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
 
         var request = new RemoveTagRequest(notExistedTagId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -56,8 +56,8 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     {
         var request = new RemoveTagRequest(_tagId);
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }

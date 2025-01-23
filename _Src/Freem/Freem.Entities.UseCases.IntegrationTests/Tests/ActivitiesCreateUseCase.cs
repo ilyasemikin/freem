@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Relations.Collections;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -10,15 +11,13 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesCreateUseCase : UseCaseTestBase
 {
     private const string ActivityName = "activity";
-
-    private const string AnotherUserLogin = "another_user";
     
     private readonly UseCaseExecutionContext _context;
     
-    public ActivitiesCreateUseCase(ServicesContext services) 
-        : base(services)
+    public ActivitiesCreateUseCase(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -29,7 +28,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     {
         var request = new CreateActivityRequest(ActivityName);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -45,7 +44,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenRelatedTagsDoesNotExist()
     {
-        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
         var tags = new RelatedTagsCollection([notExistedTagId]);
 
         var request = new CreateActivityRequest(ActivityName)
@@ -53,7 +52,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -66,8 +65,11 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
-        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
-        var tag = Services.Samples.Tags.Create(anotherUserId);
+        using var executor = Context.CreateExecutor();
+        var anotherUserId = executor.UsersPassword.Register();
+        var anotherContext = new UseCaseExecutionContext(anotherUserId);
+        var tag = executor.Tags.Create(anotherContext);
+        
         var tags = new RelatedTagsCollection([tag]);
 
         var request = new CreateActivityRequest(ActivityName)
@@ -75,7 +77,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -90,8 +92,8 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     {
         var request = new CreateActivityRequest(ActivityName);
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<CreateActivityRequest, CreateActivityResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

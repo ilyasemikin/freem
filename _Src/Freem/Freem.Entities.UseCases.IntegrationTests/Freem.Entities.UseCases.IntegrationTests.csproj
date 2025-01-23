@@ -35,6 +35,7 @@
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
         <ProjectReference Include="..\Freem.Locking.Local\Freem.Locking.Local.csproj"/>
+        <ProjectReference Include="..\Freem.Results\Freem.Results.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
         <ProjectReference Include="..\Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj"/>
         <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />

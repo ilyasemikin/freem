@@ -1,7 +1,7 @@
 ﻿namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
 [CollectionDefinition("Sequential")]
-public class ServicesContextFixture : ICollectionFixture<ServicesContext>
+public class TestContextFixture : ICollectionFixture<TestContext>
 {
     
 }

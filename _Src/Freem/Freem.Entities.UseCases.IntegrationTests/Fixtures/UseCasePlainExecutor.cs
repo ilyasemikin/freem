@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
-public sealed class RequestPlainExecutor : EntitiesPlainSyncExecutors, IDisposable
+public sealed class UseCasePlainExecutor : EntitiesPlainSyncExecutors, IDisposable
 {
     private readonly IServiceScope _scope;
     
-    private RequestPlainExecutor(IServiceScope scope, IUseCaseExecutor<UseCaseExecutionContext> executor) 
+    private UseCasePlainExecutor(IServiceScope scope, IUseCaseExecutor<UseCaseExecutionContext> executor) 
         : base(executor)
     {
         _scope = scope;
@@ -19,10 +19,10 @@ public sealed class RequestPlainExecutor : EntitiesPlainSyncExecutors, IDisposab
         _scope.Dispose();
     }
     
-    public static RequestPlainExecutor Create(IServiceProvider provider)
+    public static UseCasePlainExecutor Create(IServiceProvider provider)
     {
         var scope = provider.CreateScope();
 
-        return new RequestPlainExecutor(scope, scope.ServiceProvider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>());
+        return new UseCasePlainExecutor(scope, scope.ServiceProvider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>());
     }
 }

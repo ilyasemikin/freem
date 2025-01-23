@@ -11,22 +11,20 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesUnarchiveUseCase : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly UserIdentifier _userId;
     private readonly ActivityIdentifier _activityId;
     
-    public ActivitiesUnarchiveUseCase(ServicesContext services) 
-        : base(services)
+    public ActivitiesUnarchiveUseCase(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var activity = filler.Activities.Create(_context);
-        services.Samples.Activities.Archive(userId, activity.Id);
-
-        _userId = userId;
         _activityId = activity.Id;
+
+        filler.Activities.Archive(_context, activity.Id);
     }
 
     [Fact]
@@ -34,13 +32,14 @@ public sealed class ActivitiesUnarchiveUseCase : UseCaseTestBase
     {
         var request = new UnarchiveActivityRequest(_activityId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Activities.Get(_userId, _activityId);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Activities.RequiredGet(_context, _activityId);
         
         Assert.Equal(ActivityStatus.Active, actual.Status);
     }
@@ -48,10 +47,10 @@ public sealed class ActivitiesUnarchiveUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivityDoesNotExist()
     {
-        var notExistedActivityId = Services.Generators.CreateActivityIdentifier();
+        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
         var request = new UnarchiveActivityRequest(notExistedActivityId);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -61,11 +60,12 @@ public sealed class ActivitiesUnarchiveUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenUnarchiveAlreadyActive()
     {
-        Services.Samples.Activities.Unarchive(_userId, _activityId);
+        using var executor = Context.CreateExecutor();
+        executor.Activities.Unarchive(_context, _activityId);
         
         var request = new UnarchiveActivityRequest(_activityId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -79,8 +79,8 @@ public sealed class ActivitiesUnarchiveUseCase : UseCaseTestBase
     {
         var request = new UnarchiveActivityRequest(_activityId);
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<UnarchiveActivityRequest, UnarchiveActivityResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

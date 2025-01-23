@@ -3,22 +3,22 @@
 namespace Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 
 [Collection("Sequential")]
-public abstract class UseCaseTestBase
+public abstract class UseCaseTestBase : IDisposable
 {
-    protected ServicesContext Services { get; }
+    protected TestContext Context { get; }
 
-    protected UseCaseTestBase(ServicesContext services)
+    protected UseCaseTestBase(TestContext context)
     {
-        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(context);
         
-        Services = services;
+        Context = context;
         
-        Services.DataManager.Clean();
+        Context.CleanDatabases();
     }
 
     public void Dispose()
     {
-        Services.DataManager.Clean();
+        Context.CleanDatabases();
         
         GC.SuppressFinalize(this);
     }

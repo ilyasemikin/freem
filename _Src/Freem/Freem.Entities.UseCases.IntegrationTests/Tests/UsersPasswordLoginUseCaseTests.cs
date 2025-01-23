@@ -15,10 +15,10 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
 
     private readonly UseCaseExecutionContext _context;
     
-    public UsersPasswordLoginUseCaseTests(ServicesContext services) 
-        : base(services)
+    public UsersPasswordLoginUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
         var userId = filler.UsersPassword.Register(request);
@@ -30,7 +30,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     {
         var request = new LoginUserPasswordRequest(Login, Password);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -44,7 +44,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     {
         var request = new LoginUserPasswordRequest(NotExistedLogin, Password);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -60,7 +60,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
     {
         var request = new LoginUserPasswordRequest(Login, "InvalidPassword");
         
-        var response = await Services.RequestExecutor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);

@@ -1,5 +1,7 @@
 ﻿using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Tags.Models;
+using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -14,19 +16,16 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     
     private readonly UseCaseExecutionContext _context;
     private readonly Tag _tag;
-    private readonly UserIdentifier _userId;
     
-    public TagsUpdateUseCaseTests(ServicesContext services) : base(services)
+    public TagsUpdateUseCaseTests(TestContext context) : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var tag = filler.Tags.Create(_context);
         _tag = tag;
-        
-        _userId = userId;
     }
 
     [Fact]
@@ -37,13 +36,14 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
             Name = (TagName)UpdatedName
         };
 
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Tags.Get(_userId, _tag.Id);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Tags.RequiredGet(_context, _tag.Id);
 
         Assert.Equal(UpdatedName, actual.Name);
     }
@@ -51,14 +51,16 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenUpdateNameAlreadyExist()
     {
-        Services.Samples.Tags.Create(_userId, UpdatedName);
+        using var executor = Context.CreateExecutor();
+        var anotherRequest = new CreateTagRequest(UpdatedName);
+        executor.Tags.Create(_context, anotherRequest);
         
         var request = new UpdateTagRequest(_tag.Id)
         {
             Name = (TagName)UpdatedName
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -70,13 +72,13 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagDoesNotExist()
     {
-        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
         var request = new UpdateTagRequest(notExistedTagId)
         {
             Name = (TagName)UpdatedName
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -90,7 +92,7 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateTagRequest(_tag.Id);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -107,8 +109,8 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
             Name = (TagName)UpdatedName
         };
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }

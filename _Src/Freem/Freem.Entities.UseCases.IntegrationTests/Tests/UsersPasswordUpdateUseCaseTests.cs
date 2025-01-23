@@ -3,6 +3,7 @@ using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -17,10 +18,10 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
 
     private readonly UseCaseExecutionContext _context;
     
-    public UsersPasswordUpdateUseCaseTests(ServicesContext services) 
-        : base(services)
+    public UsersPasswordUpdateUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var request = new RegisterUserPasswordRequest(Nickname, Login, OldPassword);
         var userId = filler.UsersPassword.Register(request);
@@ -32,7 +33,7 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateLoginCredentialsRequest(OldPassword, NewPassword);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -42,12 +43,12 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenUserDoesNotExist()
     {
-        var userId = Services.Generators.CreateUserIdentifier();
+        var userId = Context.CreateIdentifier<UserIdentifier>();
         var context = new UseCaseExecutionContext(userId);
         
         var request = new UpdateLoginCredentialsRequest(OldPassword, NewPassword);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(context, request);
+        var response = await Context.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -61,7 +62,7 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateLoginCredentialsRequest(InvalidOldPassword, NewPassword);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -75,8 +76,8 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateLoginCredentialsRequest(OldPassword, NewPassword);
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

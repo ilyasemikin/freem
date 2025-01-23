@@ -10,8 +10,8 @@ public sealed class UsersPasswordRegisterUseCaseTests : UseCaseTestBase
     private const string Login = "user";
     private const string Password = "password";
     
-    public UsersPasswordRegisterUseCaseTests(ServicesContext services)
-        : base(services)
+    public UsersPasswordRegisterUseCaseTests(TestContext context)
+        : base(context)
     {
     }
 
@@ -20,7 +20,7 @@ public sealed class UsersPasswordRegisterUseCaseTests : UseCaseTestBase
     {
         var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(
+        var response = await Context.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(
             UseCaseExecutionContext.Empty, 
             request);
         
@@ -33,11 +33,12 @@ public sealed class UsersPasswordRegisterUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenLoginAlreadyUsed()
     {
-        Services.Samples.Users.Register();
+        using var executor = Context.CreateExecutor();
+        executor.UsersPassword.Register(Login);
         
         var request = new RegisterUserPasswordRequest(Nickname, Login, Password);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
+        var response = await Context.ExecuteAsync<RegisterUserPasswordRequest, RegisterUserPasswordResponse>(UseCaseExecutionContext.Empty, request);
 
         Assert.NotNull(response);
         Assert.False(response.Success);

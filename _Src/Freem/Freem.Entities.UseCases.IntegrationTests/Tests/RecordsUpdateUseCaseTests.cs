@@ -20,27 +20,22 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     private const string UpdatedName = "record";
     private const string UpdatedDescription = "description";
 
-    private const string AnotherUserLogin = "another_user";
-
     private readonly UseCaseExecutionContext _context;
-    private readonly UserIdentifier _userId;
     private readonly RecordIdentifier _recordId;
     
     private readonly ActivityIdentifier _updatedActivityId;
     private readonly TagIdentifier _updatedTagId;
     
-    public RecordsUpdateUseCaseTests(ServicesContext services) 
-        : base(services)
+    public RecordsUpdateUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var activity = filler.Activities.Create(_context);
         var record = filler.Records.Create(_context, [activity.Id]);
-        
-        _userId = userId;
         _recordId = record.Id;
         
         var updatedActivity = filler.Activities.Create(_context);
@@ -58,13 +53,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Name = new UpdateField<RecordName>(UpdatedName)
         };
 
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Records.Get(_userId, _recordId);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Records.RequiredGet(_context, _recordId);
         
         Assert.Equal(UpdatedName, actual.Name);
     }
@@ -77,13 +73,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Description = new UpdateField<RecordDescription>(UpdatedDescription)
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Records.Get(_userId, _recordId);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Records.RequiredGet(_context, _recordId);
         
         Assert.Equal(UpdatedDescription, actual.Description);
     }
@@ -97,13 +94,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Activities = new UpdateField<RelatedActivitiesCollection>(activities)
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Records.Get(_userId, _recordId);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Records.RequiredGet(_context, _recordId);
         
         Assert.Equal(activities, actual.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
     }
@@ -117,13 +115,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
-        var actual = Services.Samples.Records.Get(_userId, _recordId);
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Records.RequiredGet(_context, _recordId);
         
         Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals);
     }
@@ -131,14 +130,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
-        var notExistedActivityId = Services.Generators.CreateActivityIdentifier();
+        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
         var activities = new RelatedActivitiesCollection([notExistedActivityId]);
         var request = new UpdateRecordRequest(_recordId)
         {
             Activities = activities
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -150,8 +149,11 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivitiesBelongsToAnotherUser()
     {
-        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
-        var activity = Services.Samples.Activities.Create(anotherUserId);
+        using var executor = Context.CreateExecutor();
+        var anotherUserId = executor.UsersPassword.Register();
+        var anotherContext = new UseCaseExecutionContext(anotherUserId);
+        var activity = executor.Activities.Create(anotherContext);
+        
         var activities = new RelatedActivitiesCollection([activity]);
 
         var request = new UpdateRecordRequest(_recordId)
@@ -159,7 +161,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Activities = activities
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -171,14 +173,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
-        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
         var tags = new RelatedTagsCollection([notExistedTagId]);
         var request = new UpdateRecordRequest(_recordId)
         {
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -190,8 +192,11 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
-        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
-        var tag = Services.Samples.Tags.Create(anotherUserId);
+        using var executor = Context.CreateExecutor();
+        var anotherUserId = executor.UsersPassword.Register();
+        var anotherContext = new UseCaseExecutionContext(anotherUserId);
+        var tag = executor.Tags.Create(anotherContext);
+        
         var tags = new RelatedTagsCollection([tag]);
 
         var request = new UpdateRecordRequest(_recordId)
@@ -199,7 +204,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -213,7 +218,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRecordRequest(_recordId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -230,8 +235,8 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Name = new UpdateField<RecordName>(UpdatedName),
         };
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

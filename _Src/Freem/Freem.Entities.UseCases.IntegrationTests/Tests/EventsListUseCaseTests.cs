@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.UseCases.Contracts.Events.List;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 
@@ -8,10 +9,10 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
     
-    public EventsListUseCaseTests(ServicesContext services) 
-        : base(services)
+    public EventsListUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
 
@@ -23,7 +24,7 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListEventRequest();
 
-        var response = await Services.RequestExecutor.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
 
         Assert.NotNull(response);
         Assert.NotNull(response.Events);
@@ -41,12 +42,23 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
             After = now
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.NotNull(response.Events);
         Assert.Null(response.Error);
         
         Assert.Empty(response.Events);
+    }
+    
+    [Fact]
+    public async Task ShouldThrowException_WhenUnauthorized()
+    {
+        var request = new ListEventRequest();
+        
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<ListEventRequest, ListEventResponse>(UseCaseExecutionContext.Empty, request));
+        
+        Assert.IsType<UnauthorizedException>(exception);
     }
 }

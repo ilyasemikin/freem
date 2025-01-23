@@ -4,25 +4,30 @@ using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Bus.Events.DependencyInjection.Microsoft;
 using Freem.Entities.DependencyInjection;
+using Freem.Entities.Storage.PostgreSQL.Database;
+using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Tokens.JWT.DependencyInjection;
 using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.UseCases.IntegrationTests.Fixtures.Samples;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
+using Freem.Identifiers.Abstractions;
+using Freem.Identifiers.Abstractions.Generators;
 using Freem.Locking.Local.DependencyInjection;
 using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
+using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using StackExchange.Redis;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
-public sealed class ServicesContext
+public sealed class TestContext
 {
     private const string TokensBlacklistRedisKey = "refresh_blacklist";
 
@@ -32,29 +37,64 @@ public sealed class ServicesContext
     
     private static TimeSpan TokensExpiration { get; } = TimeSpan.FromDays(1);
 
+    private readonly TestsConfiguration _configuration;
     private readonly IServiceProvider _services;
     
-    public RequestExecutor RequestExecutor { get; }
-    public SamplesManager Samples { get; }
-    public DataManager DataManager { get; }
-    public Generators Generators { get; }
-
-    public ServicesContext()
+    public TestContext()
     {
-        var configuration = TestsConfiguration.Read();
-        var services = BuildServiceProvider(configuration);
-
-        _services = services;
-        
-        RequestExecutor = new RequestExecutor(services);
-        Samples = new SamplesManager(this);
-        DataManager = new DataManager(configuration, services);
-        Generators = new Generators(services);
+        _configuration = TestsConfiguration.Read();
+        _services = BuildServiceProvider(_configuration);
     }
 
-    public RequestPlainExecutor CreateExecutor()
+    public UseCasePlainExecutor CreateExecutor()
     {
-        return RequestPlainExecutor.Create(_services);
+        return UseCasePlainExecutor.Create(_services);
+    }
+    
+    public T CreateIdentifier<T>()
+        where T : IIdentifier
+    {
+        using var scope = _services.CreateScope();
+        var provider = scope.ServiceProvider;
+
+        var generator = provider.GetRequiredService<IIdentifierGenerator<T>>();
+        return generator.Generate();
+    }
+
+    public Task<TResponse> ExecuteAsync<TRequest, TResponse>(TRequest request)
+        where TRequest : notnull
+    {
+        var scope = _services.CreateScope();
+        var provider = scope.ServiceProvider;
+        
+        var executor = provider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>();
+
+        return executor.ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext.Empty, request);
+    }
+    
+    public Task<TResponse> ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)
+        where TRequest : notnull
+    {
+        var scope = _services.CreateScope();
+        var provider = scope.ServiceProvider;
+        
+        var executor = provider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>();
+
+        return executor.ExecuteAsync<TRequest, TResponse>(context, request);
+    }
+
+    public void CleanDatabases()
+    {
+        using var scope = _services.CreateScope();
+        var provider = scope.ServiceProvider;
+        
+        var context = provider.GetRequiredService<DatabaseContext>();
+        context.TruncateTables();
+
+        var connection = ConnectionMultiplexer.Connect(_configuration.RedisConnectionString);
+        var servers = connection.GetServers();
+        foreach (var server in servers)
+            server.FlushDatabase();
     }
     
     private static IServiceProvider BuildServiceProvider(TestsConfiguration configuration)

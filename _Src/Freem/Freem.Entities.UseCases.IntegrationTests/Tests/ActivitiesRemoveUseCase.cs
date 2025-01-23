@@ -12,10 +12,10 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly ActivityIdentifier _activityId;
     
-    public ActivitiesRemoveUseCase(ServicesContext services) 
-        : base(services)
+    public ActivitiesRemoveUseCase(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -29,7 +29,7 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     {
         var request = new RemoveActivityRequest(_activityId);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -39,10 +39,10 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivityDoesNotExist()
     {
-        var notExistedActivityId = Services.Generators.CreateActivityIdentifier();
+        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
         var request = new RemoveActivityRequest(notExistedActivityId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -56,8 +56,8 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     {
         var request = new RemoveActivityRequest(_activityId);
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

@@ -13,10 +13,10 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly IReadOnlyList<Entities.Records.Record> _records;
     
-    public RecordsListUseCaseTests(ServicesContext services) 
-        : base(services)
+    public RecordsListUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -33,7 +33,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListRecordRequest();
         
-        var response = await Services.RequestExecutor.ExecuteAsync<ListRecordRequest, ListRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListRecordRequest, ListRecordResponse>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -54,8 +54,8 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListRecordRequest();
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<ListRecordRequest, ListRecordResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<ListRecordRequest, ListRecordResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

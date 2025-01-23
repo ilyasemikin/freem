@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Records.Comparers;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -11,10 +12,10 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
     private readonly Entities.Records.Record _record;
     
-    public RecordsGetUseCase(ServicesContext services) 
-        : base(services)
+    public RecordsGetUseCase(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
@@ -29,7 +30,7 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     {
         var request = new GetRecordRequest(_record.Id);
 
-        var response = await Services.RequestExecutor.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -41,11 +42,11 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenRecordDoesNotExist()
     {
-        var notExistedRecordId = Services.Generators.CreateRecordIdentifier();
+        var notExistedRecordId = Context.CreateIdentifier<RecordIdentifier>();
         
         var request = new GetRecordRequest(notExistedRecordId);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -60,8 +61,8 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     {
         var request = new GetRecordRequest(_record.Id);
         
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<GetRecordRequest, GetRecordResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<GetRecordRequest, GetRecordResponse>(request));
         
         Assert.IsType<UnauthorizedException>(exception);
     }

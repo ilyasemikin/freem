@@ -2,6 +2,7 @@
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Relations.Collections;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -13,25 +14,20 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
 {
-    private const string AnotherUserLogin = "another_user";
-    
     private readonly UseCaseExecutionContext _context;
-    private readonly UserIdentifier _userId;
 
     private readonly DateTimeOffset _startAt;
     private readonly RelatedActivitiesCollection _activities;
     
-    public RunningRecordsStartUseCaseTests(ServicesContext services) 
-        : base(services)
+    public RunningRecordsStartUseCaseTests(TestContext context) 
+        : base(context)
     {
-        using var filler = Services.CreateExecutor();
+        using var filler = Context.CreateExecutor();
         
         var userId = filler.UsersPassword.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var activity = filler.Activities.Create(_context);
-
-        _userId = userId;
 
         _startAt = DateTimeOffset.UtcNow;
         _activities = new RelatedActivitiesCollection([activity.Id]);
@@ -42,7 +38,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     {
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -56,12 +52,12 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenAnotherRunningRecordExist()
     {
-        var otherStartAt = _startAt.AddHours(-1);
-        Services.Samples.RunningRecords.Start(_userId, _activities.Identifiers.First(), otherStartAt);
+        using var executor = Context.CreateExecutor();
+        executor.RunningRecords.Start(_context, [_activities.Identifiers.First()]);
         
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -75,12 +71,12 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
-        var notExistedActivityId = Services.Generators.CreateActivityIdentifier();
+        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
         var activities = new RelatedActivitiesCollection([notExistedActivityId]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -93,13 +89,16 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivitiesBelongsToAnotherUser()
     {
-        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
-        var activity = Services.Samples.Activities.Create(anotherUserId);
+        using var executor = Context.CreateExecutor();
+        var anotherUserId = executor.UsersPassword.Register();
+        var anotherContext = new UseCaseExecutionContext(anotherUserId);
+        var activity = executor.Activities.Create(anotherContext);
+        
         var activities = new RelatedActivitiesCollection([activity]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -112,7 +111,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
-        var notExistedTagId = Services.Generators.CreateTagIdentifier();
+        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
         var tags = new RelatedTagsCollection([notExistedTagId]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
@@ -120,7 +119,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -133,8 +132,11 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
-        var anotherUserId = Services.Samples.Users.Register(AnotherUserLogin);
-        var tag = Services.Samples.Tags.Create(anotherUserId);
+        using var executor = Context.CreateExecutor();
+        var anotherUserId = executor.UsersPassword.Register();
+        var anotherContext = new UseCaseExecutionContext(anotherUserId);
+        var tag = executor.Tags.Create(anotherContext);
+        
         var tags = new RelatedTagsCollection([tag]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
@@ -142,7 +144,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Services.RequestExecutor.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
@@ -157,8 +159,8 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     {
         var request = new StartRunningRecordRequest(_startAt, _activities);
 
-        var exception = await Record.ExceptionAsync(async () => await Services.RequestExecutor
-            .ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(UseCaseExecutionContext.Empty, request));
+        var exception = await Record.ExceptionAsync(async () => await Context
+            .ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(request));
 
         Assert.IsType<UnauthorizedException>(exception);
     }
