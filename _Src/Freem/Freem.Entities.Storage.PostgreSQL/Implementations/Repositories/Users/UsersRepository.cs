@@ -49,7 +49,10 @@ internal sealed class UsersRepository : IUsersRepository
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var dbEntity = await _database.Users.FindEntityAsync(entity, cancellationToken);
+        var dbEntity = await _database.Users
+            .Include(e => e.Settings)
+            .Include(e => e.PasswordCredentials)
+            .FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(entity.Id);
 
@@ -57,6 +60,9 @@ internal sealed class UsersRepository : IUsersRepository
         if (_equalityComparer.Equals(entity, actualEntity))
             return;
 
+        dbEntity.Settings = entity.Settings.MapToDatabaseEntity(entity.Id);
+        dbEntity.PasswordCredentials = entity.PasswordCredentials?.MapToDatabaseEntity(entity.Id);
+        
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
@@ -77,6 +83,7 @@ internal sealed class UsersRepository : IUsersRepository
         ArgumentNullException.ThrowIfNull(id);
 
         return await _database.Users
+            .Include(e => e.Settings)
             .Include(e => e.PasswordCredentials)
             .FindAsync(e => e.Id == id, UserMapper.MapToDomainEntity, cancellationToken);
     }

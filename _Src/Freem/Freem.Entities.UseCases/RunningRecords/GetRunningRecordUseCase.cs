@@ -25,6 +25,6 @@ internal class GetRunningRecordUseCase
         context.ThrowsIfUnauthorized();
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
-        return new GetRunningRecordResponse(result.Entity);
+        return GetRunningRecordResponse.Create(result);
     }
 }

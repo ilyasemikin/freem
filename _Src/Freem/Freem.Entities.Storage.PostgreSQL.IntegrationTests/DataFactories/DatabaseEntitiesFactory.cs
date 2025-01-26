@@ -50,6 +50,7 @@ internal sealed class DatabaseEntitiesFactory
             .With(e => e.Id, userId)
             .Without(e => e.DeletedAt)
             .Without(e => e.UpdatedAt)
+            .Without(e => e.Settings)
             .Without(e => e.PasswordCredentials)
             .Without(e => e.TelegramIntegration)
             .Create();

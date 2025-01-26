@@ -4,6 +4,7 @@ using Freem.Entities.UseCases.Records;
 using Freem.Entities.UseCases.RunningRecords;
 using Freem.Entities.UseCases.Tags;
 using Freem.Entities.UseCases.Users.Password;
+using Freem.Entities.UseCases.Users.Settings;
 using Freem.Entities.UseCases.Users.Tokens;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Implementations;
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
             .AddRecordsUseCases()
             .AddRunningRecordsUseCases()
             .AddEventsUseCases()
+            .AddUserSettingsUseCases()
             .AddUsersPasswordUseCases()
             .AddUsersTokensUseCases());
 
@@ -70,6 +72,7 @@ public static class ServiceCollectionExtensions
         
         builder.Add<GetRecordUseCase>();
         builder.Add<ListRecordUseCase>();
+        builder.Add<PeriodListRecordUseCase>();
         
         return builder;
     }
@@ -95,6 +98,15 @@ public static class ServiceCollectionExtensions
         return builder;
     }
 
+    private static UseCasesBuilder<UseCaseExecutionContext> AddUserSettingsUseCases(
+        this UseCasesBuilder<UseCaseExecutionContext> builder)
+    {
+        builder.Add<UpdateUserSettingsUseCase>();
+        builder.Add<GetUserSettingsUseCase>();
+        
+        return builder;
+    }
+    
     private static UseCasesBuilder<UseCaseExecutionContext> AddUsersPasswordUseCases(
         this UseCasesBuilder<UseCaseExecutionContext> builder)
     {

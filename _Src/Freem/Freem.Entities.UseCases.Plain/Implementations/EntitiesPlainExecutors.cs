@@ -13,6 +13,7 @@ public class EntitiesPlainExecutors
     
     public UsersPasswordPlainExecutor UsersPassword { get; }
     public UsersTokensPlainExecutor UsersTokens { get; }
+    public UsersSettingsPlainExecutor UsersSettings { get; }
     
     public EntitiesPlainExecutors(IUseCaseExecutor<UseCaseExecutionContext> executor)
     {
@@ -26,5 +27,6 @@ public class EntitiesPlainExecutors
         
         UsersPassword = new UsersPasswordPlainExecutor(executor);
         UsersTokens = new UsersTokensPlainExecutor(executor);
+        UsersSettings = new UsersSettingsPlainExecutor(executor);
     }
 }

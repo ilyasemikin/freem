@@ -126,8 +126,28 @@ internal sealed class RecordsRepository : IRecordsRepository
         return await _database.Records
             .Include(e => e.Activities)
             .Where(e => e.UserId == filter.UserId)
-            .OrderBy(e => e.StartAt)
+            .OrderByDescending(e => e.StartAt)
             .SliceByLimitAndOffsetFilter(filter)
+            .AsNoTracking()
+            .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
+    }
+
+    public async Task<SearchEntitiesAsyncResult<Record>> FindAsync(
+        RecordsByPeriodFilter filter, 
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        return await _database.Records
+            .Include(e => e.Activities)
+            .Where(e => 
+                e.UserId == filter.UserId && 
+                e.EndAt > filter.Period.StartAt && 
+                e.StartAt < filter.Period.EndAt)
+            .OrderByDescending(e => e.StartAt)
+            .ThenBy(e => e.Id)
+            .SliceByLimitFilter(filter)
+            .AsNoTracking()
             .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
     }
 }

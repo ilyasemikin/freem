@@ -20,6 +20,8 @@ internal sealed class UserEntity :
     
     public DateTimeOffset? DeletedAt { get; set; }
     
+    public UserSettingsEntity? Settings { get; set; }
+    
     public UserPasswordCredentialsEntity? PasswordCredentials { get; set; }
     public UserTelegramIntegrationEntity? TelegramIntegration { get; set; }
     

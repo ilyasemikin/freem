@@ -11,6 +11,7 @@ public interface IRecordsRepository :
     IWriteRepository<Record, RecordIdentifier>,
     ISearchByIdRepository<Record, RecordIdentifier>,
     ISearchByMultipleIdsRepository<Record, RecordIdentifier, RecordAndUserIdentifiers>,
-    IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter>
+    IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter>,
+    IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter>
 {
 }

@@ -29,6 +29,7 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events;
 using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
+using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Events.SignedIn;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
 using Freem.Entities.Users.Identifiers;
@@ -104,9 +105,10 @@ internal sealed class DatabaseEntityToEventEntityConverter
         return entity.Action switch
         {
             UserEventActions.Registered => new UserRegisteredEvent(entity.Id, entity.UserId),
+            UserEventActions.SignedIn => new UserSignedInEvent(entity.Id, entity.UserId),
+            UserEventActions.SettingsChanged => new UserSettingsChanged(entity.Id, entity.UserId),
             UserEventActions.LoginCredentialsChanged => new UserPasswordCredentialsChangedEvent(entity.Id, entity.UserId),
             UserEventActions.TelegramIntegrationChanged => new UserTelegramIntegrationChangedEvent(entity.Id, entity.UserId),
-            UserEventActions.SignedIn => new UserSignedInEvent(entity.Id, entity.UserId),
             _ => throw new UnknownConstantException(entity.Action)
         };
     }

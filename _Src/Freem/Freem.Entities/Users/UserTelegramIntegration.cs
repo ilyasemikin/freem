@@ -6,6 +6,8 @@ public sealed class UserTelegramIntegration
 
     public UserTelegramIntegration(string id)
     {
+        ArgumentNullException.ThrowIfNull(id);
+        
         Id = id;
     }
 }

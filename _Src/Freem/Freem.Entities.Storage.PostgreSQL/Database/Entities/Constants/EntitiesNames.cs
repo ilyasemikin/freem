@@ -71,6 +71,26 @@ internal static class EntitiesNames
         }
     }
 
+    public static class UserSettings
+    {
+        public const string EntityName = "user_settings";
+        public const string Table = "user_settings";
+
+        public static class Properties
+        {
+            public const string UserId = "user_id";
+            public const string UtcOffsetTicks = "utc_offset_ticks";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
+        }
+
+        public static class Constraints
+        {
+            public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
+            public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
+        }
+    }
+
     public static class Tags
     {
         public const string EntityName = "tag";

@@ -21,6 +21,11 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
             throw new ArgumentException($"'{nameof(endAt)}' must be not less than '{nameof(endAt)}'");
     }
 
+    public DateTimePeriod(DateTimeOffset startAt, TimeSpan duration)
+        : this(startAt, startAt + duration)
+    {
+    }
+
     public override string ToString()
     {
         return $"[{StartAt:O}, {EndAt:O}]";

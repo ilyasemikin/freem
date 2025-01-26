@@ -14,7 +14,17 @@ internal static class UserMapper
         {
             Id = user.Id,
             Nickname = user.Nickname,
+            Settings = user.Settings.MapToDatabaseEntity(user.Id),
             PasswordCredentials = user.PasswordCredentials?.MapToDatabaseEntity(user.Id)
+        };
+    }
+
+    public static UserSettingsEntity MapToDatabaseEntity(this UserSettings settings, UserIdentifier userId)
+    {
+        return new UserSettingsEntity
+        {
+            UserId = userId,
+            UtcOffsetTicks = settings.UtcOffset.Ticks
         };
     }
 
@@ -34,12 +44,26 @@ internal static class UserMapper
     public static User MapToDomainEntity(this UserEntity entity)
     {
         var id = new UserIdentifier(entity.Id);
-        return new User(id, entity.Nickname)
+        var user = new User(id, entity.Nickname)
         {
             PasswordCredentials = entity.PasswordCredentials?.MapToDomainEntity()
         };
+
+        if (entity.Settings is not null)
+            user.Settings = entity.Settings.MapToDomainEntity();
+
+        return user;
     }
 
+    public static UserSettings MapToDomainEntity(this UserSettingsEntity entity)
+    {
+        var offset = new TimeSpan(entity.UtcOffsetTicks);
+        return new UserSettings()
+        {
+            UtcOffset = offset
+        };
+    }
+    
     public static UserPasswordCredentials MapToDomainEntity(this UserPasswordCredentialsEntity entity)
     {
         var algorithm = new HashAlgorithm(entity.HashAlgorithm);

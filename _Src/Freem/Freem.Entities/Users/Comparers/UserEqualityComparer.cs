@@ -12,9 +12,11 @@ public sealed class UserEqualityComparer : IEqualityComparer<User>
             return false;
         if (x.GetType() != y.GetType()) 
             return false;
-        return 
-            x.Id.Equals(y.Id) && 
-            x.Nickname == y.Nickname;
+        return
+            x.Id.Equals(y.Id) &&
+            x.Nickname == y.Nickname &&
+            UserSettingsEqualityComparer.Instance.Equals(x.Settings, y.Settings) &&
+            UserPasswordCredentialsEqualityComparer.Instance.Equals(x.PasswordCredentials, y.PasswordCredentials);
     }
 
     public int GetHashCode(User obj)

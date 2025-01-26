@@ -8,7 +8,7 @@ using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Records;
 
-internal class ListRecordUseCase 
+internal sealed class ListRecordUseCase 
     : IEntitiesUseCase<ListRecordRequest, ListRecordResponse, ListRecordErrorCode>
 {
     private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter> _repository;

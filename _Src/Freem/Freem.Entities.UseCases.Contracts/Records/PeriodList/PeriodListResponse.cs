@@ -4,9 +4,9 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
-namespace Freem.Entities.UseCases.Contracts.Records.List;
+namespace Freem.Entities.UseCases.Contracts.Records.PeriodList;
 
-public sealed class ListRecordResponse : IResponse<ListRecordErrorCode>
+public sealed class PeriodListResponse : IResponse<PeriodListErrorCode>
 {
     [MemberNotNullWhen(true, nameof(Records))]
     [MemberNotNullWhen(true, nameof(TotalCount))]
@@ -16,12 +16,12 @@ public sealed class ListRecordResponse : IResponse<ListRecordErrorCode>
     public IReadOnlyList<Record>? Records { get; }
     public TotalCount? TotalCount { get; }
     
-    public Error<ListRecordErrorCode>? Error { get; }
+    public Error<PeriodListErrorCode>? Error { get; }
 
-    private ListRecordResponse(
-        IReadOnlyList<Record>? records = null, 
-        TotalCount? totalCount = null, 
-        Error<ListRecordErrorCode>? error = null)
+    private PeriodListResponse(
+        IReadOnlyList<Record>? records = null,
+        TotalCount? totalCount = null,
+        Error<PeriodListErrorCode>? error = null)
     {
         Success = error is null;
         Records = records;
@@ -29,17 +29,17 @@ public sealed class ListRecordResponse : IResponse<ListRecordErrorCode>
         Error = error;
     }
 
-    public static ListRecordResponse CreateSuccess(IReadOnlyList<Record> records, TotalCount totalCount)
+    public static PeriodListResponse CreateSuccess(IReadOnlyList<Record> records, TotalCount totalCount)
     {
         ArgumentNullException.ThrowIfNull(records);
         ArgumentNullException.ThrowIfNull(totalCount);
-        
-        return new ListRecordResponse(records, totalCount);
+
+        return new PeriodListResponse(records, totalCount);
     }
 
-    public static ListRecordResponse CreateFailure(ListRecordErrorCode code, string? message = null)
+    public static PeriodListResponse CreateFailure(PeriodListErrorCode code, string? message = null)
     {
-        var error = new Error<ListRecordErrorCode>(code, message);
-        return new ListRecordResponse(error: error);
+        var error = new Error<PeriodListErrorCode>(code, message);
+        return new PeriodListResponse(error: error);
     }
 }

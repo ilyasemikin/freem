@@ -28,8 +28,7 @@ internal sealed class UserTelegramIntegrationEntityTypeConfiguration : IEntityTy
 
         builder
             .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.UserTelegramIntegration.Properties.UpdatedAt)
-            .IsRequired();
+            .HasColumnName(EntitiesNames.UserTelegramIntegration.Properties.UpdatedAt);
         
         builder
             .HasKey(e => e.UserId)

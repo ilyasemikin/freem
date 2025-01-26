@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.RunningRecords;
+using Freem.Entities.Storage.Abstractions.Models;
+using Freem.Entities.UseCases.Contracts.Activities.Get;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
@@ -14,7 +16,7 @@ public sealed class GetRunningRecordResponse : IResponse<GetRunningRecordErrorCo
     public RunningRecord? Record { get; }
     public Error<GetRunningRecordErrorCode>? Error { get; }
 
-    public GetRunningRecordResponse(RunningRecord? record = null, Error<GetRunningRecordErrorCode>? error = null)
+    private GetRunningRecordResponse(RunningRecord? record = null, Error<GetRunningRecordErrorCode>? error = null)
     {
         Success = record is not null;
         Record = record;
@@ -32,5 +34,12 @@ public sealed class GetRunningRecordResponse : IResponse<GetRunningRecordErrorCo
     {
         var error = new Error<GetRunningRecordErrorCode>(code, message);
         return new GetRunningRecordResponse(error: error);
+    }
+
+    public static GetRunningRecordResponse Create(SearchEntityResult<RunningRecord> result)
+    {
+        return result.Founded
+            ? CreateSuccess(result.Entity)
+            : CreateFailure(GetRunningRecordErrorCode.RunningRecordNotFound);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Password.Register;
+﻿using Freem.Entities.UseCases.Contracts.Users.Password.Login;
+using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -38,6 +39,10 @@ public sealed class UsersPasswordUpdateUseCaseTests : UseCaseTestBase
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
+        
+        using var executor = Context.CreateExecutor();
+        var loginRequest = new LoginUserPasswordRequest(Login, NewPassword);
+        executor.UsersPassword.Login(loginRequest);
     }
 
     [Fact]
