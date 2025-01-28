@@ -25,8 +25,8 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
         var activity = filler.Activities.Create(_context);
         var records = filler.Records.CreateMany(_context, [activity.Id], RecordsCount);
         _records = records
-            .OrderByDescending(e => e.Period.StartAt)
-            .ThenBy(e => (string)e.Id)
+            .OrderBy(e => e.Period.StartAt)
+            .ThenBy(e => e.Period.EndAt)
             .ToArray();
     }
 

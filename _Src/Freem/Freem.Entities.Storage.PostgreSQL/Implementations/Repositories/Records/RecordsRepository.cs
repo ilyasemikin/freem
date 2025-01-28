@@ -141,13 +141,12 @@ internal sealed class RecordsRepository : IRecordsRepository
         return await _database.Records
             .Include(e => e.Activities)
             .Where(e => 
-                e.UserId == filter.UserId && 
-                e.EndAt > filter.Period.StartAt && 
-                e.StartAt < filter.Period.EndAt)
-            .OrderByDescending(e => e.StartAt)
-            .ThenBy(e => e.Id)
-            .SliceByLimitFilter(filter)
+                e.UserId == filter.UserId &&
+                (filter.Period.StartAt <= e.StartAt && e.StartAt < filter.Period.EndAt ||
+                filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt))
+            .OrderBy(e => e.StartAt)
+            .ThenBy(e => e.EndAt)
             .AsNoTracking()
-            .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
     }
 }

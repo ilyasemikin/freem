@@ -7,7 +7,13 @@ namespace Freem.Entities.Storage.Abstractions.Models.Filters;
 
 public sealed class RecordsByPeriodFilter : ILimitFilter
 {
-    public Limit Limit { get; init; }
+    private readonly Limit _limit;
+
+    public Limit Limit
+    {
+        get => _limit;
+        init => _limit = value ?? throw new ArgumentNullException(nameof(value));
+    }
     
     public UserIdentifier UserId { get; }
     public DateTimePeriod Period { get; }
@@ -16,7 +22,8 @@ public sealed class RecordsByPeriodFilter : ILimitFilter
     {
         ArgumentNullException.ThrowIfNull(userId);
         ArgumentNullException.ThrowIfNull(period);
-        
+
+        _limit = Limit.Default;
         UserId = userId;
         Period = period;
     }

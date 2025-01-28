@@ -2,6 +2,7 @@
 using Freem.Entities.UseCases.Events;
 using Freem.Entities.UseCases.Records;
 using Freem.Entities.UseCases.RunningRecords;
+using Freem.Entities.UseCases.Statistics;
 using Freem.Entities.UseCases.Tags;
 using Freem.Entities.UseCases.Users.Password;
 using Freem.Entities.UseCases.Users.Settings;
@@ -30,7 +31,8 @@ public static class ServiceCollectionExtensions
             .AddEventsUseCases()
             .AddUserSettingsUseCases()
             .AddUsersPasswordUseCases()
-            .AddUsersTokensUseCases());
+            .AddUsersTokensUseCases()
+            .AddStatisticsUseCases());
 
         return services;
     }
@@ -122,6 +124,14 @@ public static class ServiceCollectionExtensions
     {
         builder.Add<RefreshUserAccessTokenUseCase>();
         
+        return builder;
+    }
+
+    private static UseCasesBuilder<UseCaseExecutionContext> AddStatisticsUseCases(
+        this UseCasesBuilder<UseCaseExecutionContext> builder)
+    {
+        builder.Add<StatisticsPerDaysUseCase>();
+
         return builder;
     }
 }

@@ -18,7 +18,7 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
         EndAt = endAt.UtcDateTime;
 
         if (StartAt > EndAt)
-            throw new ArgumentException($"'{nameof(endAt)}' must be not less than '{nameof(endAt)}'");
+            throw new ArgumentException($"'{nameof(endAt)}' must be not less than '{nameof(startAt)}'");
     }
 
     public DateTimePeriod(DateTimeOffset startAt, TimeSpan duration)
@@ -123,13 +123,8 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 
     public static bool operator ==(DateTimePeriod? left, DateTimePeriod? right)
     {
-        if (left is null)
-        {
-            if (right is null)
-                return true;
-
+        if (left is null || right is null)
             return false;
-        }
 
         return left.Equals(right);
     }
