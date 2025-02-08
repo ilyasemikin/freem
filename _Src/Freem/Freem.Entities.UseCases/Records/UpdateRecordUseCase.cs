@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities.Identifiers.Extensions;
-using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Records;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
@@ -19,13 +19,13 @@ internal sealed class UpdateRecordUseCase
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateRecordUseCase(
         IDistributedLocker locker,
         IRecordsRepository repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Bus.Events.Abstractions;
+﻿using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
@@ -14,13 +14,13 @@ internal sealed class RemoveRunningRecordUseCase
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveRunningRecordUseCase(
         IDistributedLocker locker, 
         IRunningRecordRepository repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

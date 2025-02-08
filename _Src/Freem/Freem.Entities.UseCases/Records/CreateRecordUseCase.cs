@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities.Identifiers.Extensions;
-using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Records;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
@@ -18,13 +18,13 @@ internal sealed class CreateRecordUseCase
 {
     private readonly IIdentifierGenerator<RecordIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Record, RecordIdentifier> _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateRecordUseCase(
         IIdentifierGenerator<RecordIdentifier> identifierGenerator, 
         ICreateRepository<Record, RecordIdentifier> repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);

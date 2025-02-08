@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Bus.Events.Abstractions;
+﻿using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags;
@@ -16,13 +16,13 @@ internal sealed class CreateTagUseCase
 {
     private readonly IIdentifierGenerator<TagIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Tag, TagIdentifier> _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateTagUseCase(
         IIdentifierGenerator<TagIdentifier> identifierGenerator, 
         ICreateRepository<Tag, TagIdentifier> repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);

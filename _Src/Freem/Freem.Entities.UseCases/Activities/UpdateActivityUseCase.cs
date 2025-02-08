@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
@@ -18,13 +18,13 @@ internal sealed class UpdateActivityUseCase
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateActivityUseCase(
         IDistributedLocker locker,
         IActivitiesRepository repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

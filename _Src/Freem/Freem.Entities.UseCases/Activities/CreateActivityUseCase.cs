@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Activities;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Activities.Models;
-using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags.Identifiers.Extensions;
@@ -20,13 +20,13 @@ internal sealed class CreateActivityUseCase :
 
     private readonly IIdentifierGenerator<ActivityIdentifier> _identifierGenerator;
     private readonly ICreateRepository<Activity, ActivityIdentifier> _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateActivityUseCase(
         IIdentifierGenerator<ActivityIdentifier> identifierGenerator, 
         ICreateRepository<Activity, ActivityIdentifier> repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);

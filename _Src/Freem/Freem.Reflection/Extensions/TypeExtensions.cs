@@ -50,4 +50,17 @@ public static class TypeExtensions
         
         return arguments[index];
     }
+    
+    public static IEnumerable<Type> GetGenericInterfaceImplementations(this Type type, Type genericType)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(genericType);
+        
+        var interfaces = type.GetInterfaces();
+        foreach (var @interface in interfaces)
+        {
+            if (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == genericType)
+                yield return @interface;
+        }
+    }
 }

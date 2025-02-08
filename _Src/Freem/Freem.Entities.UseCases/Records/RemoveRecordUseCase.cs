@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Bus.Events.Abstractions;
+﻿using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
@@ -15,13 +15,13 @@ internal sealed class RemoveRecordUseCase
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordsRepository _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveRecordUseCase(
         IDistributedLocker locker,
         IRecordsRepository repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

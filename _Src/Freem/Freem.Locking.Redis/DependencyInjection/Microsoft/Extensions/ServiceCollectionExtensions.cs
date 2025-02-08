@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<IConnectionMultiplexer>(
             _ => ConnectionMultiplexer.Connect(configuration.ConnectionString));
 
-        services.TryAddTransient<IIdentifierGenerator<SimpleLockIdentifier>>(
+        services.TryAddSingleton<IIdentifierGenerator<SimpleLockIdentifier>>(
             _ => new GuidStringIdentifierGenerator<SimpleLockIdentifier>(value => new SimpleLockIdentifier(value)));
         
         services.TryAddTransientServiceWithImplementedInterfaces<SimpleDistributedLocker>();

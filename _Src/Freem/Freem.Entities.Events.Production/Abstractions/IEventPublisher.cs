@@ -2,9 +2,9 @@
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Entities.Bus.Events.Abstractions;
+namespace Freem.Entities.Events.Production.Abstractions;
 
-internal interface IEventPublisher
+public interface IEventPublisher
 {
     Task PublishAsync(
         IEntityEvent<IEntityIdentifier, UserIdentifier> @event,

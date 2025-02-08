@@ -1,6 +1,6 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
-using Freem.Entities.Bus.Events.Abstractions;
+using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Abstractions;
@@ -22,7 +22,7 @@ internal sealed class RegisterUserPasswordUseCase
     private readonly ICurrentPasswordHashAlgorithmGetter _passwordHashAlgorithmGetter;
     private readonly PasswordRawHasher _passwordRawHasher;
     private readonly ISaltGenerator _saltGenerator;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RegisterUserPasswordUseCase(
@@ -31,7 +31,7 @@ internal sealed class RegisterUserPasswordUseCase
         ICurrentPasswordHashAlgorithmGetter passwordHashAlgorithmGetter, 
         PasswordRawHasher passwordRawHasher, 
         ISaltGenerator saltGenerator,
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);

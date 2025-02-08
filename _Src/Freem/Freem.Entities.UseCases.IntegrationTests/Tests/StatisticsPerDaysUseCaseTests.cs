@@ -32,7 +32,7 @@ public sealed class StatisticsPerDaysUseCaseTests : UseCaseTestBase
     public async Task ShouldSuccess()
     {
         var now = DateOnly.FromDateTime(DateTime.Now);
-        var period = new DatePeriod(now, now.AddDays(1));
+        var period = new DatePeriod(now.AddDays(-1), now);
 
         var request = new StatisticsPerDaysRequest(period);
         var response = await Context.ExecuteAsync<StatisticsPerDaysRequest, StatisticsPerDaysResponse>(_context, request);
@@ -45,7 +45,7 @@ public sealed class StatisticsPerDaysUseCaseTests : UseCaseTestBase
         Assert.Single(response.Statistics);
         
         var (date, statistics) = response.Statistics.Single();
-        Assert.Equal(now, date);
+        Assert.Equal(now.AddDays(-1), date);
         Assert.Equal(2, statistics.ActivitiesStatistics.ActivitiesCount);
     }
     

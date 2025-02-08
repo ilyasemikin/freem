@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Bus.Events.Abstractions;
+﻿using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
@@ -15,13 +15,13 @@ internal sealed class RemoveActivityUseCase
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivitiesRepository _repository;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveActivityUseCase(
         IDistributedLocker locker,
         IActivitiesRepository repository, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

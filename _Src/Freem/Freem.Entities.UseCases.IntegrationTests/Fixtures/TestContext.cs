@@ -2,8 +2,8 @@
 using Freem.Credentials.Password.Implementations;
 using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Bus.Events.DependencyInjection.Microsoft;
 using Freem.Entities.DependencyInjection;
+using Freem.Entities.Events.Local.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
@@ -120,14 +120,13 @@ public sealed class TestContext
             .AddRedisTokensBlacklist(redisConfiguration)
             .AddEmptyLocking()
             .AddPostgreSqlStorage(storageConfiguration)
+            .AddLocalEventsProcessing()
             .AddEntitiesUseCases();
 
         services.AddCryptoHashes();
         services.TryAddTransient<PasswordRawHasher>();
         services.TryAddTransient<ISaltGenerator, GuidSaltGenerator>();
         services.TryAddTransient<ICurrentPasswordHashAlgorithmGetter>(_ => new StaticCurrentPasswordHashAlgorithmGetter("SHA512"));
-        
-        services.AddEventConsumers();
         
         return services.BuildAndValidateServiceProvider();
     }

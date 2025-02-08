@@ -103,7 +103,7 @@ public sealed class ConvertersCollection<TInput1, TInput2, TOutput>
     
     public bool TryConvert(TInput1 input1, TInput2 input2, [NotNullWhen(true)] out TOutput? output)
     {
-        output = default;
+        output = null;
 
         var type = new Tuple<Type, Type>(input1.GetType(), input2.GetType());
         if (!_converters.TryGetValue(type, out var converter))

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Bus.Events.Abstractions;
+﻿using Freem.Entities.Events.Production.Implementations;
 using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
@@ -19,14 +19,14 @@ internal sealed class StopRunningRecordUseCase
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
     private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
-    private readonly IEventProducer _eventProducer;
+    private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StopRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
         IUseCaseExecutor<UseCaseExecutionContext> executor, 
-        IEventProducer eventProducer, 
+        EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);

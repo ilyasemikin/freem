@@ -2,9 +2,9 @@
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Entities.Bus.Events.Abstractions;
+namespace Freem.Entities.Events.Consumption.Abstractions;
 
-public interface IEventConsumer<TEvent>
+public interface IEventConsumer<in TEvent>
     where TEvent : IEntityEvent<IEntityIdentifier, UserIdentifier>
 {
     Task ExecuteAsync(TEvent @event, CancellationToken cancellationToken = default);
