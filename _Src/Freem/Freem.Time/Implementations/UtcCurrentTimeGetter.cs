@@ -6,6 +6,7 @@ public class UtcCurrentTimeGetter : ICurrentTimeGetter
 {
     public DateTimeOffset Get()
     {
-        return DateTimeOffset.UtcNow;
+        var utc = DateTimeOffset.UtcNow;
+        return DateTimeOperations.EraseMilliseconds(utc);
     }
 }

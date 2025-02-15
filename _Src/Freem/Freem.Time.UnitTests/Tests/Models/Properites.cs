@@ -21,6 +21,21 @@ public class Properites
         });
     }
 
+    [Test]
+    public void DateTimeOffsets_ShouldEraseMilliseconds()
+    {
+        var input = new DateTimeOffset(2025, 1, 1, 0, 0, 0, 10, TimeSpan.Zero);
+        var expected = new DateTimeOffset(input.Year, input.Month, input.Day, input.Hour, input.Minute, input.Second, input.Offset);
+
+        var period = new DateTimePeriod(input, input);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(period.StartAt, Is.EqualTo(expected));
+            Assert.That(period.EndAt, Is.EqualTo(expected));
+        });
+    }
+
     [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
     public void Duration_ShouldBeCorrect(DateTimeOffset startAt, DateTimeOffset endAt)
     {

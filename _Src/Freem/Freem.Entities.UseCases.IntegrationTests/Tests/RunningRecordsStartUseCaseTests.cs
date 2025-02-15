@@ -29,7 +29,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         
         var activity = filler.Activities.Create(_context);
 
-        _startAt = DateTimeOffset.UtcNow;
+        _startAt = Context.GetCurrentDateTime();
         _activities = new RelatedActivitiesCollection([activity.Id]);
     }
 
@@ -45,7 +45,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.NotNull(response.RunningRecord);
         Assert.Null(response.Error);
         
-        Assert.True(DateTimeOperations.EqualsUpToSeconds(_startAt, response.RunningRecord.StartAt));
+        Assert.Equal(_startAt, response.RunningRecord.StartAt);
         Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
     }
 
@@ -64,7 +64,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.NotNull(response.RunningRecord);
         Assert.Null(response.Error);
         
-        Assert.True(DateTimeOperations.EqualsUpToSeconds(_startAt, response.RunningRecord.StartAt));
+        Assert.Equal(_startAt, response.RunningRecord.StartAt);
         Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
     }
 

@@ -16,6 +16,7 @@ using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Locking.Local.DependencyInjection;
+using Freem.Time.Abstractions;
 using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
@@ -59,6 +60,14 @@ public sealed class TestContext
 
         var generator = provider.GetRequiredService<IIdentifierGenerator<T>>();
         return generator.Generate();
+    }
+
+    public DateTimeOffset GetCurrentDateTime()
+    {
+        using var scope = _services.CreateScope();
+        var provider = scope.ServiceProvider;
+        var clock = provider.GetRequiredService<ICurrentTimeGetter>();
+        return clock.Get();
     }
 
     public Task<TResponse> ExecuteAsync<TRequest, TResponse>(TRequest request)

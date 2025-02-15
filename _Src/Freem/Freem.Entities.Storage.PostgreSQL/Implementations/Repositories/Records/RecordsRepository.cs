@@ -146,6 +146,7 @@ internal sealed class RecordsRepository : IRecordsRepository
                 filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt))
             .OrderBy(e => e.StartAt)
             .ThenBy(e => e.EndAt)
+            .ThenBy(e => e.Id)
             .AsNoTracking()
             .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
     }

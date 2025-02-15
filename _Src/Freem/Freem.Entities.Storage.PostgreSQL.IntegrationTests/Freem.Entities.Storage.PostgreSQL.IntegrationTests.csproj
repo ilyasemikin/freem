@@ -38,6 +38,7 @@
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
         <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
     </ItemGroup>
 
     <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">

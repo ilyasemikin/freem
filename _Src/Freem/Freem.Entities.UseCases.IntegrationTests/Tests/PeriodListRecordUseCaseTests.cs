@@ -27,13 +27,14 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
         _records = records
             .OrderBy(e => e.Period.StartAt)
             .ThenBy(e => e.Period.EndAt)
+            .ThenBy(e => (string)e.Id)
             .ToArray();
     }
 
     [Fact]
     public async Task ShouldSuccess()
     {
-        var startAt = DateTimeOffset.UtcNow.AddDays(-10);
+        var startAt = Context.GetCurrentDateTime().AddDays(-10);
         var period = new DateTimePeriod(startAt, startAt.AddDays(10));
 
         var request = new PeriodListRequest(period);

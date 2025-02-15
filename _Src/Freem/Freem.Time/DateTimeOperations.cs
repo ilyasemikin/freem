@@ -13,14 +13,9 @@ public static class DateTimeOperations
     {
         return left > right ? left : right;
     }
-    
-    public static bool EqualsUpToSeconds(DateTimeOffset left, DateTimeOffset right)
+
+    public static DateTimeOffset EraseMilliseconds(DateTimeOffset value)
     {
-        return (left - right).TotalSeconds < 1;
-    }
-    
-    public static bool EqualsUpToSeconds(DateTime left, DateTime right)
-    {
-        return (left - right).TotalSeconds < 1;
+        return new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Offset);
     }
 }

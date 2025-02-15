@@ -15,6 +15,7 @@ using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
+using Freem.Time;
 
 namespace Freem.Entities.RunningRecords;
 
@@ -50,7 +51,7 @@ public class RunningRecord :
         Activities = activities;
         Tags = tags;
 
-        StartAt = startAt;
+        StartAt = DateTimeOperations.EraseMilliseconds(startAt.UtcDateTime);
     }
 
     public RunningRecordStartedEvent BuildStartedEvent(EventIdentifier eventId)

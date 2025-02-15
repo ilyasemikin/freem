@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Freem.AutoFixture.SpecimenBuilders;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+using Freem.Time;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 
@@ -14,6 +15,8 @@ internal sealed class DatabaseEntitiesFactory
     {
         _fixture = new Fixture();
         _fixture.Customizations.Add(new UtcRandomDateTimeSequenceGenerator());
+
+        var utc = DateTimeOperations.EraseMilliseconds(DateTimeOffset.UtcNow);
 
         _fixture.Customize<TagEntity>(builder => builder
             .With(e => e.UserId, userId)
@@ -31,8 +34,8 @@ internal sealed class DatabaseEntitiesFactory
 
         _fixture.Customize<RecordEntity>(builder => builder
             .With(e => e.UserId, userId)
-            .With(e => e.StartAt, DateTimeOffset.UtcNow - TimeSpan.FromHours(10))
-            .With(e => e.EndAt, DateTimeOffset.UtcNow)
+            .With(e => e.StartAt, utc.AddHours(-10))
+            .With(e => e.EndAt, utc)
             .Without(e => e.User)
             .Without(e => e.Activities)
             .Without(e => e.Tags)
@@ -40,6 +43,7 @@ internal sealed class DatabaseEntitiesFactory
 
         _fixture.Customize<RunningRecordEntity>(builder => builder
             .With(e => e.UserId, userId)
+            .With(e => e.StartAt, utc)
             .Without(e => e.User)
             .Without(e => e.Activities)
             .Without(e => e.Tags)

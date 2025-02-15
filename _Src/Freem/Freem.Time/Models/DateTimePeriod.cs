@@ -14,8 +14,8 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 
     public DateTimePeriod(DateTimeOffset startAt, DateTimeOffset endAt)
     {
-        StartAt = startAt.UtcDateTime;
-        EndAt = endAt.UtcDateTime;
+        StartAt = DateTimeOperations.EraseMilliseconds(startAt.UtcDateTime);
+        EndAt = DateTimeOperations.EraseMilliseconds(endAt.UtcDateTime);
 
         if (StartAt > EndAt)
             throw new ArgumentException($"'{nameof(endAt)}' must be not less than '{nameof(startAt)}'");
@@ -51,20 +51,7 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 
         return StartAt == other.StartAt && EndAt == other.EndAt;
     }
-
-    public bool EqualsUpToSeconds(DateTimePeriod? other)
-    {
-        if (other is null)
-            return false;
-
-        if (ReferenceEquals(this, other))
-            return true;
-        
-        return
-            DateTimeOperations.EqualsUpToSeconds(StartAt, other.StartAt) &&
-            DateTimeOperations.EqualsUpToSeconds(EndAt, other.EndAt);
-    }
-
+    
     public static bool TryCreate(DateTimeOffset startAt, DateTimeOffset endAt, [NotNullWhen(true)] out DateTimePeriod? period)
     {
         try
