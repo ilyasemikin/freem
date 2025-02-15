@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Statistics;
+using Freem.Entities.Statistics.Time;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
@@ -11,11 +12,11 @@ public sealed class StatisticsPerDaysResponse : IResponse<StatisticsPerDaysError
     [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
-    public IReadOnlyDictionary<DateOnly, StatisticsPerDay>? Statistics { get; }
+    public IReadOnlyDictionary<DateOnly, TimeStatistics>? Statistics { get; }
     public Error<StatisticsPerDaysErrorCode>? Error { get; }
 
     private StatisticsPerDaysResponse(
-        IReadOnlyDictionary<DateOnly, StatisticsPerDay>? statistics = null, 
+        IReadOnlyDictionary<DateOnly, TimeStatistics>? statistics = null, 
         Error<StatisticsPerDaysErrorCode>? error = null)
     {
         Success = statistics is not null;
@@ -23,7 +24,7 @@ public sealed class StatisticsPerDaysResponse : IResponse<StatisticsPerDaysError
         Error = error;
     }
 
-    public static StatisticsPerDaysResponse CreateSuccess(IReadOnlyDictionary<DateOnly, StatisticsPerDay> statistics)
+    public static StatisticsPerDaysResponse CreateSuccess(IReadOnlyDictionary<DateOnly, TimeStatistics> statistics)
     {
         ArgumentNullException.ThrowIfNull(statistics);
         

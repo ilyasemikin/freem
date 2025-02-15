@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Records;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Statistics;
-using Freem.Entities.Statistics.Activities;
+using Freem.Entities.Statistics.Time;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
@@ -43,21 +43,19 @@ public sealed class StatisticsPerDaysUseCase :
             return StatisticsPerDaysResponse.CreateFailure(StatisticsPerDaysErrorCode.UserNotFound);
 
         var time = TimeOnly.MinValue.Add(settings.UtcOffset);
-        var current = request.Period.StartAt.ToDateTime(time, DateTimeKind.Utc);
-        var end = request.Period.EndAt.ToDateTime(time, DateTimeKind.Utc);
+        var current = request.Period.StartAt.ToUtcDateTime(time);
+        var end = request.Period.EndAt.ToUtcDateTime(time);
 
-        var statisticsPerDays = new Dictionary<DateOnly, StatisticsPerDay>();
-        while (current < end)
+        var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
+        while (current <= end)
         {
             var records = await FindRecordsAsync(context.UserId, current, cancellationToken);
 
             var next = current.AddDays(1);
             var period = new DateTimePeriod(current, next);
-            var duration = CalculateDuration(records, period);
-            var activitiesStatistics = CalculateActivitiesStatistics(records, period);
 
             var day = current.ToDateOnly();
-            statisticsPerDays[day] = new StatisticsPerDay(day, duration, activitiesStatistics);
+            statisticsPerDays[day] = TimeStatistics.Calculate(period, records);
             
             current = next;
         }
@@ -99,44 +97,5 @@ public sealed class StatisticsPerDaysUseCase :
             if (list.Count >= result.TotalCount)
                 return list;
         } while (true);
-    }
-
-    private static ActivitiesStatistics CalculateActivitiesStatistics(IReadOnlyList<Record> records, DateTimePeriod period)
-    {
-        var activityIds = records
-            .SelectMany(record => record.Activities.Identifiers)
-            .ToHashSet();
-
-        var builder = new ActivitiesStatisticsBuilder();
-        foreach (var activityId in activityIds)
-        {
-            var activityRecords = records.Where(record => record.Activities.Identifiers.Contains(activityId));
-            var duration = CalculateDuration(activityRecords, period);
-
-            var statistics = new ActivityStatistics(activityId, duration);
-            
-            builder.TryAdd(statistics);
-        }
-        
-        return builder.Build();
-    }
-    
-    private static TimeSpan CalculateDuration(IEnumerable<Record> records, DateTimePeriod period)
-    {
-        DateTimePeriod? last = null;
-
-        var result = TimeSpan.Zero;
-        foreach (var record in records)
-        {
-            var start = DateTimeOperations.Max(record.Period.StartAt, period.StartAt);
-            var end = DateTimeOperations.Min(record.Period.EndAt, period.EndAt);
-            
-            if (last is not null && last.EndAt > start)
-                start = last.EndAt;
-            
-            result += end - start;
-        }
-
-        return result;
     }
 }

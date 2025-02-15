@@ -19,6 +19,11 @@ public sealed class RelatedActivitiesCollection : RelatedEntitiesCollection<Acti
     { 
     }
 
+    public RelatedActivitiesCollection(params ActivityIdentifier[] identifiers)
+        : this(identifiers, [])
+    {
+    }
+
     public RelatedActivitiesCollection(IEnumerable<Activity> entities)
         : this(Enumerable.Empty<ActivityIdentifier>(), entities)
     {
