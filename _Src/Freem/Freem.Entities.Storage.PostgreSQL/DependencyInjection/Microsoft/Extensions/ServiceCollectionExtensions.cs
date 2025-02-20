@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddEntitiesEqualityComparers()
             .AddEntitiesIdentifiersNameConverters()
-            .AddEventsServices()
+            .AddEventsFactory()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()

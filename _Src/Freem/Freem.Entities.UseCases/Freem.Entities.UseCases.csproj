@@ -12,7 +12,7 @@
         <ProjectReference Include="..\Freem.Credentials.Password\Freem.Credentials.Password.csproj"/>
         <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
-        <ProjectReference Include="..\Freem.Entities.Events.Production\Freem.Entities.Events.Production.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Events.Producer\Freem.Entities.Events.Producer.csproj" />
         <ProjectReference Include="..\Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Tokens.JWT\Freem.Entities.Tokens.JWT.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj"/>

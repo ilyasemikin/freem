@@ -77,9 +77,8 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddEventsServices(this IServiceCollection services)
+    public static IServiceCollection AddEventsFactory(this IServiceCollection services)
     {
-        services.TryAddSingleton<EventJsonConverter>();
         services.TryAddSingleton<EventsFactory>();
         
         return services;

@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Events.Consumption.Implementations;
-using Freem.Entities.Events.Production.Abstractions;
+using Freem.Entities.Events.Consumer.Implementations;
+using Freem.Entities.Events.Producer.Abstractions;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Events.Local.Implementations;

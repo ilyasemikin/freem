@@ -26,8 +26,7 @@
         <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
         <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj" />
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.Entities.Events.Consumption\Freem.Entities.Events.Consumption.csproj" />
-        <ProjectReference Include="..\Freem.Entities.Events.Kafka\Freem.Entities.Events.Kafka.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Events.Consumer\Freem.Entities.Events.Consumer.csproj" />
         <ProjectReference Include="..\Freem.Entities.Events.Local\Freem.Entities.Events.Local.csproj" />
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Tokens.JWT\Freem.Entities.Tokens.JWT.csproj" />

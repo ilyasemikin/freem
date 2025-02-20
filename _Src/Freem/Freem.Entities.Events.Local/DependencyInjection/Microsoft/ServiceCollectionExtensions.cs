@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Events.Consumption.DependencyInjection.Microsoft;
-using Freem.Entities.Events.Consumption.DependencyInjection.Microsoft.Builders;
+﻿using Freem.Entities.Events.Consumer.DependencyInjection.Microsoft;
+using Freem.Entities.Events.Consumer.DependencyInjection.Microsoft.Builders;
 using Freem.Entities.Events.Local.Implementations;
-using Freem.Entities.Events.Production.DependencyInjection.Microsoft;
+using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.Events.Local.DependencyInjection.Microsoft;

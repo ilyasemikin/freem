@@ -24,6 +24,8 @@ using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
 using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using StackExchange.Redis;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -131,7 +133,8 @@ public sealed class TestContext
             .AddEmptyLocking()
             .AddPostgreSqlStorage(storageConfiguration)
             .AddLocalEventsProcessing()
-            .AddEntitiesUseCases();
+            .AddEntitiesUseCases()
+            .AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
 
         services.AddCryptoHashes();
         services.TryAddTransient<PasswordRawHasher>();

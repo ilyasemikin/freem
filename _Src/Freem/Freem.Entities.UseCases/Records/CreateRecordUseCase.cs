@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities.Identifiers.Extensions;
-using Freem.Entities.Events.Production.Implementations;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.Records;
 using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;

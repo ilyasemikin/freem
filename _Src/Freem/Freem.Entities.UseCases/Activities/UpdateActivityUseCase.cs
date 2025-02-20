@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Events.Production.Implementations;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;

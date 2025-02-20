@@ -1,6 +1,6 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
-using Freem.Entities.Events.Production.Implementations;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
