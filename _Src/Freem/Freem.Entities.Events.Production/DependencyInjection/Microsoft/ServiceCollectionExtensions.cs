@@ -18,4 +18,18 @@ public static class ServiceCollectionExtensions
         
         return services;
     }
+
+    public static IServiceCollection AddEventProduction<TEventPublisher>(
+        this IServiceCollection services, 
+        Func<IServiceProvider, TEventPublisher> factory, 
+        ServiceLifetime lifetime = ServiceLifetime.Transient)
+        where TEventPublisher : IEventPublisher
+    {
+        var descriptor = new ServiceDescriptor(typeof(IEventPublisher), provider => factory(provider), lifetime);
+        
+        services.TryAdd(descriptor);
+        services.TryAddTransient<EventProducer>();
+
+        return services;
+    }
 }

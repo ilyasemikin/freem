@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.UseCases.Plain.Implementations;
-using Freem.Entities.UseCases.Plain.Implementations.Executors;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Sync;
 using Microsoft.Extensions.DependencyInjection;

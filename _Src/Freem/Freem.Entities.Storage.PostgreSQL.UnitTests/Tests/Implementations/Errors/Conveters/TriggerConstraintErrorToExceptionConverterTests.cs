@@ -31,7 +31,7 @@ public sealed class TriggerConstraintErrorToExceptionConverterTests
     {
         var context = new DatabaseContextWriteContext(new SampleIdentifier());
         var error = new TriggerConstraintError(code, "message");
-        var converter = new TriggerConstraintErrorToExceptionConverter();
+        var converter = new TriggerConstraintErrorToExceptionConverter(new EntityIdentifierFactory());
         
         var exception = Record.Exception(() => converter.Convert(context, error));
         

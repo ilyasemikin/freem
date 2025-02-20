@@ -3,6 +3,7 @@ using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Comparers;
 using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Events;
 using Freem.Entities.Records;
 using Freem.Entities.Records.Comparers;
 using Freem.Entities.Records.Identifiers;
@@ -64,6 +65,22 @@ public static class ServiceCollectionExtensions
         services.AddSingletonExistedService<
             IIdentifierGenerator<IIdentifier>,
             IIdentifierGenerator<EventIdentifier>>();
+        
+        return services;
+    }
+
+    public static IServiceCollection AddEntitiesIdentifiersNameConverters(this IServiceCollection services)
+    {
+        services.TryAddSingleton<EntityIdentifierFactory>();
+        services.TryAddSingleton<EntityIdentifierNameProvider>();
+        
+        return services;
+    }
+
+    public static IServiceCollection AddEventsServices(this IServiceCollection services)
+    {
+        services.TryAddSingleton<EventJsonConverter>();
+        services.TryAddSingleton<EventsFactory>();
         
         return services;
     }

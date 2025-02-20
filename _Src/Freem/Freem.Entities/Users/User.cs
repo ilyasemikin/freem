@@ -14,6 +14,8 @@ public sealed class User :
     IEntity<UserIdentifier>, 
     ICloneable<User>
 {
+    public const string EntityName = "user";
+    
     public UserIdentifier Id { get; }
     public Nickname Nickname { get; }
 

@@ -11,6 +11,9 @@ internal sealed class TestsConfiguration
     
     public TestsConfiguration(string postgresConnectionString, string redisConnectionString)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(postgresConnectionString);
+        ArgumentException.ThrowIfNullOrWhiteSpace(redisConnectionString);
+        
         PostgresConnectionString = postgresConnectionString;
         RedisConnectionString = redisConnectionString;
     }

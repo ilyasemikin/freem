@@ -1,6 +1,5 @@
 ﻿using Freem.UseCases.Abstractions;
 using Freem.UseCases.Types;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.UseCases.Implementations;
 

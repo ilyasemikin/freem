@@ -24,6 +24,8 @@ public sealed class Record :
     IEntityRelation<Tag, TagIdentifier>,
     ICloneable<Record>
 {
+    public const string EntityName = "record";
+    
     public RecordIdentifier Id { get; }
     public UserIdentifier UserId { get; }
     public RelatedActivitiesCollection Activities { get; }

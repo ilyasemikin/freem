@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddEntitiesEqualityComparers()
+            .AddEntitiesIdentifiersNameConverters()
+            .AddEventsServices()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
@@ -102,7 +104,7 @@ public static class ServiceCollectionExtensions
             IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity>, 
             EventEntityToDatabaseEntityConverter>();
         
-        services.TryAddTransient<
+        services.TryAddSingleton<
             IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>>,
             DatabaseEntityToEventEntityConverter>();
         

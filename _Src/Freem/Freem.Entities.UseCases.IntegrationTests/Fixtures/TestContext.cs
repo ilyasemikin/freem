@@ -123,6 +123,7 @@ public sealed class TestContext
         services
             .AddUtcCurrentTimeGetter()
             .AddIdentifiersGenerators()
+            .AddEntitiesIdentifiersNameConverters()
             .AddStaticSecurityKeyGetter(TokensSecurityKey)
             .AddAccessTokens(accessTokensSettings)
             .AddRefreshTokens(refreshTokensSettings)

@@ -73,7 +73,6 @@ internal static class EntitiesNames
 
     public static class UserSettings
     {
-        public const string EntityName = "user_settings";
         public const string Table = "user_settings";
 
         public static class Properties
@@ -93,7 +92,6 @@ internal static class EntitiesNames
 
     public static class Tags
     {
-        public const string EntityName = "tag";
         public const string Table = "tags";
 
         public static class Properties
@@ -117,7 +115,6 @@ internal static class EntitiesNames
 
     public static class Activities
     {
-        public const string EntityName = "activity";
         public const string Table = "activities";
 
         public static class Properties
@@ -145,7 +142,6 @@ internal static class EntitiesNames
 
     public static class Records
     {
-        public const string EntityName = "record";
         public const string Table = "records";
 
         public static class Properties
@@ -171,7 +167,6 @@ internal static class EntitiesNames
 
     public static class RunningRecords
     {
-        public const string EntityName = "running_record";
         public const string Table = "running_records";
 
         public static class Properties

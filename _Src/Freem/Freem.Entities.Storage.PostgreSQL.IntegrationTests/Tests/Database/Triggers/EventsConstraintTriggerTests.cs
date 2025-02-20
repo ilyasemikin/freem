@@ -1,17 +1,21 @@
-﻿using Freem.Entities.Activities.Events;
+﻿using Freem.Entities.Activities;
+using Freem.Entities.Activities.Events;
 using Freem.Entities.Records.Events;
+using Freem.Entities.RunningRecords;
 using Freem.Entities.RunningRecords.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers.Base;
+using Freem.Entities.Tags;
 using Freem.Entities.Tags.Events;
+using Freem.Entities.Users;
 using Freem.Entities.Users.Events;
 using Npgsql;
 using Xunit;
 using Xunit.Abstractions;
+using Record = Freem.Entities.Records.Record;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Database.Triggers;
 
@@ -36,7 +40,7 @@ public class EventsConstraintTriggerTests : ConstraintTriggerTestsBase
         {
             Id = "id",
             EntityId = activity.Id,
-            EntityName = EntitiesNames.Activities.EntityName,
+            EntityName = Activity.EntityName,
             Action = ActivityEventActions.Created,
             UserId = "not_existed_user_id",
         };
@@ -48,11 +52,11 @@ public class EventsConstraintTriggerTests : ConstraintTriggerTestsBase
     }
 
     [Theory]
-    [InlineData(EntitiesNames.Activities.EntityName, ActivityEventActions.Created)]
-    [InlineData(EntitiesNames.Records.EntityName, RecordEventActions.Created)]
-    [InlineData(EntitiesNames.RunningRecords.EntityName, RunningRecordEventActions.Started)]
-    [InlineData(EntitiesNames.Tags.EntityName, TagEventActions.Created)]
-    [InlineData(EntitiesNames.Users.EntityName, UserEventActions.SignedIn)]
+    [InlineData(Activity.EntityName, ActivityEventActions.Created)]
+    [InlineData(Record.EntityName, RecordEventActions.Created)]
+    [InlineData(RunningRecord.EntityName, RunningRecordEventActions.Started)]
+    [InlineData(Tag.EntityName, TagEventActions.Created)]
+    [InlineData(User.EntityName, UserEventActions.SignedIn)]
     public async Task Events_ShouldThrowException_WhenRelatedEntityNotExists(string name, string action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();

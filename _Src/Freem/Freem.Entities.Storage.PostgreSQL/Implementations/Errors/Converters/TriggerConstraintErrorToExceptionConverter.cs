@@ -1,12 +1,12 @@
 ﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
+using Freem.Entities.Activities;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Extensions;
+using Freem.Entities.Tags;
 using Freem.Exceptions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
@@ -14,6 +14,15 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 internal sealed class TriggerConstraintErrorToExceptionConverter :
     IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>
 {
+    private readonly EntityIdentifierFactory _identifierFactory;
+
+    public TriggerConstraintErrorToExceptionConverter(EntityIdentifierFactory identifierFactory)
+    {
+        ArgumentNullException.ThrowIfNull(identifierFactory);
+        
+        _identifierFactory = identifierFactory;
+    }
+
     public Exception Convert(DatabaseContextWriteContext context, TriggerConstraintError error)
     {
         switch (error.Code)
@@ -22,7 +31,8 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
             case TriggerErrorCodes.RecordsTagsDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsTagsDifferentUserIds:
             {
-                var identifier = error.Parameters[TriggerErrorParameters.TagId].AsTagIdentifier();
+                var identifierValue = error.Parameters[TriggerErrorParameters.TagId].AsString();
+                var identifier = _identifierFactory.Create(Tag.EntityName, identifierValue);
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             case TriggerErrorCodes.ActivitiesTagsInvalidCount:
@@ -37,7 +47,8 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
             case TriggerErrorCodes.RecordsActivitiesDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds:
             {
-                var identifier = error.Parameters[TriggerErrorParameters.ActivityId].AsActivityIdentifier();
+                var identifierValue = error.Parameters[TriggerErrorParameters.ActivityId].AsString();
+                var identifier = _identifierFactory.Create(Activity.EntityName, identifierValue);
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             case TriggerErrorCodes.RecordsActivitiesInvalidCount:
@@ -51,20 +62,8 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
             case TriggerErrorCodes.EventsRelatedEntityNotExists:
             {
                 var entityName = error.Parameters[TriggerErrorParameters.EventEntityName].AsString();
-                var identifierParameter = error.Parameters[TriggerErrorParameters.EventEntityId];
-
-                IEntityIdentifier identifier = entityName switch
-                {
-                    EntitiesNames.Activities.EntityName => identifierParameter.AsActivityIdentifier(),
-                    EntitiesNames.Records.EntityName => identifierParameter.AsRecordIdentifier(),
-                    EntitiesNames.RunningRecords.EntityName => identifierParameter.AsRunningRecordIdentifier(),
-                    EntitiesNames.Tags.EntityName => identifierParameter.AsTagIdentifier(),
-                    EntitiesNames.Users.EntityName => identifierParameter.AsUserIdentifier(),
-                    EntitiesNames.UsersLoginCredentials.EntityName => identifierParameter.AsUserIdentifier(),
-                    EntitiesNames.UserTelegramIntegration.EntityName => identifierParameter.AsUserIdentifier(),
-                    _ => throw new InvalidOperationException($"Unknown entity name \"{entityName}\"")
-                };
-
+                var identifierValue = error.Parameters[TriggerErrorParameters.EventEntityId].AsString();
+                var identifier = _identifierFactory.Create(entityName, identifierValue);
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             default:

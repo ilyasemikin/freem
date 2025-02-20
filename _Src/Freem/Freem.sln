@@ -133,6 +133,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{3F544A08-4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Events.Local", "Freem.Entities.Events.Local\Freem.Entities.Events.Local.csproj", "{A224F254-92E8-48AA-B780-788D594934E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Events.Kafka", "Freem.Entities.Events.Kafka\Freem.Entities.Events.Kafka.csproj", "{8978E309-A37A-4787-A970-AA292ECD23E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -359,6 +361,10 @@ Global
 		{A224F254-92E8-48AA-B780-788D594934E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A224F254-92E8-48AA-B780-788D594934E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A224F254-92E8-48AA-B780-788D594934E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8978E309-A37A-4787-A970-AA292ECD23E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8978E309-A37A-4787-A970-AA292ECD23E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8978E309-A37A-4787-A970-AA292ECD23E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8978E309-A37A-4787-A970-AA292ECD23E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -430,5 +436,6 @@ Global
 		{1C769851-B681-401C-8D41-B84C6427C191} = {3F544A08-484B-404D-B07F-80858B4621DD}
 		{B2B98163-785D-4AD8-B5E8-3FF58DBEFFE3} = {3F544A08-484B-404D-B07F-80858B4621DD}
 		{A224F254-92E8-48AA-B780-788D594934E9} = {12F3CB1E-7452-4E4E-9137-30B0A8987499}
+		{8978E309-A37A-4787-A970-AA292ECD23E1} = {12F3CB1E-7452-4E4E-9137-30B0A8987499}
 	EndGlobalSection
 EndGlobal

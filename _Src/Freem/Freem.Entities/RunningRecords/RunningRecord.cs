@@ -25,6 +25,8 @@ public class RunningRecord :
     IEntityRelation<Tag, TagIdentifier>,
     ICloneable<RunningRecord>
 {
+    public const string EntityName = "running_record";
+    
     public RunningRecordIdentifier Id => UserId;
     public UserIdentifier UserId { get; }
     public RelatedActivitiesCollection Activities { get; }

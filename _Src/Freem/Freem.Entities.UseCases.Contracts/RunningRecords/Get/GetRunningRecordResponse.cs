@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.RunningRecords;
 using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.UseCases.Contracts.Activities.Get;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 

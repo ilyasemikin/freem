@@ -14,6 +14,8 @@ public sealed class Tag :
     IEntity<TagIdentifier>,
     ICloneable<Tag>
 {
+    public const string EntityName = "tag";
+    
     private TagName _name = null!;
 
     public TagIdentifier Id { get; }

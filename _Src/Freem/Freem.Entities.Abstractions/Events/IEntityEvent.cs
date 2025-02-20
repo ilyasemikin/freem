@@ -4,7 +4,8 @@ using Freem.Entities.Abstractions.Identifiers;
 
 namespace Freem.Entities.Abstractions.Events;
 
-public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier> : IEntity<EventIdentifier>
+public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier> 
+    : IEntity<EventIdentifier>
     where TEntityIdentifier : IEntityIdentifier
     where TUserEntityIdentifier : IEntityIdentifier
 {
@@ -12,13 +13,4 @@ public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier> 
     TUserEntityIdentifier UserEntityId { get; }
 
     EventAction Action { get; }
-}
-
-public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier, out TAdditionalData> 
-    : IEntityEvent<TEntityIdentifier, TUserEntityIdentifier>
-    where TEntityIdentifier : IEntityIdentifier
-    where TUserEntityIdentifier : IEntityIdentifier
-    where TAdditionalData : class
-{
-    TAdditionalData Data { get; }
 }

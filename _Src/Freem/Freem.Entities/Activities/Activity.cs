@@ -22,6 +22,8 @@ public sealed class Activity :
     IEntityRelation<Tag, TagIdentifier>, 
     ICloneable<Activity>
 {
+    public const string EntityName = "activity";
+    
     private ActivityName _activityName = null!;
     private ActivityStatus _status = null!;
 
