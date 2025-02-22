@@ -1,11 +1,12 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
+using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Users;
 using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
-using Freem.Entities.Users.Identifiers;
 using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Users;

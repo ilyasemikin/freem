@@ -1,6 +1,6 @@
 ﻿using Freem.Enums.Exceptions;
 
-namespace Freem.Entities.Activities.Models;
+namespace Freem.Entities.Models.Activities;
 
 public sealed class ActivityStatus : IEquatable<ActivityStatus>
 {

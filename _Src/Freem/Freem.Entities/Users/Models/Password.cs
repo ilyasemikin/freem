@@ -3,7 +3,7 @@ using Freem.Clones;
 using Freem.Validation;
 using Freem.Validation.Extensions;
 
-namespace Freem.Entities.Users.Models;
+namespace Freem.Entities.Models.Users;
 
 public sealed class Password :
     IEquatable<Password>,

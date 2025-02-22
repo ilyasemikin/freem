@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Events.Producer.Implementations;
+using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags;

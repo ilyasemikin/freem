@@ -14,11 +14,11 @@ public sealed class UserSettingsEqualityComparer : IEqualityComparer<UserSetting
             return false;
         if (x.GetType() != y.GetType()) 
             return false;
-        return x.UtcOffset.Equals(y.UtcOffset);
+        return x.DayUtcOffset.Equals(y.DayUtcOffset);
     }
 
     public int GetHashCode(UserSettings obj)
     {
-        return obj.UtcOffset.GetHashCode();
+        return obj.DayUtcOffset.GetHashCode();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.Activities.Identifiers;
+namespace Freem.Entities.Identifiers;
 
 public sealed class ActivityIdentifier : StringIdentifier, IEntityIdentifier
 {
@@ -28,5 +28,10 @@ public sealed class ActivityIdentifier : StringIdentifier, IEntityIdentifier
     public static implicit operator ActivityIdentifier(string value)
     {
         return new ActivityIdentifier(value);
+    }
+
+    public override string ToString()
+    {
+        return base.ToString();
     }
 }

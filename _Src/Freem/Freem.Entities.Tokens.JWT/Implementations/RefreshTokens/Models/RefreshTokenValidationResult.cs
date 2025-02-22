@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Identifiers;
 
 namespace Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 

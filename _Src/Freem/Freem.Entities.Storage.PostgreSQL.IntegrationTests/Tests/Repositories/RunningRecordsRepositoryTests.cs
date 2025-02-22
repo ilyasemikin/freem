@@ -1,5 +1,5 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.RunningRecords.Identifiers;
+using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;

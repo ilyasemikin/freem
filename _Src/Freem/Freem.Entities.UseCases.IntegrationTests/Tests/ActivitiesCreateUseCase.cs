@@ -1,10 +1,11 @@
-﻿using Freem.Entities.Relations.Collections;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using ActivityStatus = Freem.Entities.Activities.Models.ActivityStatus;
+using ActivityStatus = Freem.Entities.Models.Activities.ActivityStatus;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

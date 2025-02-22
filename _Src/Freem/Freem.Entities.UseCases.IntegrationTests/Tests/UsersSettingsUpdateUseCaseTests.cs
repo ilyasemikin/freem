@@ -37,7 +37,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.UsersSettings.RequiredGet(_context);
         
-        Assert.Equal(UpdatedUtcOffset, actual.UtcOffset);
+        Assert.Equal<TimeSpan>(UpdatedUtcOffset, actual.DayUtcOffset);
     }
     
     [Fact]

@@ -1,8 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Users.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.RunningRecords.Identifiers;
+namespace Freem.Entities.Identifiers;
 
 public sealed class RunningRecordIdentifier : StringIdentifier, IEntityIdentifier
 {
@@ -24,6 +23,11 @@ public sealed class RunningRecordIdentifier : StringIdentifier, IEntityIdentifie
     public override int GetHashCode()
     {
         return base.GetHashCode();
+    }
+    
+    public override string ToString()
+    {
+        return base.ToString();
     }
 
     public static implicit operator RunningRecordIdentifier(string value)

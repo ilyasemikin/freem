@@ -9,11 +9,11 @@ using Freem.Entities.Activities.Events.Removed;
 using Freem.Entities.Activities.Events.Unarchived;
 using Freem.Entities.Activities.Events.Updated;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
+using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Activities;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Activities;
 

@@ -1,10 +1,10 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Password.Login;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

@@ -4,9 +4,10 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
 
-namespace Freem.Entities.Relations.Collections.Base;
+namespace Freem.Entities.Collections;
 
-public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEntitiesCollection<TEntity, TEntityIdentifier>
+public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> 
+    : IRelatedEntitiesCollection<TEntity, TEntityIdentifier>
     where TEntity : IEntity<TEntityIdentifier>
     where TEntityIdentifier : IEntityIdentifier
 {
@@ -44,7 +45,7 @@ public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEnt
         FillEntities(_entities, identifiers, entities);
 
         if (!IsCountAllowed(_entities.Count))
-            throw new InvalidRelatedEntitiesCountException(MinCount, MaxCount, _entities.Count);
+            throw new InvalidRelatedCountException(MinCount, MaxCount, _entities.Count);
     }
 
     public bool TryAdd(TEntityIdentifier identifier)
@@ -68,10 +69,7 @@ public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> : IRelatedEnt
 
     public bool TryRemove(TEntityIdentifier identifier)
     {
-        if (!IsCountAllowed(Count - 1))
-            return false;
-
-        return _entities.Remove(identifier);
+        return IsCountAllowed(Count - 1) && _entities.Remove(identifier);
     }
 
     public bool TryGet(TEntityIdentifier identifier, [NotNullWhen(true)] out TEntity? entity)

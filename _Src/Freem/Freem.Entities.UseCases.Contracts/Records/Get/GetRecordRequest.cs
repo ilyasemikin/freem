@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Identifiers;
+﻿using Freem.Entities.Identifiers;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Get;
 

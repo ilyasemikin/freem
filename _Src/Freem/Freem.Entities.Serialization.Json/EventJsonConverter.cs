@@ -4,7 +4,7 @@ using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events;
-using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Identifiers;
 
 namespace Freem.Entities.Serialization.Json;
 

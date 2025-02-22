@@ -45,7 +45,7 @@ internal sealed class UpdateUserSettingsUseCase :
         var user = result.Entity;
         var settings = new UserSettings()
         {
-            UtcOffset = request.UtcOffset.Value
+            DayUtcOffset = request.UtcOffset.Value
         };
         
         user.Settings = settings;

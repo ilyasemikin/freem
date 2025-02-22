@@ -4,8 +4,8 @@ using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events.Producer.Abstractions;
 using Freem.Entities.Events.Producer.Kafka.Models;
+using Freem.Entities.Identifiers;
 using Freem.Entities.Serialization.Json;
-using Freem.Entities.Users.Identifiers;
 using Microsoft.Extensions.Logging;
 
 namespace Freem.Entities.Events.Producer.Kafka.Implementations;

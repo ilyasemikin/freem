@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
+using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Activities;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;

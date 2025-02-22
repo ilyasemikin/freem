@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Entities.Identifiers;
 using Freem.Entities.UseCases.Exceptions;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases;
 

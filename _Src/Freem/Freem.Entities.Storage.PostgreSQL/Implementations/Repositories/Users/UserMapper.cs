@@ -1,7 +1,7 @@
 ﻿using Freem.Crypto.Hashes.Abstractions.Models;
+using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
@@ -24,7 +24,7 @@ internal static class UserMapper
         return new UserSettingsEntity
         {
             UserId = userId,
-            UtcOffsetTicks = settings.UtcOffset.Ticks
+            UtcOffsetTicks = settings.DayUtcOffset.Ticks
         };
     }
 
@@ -60,7 +60,7 @@ internal static class UserMapper
         var offset = new TimeSpan(entity.UtcOffsetTicks);
         return new UserSettings()
         {
-            UtcOffset = offset
+            DayUtcOffset = offset
         };
     }
     

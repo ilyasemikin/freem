@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Activities.Models;
+﻿using Freem.Entities.Models.Activities;
 using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Create;

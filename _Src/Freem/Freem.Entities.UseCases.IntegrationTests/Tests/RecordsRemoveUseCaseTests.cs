@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Identifiers;
+﻿using Freem.Entities.Identifiers;
 using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

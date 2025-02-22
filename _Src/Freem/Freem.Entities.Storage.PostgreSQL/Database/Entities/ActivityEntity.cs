@@ -15,7 +15,7 @@ internal sealed class ActivityEntity :
     public required string Id { get; init; }
     public required string UserId { get; init; }
 
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public required ActivityStatusDb Status { get; set; }
 

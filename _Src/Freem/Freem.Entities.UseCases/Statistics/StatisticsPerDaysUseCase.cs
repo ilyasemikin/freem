@@ -1,12 +1,11 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Records;
 using Freem.Entities.Statistics.Time;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Freem.UseCases.Abstractions;
@@ -40,7 +39,7 @@ public sealed class StatisticsPerDaysUseCase :
         if (settings is null)
             return StatisticsPerDaysResponse.CreateFailure(StatisticsPerDaysErrorCode.UserNotFound);
 
-        var time = TimeOnly.MinValue.Add(settings.UtcOffset);
+        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset);
         var current = request.Period.StartAt.ToUtcDateTime(time);
         var end = request.Period.EndAt.ToUtcDateTime(time);
 

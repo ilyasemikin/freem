@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.Tags.Identifiers;
+namespace Freem.Entities.Identifiers;
 
 public sealed class TagIdentifier : StringIdentifier, IEntityIdentifier
 {
@@ -28,5 +28,10 @@ public sealed class TagIdentifier : StringIdentifier, IEntityIdentifier
     public static implicit operator TagIdentifier(string value)
     {
         return new TagIdentifier(value);
+    }
+    
+    public override string ToString()
+    {
+        return base.ToString();
     }
 }

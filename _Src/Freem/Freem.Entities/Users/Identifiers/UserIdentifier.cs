@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.Users.Identifiers;
+namespace Freem.Entities.Identifiers;
 
 public sealed class UserIdentifier : StringIdentifier, IEntityIdentifier
 {
@@ -23,6 +23,11 @@ public sealed class UserIdentifier : StringIdentifier, IEntityIdentifier
     public override int GetHashCode()
     {
         return base.GetHashCode();
+    }
+    
+    public override string ToString()
+    {
+        return base.ToString();
     }
 
     public static implicit operator UserIdentifier(string value)

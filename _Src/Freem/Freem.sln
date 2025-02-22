@@ -139,6 +139,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{731B3AA0-E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Serialization.Json", "Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj", "{BBBFBFB2-0E1A-4F82-A310-F3368BB1322B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Web.Api.Public", "Freem.Web.Api.Public\Freem.Web.Api.Public.csproj", "{7E52F78A-973E-4A2A-943E-441FD8E73B58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Web.Api.Public.Contracts", "Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj", "{738A6C66-B678-4BCB-8FB0-49F928B29C40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -377,6 +381,14 @@ Global
 		{BBBFBFB2-0E1A-4F82-A310-F3368BB1322B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBBFBFB2-0E1A-4F82-A310-F3368BB1322B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBBFBFB2-0E1A-4F82-A310-F3368BB1322B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E52F78A-973E-4A2A-943E-441FD8E73B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E52F78A-973E-4A2A-943E-441FD8E73B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E52F78A-973E-4A2A-943E-441FD8E73B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E52F78A-973E-4A2A-943E-441FD8E73B58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{738A6C66-B678-4BCB-8FB0-49F928B29C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{738A6C66-B678-4BCB-8FB0-49F928B29C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{738A6C66-B678-4BCB-8FB0-49F928B29C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{738A6C66-B678-4BCB-8FB0-49F928B29C40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

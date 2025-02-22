@@ -1,4 +1,5 @@
-﻿using Freem.Identifiers.Abstractions;
+﻿using Freem.Entities.Identifiers;
+using Freem.Identifiers.Abstractions;
 
 namespace Freem.Entities.Activities.Identifiers.Extensions;
 

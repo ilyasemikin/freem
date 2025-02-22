@@ -39,7 +39,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
             case TriggerErrorCodes.RecordsTagsInvalidCount:
             case TriggerErrorCodes.RunningRecordsTagsInvalidCount:
             {
-                return new InvalidRelatedEntitiesCountException(
+                return new InvalidRelatedCountException(
                     RelatedTagsCollection.MinTagsCount,
                     RelatedTagsCollection.MaxTagsCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
@@ -54,7 +54,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
             case TriggerErrorCodes.RecordsActivitiesInvalidCount:
             case TriggerErrorCodes.RunningRecordsActivitiesInvalidCount:
             {
-                return new InvalidRelatedEntitiesCountException(
+                return new InvalidRelatedCountException(
                     RelatedActivitiesCollection.MinActivitiesCount,
                     RelatedActivitiesCollection.MaxActivitiesCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());

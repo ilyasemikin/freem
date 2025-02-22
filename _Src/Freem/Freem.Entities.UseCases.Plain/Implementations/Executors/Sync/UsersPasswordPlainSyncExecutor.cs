@@ -1,8 +1,8 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Password.Login;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
-using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Plain.Implementations.Executors.Sync;

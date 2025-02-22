@@ -6,7 +6,6 @@ namespace Freem.Entities.UseCases.Contracts.Records.PeriodList;
 public sealed class PeriodListRequest
 {
     public Limit Limit { get; }
-    
     public DateTimePeriod Period { get; }
 
     public PeriodListRequest(DateTimePeriod period)

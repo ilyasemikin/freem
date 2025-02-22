@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Records.Models;
+﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Records;
 using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Update;

@@ -1,8 +1,10 @@
-﻿namespace Freem.Entities.Users;
+﻿using Freem.Entities.Models.Users;
+
+namespace Freem.Entities.Users;
 
 public sealed class UserSettings
 {
     public static UserSettings Default { get; } = new();
     
-    public TimeSpan UtcOffset { get; set; }
+    public DayUtcOffset DayUtcOffset { get; set; }
 }
