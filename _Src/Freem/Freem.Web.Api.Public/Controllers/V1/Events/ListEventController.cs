@@ -35,7 +35,9 @@ public sealed class ListEventController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<EventResponse>>> ListAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<EventResponse>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListEventRequest query,
         CancellationToken cancellationToken = default)
     {
@@ -45,7 +47,7 @@ public sealed class ListEventController : BaseController
         var response = await _executor.ExecuteAsync<UseCaseListEventRequest, ListEventResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? Ok(CreateSuccess(Response, response.Events, response.TotalCount))
+            ? CreateSuccess(Response, response.Events, response.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -55,20 +57,27 @@ public sealed class ListEventController : BaseController
         return new UseCaseListEventRequest(limit);
     }
 
-    private static async IAsyncEnumerable<EventResponse> CreateSuccess(
+    private static IActionResult CreateSuccess(
         HttpResponse response, IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>> events, int totalCount)
     {
         response.Headers.Append(HeaderNames.ItemsCount, events.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
-        
-        foreach (var @event in events)
-            yield return new EventResponse(@event.Id, @event.EntityId, @event.Action);
 
-        await Task.CompletedTask;
+        var value = MapEvents(events);
+        return new OkObjectResult(value);
+
+        static async IAsyncEnumerable<EventResponse> MapEvents(IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>> events)
+        {
+            foreach (var @event in events)
+                yield return new EventResponse(@event.Id, @event.EntityId, @event.Action);
+        }
     }
 
-    private static ActionResult<IAsyncEnumerable<EventResponse>> CreateFailure(Error<ListEventErrorCode> error)
+    private static IActionResult CreateFailure(Error<ListEventErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

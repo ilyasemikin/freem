@@ -7,6 +7,7 @@ using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Activities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
@@ -30,7 +31,11 @@ public sealed class GetActivityController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<ActivityResponse>> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ActivityResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
@@ -50,13 +55,18 @@ public sealed class GetActivityController : BaseController
         return new GetActivityRequest(activityId);
     }
 
-    private static ActivityResponse CreateSuccess(Activity activity)
+    private static IActionResult CreateSuccess(Activity activity)
     {
-        return new ActivityResponse(activity.Id, activity.Name, activity.Status, activity.Tags);
+        var response = new ActivityResponse(activity.Id, activity.Name, activity.Status, activity.Tags);
+        return new OkObjectResult(response);
     }
     
-    private static ActionResult CreateFailure(Error<GetActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetActivityErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetActivityErrorCode.ActivityNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

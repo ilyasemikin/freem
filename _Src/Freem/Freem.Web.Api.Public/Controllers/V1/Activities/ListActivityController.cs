@@ -33,7 +33,10 @@ public sealed class ListActivityController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<ActivityResponse>>> ListAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<ActivityResponse>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListActivityRequest query,
         CancellationToken cancellationToken = default)
     {
@@ -43,7 +46,7 @@ public sealed class ListActivityController : BaseController
         var response = await _executor.ExecuteAsync<UseCaseListActivityRequest, ListActivityResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? Ok(CreateSuccess(Response, response.Activities, response.TotalCount))
+            ? CreateSuccess(Response, response.Activities, response.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -55,20 +58,27 @@ public sealed class ListActivityController : BaseController
         return new UseCaseListActivityRequest(limit, offset);
     }
 
-    private static async IAsyncEnumerable<ActivityResponse> CreateSuccess(
+    private static IActionResult CreateSuccess(
         HttpResponse response, IReadOnlyList<Activity> activities, int totalCount)
     {
         response.Headers.Append(HeaderNames.ItemsCount, activities.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
-        
-        foreach (var activity in activities)
-            yield return new ActivityResponse(activity.Id, activity.Name, activity.Status, activity.Tags);
 
-        await Task.CompletedTask;
+        var value = MapActivities(activities);
+        return new OkObjectResult(value);
+
+        static async IAsyncEnumerable<ActivityResponse> MapActivities(IReadOnlyList<Activity> activities)
+        {
+            foreach (var activity in activities)
+                yield return new ActivityResponse(activity.Id, activity.Name, activity.Status, activity.Tags);
+        }
     }
 
-    private static ActionResult<IAsyncEnumerable<ActivityResponse>> CreateFailure(Error<ListActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error<ListActivityErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

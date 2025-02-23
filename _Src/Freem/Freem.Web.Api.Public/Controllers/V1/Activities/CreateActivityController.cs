@@ -33,7 +33,11 @@ public sealed class CreateActivityController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiCreateActivityResponse>> CreateAsync(
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateActivityResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateAsync(
         [Required] [FromBody] ApiCreateActivityRequest body, 
         CancellationToken cancellationToken = default)
     {
@@ -55,13 +59,21 @@ public sealed class CreateActivityController : BaseController
         };
     }
 
-    private static ApiCreateActivityResponse CreateSuccess(Activity activity)
+    private static IActionResult CreateSuccess(Activity activity)
     {
-        return new ApiCreateActivityResponse(activity.Id);
+        var response = new ApiCreateActivityResponse(activity.Id);
+        return new CreatedResult
+        {
+            Value = response
+        };
     }
 
-    private static ActionResult<ApiCreateActivityResponse> CreateFailure(Error<CreateActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error<CreateActivityErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            CreateActivityErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

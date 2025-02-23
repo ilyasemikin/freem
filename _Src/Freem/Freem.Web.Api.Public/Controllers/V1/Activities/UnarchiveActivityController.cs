@@ -28,7 +28,11 @@ public sealed class UnarchiveActivityController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> UnarchiveAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UnarchiveAsync(
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
@@ -50,6 +54,11 @@ public sealed class UnarchiveActivityController : BaseController
 
     private static ActionResult CreateFailure(Error<UnarchiveActivityErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UnarchiveActivityErrorCode.ActivityNotFound => new NotFoundResult(),
+            UnarchiveActivityErrorCode.ActivityInvalidStatus => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

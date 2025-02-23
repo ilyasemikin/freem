@@ -28,7 +28,11 @@ public sealed class RemoveActivityController : BaseController
     }
 
     [HttpDelete]
-    public async Task<ActionResult> RemoveAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveAsync(
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
@@ -48,8 +52,12 @@ public sealed class RemoveActivityController : BaseController
         return new RemoveActivityRequest(activityId);
     }
 
-    private static ActionResult CreateFailure(Error<RemoveActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error<RemoveActivityErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RemoveActivityErrorCode.ActivityNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }
