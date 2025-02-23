@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Identifiers;
 using Freem.Entities.Models.Tags;
-using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Update;
 

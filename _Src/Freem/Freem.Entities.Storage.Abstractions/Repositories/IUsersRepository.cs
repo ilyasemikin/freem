@@ -4,7 +4,6 @@ using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Users;
-using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Storage.Abstractions.Repositories;
 

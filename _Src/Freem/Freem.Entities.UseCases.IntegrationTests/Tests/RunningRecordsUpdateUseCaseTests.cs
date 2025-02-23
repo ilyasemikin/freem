@@ -1,11 +1,9 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Models.Records;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -47,7 +45,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRunningRecordRequest
         {
-            Name = new UpdateField<RecordName>(UpdatedName)
+            Name = new UpdateField<RecordName?>(UpdatedName)
         };
 
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -67,7 +65,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRunningRecordRequest
         {
-            Description = new UpdateField<RecordDescription>(UpdatedDescription)
+            Description = new UpdateField<RecordDescription?>(UpdatedDescription)
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);

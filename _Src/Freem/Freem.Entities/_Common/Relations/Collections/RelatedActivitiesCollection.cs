@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
+﻿using Freem.Entities.Abstractions.Relations.Collection;
+using Freem.Entities.Activities;
 using Freem.Entities.Collections;
 using Freem.Entities.Identifiers;
 
@@ -26,7 +26,12 @@ public sealed class RelatedActivitiesCollection : RelatedEntitiesCollection<Acti
     }
 
     public RelatedActivitiesCollection(IEnumerable<Activity> entities)
-        : this(Enumerable.Empty<ActivityIdentifier>(), entities)
+        : this([], entities)
+    {
+    }
+
+    public RelatedActivitiesCollection(IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> collection)
+        : this(collection.Identifiers, [])
     {
     }
 

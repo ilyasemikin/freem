@@ -2,7 +2,6 @@
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 

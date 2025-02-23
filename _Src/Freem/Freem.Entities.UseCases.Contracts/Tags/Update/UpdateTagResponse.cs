@@ -1,10 +1,12 @@
-﻿using Freem.UseCases.Contracts.Abstractions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Update;
 
 public sealed class UpdateTagResponse : IResponse<UpdateTagErrorCode>
 {
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Error<UpdateTagErrorCode>? Error { get; }

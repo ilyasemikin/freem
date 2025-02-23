@@ -1,7 +1,6 @@
 ﻿namespace Freem.Entities.UseCases.Contracts;
 
 public sealed class UpdateField<TValue>
-    where TValue : notnull
 {
     public TValue Value { get; }
 

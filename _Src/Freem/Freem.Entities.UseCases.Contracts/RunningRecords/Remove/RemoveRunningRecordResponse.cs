@@ -6,7 +6,7 @@ namespace Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
 
 public sealed class RemoveRunningRecordResponse : IResponse<RemoveRunningRecordErrorCode>
 {
-    [MemberNotNullWhen(true)]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Error<RemoveRunningRecordErrorCode>? Error { get; }

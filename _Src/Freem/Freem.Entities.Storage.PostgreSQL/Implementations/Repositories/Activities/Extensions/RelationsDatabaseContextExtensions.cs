@@ -4,7 +4,6 @@ using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities.Extensions;
 

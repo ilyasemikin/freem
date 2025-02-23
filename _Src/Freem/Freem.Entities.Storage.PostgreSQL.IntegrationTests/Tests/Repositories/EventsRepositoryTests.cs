@@ -6,7 +6,6 @@ using Freem.Entities.Activities.Events.Created;
 using Freem.Entities.Activities.Events.Removed;
 using Freem.Entities.Activities.Events.Unarchived;
 using Freem.Entities.Activities.Events.Updated;
-using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Records.Events.Created;
 using Freem.Entities.Records.Events.Removed;
@@ -20,7 +19,6 @@ using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base
 using Freem.Entities.Tags.Events.Created;
 using Freem.Entities.Tags.Events.Removed;
 using Freem.Entities.Tags.Events.Updated;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;

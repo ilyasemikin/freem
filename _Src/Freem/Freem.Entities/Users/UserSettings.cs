@@ -6,5 +6,5 @@ public sealed class UserSettings
 {
     public static UserSettings Default { get; } = new();
     
-    public DayUtcOffset DayUtcOffset { get; set; }
+    public DayUtcOffset DayUtcOffset { get; set; } = DayUtcOffset.Default;
 }

@@ -8,6 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+      <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
+      <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj" />
+      <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+      <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+      <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+      <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj" />
+      <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />
     </ItemGroup>
 

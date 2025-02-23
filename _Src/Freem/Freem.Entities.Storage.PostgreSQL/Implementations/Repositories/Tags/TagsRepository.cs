@@ -10,7 +10,6 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Sorting.Extensions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;

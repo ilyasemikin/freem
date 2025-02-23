@@ -1,4 +1,6 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
+﻿using Freem.Entities.Models.Users;
+using Freem.Entities.UseCases.Contracts;
+using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -25,7 +27,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateUserSettingsRequest
         {
-            UtcOffset = UpdatedUtcOffset
+            UtcOffset = new UpdateField<DayUtcOffset>(UpdatedUtcOffset)
         };
         
         var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, UpdateUserSettingsResponse>(_context, request);

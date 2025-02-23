@@ -8,6 +8,7 @@ namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 public sealed class StartRunningRecordResponse : IResponse<StartRunningRecordErrorCode>
 {
     [MemberNotNullWhen(true, nameof(RunningRecord))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public RunningRecord? RunningRecord { get; }

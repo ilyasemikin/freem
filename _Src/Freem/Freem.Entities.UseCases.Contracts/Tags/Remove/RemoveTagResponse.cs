@@ -1,10 +1,12 @@
-﻿using Freem.UseCases.Contracts.Abstractions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Remove;
 
 public sealed class RemoveTagResponse : IResponse<RemoveTagErrorCode>
 {
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Error<RemoveTagErrorCode>? Error { get; }

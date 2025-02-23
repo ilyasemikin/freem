@@ -2,5 +2,5 @@
 
 public sealed class GetUserSettingsRequest
 {
-    
+    public static GetUserSettingsRequest Instance { get; } = new();
 }

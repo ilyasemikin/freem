@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Models.Activities;

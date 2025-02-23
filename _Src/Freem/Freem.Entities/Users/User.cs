@@ -7,7 +7,6 @@ using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
-using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Users;
 

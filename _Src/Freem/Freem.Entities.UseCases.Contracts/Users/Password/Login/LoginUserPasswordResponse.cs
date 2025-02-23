@@ -8,6 +8,7 @@ public sealed class LoginUserPasswordResponse : IResponse<LoginUserPasswordError
 {
     [MemberNotNullWhen(true, nameof(AccessToken))]
     [MemberNotNullWhen(true, nameof(RefreshToken))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public string? AccessToken { get; }

@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Collections;
+﻿using Freem.Entities.Abstractions.Relations.Collection;
+using Freem.Entities.Collections;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 
 // ReSharper disable once CheckNamespace
 namespace Freem.Entities.Relations.Collections;
@@ -30,6 +30,11 @@ public sealed class RelatedTagsCollection : RelatedEntitiesCollection<Tag, TagId
 
     public RelatedTagsCollection(IEnumerable<Tag> entities)
         : this([], entities)
+    {
+    }
+
+    public RelatedTagsCollection(IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier> collection)
+        : this(collection.Identifiers)
     {
     }
 

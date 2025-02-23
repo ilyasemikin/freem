@@ -1,11 +1,9 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Identifiers;
 using Freem.Entities.Models.Records;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Records.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -49,7 +47,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRecordRequest(_recordId)
         {
-            Name = new UpdateField<RecordName>(UpdatedName)
+            Name = new UpdateField<RecordName?>(UpdatedName)
         };
 
         var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
@@ -69,7 +67,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRecordRequest(_recordId)
         {
-            Description = new UpdateField<RecordDescription>(UpdatedDescription)
+            Description = new UpdateField<RecordDescription?>(UpdatedDescription)
         };
         
         var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
@@ -231,7 +229,7 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRecordRequest(_recordId)
         {
-            Name = new UpdateField<RecordName>(UpdatedName),
+            Name = new UpdateField<RecordName?>(UpdatedName),
         };
         
         var exception = await Record.ExceptionAsync(async () => await Context

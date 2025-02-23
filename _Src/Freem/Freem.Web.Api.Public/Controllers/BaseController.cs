@@ -1,7 +1,7 @@
 ﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Freem.Web.Api.Public.Controllers.V1.Base;
+namespace Freem.Web.Api.Public.Controllers;
 
 [ApiController]
 [Consumes(MediaTypeNames.Application.Json)]

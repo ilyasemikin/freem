@@ -9,6 +9,7 @@ namespace Freem.Entities.UseCases.Contracts.Tags.Get;
 public sealed class GetTagResponse : IResponse<GetTagErrorCode>
 {
     [MemberNotNullWhen(true, nameof(Tag))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Tag? Tag { get; }

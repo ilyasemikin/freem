@@ -9,6 +9,7 @@ namespace Freem.Entities.UseCases.Contracts.Records.Get;
 public sealed class GetRecordResponse : IResponse<GetRecordErrorCode>
 {
     [MemberNotNullWhen(true, nameof(Record))]
+    [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
     public Record? Record { get; }

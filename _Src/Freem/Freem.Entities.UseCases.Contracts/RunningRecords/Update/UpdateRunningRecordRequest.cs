@@ -5,8 +5,8 @@ namespace Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 
 public sealed class UpdateRunningRecordRequest
 {
-    public UpdateField<RecordName>? Name { get; init; }
-    public UpdateField<RecordDescription>? Description { get; init; }
+    public UpdateField<RecordName?>? Name { get; init; }
+    public UpdateField<RecordDescription?>? Description { get; init; }
     
     public UpdateField<RelatedActivitiesCollection>? Activities { get; init; }
     public UpdateField<RelatedTagsCollection>? Tags { get; init; }
