@@ -31,7 +31,12 @@ public sealed class UpdateTagController : BaseController
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateAsync(
         [Required] [FromRoute] string tagId,
         [Required] [FromBody] ApiUpdateTagRequest body,
         CancellationToken cancellationToken = default)
@@ -55,8 +60,14 @@ public sealed class UpdateTagController : BaseController
         };
     }
 
-    private static ActionResult CreateFailure(Error<UpdateTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<UpdateTagErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UpdateTagErrorCode.NothingToUpdate => new BadRequestResult(),
+            UpdateTagErrorCode.TagNotFound => new NotFoundResult(),
+            UpdateTagErrorCode.TagNameAlreadyExists => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

@@ -76,7 +76,6 @@ public class UpdateActivityController : BaseController
         {
             UpdateActivityErrorCode.ActivityNotFound => new NotFoundResult(),
             UpdateActivityErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
-            UpdateActivityErrorCode.RelatedUnknownNotFound => new StatusCodeResult(StatusCodes.Status500InternalServerError),
             UpdateActivityErrorCode.NothingToUpdate => new BadRequestResult(),
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
         };

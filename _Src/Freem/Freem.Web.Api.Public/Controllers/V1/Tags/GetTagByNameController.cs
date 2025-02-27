@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Tags;
 using Freem.Entities.Tags;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
+using Freem.Entities.UseCases.Contracts.Tags.GetByName;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Tags;
@@ -12,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 
 [Authorize]
-[Route("api/v1/tags/by-name/{tagId}")]
+[Route("api/v1/tags/by-name/{tagName}")]
 public sealed class GetTagByNameController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -29,33 +31,43 @@ public sealed class GetTagByNameController : BaseController
         _executor = executor;
     }
 
-    public async Task<ActionResult<TagResponse>> GetAsync(
-        [Required] [FromRoute] string tagId,
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TagResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
+        [Required] [FromRoute] string tagName,
         CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();
-        var request = Map(tagId);
+        var request = Map(tagName);
 
-        var response = await _executor.ExecuteAsync<GetTagRequest, GetTagResponse>(context, request, cancellationToken);
+        var response = await _executor.ExecuteAsync<GetTagByNameRequest, GetTagByNameResponse>(context, request, cancellationToken);
 
         return response.Success
             ? CreateSuccess(response.Tag)
             : CreateFailure(response.Error);
     }
 
-    private static GetTagRequest Map(string tagIdString)
+    private static GetTagByNameRequest Map(string tagNameString)
     {
-        var tagId = new TagIdentifier(tagIdString);
-        return new GetTagRequest(tagId);
+        var tagName = new TagName(tagNameString);
+        return new GetTagByNameRequest(tagName);
     }
 
-    private static TagResponse CreateSuccess(Tag tag)
+    private static IActionResult CreateSuccess(Tag tag)
     {
-        return new TagResponse(tag.Id, tag.Name);
+        var response = new TagResponse(tag.Id, tag.Name);
+        return new OkObjectResult(response);
     }
 
-    private static TagResponse CreateFailure(Error<GetTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetTagByNameErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetTagByNameErrorCode.TagNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

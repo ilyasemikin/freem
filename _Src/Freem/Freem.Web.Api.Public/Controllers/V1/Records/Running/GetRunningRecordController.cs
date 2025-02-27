@@ -28,7 +28,11 @@ public sealed class GetRunningRecordController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<RunningRecordResponse>> GetAsync(CancellationToken cancellationToken = default)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRunningRecordRequest))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();
         var request = GetRunningRecordRequest.Instance;
@@ -40,17 +44,23 @@ public sealed class GetRunningRecordController : BaseController
             : CreateFailure(response.Error);
     }
 
-    private static RunningRecordResponse CreateSuccess(RunningRecord record)
+    private static IActionResult CreateSuccess(RunningRecord record)
     {
-        return new RunningRecordResponse(record.Id, record.Activities, record.Tags)
+        var response = new RunningRecordResponse(record.Id, record.Activities, record.Tags)
         {
             Name = record.Name,
             Description = record.Description
         };
+
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<RunningRecordResponse> CreateFailure(Error<GetRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetRunningRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetRunningRecordErrorCode.RunningRecordNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

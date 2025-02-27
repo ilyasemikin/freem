@@ -60,6 +60,7 @@ public static class ServiceCollectionExtensions
         builder.Add<RemoveTagUseCase>();
         
         builder.Add<GetTagUseCase>();
+        builder.Add<GetTagByNameUseCase>();
         builder.Add<ListTagUseCase>();
         
         return builder;

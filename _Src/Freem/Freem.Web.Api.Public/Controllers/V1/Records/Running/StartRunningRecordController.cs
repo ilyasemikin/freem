@@ -35,7 +35,11 @@ public sealed class StartRunningRecordController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> StartAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> StartAsync(
         [Required] [FromBody] ApiStartRunningRecordRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -60,8 +64,13 @@ public sealed class StartRunningRecordController : BaseController
         };
     }
 
-    private static ActionResult CreateFailure(Error<StartRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<StartRunningRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            StartRunningRecordErrorCode.RelatedActivitiesNotFound => new UnprocessableEntityResult(),
+            StartRunningRecordErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.Identifiers;
+using Freem.Entities.Models.Tags;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
@@ -110,5 +111,17 @@ internal sealed class TagsRepository : ITagsRepository
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
+    }
+    
+    public async Task<SearchEntityResult<Tag>> FindByNameAsync(
+        TagName name, 
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+
+        return await _database.Tags.FindAsync(
+            e => e.Name == name,
+            TagMapper.MapToDomainEntity,
+            cancellationToken);
     }
 }

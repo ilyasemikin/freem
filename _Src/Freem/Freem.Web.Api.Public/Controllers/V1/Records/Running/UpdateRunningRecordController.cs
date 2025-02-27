@@ -7,6 +7,7 @@ using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Mappers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateRunningRecordRequest = Freem.Web.Api.Public.Contracts.Records.Running.UpdateRunningRecordRequest;
 using UseCaseUpdateRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Update.UpdateRunningRecordRequest;
@@ -32,7 +33,13 @@ public sealed class UpdateRunningRecordController : BaseController
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateAsync(
         [Required] [FromBody] ApiUpdateRunningRecordRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -65,8 +72,15 @@ public sealed class UpdateRunningRecordController : BaseController
         };
     }
 
-    private static ActionResult CreateFailure(Error<UpdateRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<UpdateRunningRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UpdateRunningRecordErrorCode.RunningRecordNotFound => new NotFoundResult(),
+            UpdateRunningRecordErrorCode.NothingToUpdate => new BadRequestResult(),
+            UpdateRunningRecordErrorCode.RelatedActivitiesNotFound => new UnprocessableEntityResult(),
+            UpdateRunningRecordErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

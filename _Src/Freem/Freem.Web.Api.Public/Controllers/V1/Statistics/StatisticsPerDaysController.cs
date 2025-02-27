@@ -31,7 +31,11 @@ public sealed class StatisticsPerDaysController : BaseController
         _executor = executor;
     }
 
-    public async Task<ActionResult<ApiStatisticsPerDaysResponse>> GetAsync(
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiStatisticsPerDaysResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
         [Required] [FromQuery] ApiStatisticsPerDaysRequest query,
         CancellationToken cancellationToken = default)
     {
@@ -50,13 +54,18 @@ public sealed class StatisticsPerDaysController : BaseController
         return new UseCaseStatisticsPerDaysRequest(request.Period);
     }
 
-    private static ApiStatisticsPerDaysResponse CreateSuccess(IReadOnlyDictionary<DateOnly, TimeStatistics> statistics)
+    private static IActionResult CreateSuccess(IReadOnlyDictionary<DateOnly, TimeStatistics> statistics)
     {
-        return new ApiStatisticsPerDaysResponse(statistics);
+        var response = new ApiStatisticsPerDaysResponse(statistics);
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<ApiStatisticsPerDaysResponse> CreateFailure(Error<StatisticsPerDaysErrorCode> error)
+    private static IActionResult CreateFailure(Error<StatisticsPerDaysErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            StatisticsPerDaysErrorCode.UserNotFound => new UnauthorizedResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

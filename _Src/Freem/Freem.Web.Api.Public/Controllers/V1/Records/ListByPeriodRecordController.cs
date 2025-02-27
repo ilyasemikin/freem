@@ -31,7 +31,10 @@ public sealed class ListByPeriodRecordController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<RecordResponse>>> ListAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<RecordResponse>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ListByPeriodRequest query,
         CancellationToken cancellationToken = default)
     {
@@ -41,7 +44,7 @@ public sealed class ListByPeriodRecordController : BaseController
         var response = await _executor.ExecuteAsync<PeriodListRequest, PeriodListResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? Ok(CreateSuccess(Response, response.Records, response.TotalCount))
+            ? CreateSuccess(Response, response.Records, response.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -51,24 +54,31 @@ public sealed class ListByPeriodRecordController : BaseController
         return new PeriodListRequest(request.Period, limit);
     }
 
-    private static async IAsyncEnumerable<RecordResponse> CreateSuccess(
+    private static IActionResult CreateSuccess(
         HttpResponse response, IReadOnlyList<Record> records, int totalCount)
     {
         response.Headers.Append(HeaderNames.ItemsCount, records.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
 
-        foreach (var record in records)
-            yield return new RecordResponse(record.Id, record.Activities, record.Tags)
-            {
-                Name = record.Name,
-                Description = record.Description
-            };
+        var value = MapRecords(records);
+        return new OkObjectResult(value);
 
-        await Task.CompletedTask;
+        static async IAsyncEnumerable<RecordResponse> MapRecords(IReadOnlyList<Record> records)
+        {
+            foreach (var record in records)
+                yield return new RecordResponse(record.Id, record.Activities, record.Tags)
+                {
+                    Name = record.Name,
+                    Description = record.Description
+                };
+        }
     }
 
-    private static ActionResult<IAsyncEnumerable<RecordResponse>> CreateFailure(Error<PeriodListErrorCode> error)
+    private static IActionResult CreateFailure(Error<PeriodListErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

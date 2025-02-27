@@ -7,6 +7,7 @@ using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Records;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
@@ -30,7 +31,11 @@ public sealed class GetRecordController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<RecordResponse>> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRecordResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
         [Required] [FromRoute] string recordId,
         CancellationToken cancellationToken = default)
     {
@@ -50,17 +55,23 @@ public sealed class GetRecordController : BaseController
         return new GetRecordRequest(recordId);
     }
 
-    private static RecordResponse CreateSuccess(Record record)
+    private static IActionResult CreateSuccess(Record record)
     {
-        return new RecordResponse(record.Id, record.Activities, record.Tags)
+        var response = new RecordResponse(record.Id, record.Activities, record.Tags)
         {
             Name = record.Name,
             Description = record.Description
         };
+        
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<RecordResponse> CreateFailure(Error<GetRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetRecordErrorCode.RecordNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

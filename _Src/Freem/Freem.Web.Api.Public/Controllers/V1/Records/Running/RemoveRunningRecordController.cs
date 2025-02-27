@@ -26,7 +26,11 @@ public sealed class RemoveRunningRecordController : BaseController
     }
 
     [HttpDelete]
-    public async Task<ActionResult> RemoveAsync(CancellationToken cancellationToken = default)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();
         var request = RemoveRunningRecordRequest.Instance;
@@ -38,8 +42,12 @@ public sealed class RemoveRunningRecordController : BaseController
             : CreateFailure(response.Error);
     }
 
-    private static ActionResult CreateFailure(Error<RemoveRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<RemoveRunningRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RemoveRunningRecordErrorCode.RunningRecordNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

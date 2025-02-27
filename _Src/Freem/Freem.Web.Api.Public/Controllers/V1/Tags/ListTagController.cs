@@ -33,7 +33,10 @@ public sealed class ListTagController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<TagResponse>>> ListAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<TagResponse>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListTagRequest query,
         CancellationToken cancellationToken = default)
     {
@@ -43,7 +46,7 @@ public sealed class ListTagController : BaseController
         var response = await _executor.ExecuteAsync<UseCaseListTagRequest, ListTagResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? Ok(CreateSuccess(Response, response.Tags, response.TotalCount))
+            ? CreateSuccess(Response, response.Tags, response.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -54,20 +57,27 @@ public sealed class ListTagController : BaseController
         return new UseCaseListTagRequest(limit, offset);
     }
 
-    private static async IAsyncEnumerable<TagResponse> CreateSuccess(
+    private static IActionResult CreateSuccess(
         HttpResponse response, IReadOnlyList<Tag> tags, int totalCount)
     {
         response.Headers.Append(HeaderNames.ItemsCount, tags.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
 
-        foreach (var tag in tags)
-            yield return new TagResponse(tag.Id, tag.Name);
+        var value = MapTags(tags);
+        return new OkObjectResult(value);
 
-        await Task.CompletedTask;
+        static async IAsyncEnumerable<TagResponse> MapTags(IEnumerable<Tag> tags)
+        {
+            foreach (var tag in tags)
+                yield return new TagResponse(tag.Id, tag.Name);
+        }
     }
 
-    private static ActionResult<IAsyncEnumerable<TagResponse>> CreateFailure(Error<ListTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<ListTagErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

@@ -5,6 +5,7 @@ using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
@@ -28,7 +29,11 @@ public sealed class RemoveRecordController : BaseController
     }
     
     [HttpDelete]
-    public async Task<ActionResult> RemoveAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveAsync(
         [Required] [FromRoute] string recordId,
         CancellationToken cancellationToken = default)
     {
@@ -48,8 +53,12 @@ public sealed class RemoveRecordController : BaseController
         return new RemoveRecordRequest(recordId);
     }
 
-    private static ActionResult CreateFailure(Error<RemoveRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<RemoveRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RemoveRecordErrorCode.RecordNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

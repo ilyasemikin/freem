@@ -32,7 +32,11 @@ public sealed class CreateTagController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiCreateTagResponse>> CreateAsync(
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateTagResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateAsync(
         [Required] [FromBody] ApiCreateTagRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -51,13 +55,21 @@ public sealed class CreateTagController : BaseController
         return new UseCaseCreateTagRequest(request.Name);
     }
 
-    private static ApiCreateTagResponse CreateSuccess(Tag tag)
+    private static IActionResult CreateSuccess(Tag tag)
     {
-        return new ApiCreateTagResponse(tag.Id);
+        var response = new ApiCreateTagResponse(tag.Id);
+        return new CreatedResult()
+        {
+            Value = response
+        };
     }
 
-    private static ActionResult<ApiCreateTagResponse> CreateFailure(Error<CreateTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<CreateTagErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            CreateTagErrorCode.TagNameAlreadyExists => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

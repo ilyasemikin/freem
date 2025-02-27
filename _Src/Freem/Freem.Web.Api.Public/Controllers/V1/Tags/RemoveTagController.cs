@@ -28,7 +28,11 @@ public sealed class RemoveTagController : BaseController
     }
 
     [HttpDelete]
-    public async Task<ActionResult> RemoveAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveAsync(
         [Required] [FromRoute] string tagId,
         CancellationToken cancellationToken = default)
     {
@@ -48,8 +52,12 @@ public sealed class RemoveTagController : BaseController
         return new RemoveTagRequest(tagId);
     }
 
-    private static ActionResult CreateFailure(Error<RemoveTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<RemoveTagErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RemoveTagErrorCode.TagNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

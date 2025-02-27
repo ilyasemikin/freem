@@ -7,6 +7,7 @@ using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Tags;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Tags;
@@ -29,7 +30,12 @@ public sealed class GetTagController : BaseController
         _executor = executor;
     }
 
-    public async Task<ActionResult<TagResponse>> GetAsync(
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetTagResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
         [Required] [FromRoute] string tagId,
         CancellationToken cancellationToken = default)
     {
@@ -49,13 +55,18 @@ public sealed class GetTagController : BaseController
         return new GetTagRequest(tagId);
     }
 
-    private static TagResponse CreateSuccess(Tag tag)
+    private static IActionResult CreateSuccess(Tag tag)
     {
-        return new TagResponse(tag.Id, tag.Name);
+        var response = new TagResponse(tag.Id, tag.Name);
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<TagResponse> CreateFailure(Error<GetTagErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetTagErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetTagErrorCode.TagNotFound => new NotFoundResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

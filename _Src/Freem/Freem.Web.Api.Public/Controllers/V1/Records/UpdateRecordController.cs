@@ -33,7 +33,13 @@ public sealed class UpdateRecordController : BaseController
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateAsync(
         [Required] [FromRoute] string recordId,
         [Required] [FromBody] ApiUpdateRecordRequest body,
         CancellationToken cancellationToken = default)
@@ -69,8 +75,15 @@ public sealed class UpdateRecordController : BaseController
         };
     }
 
-    private static ActionResult CreateFailure(Error<UpdateRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error<UpdateRecordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UpdateRecordErrorCode.RecordNotFound => new NotFoundResult(),
+            UpdateRecordErrorCode.RelatedActivitiesNotFound => new UnprocessableEntityResult(),
+            UpdateRecordErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
+            UpdateRecordErrorCode.NothingToUpdate => new BadRequestResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }
