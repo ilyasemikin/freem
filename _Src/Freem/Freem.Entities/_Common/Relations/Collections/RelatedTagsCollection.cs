@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Collections;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Relations.Collections.Base;
 using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 
 // ReSharper disable once CheckNamespace
 namespace Freem.Entities.Relations.Collections;

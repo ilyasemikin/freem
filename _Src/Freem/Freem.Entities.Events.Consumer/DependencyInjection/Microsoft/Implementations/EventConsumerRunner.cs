@@ -2,7 +2,7 @@
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events.Consumer.Abstractions;
 using Freem.Entities.Events.Consumer.Implementations;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.Events.Consumer.DependencyInjection.Microsoft.Implementations;

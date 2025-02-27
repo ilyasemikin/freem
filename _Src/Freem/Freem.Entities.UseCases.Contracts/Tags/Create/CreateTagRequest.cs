@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Models.Tags;
+﻿using Freem.Entities.Tags.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Create;
 

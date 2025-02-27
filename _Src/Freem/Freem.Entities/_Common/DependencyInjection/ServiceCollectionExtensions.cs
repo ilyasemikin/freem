@@ -2,16 +2,20 @@
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Comparers;
+using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Records;
 using Freem.Entities.Records.Comparers;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.RunningRecords;
 using Freem.Entities.RunningRecords.Comparers;
+using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Comparers;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Comparers;
+using Freem.Entities.Users.Identifiers;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Identifiers.Implementations.Generators.DependencyInjection.Microsoft;
@@ -67,8 +71,8 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddEntitiesIdentifiersNameConverters(this IServiceCollection services)
     {
-        services.TryAddSingleton<EntityIdentifierFactory>();
-        services.TryAddSingleton<EntityIdentifierNameProvider>();
+        services.TryAddSingleton(EntityIdentifierFactory.Instance);
+        services.TryAddSingleton(EntityIdentifierNameProvider.Instance);
         
         return services;
     }

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Models.Users;
+﻿using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.Users;
 

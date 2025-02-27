@@ -2,6 +2,7 @@
 using Freem.Entities.Events.Producer.Kafka.Implementations;
 using Freem.Entities.Events.Producer.Kafka.Models;
 using Freem.Entities.Serialization.Json;
+using Freem.Entities.Serialization.Json.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;

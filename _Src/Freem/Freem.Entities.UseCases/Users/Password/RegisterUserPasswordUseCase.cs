@@ -1,12 +1,12 @@
 ﻿using Freem.Credentials.Password.Abstractions;
 using Freem.Credentials.Password.Implementations;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.Users;
+using Freem.Entities.Users.Identifiers;
 using Freem.Entities.Users.Models;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;

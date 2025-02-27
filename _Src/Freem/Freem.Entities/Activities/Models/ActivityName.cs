@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Models.Activities;
+﻿namespace Freem.Entities.Activities.Models;
 
 public sealed class ActivityName : IEquatable<ActivityName>
 {

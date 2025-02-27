@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Activities.Identifiers;
 
 namespace Freem.Entities.Statistics.Time;
 

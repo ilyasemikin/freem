@@ -1,10 +1,11 @@
 ﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;

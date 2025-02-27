@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
+﻿using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
+using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;

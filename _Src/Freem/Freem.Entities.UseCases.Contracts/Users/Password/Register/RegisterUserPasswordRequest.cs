@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Models.Users;
+﻿using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Users.Password.Register;
 
@@ -6,12 +6,12 @@ public class RegisterUserPasswordRequest
 {
     public Nickname Nickname { get; }
     
-    public Models.Users.Login Login { get; }
-    public Models.Users.Password Password { get; }
+    public Entities.Users.Models.Login Login { get; }
+    public Entities.Users.Models.Password Password { get; }
 
     public RegisterUserPasswordRequest(
         Nickname nickname, 
-        Models.Users.Login login, Models.Users.Password password)
+        Entities.Users.Models.Login login, Entities.Users.Models.Password password)
     {
         ArgumentNullException.ThrowIfNull(nickname);
         ArgumentNullException.ThrowIfNull(login);

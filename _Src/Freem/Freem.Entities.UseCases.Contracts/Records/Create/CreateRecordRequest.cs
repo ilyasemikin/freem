@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Models.Records;
+﻿using Freem.Entities.Records.Models;
 using Freem.Entities.Relations.Collections;
 using Freem.Time.Models;
 

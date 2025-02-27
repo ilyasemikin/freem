@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.Identifiers;
+namespace Freem.Entities.Records.Identifiers;
 
 public sealed class RecordIdentifier : StringIdentifier, IEntityIdentifier
 {

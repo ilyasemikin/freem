@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Models.Activities;
+﻿using Freem.Entities.Activities.Identifiers;
+using Freem.Entities.Activities.Models;
 using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Update;

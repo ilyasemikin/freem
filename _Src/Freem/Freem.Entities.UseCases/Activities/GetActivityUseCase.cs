@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.UseCases.Abstractions;

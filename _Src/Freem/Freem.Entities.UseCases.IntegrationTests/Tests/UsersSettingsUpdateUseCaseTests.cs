@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Models.Users;
-using Freem.Entities.UseCases.Contracts;
+﻿using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Freem.Entities.Users.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 

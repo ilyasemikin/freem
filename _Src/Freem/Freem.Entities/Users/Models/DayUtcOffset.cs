@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Models.Users;
+﻿namespace Freem.Entities.Users.Models;
 
 public sealed class DayUtcOffset
 {

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Models.Records;
+﻿using Freem.Entities.Records.Models;
 using Freem.Entities.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;

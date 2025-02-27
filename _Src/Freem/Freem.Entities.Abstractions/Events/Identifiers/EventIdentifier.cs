@@ -24,6 +24,10 @@ public sealed class EventIdentifier : StringIdentifier, IEntityIdentifier
         return base.GetHashCode();
     }
 
+    public override string ToString()
+    {
+        return base.ToString();
+    }
 
     public static implicit operator EventIdentifier(string value)
     {

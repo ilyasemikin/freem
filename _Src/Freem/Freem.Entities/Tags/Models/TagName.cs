@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Models.Tags;
+﻿namespace Freem.Entities.Tags.Models;
 
 public sealed class TagName : IEquatable<TagName>
 {

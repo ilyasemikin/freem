@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Records;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.UseCases.Abstractions;

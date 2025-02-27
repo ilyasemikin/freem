@@ -1,4 +1,4 @@
-﻿namespace Freem.Entities.Models.Records;
+﻿namespace Freem.Entities.Records.Models;
 
 public sealed class RecordDescription : IEquatable<RecordDescription>
 {

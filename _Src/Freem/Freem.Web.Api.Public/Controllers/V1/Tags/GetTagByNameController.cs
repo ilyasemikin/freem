@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Identifiers;
-using Freem.Entities.Models.Tags;
 using Freem.Entities.Tags;
+using Freem.Entities.Tags.Models;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Contracts.Tags.GetByName;

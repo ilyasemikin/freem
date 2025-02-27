@@ -2,12 +2,12 @@
 
 public class UpdateLoginCredentialsRequest
 {
-    public Models.Users.Password OldPassword { get; }
-    public Models.Users.Password NewPassword { get; }
+    public Entities.Users.Models.Password OldPassword { get; }
+    public Entities.Users.Models.Password NewPassword { get; }
     
     public UpdateLoginCredentialsRequest(
-        Models.Users.Password oldPassword, 
-        Models.Users.Password newPassword)
+        Entities.Users.Models.Password oldPassword, 
+        Entities.Users.Models.Password newPassword)
     {
         ArgumentNullException.ThrowIfNull(oldPassword);
         ArgumentNullException.ThrowIfNull(newPassword);

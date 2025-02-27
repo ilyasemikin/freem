@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Records;
+﻿using Freem.Entities.Records;
+using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;

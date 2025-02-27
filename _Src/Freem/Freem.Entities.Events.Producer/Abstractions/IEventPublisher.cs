@@ -1,6 +1,6 @@
 ﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Events.Producer.Abstractions;
 

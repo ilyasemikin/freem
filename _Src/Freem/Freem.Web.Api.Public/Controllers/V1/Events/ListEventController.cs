@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Identifiers;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.UseCases.Contracts.Filter;
+using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts;

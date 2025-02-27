@@ -1,8 +1,8 @@
 ﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Base.Write;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Identifiers.Abstractions.Generators;

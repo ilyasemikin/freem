@@ -1,7 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
 using Freem.Identifiers.Base;
 
-namespace Freem.Entities.Identifiers;
+namespace Freem.Entities.Activities.Identifiers;
 
 public sealed class ActivityIdentifier : StringIdentifier, IEntityIdentifier
 {

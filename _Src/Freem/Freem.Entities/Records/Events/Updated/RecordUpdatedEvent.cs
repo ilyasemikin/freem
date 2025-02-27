@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Records.Identifiers;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Records.Events.Updated;
 

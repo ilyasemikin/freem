@@ -4,7 +4,7 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
 
-namespace Freem.Entities.Collections;
+namespace Freem.Entities.Relations.Collections.Base;
 
 public class RelatedEntitiesCollection<TEntity, TEntityIdentifier> 
     : IRelatedEntitiesCollection<TEntity, TEntityIdentifier>

@@ -4,9 +4,9 @@ using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Users.Identifiers;
 
-namespace Freem.Entities.Serialization.Json;
+namespace Freem.Entities.Serialization.Json.Events;
 
 public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>>
 {

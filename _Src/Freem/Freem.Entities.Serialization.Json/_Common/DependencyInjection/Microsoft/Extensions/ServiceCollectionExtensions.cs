@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Freem.Entities.Serialization.Json.Events;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Freem.Entities.Serialization.Json.DependencyInjection.Microsoft.Extensions;

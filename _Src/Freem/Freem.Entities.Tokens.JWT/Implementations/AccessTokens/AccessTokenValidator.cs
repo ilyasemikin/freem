@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+﻿using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
+using Freem.Entities.Users.Identifiers;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 

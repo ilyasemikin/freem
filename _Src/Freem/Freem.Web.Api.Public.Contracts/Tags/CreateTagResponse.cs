@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.Tags;
 

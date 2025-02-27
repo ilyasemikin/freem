@@ -1,6 +1,4 @@
-﻿using Freem.Entities.Identifiers;
-using Freem.Entities.Models.Tags;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
@@ -11,6 +9,8 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Tags;
+using Freem.Entities.Tags.Identifiers;
+using Freem.Entities.Tags.Models;
 using Freem.Sorting.Extensions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;

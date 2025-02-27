@@ -1,11 +1,12 @@
 ﻿using Freem.Entities.Activities;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Tags;
+using Freem.Entities.Users.Identifiers;
 using DatabaseActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
-using EntityActivityStatus = Freem.Entities.Models.Activities.ActivityStatus;
+using EntityActivityStatus = Freem.Entities.Activities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 

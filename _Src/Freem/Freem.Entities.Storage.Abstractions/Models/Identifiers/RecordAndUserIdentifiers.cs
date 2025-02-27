@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Identifiers;
+using Freem.Entities.Records.Identifiers;
+using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.Abstractions.Models.Identifiers;
 

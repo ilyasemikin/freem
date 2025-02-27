@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Activities.Identifiers;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Get;
 

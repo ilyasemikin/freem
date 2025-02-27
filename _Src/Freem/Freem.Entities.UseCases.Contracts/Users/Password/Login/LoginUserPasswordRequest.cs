@@ -2,10 +2,10 @@
 
 public sealed class LoginUserPasswordRequest
 {
-    public Models.Users.Login Login { get; }
-    public Models.Users.Password Password { get; }
+    public Entities.Users.Models.Login Login { get; }
+    public Entities.Users.Models.Password Password { get; }
 
-    public LoginUserPasswordRequest(Models.Users.Login login, Models.Users.Password password)
+    public LoginUserPasswordRequest(Entities.Users.Models.Login login, Entities.Users.Models.Password password)
     {
         ArgumentNullException.ThrowIfNull(login);
         ArgumentNullException.ThrowIfNull(password);

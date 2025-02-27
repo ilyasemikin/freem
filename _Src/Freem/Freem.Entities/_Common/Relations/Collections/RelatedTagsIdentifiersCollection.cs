@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Collections;
-using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Relations.Collections.Base;
+using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Entities.Relations.Collections;
 

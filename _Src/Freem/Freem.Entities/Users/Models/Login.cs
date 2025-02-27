@@ -2,7 +2,7 @@
 using Freem.Validation;
 using Freem.Validation.Extensions;
 
-namespace Freem.Entities.Models.Users;
+namespace Freem.Entities.Users.Models;
 
 public sealed class Login : 
     IEquatable<Login>,

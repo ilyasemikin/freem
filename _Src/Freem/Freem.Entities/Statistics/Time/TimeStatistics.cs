@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Identifiers;
+﻿using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records;
 using Freem.Time;
 using Freem.Time.Models;
