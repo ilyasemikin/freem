@@ -26,7 +26,10 @@ public sealed class RefreshTokensController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult<RefreshTokensResponse>> RefreshAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokensResponse))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RefreshAsync(
         [Required] [FromBody] RefreshTokensRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -45,13 +48,19 @@ public sealed class RefreshTokensController : BaseController
         return new RefreshUserAccessTokenRequest(request.RefreshToken);
     }
 
-    private static RefreshTokensResponse CreateSuccess(string accessToken, string refreshToken)
+    private static IActionResult CreateSuccess(string accessToken, string refreshToken)
     {
-        return new RefreshTokensResponse(accessToken, refreshToken);
+        var response = new RefreshTokensResponse(accessToken, refreshToken);
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<RefreshTokensResponse> CreateFailure(Error<RefreshUserAccessTokenErrorCode> error)
+    private static IActionResult CreateFailure(Error<RefreshUserAccessTokenErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RefreshUserAccessTokenErrorCode.TokenInvalid => new ForbidResult(),
+            RefreshUserAccessTokenErrorCode.UserNotFound => new ForbidResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

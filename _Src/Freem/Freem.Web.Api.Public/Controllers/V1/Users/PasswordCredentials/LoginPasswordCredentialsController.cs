@@ -26,7 +26,10 @@ public sealed class LoginPasswordCredentialsController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult<LoginPasswordCredentialsResponse>> LoginAsync(
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginPasswordCredentialsResponse))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> LoginAsync(
         [Required] [FromBody] LoginPasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -45,13 +48,20 @@ public sealed class LoginPasswordCredentialsController : BaseController
         return new LoginUserPasswordRequest(request.Login, request.Password);
     }
 
-    private static LoginPasswordCredentialsResponse CreateSuccess(string accessToken, string refreshToken)
+    private static IActionResult CreateSuccess(string accessToken, string refreshToken)
     {
-        return new LoginPasswordCredentialsResponse(accessToken, refreshToken);
+        var response = new LoginPasswordCredentialsResponse(accessToken, refreshToken);
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<LoginPasswordCredentialsResponse> CreateFailure(Error<LoginUserPasswordErrorCode> error)
+    private static IActionResult CreateFailure(Error<LoginUserPasswordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            LoginUserPasswordErrorCode.UserNotFound => new ForbidResult(),
+            LoginUserPasswordErrorCode.PasswordCredentialsNotAllowed => new ForbidResult(),
+            LoginUserPasswordErrorCode.InvalidCredentials => new ForbidResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

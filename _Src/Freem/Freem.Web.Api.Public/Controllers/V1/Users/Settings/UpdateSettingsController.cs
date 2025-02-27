@@ -30,7 +30,11 @@ public sealed class UpdateSettingsController : BaseController
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateAsync(
         [Required] [FromBody] ApiUpdateUserSettingsRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -52,8 +56,13 @@ public sealed class UpdateSettingsController : BaseController
         };
     }
 
-    private static ActionResult CreateFailure(Error<UpdateUserSettingsErrorCode> error)
+    private static IActionResult CreateFailure(Error<UpdateUserSettingsErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UpdateUserSettingsErrorCode.UserNotFound => new UnauthorizedResult(),
+            UpdateUserSettingsErrorCode.NothingToDo => new BadRequestResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

@@ -26,7 +26,10 @@ public sealed class RegisterPasswordCredentialsController : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> RegisterAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RegisterAsync(
         [Required] [FromBody] RegisterPasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -45,8 +48,12 @@ public sealed class RegisterPasswordCredentialsController : BaseController
         return new RegisterUserPasswordRequest(request.Nickname, request.Login, request.Password);
     }
 
-    private static ActionResult CreateFailure(Error<RegisterUserPasswordErrorCode> error)
+    private static IActionResult CreateFailure(Error<RegisterUserPasswordErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            RegisterUserPasswordErrorCode.LoginAlreadyUsed => new UnprocessableEntityResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

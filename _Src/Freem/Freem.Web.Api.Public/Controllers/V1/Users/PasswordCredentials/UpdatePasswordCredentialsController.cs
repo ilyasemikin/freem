@@ -28,7 +28,12 @@ public sealed class UpdatePasswordCredentialsController : BaseController
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateAsync(
         [Required] [FromBody] UpdatePasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -47,8 +52,14 @@ public sealed class UpdatePasswordCredentialsController : BaseController
         return new UpdateLoginCredentialsRequest(request.OldPassword, request.NewPassword);
     }
 
-    private static ActionResult CreateFailure(Error<UpdateLoginCredentialsErrorCode> error)
+    private static IActionResult CreateFailure(Error<UpdateLoginCredentialsErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            UpdateLoginCredentialsErrorCode.UserNotFound => new UnauthorizedResult(),
+            UpdateLoginCredentialsErrorCode.PasswordCredentialsNotAllowed => new UnprocessableEntityResult(),
+            UpdateLoginCredentialsErrorCode.InvalidCredentials => new ForbidResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

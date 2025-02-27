@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
+using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
@@ -28,7 +29,10 @@ public sealed class GetUserSettingsController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<UserSettingsResponse>> GetAsync(CancellationToken cancellationToken = default)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSettingsResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();
         var request = GetUserSettingsRequest.Instance;
@@ -40,13 +44,18 @@ public sealed class GetUserSettingsController : BaseController
             : CreateFailure(response.Error);
     }
 
-    private static UserSettingsResponse CreateSuccess(UserSettings settings)
+    private static IActionResult CreateSuccess(UserSettings settings)
     {
-        return new UserSettingsResponse(settings.DayUtcOffset);
+        var response = new UserSettingsResponse(settings.DayUtcOffset);
+        return new OkObjectResult(response);
     }
 
-    private static ActionResult<UserSettingsResponse> CreateFailure(Error<GetUserSettingsErrorCode> error)
+    private static IActionResult CreateFailure(Error<GetUserSettingsErrorCode> error)
     {
-        throw new NotImplementedException();
+        return error.Code switch
+        {
+            GetUserSettingsErrorCode.UserNotFound => new UnauthorizedResult(),
+            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }
