@@ -26,14 +26,11 @@ public sealed class AccessTokenValidator
         {
             
         };
-        
-        var result = await _handler.ValidateTokenAsync(accessToken, parameters);
-        if (!result.IsValid || 
-            result.Claims.TryGetValue("UserId", out var userIdClaim) || 
-            userIdClaim is not string userIdString)
-            return AccessTokenValidationResult.Invalid();
 
-        var userId = new UserIdentifier(userIdString);
-        return AccessTokenValidationResult.Valid(userId);
+        var result = await _handler.ValidateTokenAsync(accessToken, parameters);
+        if (!result.IsValid || !AccessTokenProperties.TryCreate(result.Claims, out var properties))
+            return AccessTokenValidationResult.Invalid(result.Exception);
+        
+        return AccessTokenValidationResult.Valid(properties);
     }
 }

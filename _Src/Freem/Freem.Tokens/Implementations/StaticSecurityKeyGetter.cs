@@ -6,16 +6,16 @@ namespace Freem.Tokens.Implementations;
 
 public sealed class StaticSecurityKeyGetter : ISecurityKeyGetter
 {
-    private readonly string _value;
+    private readonly SymmetricSecurityKey _key;
 
     public StaticSecurityKeyGetter(string value)
     {
-        _value = value;
+        var bytes = Encoding.UTF8.GetBytes(value);
+        _key = new SymmetricSecurityKey(bytes);
     }
 
     public SecurityKey Get()
     {
-        var bytes = Encoding.UTF8.GetBytes(_value);
-        return new SymmetricSecurityKey(bytes);
+        return _key;
     }
 }

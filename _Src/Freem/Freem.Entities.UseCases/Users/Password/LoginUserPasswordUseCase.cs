@@ -1,7 +1,9 @@
 ﻿using Freem.Credentials.Password.Implementations;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 
@@ -50,8 +52,11 @@ public sealed class LoginUserPasswordUseCase
         if (hash != actualPassword)
             return LoginUserPasswordResponse.CreateFailure(LoginUserPasswordErrorCode.InvalidCredentials);
 
-        var accessToken = _accessTokenGenerator.Generate(user);
-        var refreshToken = _refreshTokenGenerator.Generate(user);
+        var atp = new AccessTokenProperties(user.Id);
+        var rtp = new RefreshTokenProperties(user.Id);
+        
+        var accessToken = _accessTokenGenerator.Generate(atp);
+        var refreshToken = _refreshTokenGenerator.Generate(rtp);
         
         return LoginUserPasswordResponse.CreateSuccess(accessToken, refreshToken);
     }

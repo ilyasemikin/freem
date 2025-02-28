@@ -16,11 +16,48 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+    
+    public static IServiceCollection AddAccessTokens(
+        this IServiceCollection services, Func<IServiceProvider, AccessTokenSettings> settingsGetter)
+
+    {
+        services.TryAddSingleton(provider =>
+        {
+            var settings = settingsGetter(provider);
+            return ActivatorUtilities.CreateInstance<AccessTokenGenerator>(provider, settings);
+        });
+        
+        services.TryAddSingleton(provider =>
+        {
+            var settings = settingsGetter(provider);
+            return ActivatorUtilities.CreateInstance<AccessTokenValidator>(provider, settings);
+        });
+        
+        return services;
+    }
 
     public static IServiceCollection AddRefreshTokens(this IServiceCollection services, RefreshTokenSettings settings)
     {
         services.TryAddTransient(provider => ActivatorUtilities.CreateInstance<RefreshTokenGenerator>(provider, settings));
         services.TryAddTransient(provider => ActivatorUtilities.CreateInstance<RefreshTokenValidator>(provider, settings));
+        
+        return services;
+    }
+
+    public static IServiceCollection AddRefreshTokens(
+        this IServiceCollection services, Func<IServiceProvider, RefreshTokenSettings> settingsGetter)
+    {
+        services.TryAddSingleton(provider =>
+        {
+            var settings = settingsGetter(provider);
+            return ActivatorUtilities.CreateInstance<RefreshTokenGenerator>(provider, settings);
+        });
+        
+        services.TryAddSingleton(provider =>
+        {
+            var settings = settingsGetter(provider);
+            return ActivatorUtilities.CreateInstance<RefreshTokenValidator>(provider, settings);
+        });
         
         return services;
     }

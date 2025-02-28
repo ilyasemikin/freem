@@ -17,18 +17,11 @@ public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdent
     private readonly EntityIdentifierFactory _entityIdentifierFactory;
     private readonly EntityIdentifierNameProvider _nameProvider;
     
-    public EventJsonConverter(
-        EventsFactory eventsFactory, 
-        EntityIdentifierFactory entityIdentifierFactory, 
-        EntityIdentifierNameProvider nameProvider)
+    public EventJsonConverter()
     {
-        ArgumentNullException.ThrowIfNull(eventsFactory);
-        ArgumentNullException.ThrowIfNull(entityIdentifierFactory);
-        ArgumentNullException.ThrowIfNull(nameProvider);
-        
-        _eventsFactory = eventsFactory;
-        _entityIdentifierFactory = entityIdentifierFactory;
-        _nameProvider = nameProvider;
+        _eventsFactory = EventsFactory.Instance;
+        _entityIdentifierFactory = EntityIdentifierFactory.Instance;
+        _nameProvider = EntityIdentifierNameProvider.Instance;
     }
     
     public override IEntityEvent<IEntityIdentifier, UserIdentifier>? Read(

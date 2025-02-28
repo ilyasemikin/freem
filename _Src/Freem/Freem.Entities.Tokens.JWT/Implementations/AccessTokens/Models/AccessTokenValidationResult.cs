@@ -5,24 +5,31 @@ namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 
 public sealed class AccessTokenValidationResult
 {
-    [MemberNotNullWhen(true, nameof(UserId))]
+    [MemberNotNullWhen(true, nameof(Properties))]
+    [MemberNotNullWhen(false, nameof(Exception))]
     public bool IsValid { get; }
     
-    public UserIdentifier? UserId { get; }
+    public AccessTokenProperties? Properties { get; }
+    
+    public Exception? Exception { get; }
 
-    private AccessTokenValidationResult(bool isValid, UserIdentifier? userId = null)
+    private AccessTokenValidationResult(
+        bool isValid, 
+        AccessTokenProperties? properties = null,
+        Exception? exception = null)
     {
         IsValid = isValid;
-        UserId = userId;
+        Properties = properties;
+        Exception = exception;
     }
     
-    public static AccessTokenValidationResult Valid(UserIdentifier userId)
+    public static AccessTokenValidationResult Valid(AccessTokenProperties properties)
     {
-        return new AccessTokenValidationResult(true, userId);
+        return new AccessTokenValidationResult(true, properties);
     }
 
-    public static AccessTokenValidationResult Invalid()
+    public static AccessTokenValidationResult Invalid(Exception exception)
     {
-        return new AccessTokenValidationResult(false);
+        return new AccessTokenValidationResult(false, exception: exception);
     }
 }

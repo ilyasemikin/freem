@@ -20,12 +20,10 @@ public sealed class KafkaEventConsumer
 
     public KafkaEventConsumer(
         KafkaConsumerConfiguration configuration,
-        EventJsonConverter converter, 
         EventConsumersExecutor executor, 
         ILogger<KafkaEventConsumer> logger)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        ArgumentNullException.ThrowIfNull(converter);
         ArgumentNullException.ThrowIfNull(executor);
         ArgumentNullException.ThrowIfNull(logger);
         
@@ -34,7 +32,7 @@ public sealed class KafkaEventConsumer
         _logger = logger;
 
         _jsonOptions = new JsonSerializerOptions();
-        _jsonOptions.Converters.Add(converter);
+        _jsonOptions.Converters.Add(new EventJsonConverter());
     }
 
     public async Task ConsumeAsync(CancellationToken cancellationToken = default)

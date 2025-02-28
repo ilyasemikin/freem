@@ -7,7 +7,6 @@ using Freem.Entities.Events.Consumer.Kafka.Models;
 using Freem.Entities.Serialization.Json;
 using Freem.Entities.Serialization.Json.Events;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Freem.Entities.Events.Consumer.Kafka.DependencyInjection.Microsoft.Extensions;
 
@@ -24,11 +23,10 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IEventConsumerRunner>(provider => new EventConsumerRunner(provider));
         services.AddSingleton<KafkaEventConsumer>(provider =>
-            new KafkaEventConsumer(
-                configuration,
-                provider.GetRequiredService<EventJsonConverter>(),
-                new EventConsumersExecutor(collection, provider.GetRequiredService<IEventConsumerRunner>()),
-                provider.GetRequiredService<ILogger<KafkaEventConsumer>>()));
+        {
+            var executor = ActivatorUtilities.CreateInstance<EventConsumersExecutor>(provider, collection);
+            return ActivatorUtilities.CreateInstance<KafkaEventConsumer>(provider, executor);
+        });
         
         return services;
     }

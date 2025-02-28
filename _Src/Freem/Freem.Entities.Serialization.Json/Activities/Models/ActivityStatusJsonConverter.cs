@@ -8,7 +8,7 @@ public sealed class ActivityStatusJsonConverter : JsonConverter<ActivityStatus>
 {
     public override ActivityStatus? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (!reader.Read() || reader.TokenType is not JsonTokenType.String)
+        if (reader.TokenType is not JsonTokenType.String)
             throw new JsonException();
         
         var valueString = reader.GetString()!;

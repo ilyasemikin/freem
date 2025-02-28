@@ -79,7 +79,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddEventsFactory(this IServiceCollection services)
     {
-        services.TryAddSingleton<EventsFactory>();
+        services.TryAddSingleton(EventsFactory.Instance);
         
         return services;
     }

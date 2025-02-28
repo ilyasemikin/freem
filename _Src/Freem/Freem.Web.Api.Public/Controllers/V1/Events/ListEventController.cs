@@ -9,6 +9,7 @@ using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.Events;
+using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiListEventRequest = Freem.Web.Api.Public.Contracts.Events.ListEventRequest;

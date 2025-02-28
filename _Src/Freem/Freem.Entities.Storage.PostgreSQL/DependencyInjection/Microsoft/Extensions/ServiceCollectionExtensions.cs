@@ -31,30 +31,39 @@ namespace Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extens
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPostgreSqlStorage(this IServiceCollection services, StorageConfiguration configuration)
+    public static IServiceCollection AddPostgreSqlStorage(
+        this IServiceCollection services, 
+        Func<IServiceProvider, StorageConfiguration> configurationGetter)
     {
         return services
             .AddEntitiesEqualityComparers()
             .AddEntitiesIdentifiersNameConverters()
             .AddEventsFactory()
-            .AddDatabaseContext(configuration)
+            .AddDatabaseContext(configurationGetter)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
             .AddStorageTransactions<DatabaseContext>()
             .AddRepositories();
     }
     
-    private static IServiceCollection AddDatabaseContext(this IServiceCollection services, StorageConfiguration configuration)
+    public static IServiceCollection AddPostgreSqlStorage(this IServiceCollection services, StorageConfiguration configuration)
+    {
+        return services.AddPostgreSqlStorage(_ => configuration);
+    }
+    
+    private static IServiceCollection AddDatabaseContext(
+        this IServiceCollection services, Func<IServiceProvider, StorageConfiguration> configurationGetter)
     {
         if (services.Any(service => service.ServiceType == typeof(DatabaseContext)))
             return services;
         
-        var dataSource = NpgsqlDataSourceFactory.Create(configuration.ConnectionString);
-
-        return services.AddDbContext<DatabaseContext>(builder =>
+        return services.AddDbContext<DatabaseContext>((provider, builder) =>
         {
+            var configuration = configurationGetter(provider);
+            var ds = NpgsqlDataSourceFactory.Create(configuration.ConnectionString);
+            
             builder
-                .UseNpgsql(dataSource, options =>
+                .UseNpgsql(ds, options =>
                 {
                     options.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
                     options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);

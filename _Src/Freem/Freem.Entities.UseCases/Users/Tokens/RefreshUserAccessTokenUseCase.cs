@@ -1,6 +1,8 @@
 ﻿using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Tokens.JWT.Implementations.AccessTokens;
+using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
+using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 using Freem.Entities.Users;
@@ -55,8 +57,12 @@ internal sealed class RefreshUserAccessTokenUseCase
             return RefreshUserAccessTokenResponse.CreateFailure(RefreshUserAccessTokenErrorCode.UserNotFound);
 
         var user = result.Entity;
-        var accessToken = _accessTokenGenerator.Generate(user);
-        var refreshToken = _refreshTokenGenerator.Generate(user);
+
+        var atp = new AccessTokenProperties(user.Id);
+        var rtp = new RefreshTokenProperties(user.Id);
+        
+        var accessToken = _accessTokenGenerator.Generate(atp);
+        var refreshToken = _refreshTokenGenerator.Generate(rtp);
         
         return RefreshUserAccessTokenResponse.CreateSuccess(accessToken, refreshToken);
     }

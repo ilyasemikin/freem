@@ -8,15 +8,29 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Freem.Credentials.Password\Freem.Credentials.Password.csproj" />
+      <ProjectReference Include="..\Freem.Crypto.Hashes\Freem.Crypto.Hashes.csproj" />
       <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+      <ProjectReference Include="..\Freem.Entities.Events.Producer.Kafka\Freem.Entities.Events.Producer.Kafka.csproj" />
+      <ProjectReference Include="..\Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj" />
+      <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
+      <ProjectReference Include="..\Freem.Entities.Tokens.JWT\Freem.Entities.Tokens.JWT.csproj" />
       <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
       <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj" />
       <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
       <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+      <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj" />
       <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+      <ProjectReference Include="..\Freem.Tokens.Blacklist.Redis\Freem.Tokens.Blacklist.Redis.csproj" />
+      <ProjectReference Include="..\Freem.Tokens\Freem.Tokens.csproj" />
       <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj" />
+      <ProjectReference Include="..\Freem.UseCases\Freem.UseCases.csproj" />
       <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Configuration\DependencyInjection\Microsoft\" />
     </ItemGroup>
 
 </Project>

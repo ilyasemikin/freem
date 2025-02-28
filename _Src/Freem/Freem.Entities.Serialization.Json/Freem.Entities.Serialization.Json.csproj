@@ -13,8 +13,4 @@
       <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="_Common\" />
-    </ItemGroup>
-
 </Project>

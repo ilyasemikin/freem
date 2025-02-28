@@ -37,6 +37,8 @@ namespace Freem.Entities.Events;
 
 public sealed class EventsFactory
 {
+    public static EventsFactory Instance { get; } = new();
+    
     public IEntityEvent<IEntityIdentifier, UserIdentifier> Create(
         EventIdentifier id,
         IEntityIdentifier entityId,

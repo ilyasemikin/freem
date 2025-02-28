@@ -5,6 +5,7 @@ using Freem.Entities.UseCases.Contracts.Tags.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Mappers;
+using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateTagRequest = Freem.Web.Api.Public.Contracts.Tags.UpdateTagRequest;

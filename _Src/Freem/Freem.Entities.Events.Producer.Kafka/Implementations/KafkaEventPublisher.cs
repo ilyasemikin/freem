@@ -21,12 +21,10 @@ public sealed class KafkaEventPublisher : IEventPublisher
     public KafkaEventPublisher(
         KafkaProducerConfiguration configuration,
         EventTopicResolver topicResolver,
-        EventJsonConverter converter,
         ILogger<KafkaEventPublisher> logger)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(topicResolver);
-        ArgumentNullException.ThrowIfNull(converter);
         ArgumentNullException.ThrowIfNull(logger);
         
         _configuration = configuration;
@@ -34,7 +32,7 @@ public sealed class KafkaEventPublisher : IEventPublisher
         _logger = logger;
 
         _options = new JsonSerializerOptions();
-        _options.Converters.Add(converter);
+        EntitiesJsonSerialization.Populate(_options.Converters);
     }
 
     public async Task PublishAsync(

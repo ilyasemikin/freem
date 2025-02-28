@@ -4,6 +4,7 @@ using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Time.Abstractions;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiStopRunningRecordRequest = Freem.Web.Api.Public.Contracts.Records.Running.StopRunningRecordRequest;

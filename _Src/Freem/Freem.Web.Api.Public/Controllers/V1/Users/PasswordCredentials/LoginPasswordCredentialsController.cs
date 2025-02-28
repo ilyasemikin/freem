@@ -4,6 +4,7 @@ using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;

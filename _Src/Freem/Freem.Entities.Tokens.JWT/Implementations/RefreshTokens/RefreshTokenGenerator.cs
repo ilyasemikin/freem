@@ -30,7 +30,7 @@ public sealed class RefreshTokenGenerator
         _currentTimeGetter = currentTimeGetter;
     }
 
-    public string Generate(User user)
+    public string Generate(RefreshTokenProperties properties)
     {
         var now = _currentTimeGetter.Get();
         
@@ -44,12 +44,9 @@ public sealed class RefreshTokenGenerator
             SigningCredentials = credentials,
             Issuer = _settings.Issuer,
             Audience = _settings.Audience,
-            Expires = expires.DateTime
+            Expires = expires.DateTime,
+            Claims = properties.ToClaims()
         };
-
-        descriptor.Claims ??= new Dictionary<string, object>();
-        descriptor.Claims.Add("UserId", (string)user.Id);
-        descriptor.Claims.Add("TokenId", Guid.NewGuid().ToString("N"));
 
         return _handler.CreateToken(descriptor);
     }
