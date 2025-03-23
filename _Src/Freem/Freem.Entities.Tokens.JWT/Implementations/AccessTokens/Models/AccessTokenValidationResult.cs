@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 
@@ -25,11 +24,15 @@ public sealed class AccessTokenValidationResult
     
     public static AccessTokenValidationResult Valid(AccessTokenProperties properties)
     {
+        ArgumentNullException.ThrowIfNull(properties);
+        
         return new AccessTokenValidationResult(true, properties);
     }
 
     public static AccessTokenValidationResult Invalid(Exception exception)
     {
+        ArgumentNullException.ThrowIfNull(exception);
+        
         return new AccessTokenValidationResult(false, exception: exception);
     }
 }

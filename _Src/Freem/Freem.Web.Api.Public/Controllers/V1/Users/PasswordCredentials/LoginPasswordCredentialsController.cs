@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Password.Login;
+using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
@@ -40,7 +41,7 @@ public sealed class LoginPasswordCredentialsController : BaseController
         var response = await _executor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.AccessToken, response.RefreshToken)
+            ? CreateSuccess(response.Tokens)
             : CreateFailure(response.Error);
     }
 
@@ -49,9 +50,9 @@ public sealed class LoginPasswordCredentialsController : BaseController
         return new LoginUserPasswordRequest(request.Login, request.Password);
     }
 
-    private static IActionResult CreateSuccess(string accessToken, string refreshToken)
+    private static IActionResult CreateSuccess(UserTokens tokens)
     {
-        var response = new LoginPasswordCredentialsResponse(accessToken, refreshToken);
+        var response = new LoginPasswordCredentialsResponse(tokens);
         return new OkObjectResult(response);
     }
 

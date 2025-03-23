@@ -13,16 +13,4 @@ public static class ServiceCollectionExtensions
         
         return services;
     }
-
-    public static IServiceCollection AddStaticSecurityKeyGetter(
-        this IServiceCollection services, Func<IServiceProvider, string> valueGetter)
-    {
-        services.TryAddSingleton<ISecurityKeyGetter>(provider =>
-        {
-            var value = valueGetter(provider);
-            return new StaticSecurityKeyGetter(value);
-        });
-
-        return services;
-    }
 }

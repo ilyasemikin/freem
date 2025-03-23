@@ -5,6 +5,7 @@ namespace Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 
 public sealed class AccessTokenProperties
 {
+    private const string EntropyClaim = "EntropyId";
     private const string UserIdClaim = "UserId";
     
     public UserIdentifier UserId { get; }
@@ -20,7 +21,8 @@ public sealed class AccessTokenProperties
     {
         return new Dictionary<string, object>
         {
-            [UserIdClaim] = UserId.ToString()
+            [EntropyClaim] = Guid.NewGuid().ToString("N"),
+            [UserIdClaim] = UserId.ToString(),
         };
     }
 

@@ -36,7 +36,7 @@ public sealed class ListByPeriodRecordController : BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ListAsync(
-        [Required] [FromQuery] ListByPeriodRequest query,
+        [Required] [FromQuery] ListRecordByPeriodRequest query,
         CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();
@@ -49,7 +49,7 @@ public sealed class ListByPeriodRecordController : BaseController
             : CreateFailure(response.Error);
     }
 
-    private static PeriodListRequest Map(ListByPeriodRequest request)
+    private static PeriodListRequest Map(ListRecordByPeriodRequest request)
     {
         var limit = new Limit(request.Limit);
         return new PeriodListRequest(request.Period, limit);

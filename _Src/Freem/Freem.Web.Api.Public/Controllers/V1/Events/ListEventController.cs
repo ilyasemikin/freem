@@ -8,7 +8,6 @@ using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts;
-using Freem.Web.Api.Public.Contracts.Events;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +35,7 @@ public sealed class ListEventController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<EventResponse>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListEventRequest query,
@@ -55,7 +54,10 @@ public sealed class ListEventController : BaseController
     private static UseCaseListEventRequest Map(ApiListEventRequest request)
     {
         var limit = new Limit(request.Limit);
-        return new UseCaseListEventRequest(limit);
+        return new UseCaseListEventRequest(limit)
+        {
+            After = request.After
+        };
     }
 
     private static IActionResult CreateSuccess(
@@ -64,14 +66,7 @@ public sealed class ListEventController : BaseController
         response.Headers.Append(HeaderNames.ItemsCount, events.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
 
-        var value = MapEvents(events);
-        return new OkObjectResult(value);
-
-        static async IAsyncEnumerable<EventResponse> MapEvents(IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>> events)
-        {
-            foreach (var @event in events)
-                yield return new EventResponse(@event.Id, @event.EntityId, @event.Action);
-        }
+        return new OkObjectResult(events);
     }
 
     private static IActionResult CreateFailure(Error<ListEventErrorCode> error)

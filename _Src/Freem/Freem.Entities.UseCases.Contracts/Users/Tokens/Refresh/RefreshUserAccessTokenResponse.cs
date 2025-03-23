@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Entities.Users;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
@@ -6,33 +7,28 @@ namespace Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 
 public class RefreshUserAccessTokenResponse : IResponse<RefreshUserAccessTokenErrorCode>
 {
-    [MemberNotNullWhen(true, nameof(AccessToken))]
-    [MemberNotNullWhen(true, nameof(RefreshToken))]
+    [MemberNotNullWhen(true, nameof(Tokens))]
     [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
-    public string? AccessToken { get; }
-    public string? RefreshToken { get; }
+    public UserTokens? Tokens { get; }
     
     public Error<RefreshUserAccessTokenErrorCode>? Error { get; }
 
     private RefreshUserAccessTokenResponse(
-        string? accessToken = null, 
-        string? refreshToken = null, 
+        UserTokens? tokens = null,
         Error<RefreshUserAccessTokenErrorCode>? error = null)
     {
         Success = error is null;
-        AccessToken = accessToken;
-        RefreshToken = refreshToken;
+        Tokens = tokens;
         Error = error;
     }
     
-    public static RefreshUserAccessTokenResponse CreateSuccess(string accessToken, string refreshToken)
+    public static RefreshUserAccessTokenResponse CreateSuccess(UserTokens tokens)
     {
-        ArgumentException.ThrowIfNullOrEmpty(accessToken);
-        ArgumentException.ThrowIfNullOrEmpty(refreshToken);
+        ArgumentNullException.ThrowIfNull(tokens);
         
-        return new RefreshUserAccessTokenResponse(accessToken, refreshToken);
+        return new RefreshUserAccessTokenResponse(tokens);
     }
     
     public static RefreshUserAccessTokenResponse CreateFailure(RefreshUserAccessTokenErrorCode code, string? message = null)

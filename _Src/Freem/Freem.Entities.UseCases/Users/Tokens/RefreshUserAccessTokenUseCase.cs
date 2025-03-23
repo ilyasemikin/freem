@@ -49,8 +49,8 @@ internal sealed class RefreshUserAccessTokenUseCase
             return RefreshUserAccessTokenResponse.CreateFailure(RefreshUserAccessTokenErrorCode.TokenInvalid);
 
         await _tokensBlacklist.AddAsync(request.RefreshToken, cancellationToken);
-
-        var userId = validationResult.UserId;
+        
+        var userId = validationResult.Properties.UserId;
         var result = await _usersRepository.FindByIdAsync(userId, cancellationToken);
         
         if (!result.Founded)
@@ -64,6 +64,8 @@ internal sealed class RefreshUserAccessTokenUseCase
         var accessToken = _accessTokenGenerator.Generate(atp);
         var refreshToken = _refreshTokenGenerator.Generate(rtp);
         
-        return RefreshUserAccessTokenResponse.CreateSuccess(accessToken, refreshToken);
+        var tokens = new UserTokens(accessToken, refreshToken);
+        
+        return RefreshUserAccessTokenResponse.CreateSuccess(tokens);
     }
 }

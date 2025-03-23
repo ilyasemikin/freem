@@ -33,35 +33,26 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddPostgreSqlStorage(
         this IServiceCollection services, 
-        Func<IServiceProvider, StorageConfiguration> configurationGetter)
+        StorageConfiguration configuration)
     {
         return services
             .AddEntitiesEqualityComparers()
             .AddEntitiesIdentifiersNameConverters()
             .AddEventsFactory()
-            .AddDatabaseContext(configurationGetter)
+            .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
             .AddStorageTransactions<DatabaseContext>()
             .AddRepositories();
     }
     
-    public static IServiceCollection AddPostgreSqlStorage(this IServiceCollection services, StorageConfiguration configuration)
+    public static IServiceCollection AddDatabaseContext(
+        this IServiceCollection services, StorageConfiguration configuration)
     {
-        return services.AddPostgreSqlStorage(_ => configuration);
-    }
-    
-    private static IServiceCollection AddDatabaseContext(
-        this IServiceCollection services, Func<IServiceProvider, StorageConfiguration> configurationGetter)
-    {
-        if (services.Any(service => service.ServiceType == typeof(DatabaseContext)))
-            return services;
+        var ds = NpgsqlDataSourceFactory.Create(configuration);
         
-        return services.AddDbContext<DatabaseContext>((provider, builder) =>
+        return services.AddDbContext<DatabaseContext>(builder =>
         {
-            var configuration = configurationGetter(provider);
-            var ds = NpgsqlDataSourceFactory.Create(configuration.ConnectionString);
-            
             builder
                 .UseNpgsql(ds, options =>
                 {

@@ -1,16 +1,15 @@
-﻿namespace Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+﻿using Freem.Entities.Users;
+
+namespace Freem.Web.Api.Public.Contracts.Users.LoginPassword;
 
 public sealed class LoginPasswordCredentialsResponse
 {
-    public string AccessToken { get; }
-    public string RefreshToken { get; }
+    public UserTokens Tokens { get; }
     
-    public LoginPasswordCredentialsResponse(string accessToken, string refreshToken)
+    public LoginPasswordCredentialsResponse(UserTokens tokens)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
-        ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        ArgumentNullException.ThrowIfNull(tokens);
         
-        AccessToken = accessToken;
-        RefreshToken = refreshToken;
+        Tokens = tokens;
     }
 }

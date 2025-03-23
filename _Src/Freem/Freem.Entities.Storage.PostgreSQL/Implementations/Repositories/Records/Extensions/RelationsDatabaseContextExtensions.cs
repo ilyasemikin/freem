@@ -20,7 +20,7 @@ internal static class RelationsDatabaseContextExtensions
             entity,
             e => e.RecordId == entity.Id,
             e => e.ActivityId,
-            ids => e => ids.Contains(e.ActivityId),
+            ids => e => ids.Contains(e.ActivityId) && e.RecordId == entity.Id,
             id => RecordRelationFactory.CreateDatabaseRecordActivityRelation(entity.Id, id),
             cancellationToken);
     }
@@ -34,7 +34,7 @@ internal static class RelationsDatabaseContextExtensions
             entity,
             e => e.RecordId == entity.Id,
             e => e.TagId,
-            ids => e => ids.Contains(e.TagId),
+            ids => e => ids.Contains(e.TagId) && e.RecordId == entity.Id,
             id => RecordRelationFactory.CreateDatabaseRecordTagRelation(entity.Id, id),
             cancellationToken);
     }

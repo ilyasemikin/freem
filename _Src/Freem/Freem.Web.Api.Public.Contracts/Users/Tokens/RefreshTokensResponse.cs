@@ -1,16 +1,15 @@
-﻿namespace Freem.Web.Api.Public.Contracts.Users.Tokens;
+﻿using Freem.Entities.Users;
+
+namespace Freem.Web.Api.Public.Contracts.Users.Tokens;
 
 public sealed class RefreshTokensResponse
 {
-    public string AccessToken { get; }
-    public string RefreshToken { get; }
+    public UserTokens Tokens { get; }
     
-    public RefreshTokensResponse(string accessToken, string refreshToken)
+    public RefreshTokensResponse(UserTokens tokens)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
-        ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        ArgumentNullException.ThrowIfNull(tokens);
         
-        AccessToken = accessToken;
-        RefreshToken = refreshToken;
+        Tokens = tokens;
     }
 }

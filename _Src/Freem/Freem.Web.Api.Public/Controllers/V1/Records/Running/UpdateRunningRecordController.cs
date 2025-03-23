@@ -8,7 +8,6 @@ using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateRunningRecordRequest = Freem.Web.Api.Public.Contracts.Records.Running.UpdateRunningRecordRequest;
 using UseCaseUpdateRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Update.UpdateRunningRecordRequest;

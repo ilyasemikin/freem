@@ -2,15 +2,18 @@
 
 public sealed class ListRecordRequest
 {
-    public int Limit { get; }
+    public const int DefaultOffset = 0;
+    public const int DefaultLimit = 100;
+    
     public int Offset { get; }
+    public int Limit { get; }
 
-    public ListRecordRequest(int limit, int offset)
+    public ListRecordRequest(int offset, int limit)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
         ArgumentOutOfRangeException.ThrowIfNegative(offset);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
         
-        Limit = limit;
         Offset = offset;
+        Limit = limit;
     }
 }

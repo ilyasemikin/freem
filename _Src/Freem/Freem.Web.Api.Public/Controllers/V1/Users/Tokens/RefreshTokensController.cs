@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
+using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.Users.Tokens;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.Tokens;
 
-[Route("api/user/tokens/refresh")]
+[Route("api/v1/user/tokens/refresh")]
 public sealed class RefreshTokensController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -40,7 +41,7 @@ public sealed class RefreshTokensController : BaseController
         var response = await _executor.ExecuteAsync<RefreshUserAccessTokenRequest, RefreshUserAccessTokenResponse>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.AccessToken, response.RefreshToken)
+            ? CreateSuccess(response.Tokens)
             : CreateFailure(response.Error);
     }
 
@@ -49,9 +50,9 @@ public sealed class RefreshTokensController : BaseController
         return new RefreshUserAccessTokenRequest(request.RefreshToken);
     }
 
-    private static IActionResult CreateSuccess(string accessToken, string refreshToken)
+    private static IActionResult CreateSuccess(UserTokens tokens)
     {
-        var response = new RefreshTokensResponse(accessToken, refreshToken);
+        var response = new RefreshTokensResponse(tokens);
         return new OkObjectResult(response);
     }
 

@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
-using Freem.Entities.Users;
 using Freem.Time.Abstractions;
 using Freem.Tokens.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;

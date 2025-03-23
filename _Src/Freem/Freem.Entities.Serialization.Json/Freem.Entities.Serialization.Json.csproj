@@ -8,9 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Freem.Clones\Freem.Clones.csproj" />
       <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
       <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
       <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+      <ProjectReference Include="..\Freem.Time.Serialization.Json\Freem.Time.Serialization.Json.csproj" />
     </ItemGroup>
 
 </Project>

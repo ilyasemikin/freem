@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Models;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.Records.Running;
@@ -18,13 +19,12 @@ public sealed class StartRunningRecordRequest
     public StartRunningRecordRequest(
         DateTimeOffset? startAt, 
         IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> activities, 
-        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier> tags)
+        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>? tags = null)
     {
         ArgumentNullException.ThrowIfNull(activities);
-        ArgumentNullException.ThrowIfNull(tags);
         
         StartAt = startAt;
         Activities = activities;
-        Tags = tags;
+        Tags = tags ?? RelatedTagsIdentifiersCollection.Empty;
     }
 }

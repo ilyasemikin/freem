@@ -1,4 +1,6 @@
-﻿namespace Freem.Entities.Storage.PostgreSQL.DependencyInjection;
+﻿using Microsoft.Extensions.Logging;
+
+namespace Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 
 public sealed class StorageConfiguration
 {
@@ -7,6 +9,7 @@ public sealed class StorageConfiguration
     public string ConnectionString { get; }
     
     public LoggerAction? Logger { get; init; }
+    public ILoggerFactory? LoggerFactory { get; init; }
 
     public bool EnableServiceProviderCaching { get; init; } = true;
     public bool SensitiveDataLogging { get; init; } = false;

@@ -1,4 +1,5 @@
 ﻿using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
+using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Plain.Implementations.Executors.Sync;
@@ -14,7 +15,7 @@ public sealed class UsersTokensPlainSyncExecutor
         _executor = new UsersTokensPlainExecutor(executor);
     }
 
-    public UsersTokensPlainExecutor.Tokens Refresh(UseCaseExecutionContext context, string refreshToken)
+    public UserTokens Refresh(UseCaseExecutionContext context, string refreshToken)
     {
         return _executor.RefreshAsync(context, refreshToken)
             .GetAwaiter()

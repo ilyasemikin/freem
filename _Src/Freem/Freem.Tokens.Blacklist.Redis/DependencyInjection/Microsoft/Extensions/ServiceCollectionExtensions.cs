@@ -10,23 +10,13 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddRedisTokensBlacklist(
         this IServiceCollection services,
-        Func<IServiceProvider, RedisConfiguration> configurationGetter)
-    {
-        services.TryAddSingleton<ITokensBlacklist>(provider =>
-        {
-            var configuration = configurationGetter(provider);
-            return new TokensBlacklist(
-                configuration.BlacklistKey,
-                ConnectionMultiplexer.Connect(configuration.ConnectionString));
-        });
-        
-        return services;
-    }
-    
-    public static IServiceCollection AddRedisTokensBlacklist(
-        this IServiceCollection services, 
         RedisConfiguration configuration)
     {
-        return services.AddRedisTokensBlacklist(_ => configuration);
+        services.TryAddSingleton<ITokensBlacklist>(_ =>
+            new TokensBlacklist(
+                configuration.BlacklistKey,
+                ConnectionMultiplexer.Connect(configuration.ConnectionString)));
+
+        return services;
     }
 }

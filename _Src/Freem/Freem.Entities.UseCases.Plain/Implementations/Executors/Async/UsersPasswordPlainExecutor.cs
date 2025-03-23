@@ -2,6 +2,7 @@
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Plain.Exceptions;
+using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 
@@ -40,7 +41,7 @@ public sealed class UsersPasswordPlainExecutor
         return await RegisterAsync(request, cancellationToken);
     }
 
-    public async Task<Tokens> LoginAsync(
+    public async Task<UserTokens> LoginAsync(
         LoginUserPasswordRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -49,7 +50,7 @@ public sealed class UsersPasswordPlainExecutor
         if (!response.Success)
             throw new PlainRequestFailedException();
 
-        return new Tokens(response.AccessToken, response.RefreshToken);
+        return response.Tokens;
     }
 
     public async Task UpdateAsync(
@@ -62,20 +63,5 @@ public sealed class UsersPasswordPlainExecutor
         var response = await _executor.ExecuteAsync<UpdateLoginCredentialsRequest, UpdateLoginCredentialsResponse>(context, request, cancellationToken);
         if (!response.Success)
             throw new PlainRequestFailedException();
-    }
-
-    public sealed class Tokens
-    {
-        public string AccessToken { get; }
-        public string RefreshToken { get; }
-
-        public Tokens(string accessToken, string refreshToken)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
-            ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
-            
-            AccessToken = accessToken;
-            RefreshToken = refreshToken;
-        }
     }
 }

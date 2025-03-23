@@ -2,7 +2,6 @@
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Models;
 using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Contracts.Tags.GetByName;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;

@@ -5,6 +5,7 @@ namespace Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 
 public sealed class RefreshTokenProperties
 {
+    private const string EntropyClaim = "EntropyId";
     private const string UserIdClaim = "UserId";
     
     public UserIdentifier UserId { get; }
@@ -20,7 +21,8 @@ public sealed class RefreshTokenProperties
     {
         return new Dictionary<string, object>
         {
-            [UserIdClaim] = UserId
+            [EntropyClaim] = Guid.NewGuid().ToString("N"),
+            [UserIdClaim] = UserId.ToString()
         };
     }
 

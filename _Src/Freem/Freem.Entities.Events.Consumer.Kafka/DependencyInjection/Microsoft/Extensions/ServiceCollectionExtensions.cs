@@ -4,8 +4,6 @@ using Freem.Entities.Events.Consumer.DependencyInjection.Microsoft.Implementatio
 using Freem.Entities.Events.Consumer.Implementations;
 using Freem.Entities.Events.Consumer.Kafka.Implementations;
 using Freem.Entities.Events.Consumer.Kafka.Models;
-using Freem.Entities.Serialization.Json;
-using Freem.Entities.Serialization.Json.Events;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.Events.Consumer.Kafka.DependencyInjection.Microsoft.Extensions;

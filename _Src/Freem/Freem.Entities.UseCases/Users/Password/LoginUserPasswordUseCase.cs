@@ -6,6 +6,7 @@ using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens;
 using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Password.Login;
+using Freem.Entities.Users;
 
 namespace Freem.Entities.UseCases.Users.Password;
 
@@ -57,7 +58,9 @@ public sealed class LoginUserPasswordUseCase
         
         var accessToken = _accessTokenGenerator.Generate(atp);
         var refreshToken = _refreshTokenGenerator.Generate(rtp);
+
+        var tokens = new UserTokens(accessToken, refreshToken);
         
-        return LoginUserPasswordResponse.CreateSuccess(accessToken, refreshToken);
+        return LoginUserPasswordResponse.CreateSuccess(tokens);
     }
 }

@@ -9,7 +9,6 @@ using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateActivityRequest = Freem.Web.Api.Public.Contracts.Activities.UpdateActivityRequest;
 using UseCaseUpdateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Update.UpdateActivityRequest;

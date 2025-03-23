@@ -39,11 +39,10 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
             request);
         
         Assert.True(response.Success);
-        Assert.NotNull(response.AccessToken);
-        Assert.NotNull(response.RefreshToken);
+        Assert.NotNull(response.Tokens);
         Assert.Null(response.Error);
         
-        Assert.NotEqual(_token, response.RefreshToken);
+        Assert.NotEqual(_token, response.Tokens.RefreshToken);
     }
 
     [Fact]
@@ -56,8 +55,7 @@ public sealed class UserTokensRefreshUseCaseTests : UseCaseTestBase
             request);
         
         Assert.False(response.Success);
-        Assert.Null(response.AccessToken);
-        Assert.Null(response.RefreshToken);
+        Assert.Null(response.Tokens);
         Assert.NotNull(response.Error);
         
         Assert.Equal(RefreshUserAccessTokenErrorCode.TokenInvalid, response.Error.Code);

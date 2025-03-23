@@ -7,6 +7,8 @@ public sealed class RelatedTagsIdentifiersCollection : RelatedEntitiesIdentifier
 {
     public const int MinTagsCount = RelatedTagsCollection.MinTagsCount;
     public const int MaxTagsCount = RelatedTagsCollection.MaxTagsCount;
+
+    public static RelatedTagsIdentifiersCollection Empty { get; } = new();
     
     public RelatedTagsIdentifiersCollection()
         : base([], MinTagsCount, MaxTagsCount)

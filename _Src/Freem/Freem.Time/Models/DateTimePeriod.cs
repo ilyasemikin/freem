@@ -28,7 +28,7 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
 
     public override string ToString()
     {
-        return $"[{StartAt:O}, {EndAt:O}]";
+        return $"{StartAt:O},{EndAt:O}";
     }
 
     public override bool Equals(object? obj)
@@ -64,6 +64,21 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
             return false;
         }
 
+        return true;
+    }
+
+    public static bool TryParse(string input, [NotNullWhen(true)] out DateTimePeriod? period)
+    {
+        period = null;
+        
+        var parts = input.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2)
+            return false;
+
+        if (!DateTimeOffset.TryParse(parts[0], out var startAt) || !DateTimeOffset.TryParse(parts[1], out var endAt))
+            return false;
+        
+        period = new DateTimePeriod(startAt, endAt);
         return true;
     }
 

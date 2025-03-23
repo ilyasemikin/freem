@@ -1,28 +1,35 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
 
 public sealed class RefreshTokenValidationResult
 {
-    [MemberNotNullWhen(true, nameof(UserId))]
+    [MemberNotNullWhen(true, nameof(Properties))]
+    [MemberNotNullWhen(false, nameof(Exception))]
     public bool IsValid { get; }
     
-    public UserIdentifier? UserId { get; }
+    public RefreshTokenProperties? Properties { get; }
+    
+    public Exception? Exception { get; }
 
-    private RefreshTokenValidationResult(bool isValid, UserIdentifier? userId = null)
+    private RefreshTokenValidationResult(bool isValid, RefreshTokenProperties? properties = null, Exception? exception = null)
     {
         IsValid = isValid;
-        UserId = userId;
+        Exception = exception;
+        Properties = properties;
     }
 
-    public static RefreshTokenValidationResult Valid(UserIdentifier? userId)
+    public static RefreshTokenValidationResult Valid(RefreshTokenProperties properties)
     {
-        return new RefreshTokenValidationResult(true, userId);
+        ArgumentNullException.ThrowIfNull(properties);
+        
+        return new RefreshTokenValidationResult(true, properties);
     }
 
-    public static RefreshTokenValidationResult Invalid()
+    public static RefreshTokenValidationResult Invalid(Exception exception)
     {
-        return new RefreshTokenValidationResult(false);
+        ArgumentNullException.ThrowIfNull(exception);
+        
+        return new RefreshTokenValidationResult(false, exception: exception);
     }
 }

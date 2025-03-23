@@ -5,7 +5,6 @@ using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events.Producer.Abstractions;
 using Freem.Entities.Events.Producer.Kafka.Models;
 using Freem.Entities.Serialization.Json;
-using Freem.Entities.Serialization.Json.Events;
 using Freem.Entities.Users.Identifiers;
 using Microsoft.Extensions.Logging;
 
@@ -31,8 +30,7 @@ public sealed class KafkaEventPublisher : IEventPublisher
         _topicResolver = topicResolver;
         _logger = logger;
 
-        _options = new JsonSerializerOptions();
-        EntitiesJsonSerialization.Populate(_options.Converters);
+        _options = EntitiesJsonSerialization.CreateSerializerOptions();
     }
 
     public async Task PublishAsync(

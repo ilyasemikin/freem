@@ -120,7 +120,7 @@ internal sealed class TagsRepository : ITagsRepository
         ArgumentNullException.ThrowIfNull(name);
 
         return await _database.Tags.FindAsync(
-            e => e.Name == name,
+            e => e.Name == (string)name,
             TagMapper.MapToDomainEntity,
             cancellationToken);
     }

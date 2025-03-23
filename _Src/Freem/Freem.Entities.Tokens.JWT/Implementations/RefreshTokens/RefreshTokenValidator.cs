@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
-using Freem.Entities.Users.Identifiers;
 using Freem.Tokens.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -34,7 +33,10 @@ public sealed class RefreshTokenValidator
         CancellationToken cancellationToken)
     {
         if (await _blacklist.ContainsAsync(refreshToken, cancellationToken))
-            return RefreshTokenValidationResult.Invalid();
+        {
+            var exception = new InvalidOperationException($"Token {refreshToken} forbidden");
+            return RefreshTokenValidationResult.Invalid(exception);
+        }
 
         var securityKey = _securityKeyGetter.Get();
         var parameters = new TokenValidationParameters
@@ -45,12 +47,9 @@ public sealed class RefreshTokenValidator
         };
 
         var result = await _handler.ValidateTokenAsync(refreshToken, parameters);
-        if (!result.IsValid ||
-            !result.Claims.TryGetValue("UserId", out var userIdClaim) ||
-            userIdClaim is not string userIdString)
-            return RefreshTokenValidationResult.Invalid();
-
-        var userId = new UserIdentifier(userIdString);
-        return RefreshTokenValidationResult.Valid(userId);
+        if (!result.IsValid || !RefreshTokenProperties.TryCreate(result.Claims, out var properties))
+            return RefreshTokenValidationResult.Invalid(result.Exception);
+        
+        return RefreshTokenValidationResult.Valid(properties);
     }
 }

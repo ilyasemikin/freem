@@ -18,7 +18,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("core_entities")
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "activity_status", new[] { "active", "archived" });

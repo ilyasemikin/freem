@@ -26,12 +26,12 @@ internal static class RelationsDatabaseContextExtensions
 
         var ids = entity.RelatedEntities.Identifiers.Select(id => id.ToString()!);
         var (idsToRemove, idsToAdd) = existedIds.ExceptMutual(ids);
-
-        var removeFilter = removeFilterFactory(idsToRemove);
-        await context.RemoveRelationsAsync(removeFilter, cancellationToken);
-
+        
         var dbRelationEntities = idsToAdd.Select(databaseRelationEntityFactory);
         await context.AddRangeAsync(dbRelationEntities, cancellationToken);
+        
+        var removeFilter = removeFilterFactory(idsToRemove);
+        context.RemoveRelations(removeFilter);
     }
     
     private static IEnumerable<string> FindRelatedIds<TDatabaseRelation>(
@@ -48,15 +48,15 @@ internal static class RelationsDatabaseContextExtensions
             .AsEnumerable();
     }
 
-    private static async Task RemoveRelationsAsync<TDatabaseRelation>(
+    private static void RemoveRelations<TDatabaseRelation>(
         this DatabaseContext context,
-        Expression<Func<TDatabaseRelation, bool>> whereExpression,
-        CancellationToken cancellationToken = default)
+        Expression<Func<TDatabaseRelation, bool>> whereExpression)
             where TDatabaseRelation : class
     {
-        await context
+        var items = context
             .Set<TDatabaseRelation>()
-            .Where(whereExpression)
-            .ExecuteDeleteAsync(cancellationToken);
+            .Where(whereExpression);
+
+        context.RemoveRange(items);
     }
 }

@@ -12,8 +12,7 @@ public sealed class JwtBearerAuthenticationHandler : AuthenticationHandler<JwtBe
     private readonly AccessTokenValidator _validator;
 
     private const string BearerPrefix = "Bearer ";
-    
-    public const string AuthenticationScheme = "JwtAuthentication";
+    private const string AuthenticationType = "JWT Bearer";
     
     public JwtBearerAuthenticationHandler(
         IOptionsMonitor<JwtBearerAuthenticationOptions> options, 
@@ -40,20 +39,20 @@ public sealed class JwtBearerAuthenticationHandler : AuthenticationHandler<JwtBe
         if (!result.IsValid)
             return AuthenticateResult.Fail(result.Exception);
 
-        var ticket = CreateTicket(result.Properties);
+        var ticket = CreateTicket(result.Properties, Scheme.Name);
         return AuthenticateResult.Success(ticket);
     }
 
-    private static AuthenticationTicket CreateTicket(AccessTokenProperties properties)
+    private static AuthenticationTicket CreateTicket(AccessTokenProperties properties, string schemeName)
     {
         var claims = new Claim[]
         {
             new(JwtBearerAuthenticationClaimTypes.UserId, properties.UserId),
         };
 
-        var ci = new ClaimsIdentity(claims);
+        var ci = new ClaimsIdentity(claims, AuthenticationType);
         var cp = new ClaimsPrincipal(ci);
         
-        return new AuthenticationTicket(cp, AuthenticationScheme);
+        return new AuthenticationTicket(cp, schemeName);
     }
 }

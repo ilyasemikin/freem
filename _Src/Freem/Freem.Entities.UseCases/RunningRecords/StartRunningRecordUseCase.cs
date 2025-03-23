@@ -50,8 +50,6 @@ internal sealed class StartRunningRecordUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
-        
         var record = new RunningRecord(context.UserId, request.Activities, request.Tags, request.StartAt)
         {
             Name = request.Name,
@@ -65,6 +63,7 @@ internal sealed class StartRunningRecordUseCase
             await _executor.ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(context, stopRunningRecordRequest, cancellationToken);
         }
 
+        await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         try
         {
             await RunTransactionAsync(context, record, cancellationToken);

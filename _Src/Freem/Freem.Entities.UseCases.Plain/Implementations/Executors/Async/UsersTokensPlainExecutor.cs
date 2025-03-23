@@ -1,5 +1,6 @@
 ﻿using Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 using Freem.Entities.UseCases.Plain.Exceptions;
+using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
@@ -15,7 +16,7 @@ public sealed class UsersTokensPlainExecutor
         _executor = executor;
     }
 
-    public async Task<Tokens> RefreshAsync(
+    public async Task<UserTokens> RefreshAsync(
         UseCaseExecutionContext context, string refreshToken,
         CancellationToken cancellationToken = default)
     {
@@ -27,21 +28,6 @@ public sealed class UsersTokensPlainExecutor
         if (!response.Success)
             throw new PlainRequestFailedException();
         
-        return new Tokens(response.AccessToken, response.RefreshToken);
-    }
-
-    public sealed class Tokens
-    {
-        public string AccessToken { get; }
-        public string RefreshToken { get; }
-        
-        public Tokens(string accessToken, string refreshToken)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(accessToken);
-            ArgumentException.ThrowIfNullOrEmpty(refreshToken);
-            
-            AccessToken = accessToken;
-            RefreshToken = refreshToken;
-        }
+        return response.Tokens;
     }
 }

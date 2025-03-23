@@ -30,4 +30,12 @@ public static class ServiceCollectionExtensions
         });
         return services;
     }
+
+    public static IServiceCollection AddStaticCurrentPasswordHashAlgorithmGetter(
+        this IServiceCollection services, HashAlgorithm algorithm)
+    {
+        services.TryAddSingleton<ICurrentPasswordHashAlgorithmGetter>(_ => new StaticCurrentPasswordHashAlgorithmGetter(algorithm));
+        
+        return services;
+    }
 }

@@ -2,15 +2,18 @@
 
 public sealed class ListActivityRequest
 {
-    public int Limit { get; }
-    public int Offset { get; }
+    public const int DefaultOffset = 0;
+    public const int DefaultLimit = 100;
     
-    public ListActivityRequest(int limit, int offset)
+    public int Offset { get; }
+    public int Limit { get; }
+    
+    public ListActivityRequest(int offset, int limit)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(Limit);
         ArgumentOutOfRangeException.ThrowIfNegative(offset);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
         
-        Limit = limit;
         Offset = offset;
+        Limit = limit;
     }
 }

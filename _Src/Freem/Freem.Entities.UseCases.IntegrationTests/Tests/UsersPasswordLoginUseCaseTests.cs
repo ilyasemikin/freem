@@ -34,8 +34,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
 
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotEmpty(response.AccessToken);
-        Assert.NotEmpty(response.RefreshToken);
+        Assert.NotNull(response.Tokens);
         Assert.Null(response.Error);
     }
 
@@ -48,8 +47,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.AccessToken);
-        Assert.Null(response.RefreshToken);
+        Assert.Null(response.Tokens);
         Assert.NotNull(response.Error);
         
         Assert.Equal(LoginUserPasswordErrorCode.UserNotFound, response.Error.Code);
@@ -64,8 +62,7 @@ public sealed class UsersPasswordLoginUseCaseTests : UseCaseTestBase
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.AccessToken);
-        Assert.Null(response.RefreshToken);
+        Assert.Null(response.Tokens);
         Assert.NotNull(response.Error);
         
         Assert.Equal(LoginUserPasswordErrorCode.InvalidCredentials, response.Error.Code);

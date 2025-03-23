@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Abstractions.Relations.Collection;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Models;
+using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Time.Models;
 
@@ -19,14 +20,13 @@ public sealed class CreateRecordRequest
     public CreateRecordRequest(
         DateTimePeriod period, 
         IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> activities,
-        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier> tags)
+        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>? tags = null)
     {
         ArgumentNullException.ThrowIfNull(period);
         ArgumentNullException.ThrowIfNull(activities);
-        ArgumentNullException.ThrowIfNull(tags);
         
         Period = period;
         Activities = activities;
-        Tags = tags;
+        Tags = tags ?? RelatedTagsCollection.Empty;
     }
 }

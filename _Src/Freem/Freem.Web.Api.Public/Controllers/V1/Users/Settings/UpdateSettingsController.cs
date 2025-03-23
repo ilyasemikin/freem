@@ -61,7 +61,7 @@ public sealed class UpdateSettingsController : BaseController
     {
         return error.Code switch
         {
-            UpdateUserSettingsErrorCode.UserNotFound => new UnauthorizedResult(),
+            UpdateUserSettingsErrorCode.UserNotFound => new ForbidResult(),
             UpdateUserSettingsErrorCode.NothingToDo => new BadRequestResult(),
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
         };

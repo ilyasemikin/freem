@@ -2,6 +2,7 @@
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
+using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 
@@ -32,7 +33,7 @@ public sealed class UsersPasswordPlainSyncExecutor
             .GetResult();
     }
 
-    public UsersPasswordPlainExecutor.Tokens Login(LoginUserPasswordRequest request)
+    public UserTokens Login(LoginUserPasswordRequest request)
     {
         return _executor.LoginAsync(request)
             .GetAwaiter()
