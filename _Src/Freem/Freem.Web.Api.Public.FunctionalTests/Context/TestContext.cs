@@ -5,6 +5,7 @@ using Freem.Web.Api.Public.Client.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Client.Implementations;
 using Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 using Freem.Web.Api.Public.FunctionalTests.Infrastructure;
+using Freem.Web.Api.Public.FunctionalTests.Infrastructure.Configuration;
 using Freem.Web.Api.Public.SyncClient.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.SyncClient.Implementations;
 using Microsoft.AspNetCore.Mvc.Testing;
