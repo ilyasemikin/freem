@@ -1,3 +1,4 @@
+using System.Net;
 using Freem.Credentials.Password.DependencyInjection.Microsoft.Extensions;
 using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.DependencyInjection;
@@ -26,6 +27,17 @@ builder.Host.UseDefaultServiceProvider(options =>
 {
     options.ValidateScopes = true;
     options.ValidateOnBuild = true;
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    var configuration = builder.Configuration.GetApiConfiguration();
+
+    if (configuration.Ports is null || configuration.Ports.Count == 0)
+        return;
+
+    foreach (var port in configuration.Ports)
+        options.Listen(IPAddress.Loopback, port);
 });
 
 builder.Services.AddConfiguration(builder.Configuration);

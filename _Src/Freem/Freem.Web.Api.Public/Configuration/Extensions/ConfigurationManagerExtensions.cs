@@ -69,10 +69,16 @@ internal static class ConfigurationManagerExtensions
         return new RefreshTokenSettings(tc.Issuer, tc.Audience, tc.ExpirationPeriod);
     }
 
-    public static ApiInfoConfiguration GetApiInfo(this IConfiguration section)
+    public static OpenApiConfiguration GetOpenApiConfiguration(this IConfiguration section)
     {
         var configuration = section.GetConfiguration();
-        return configuration.ApiInfo;
+        return configuration.OpenApi;
+    }
+
+    public static ApiConfiguration GetApiConfiguration(this IConfiguration section)
+    {
+        var configuration = section.GetConfiguration();
+        return configuration.Api;
     }
 
     public static CompositeConfiguration GetConfiguration(this IConfiguration section)

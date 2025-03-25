@@ -12,7 +12,7 @@ internal sealed class OpenApiDocumentTransformer : IOpenApiDocumentTransformer
         CancellationToken cancellationToken)
     {
         var configuration = context.ApplicationServices.GetRequiredService<IConfiguration>();
-        var info = configuration.GetApiInfo();
+        var info = configuration.GetOpenApiConfiguration();
         
         var environment = context.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
         if (environment.IsDevelopment())
