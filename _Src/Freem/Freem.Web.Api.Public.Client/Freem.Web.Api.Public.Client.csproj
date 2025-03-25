@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj" />
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+        <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj" />
+        <ProjectReference Include="..\Freem.Http.Requests\Freem.Http.Requests.csproj"/>
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+        <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Freem.Web.Api.Public.SyncClient"/>
+        <InternalsVisibleTo Include="Freem.Web.Api.Public.FunctionalTests"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="xunit" Version="2.9.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Configurations\Freem.Configurations.csproj"/>
+        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
+        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
+        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
+        <ProjectReference Include="..\Freem.Web.Api.Public.Client\Freem.Web.Api.Public.Client.csproj" />
+        <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />
+        <ProjectReference Include="..\Freem.Web.Api.Public.SyncClient\Freem.Web.Api.Public.SyncClient.csproj" />
+        <ProjectReference Include="..\Freem.Web.Api.Public\Freem.Web.Api.Public.csproj" />
+    </ItemGroup>
+
+    <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="configuration.json" DestinationFolder="$(OutDir)"/>
+    </Target>
+    
+</Project>

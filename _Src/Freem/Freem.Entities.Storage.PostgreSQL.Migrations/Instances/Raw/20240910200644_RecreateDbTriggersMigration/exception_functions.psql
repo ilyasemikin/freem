@@ -1,0 +1,51 @@
+﻿-- Begin exception procedures/functions
+-- Begin declaration
+
+create type ${EnvironmentNames.Schema}.exception_parameter as (name text, value text);
+
+create or replace function ${EnvironmentNames.Schema}.format_exception_parameters(parameters ${EnvironmentNames.Schema}.exception_parameter[])
+returns text
+language PLPGSQL
+as $$
+declare
+	msg text := '';
+	parameter ${EnvironmentNames.Schema}.exception_parameter;
+begin
+	foreach parameter in array parameters
+	loop
+		if length(msg) <> 0 then
+			msg := msg || ';';
+		end if;
+		
+		msg := msg || format('%s=%s', parameter.name, parameter.value);
+	end loop;
+
+	return msg;
+end;
+$$;
+
+create or replace procedure ${EnvironmentNames.Schema}.throw_exception(code text, message text, parameters ${EnvironmentNames.Schema}.exception_parameter[] default '{}')
+language PLPGSQL
+as $$
+declare
+	params_msg text;
+begin
+	select ${EnvironmentNames.Schema}.format_exception_parameters(parameters) into params_msg;
+	
+	if length(params_msg) <> 0 then
+		raise exception '[%] {%}: %', code, params_msg, message;
+	else
+		raise exception '[%]: %', code, message;
+	end if;
+end;
+$$;
+
+-- End declaration
+-- Begin dropping
+
+drop procedure if exists ${EnvironmentNames.Schema}.throw_exception;
+drop function if exists ${EnvironmentNames.Schema}.format_exception_parameters;
+drop type ${EnvironmentNames.Schema}.exception_parameter;
+
+-- End dropping
+-- End exception procedures/functions

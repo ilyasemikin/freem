@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Exceptions\Freem.Exceptions.csproj"/>
+        <ProjectReference Include="..\Freem.TextProcessing\Freem.TextProcessing.csproj"/>
+    </ItemGroup>
+
+</Project>

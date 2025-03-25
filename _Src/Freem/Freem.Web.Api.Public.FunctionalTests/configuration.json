@@ -1,0 +1,31 @@
+﻿{
+  "WebApiConfiguration": {
+    "Postgres": {
+      "ConnectionString": "Host=192.168.1.2; Port=24000; UserID=user; Password=78urhnqf3dw; Database=freem; Include Error Detail=true",
+      "EnableSensitiveDataLogging": true
+    },
+    "Redis": {
+      "ConnectionString": "192.168.1.2:24001,allowAdmin=true",
+      "TokensBlackListKey": "tokens_blacklist"
+    },
+    "Kafka": {
+      "BootstrapServers": "192.168.1.2:9092"
+    },
+    "PasswordCredentials": {
+      "HashAlgorithmName": "SHA512"
+    },
+    "Tokens": {
+      "SecretKey": "secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret",
+      "Access": {
+        "Issuer": "string",
+        "Audience": "string",
+        "ExpirationPeriod": "0.04:00:00"
+      },
+      "Refresh": {
+        "Issuer": "string",
+        "Audience": "string",
+        "ExpirationPeriod": "14.00:00:00"
+      }
+    }
+  }
+}
