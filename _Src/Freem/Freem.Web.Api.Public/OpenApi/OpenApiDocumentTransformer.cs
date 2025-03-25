@@ -18,6 +18,9 @@ internal sealed class OpenApiDocumentTransformer : IOpenApiDocumentTransformer
         if (environment.IsDevelopment())
             return Task.CompletedTask;
 
+        if (info.ServerAddresses.Count == 0)
+            return Task.CompletedTask;
+        
         document.Servers.Clear();
         foreach (var address in info.ServerAddresses)
         {
