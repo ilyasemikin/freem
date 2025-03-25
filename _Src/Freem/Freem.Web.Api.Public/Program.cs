@@ -37,7 +37,7 @@ builder.WebHost.ConfigureKestrel(options =>
         return;
 
     foreach (var port in configuration.Ports)
-        options.Listen(IPAddress.Loopback, port);
+        options.Listen(IPAddress.Any, port);
 });
 
 builder.Services.AddConfiguration(builder.Configuration);
