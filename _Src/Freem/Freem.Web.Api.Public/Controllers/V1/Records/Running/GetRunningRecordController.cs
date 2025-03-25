@@ -3,6 +3,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Records.Running;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,11 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
 [Authorize]
 [Route("api/v1/records/running")]
+[Tags(ControllerTags.RunningRecords)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRunningRecordRequest))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class GetRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -29,10 +35,7 @@ public sealed class GetRunningRecordController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRunningRecordRequest))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Get running record")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();

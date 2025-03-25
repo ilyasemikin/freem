@@ -4,6 +4,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,10 @@ namespace Freem.Web.Api.Public.Controllers.V1.Statistics;
 
 [Authorize]
 [Route("api/v1/statistics/per-days")]
+[Tags(ControllerTags.Statistics)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiStatisticsPerDaysResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class StatisticsPerDaysController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -33,9 +38,7 @@ public sealed class StatisticsPerDaysController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiStatisticsPerDaysResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Get summary activity statistics by days")]
     public async Task<IActionResult> GetAsync(
         [Required] [FromQuery] ApiStatisticsPerDaysRequest query,
         CancellationToken cancellationToken = default)

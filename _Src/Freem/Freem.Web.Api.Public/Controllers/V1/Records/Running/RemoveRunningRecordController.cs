@@ -2,6 +2,7 @@
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,11 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
 [Authorize]
 [Route("api/v1/records/running")]
+[Tags(ControllerTags.RunningRecords)]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RemoveRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -27,10 +33,7 @@ public sealed class RemoveRunningRecordController : BaseController
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Remove running record")]
     public async Task<IActionResult> RemoveAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();

@@ -5,6 +5,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
 [Authorize]
 [Route("api/v1/records")]
+[Tags(ControllerTags.Records)]
+[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateRecordResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class CreateRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -34,10 +40,7 @@ public sealed class CreateRecordController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateRecordResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Create record")]
     public async Task<IActionResult> CreateAsync(
         [Required] [FromBody] ApiCreateRecordRequest body,
         CancellationToken cancellationToken = default)

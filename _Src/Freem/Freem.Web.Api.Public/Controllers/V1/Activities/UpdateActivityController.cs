@@ -6,6 +6,7 @@ using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,13 @@ using UseCaseUpdateActivityRequest = Freem.Entities.UseCases.Contracts.Activitie
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
 [Authorize]
-[Route("api/v1/activities/{activityId}")]
+[Route("api/v1/activities/{activityId:required}")][ProducesResponseType(StatusCodes.Status200OK)]
+[Tags(ControllerTags.Activities)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public class UpdateActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -34,12 +41,7 @@ public class UpdateActivityController : BaseController
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Update activity by id")]
     public async Task<IActionResult> UpdateAsync(
         [Required] [FromRoute] string activityId,
         [Required] [FromBody] ApiUpdateActivityRequest body,

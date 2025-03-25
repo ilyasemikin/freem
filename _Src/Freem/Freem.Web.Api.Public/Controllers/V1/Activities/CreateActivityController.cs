@@ -5,6 +5,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
 [Authorize]
 [Route("api/v1/activities")]
+[Tags(ControllerTags.Activities)]
+[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateActivityResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class CreateActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -34,10 +40,7 @@ public sealed class CreateActivityController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateActivityResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Create activity")]
     public async Task<IActionResult> CreateAsync(
         [Required] [FromBody] ApiCreateActivityRequest body, 
         CancellationToken cancellationToken = default)

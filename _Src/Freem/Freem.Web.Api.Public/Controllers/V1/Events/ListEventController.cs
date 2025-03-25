@@ -7,6 +7,7 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,9 @@ namespace Freem.Web.Api.Public.Controllers.V1.Events;
 
 [Authorize]
 [Route("api/v1/events")]
+[Tags(ControllerTags.Events)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>))]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class ListEventController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -35,8 +39,7 @@ public sealed class ListEventController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("List events")]
     public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListEventRequest query,
         CancellationToken cancellationToken = default)

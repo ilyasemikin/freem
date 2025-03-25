@@ -3,6 +3,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;
 
 [Route("api/v1/user/password-credentials/register")]
+[Tags(ControllerTags.User, ControllerTags.PasswordCredentials)]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RegisterPasswordCredentialsController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -27,9 +32,7 @@ public sealed class RegisterPasswordCredentialsController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Register using password credentials")]
     public async Task<IActionResult> RegisterAsync(
         [Required] [FromBody] RegisterPasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)

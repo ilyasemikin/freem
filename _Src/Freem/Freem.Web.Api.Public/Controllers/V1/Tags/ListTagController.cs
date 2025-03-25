@@ -5,8 +5,10 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Tags.List;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.Tags;
+using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,12 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 
 [Authorize]
 [Route("api/v1/tags")]
+[Tags(ControllerTags.Tags)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<TagResponse>))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+[ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
+[ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
 public sealed class ListTagController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -34,9 +42,7 @@ public sealed class ListTagController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<TagResponse>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("List all tags")]
     public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ApiListTagRequest query,
         CancellationToken cancellationToken = default)

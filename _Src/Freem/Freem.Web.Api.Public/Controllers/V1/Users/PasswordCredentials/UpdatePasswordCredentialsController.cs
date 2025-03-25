@@ -3,6 +3,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,12 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;
 
 [Authorize]
 [Route("api/v1/user/password-credentials")]
+[Tags(ControllerTags.User, ControllerTags.PasswordCredentials)]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class UpdatePasswordCredentialsController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -29,11 +36,7 @@ public sealed class UpdatePasswordCredentialsController : BaseController
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Update password credentials or set if not exists")]
     public async Task<IActionResult> UpdateAsync(
         [Required] [FromBody] UpdatePasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)

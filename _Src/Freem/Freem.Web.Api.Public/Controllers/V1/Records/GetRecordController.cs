@@ -5,6 +5,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Records;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
 [Authorize]
-[Route("api/v1/records/{recordId}")]
+[Route("api/v1/records/{recordId:required}")]
+[Tags(ControllerTags.Records)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRecordResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class GetRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -31,10 +37,7 @@ public sealed class GetRecordController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRecordResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Get record by id")]
     public async Task<IActionResult> GetAsync(
         [Required] [FromRoute] string recordId,
         CancellationToken cancellationToken = default)

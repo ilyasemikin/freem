@@ -5,8 +5,10 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.Records;
+using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,12 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
 [Authorize]
 [Route("api/v1/records/by-period")]
+[Tags(ControllerTags.Records)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<RecordResponse>))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+[ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
+[ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
 public sealed class ListByPeriodRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -32,9 +40,7 @@ public sealed class ListByPeriodRecordController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<RecordResponse>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("List records by period")]
     public async Task<IActionResult> ListAsync(
         [Required] [FromQuery] ListRecordByPeriodRequest query,
         CancellationToken cancellationToken = default)

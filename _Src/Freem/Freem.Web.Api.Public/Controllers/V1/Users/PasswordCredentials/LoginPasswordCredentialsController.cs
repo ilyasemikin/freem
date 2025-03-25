@@ -4,13 +4,18 @@ using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;
 
+[Tags(ControllerTags.User, ControllerTags.PasswordCredentials)]
 [Route("api/v1/user/password-credentials/login")]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginPasswordCredentialsResponse))]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class LoginPasswordCredentialsController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -28,9 +33,7 @@ public sealed class LoginPasswordCredentialsController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginPasswordCredentialsResponse))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Login using password credentials")]
     public async Task<IActionResult> LoginAsync(
         [Required] [FromBody] LoginPasswordCredentialsRequest body,
         CancellationToken cancellationToken = default)

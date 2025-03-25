@@ -11,10 +11,13 @@ using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Authentication.DependencyInjection.Microsoft;
+using Freem.Web.Api.Public.Authentication.OpenApi;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.ModelBinders.Providers;
+using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.DependencyInjection.Microsoft.Extensions;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,10 +72,23 @@ builder.Services
         EntitiesJsonSerialization.Populate(options.JsonSerializerOptions);
     });
 
-var app = builder.Build();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<JwtBearerOpenApiDocumentTransformer>();
+    options.AddOperationTransformer<JwtBearerOpenApiOperationTransformer>();
 
-app.MapControllers();
+    options.AddOperationTransformer<HeadersOpenApiOperationTransformer>();
+});
 
-app.Run();
+var application = builder.Build();
+
+application
+    .MapOpenApi()
+    .CacheOutput();
+application.MapScalarApiReference();
+
+application.MapControllers();
+
+application.Run();
 
 public partial class Program {}

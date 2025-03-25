@@ -3,6 +3,7 @@ using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Users.Settings;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,10 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users.Settings;
 
 [Authorize]
 [Route("api/v1/user/settings")]
+[Tags(ControllerTags.User, ControllerTags.Settings)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSettingsResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class GetUserSettingsController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -29,9 +34,7 @@ public sealed class GetUserSettingsController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSettingsResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Get user settings")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
         var context = _contextProvider.Get();

@@ -5,6 +5,7 @@ using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,13 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
 [Authorize]
 [Route("api/v1/records/running")]
+[Tags(ControllerTags.RunningRecords)]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class UpdateRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -33,12 +41,7 @@ public sealed class UpdateRunningRecordController : BaseController
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Update running record")]
     public async Task<IActionResult> UpdateAsync(
         [Required] [FromBody] ApiUpdateRunningRecordRequest body,
         CancellationToken cancellationToken = default)

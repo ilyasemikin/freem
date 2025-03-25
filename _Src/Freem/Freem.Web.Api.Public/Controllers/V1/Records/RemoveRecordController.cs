@@ -4,6 +4,7 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
 [Authorize]
-[Route("api/v1/records/{recordId}")]
+[Route("api/v1/records/{recordId:required}")]
+[Tags(ControllerTags.Records)]
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RemoveRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -29,10 +35,7 @@ public sealed class RemoveRecordController : BaseController
     }
     
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Remove record by id")]
     public async Task<IActionResult> RemoveAsync(
         [Required] [FromRoute] string recordId,
         CancellationToken cancellationToken = default)

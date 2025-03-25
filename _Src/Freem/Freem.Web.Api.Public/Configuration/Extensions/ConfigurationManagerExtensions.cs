@@ -3,6 +3,7 @@ using Freem.Entities.Events.Producer.Kafka.Models;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Tokens.JWT.Implementations.AccessTokens.Models;
 using Freem.Entities.Tokens.JWT.Implementations.RefreshTokens.Models;
+using Freem.Web.Api.Public.Configuration.Instances;
 
 namespace Freem.Web.Api.Public.Configuration.Extensions;
 
@@ -66,6 +67,12 @@ internal static class ConfigurationManagerExtensions
         var configuration = section.GetConfiguration();
         var tc = configuration.Tokens.Refresh;
         return new RefreshTokenSettings(tc.Issuer, tc.Audience, tc.ExpirationPeriod);
+    }
+
+    public static ApiInfoConfiguration GetApiInfo(this IConfiguration section)
+    {
+        var configuration = section.GetConfiguration();
+        return configuration.ApiInfo;
     }
 
     public static CompositeConfiguration GetConfiguration(this IConfiguration section)

@@ -4,6 +4,7 @@ using Freem.Entities.UseCases.Contracts.Users.Tokens.Refresh;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.Users.Tokens;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Freem.Web.Api.Public.Controllers.V1.Users.Tokens;
 
 [Route("api/v1/user/tokens/refresh")]
+[Tags(ControllerTags.User, ControllerTags.AuthTokens)]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokensResponse))]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RefreshTokensController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
@@ -28,9 +33,7 @@ public sealed class RefreshTokensController : BaseController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokensResponse))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [EndpointSummary("Refresh authentication tokens using refresh token")]
     public async Task<IActionResult> RefreshAsync(
         [Required] [FromBody] RefreshTokensRequest body,
         CancellationToken cancellationToken = default)
