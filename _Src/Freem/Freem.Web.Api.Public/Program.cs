@@ -15,6 +15,7 @@ using Freem.Web.Api.Public.Authentication.OpenApi;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.ModelBinders.Providers;
+using Freem.Web.Api.Public.OpenApi;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.DependencyInjection.Microsoft.Extensions;
 using Scalar.AspNetCore;
@@ -77,6 +78,7 @@ builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<JwtBearerOpenApiDocumentTransformer>();
     options.AddOperationTransformer<JwtBearerOpenApiOperationTransformer>();
 
+    options.AddDocumentTransformer<OpenApiDocumentTransformer>();
     options.AddOperationTransformer<HeadersOpenApiOperationTransformer>();
 });
 
