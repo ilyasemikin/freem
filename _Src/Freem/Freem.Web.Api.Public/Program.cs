@@ -44,6 +44,23 @@ builder.Services.AddConfiguration(builder.Configuration);
 
 builder.Services.AddHttpLogging(o => {});
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        var configuration = builder.Configuration.GetApiConfiguration();
+
+        if (configuration.CorsOrigins is not null)
+        {
+            policy
+                .WithOrigins(configuration.CorsOrigins.ToArray())
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    });
+});
+
 builder.Services
     .AddUtcCurrentTimeGetter()
     .AddHttpContextAccessor()
@@ -95,6 +112,8 @@ builder.Services.AddOpenApi(options =>
 });
 
 var application = builder.Build();
+
+application.UseCors();
 
 application
     .MapOpenApi()
