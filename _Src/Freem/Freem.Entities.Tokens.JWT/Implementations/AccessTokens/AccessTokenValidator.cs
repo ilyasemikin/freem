@@ -29,7 +29,7 @@ public sealed class AccessTokenValidator
         {
             IssuerSigningKey = _keyGetter.Get(),
             ValidIssuer = _settings.Issuer,
-            ValidAudience = _settings.Audience
+            ValidAudience = _settings.Audience,
         };
 
         var result = await _handler.ValidateTokenAsync(accessToken, parameters);

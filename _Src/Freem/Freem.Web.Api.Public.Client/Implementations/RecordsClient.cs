@@ -5,8 +5,8 @@ using Freem.Http.Requests.Entities;
 using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Records;
-using Freem.Web.Api.Public.Contracts.Records.Running;
+using Freem.Web.Api.Public.Contracts.DTO.Records;
+using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 

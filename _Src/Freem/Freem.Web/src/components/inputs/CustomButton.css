@@ -1,0 +1,8 @@
+﻿.custom-button-area > * {
+  color: darkgray;
+}
+
+.custom-button-area > *:hover {
+  color: gray;
+  cursor: pointer;
+}

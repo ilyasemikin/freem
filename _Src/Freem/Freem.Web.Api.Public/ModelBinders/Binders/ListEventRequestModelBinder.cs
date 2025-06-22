@@ -1,4 +1,4 @@
-﻿using Freem.Web.Api.Public.Contracts.Events;
+﻿using Freem.Web.Api.Public.Contracts.DTO.Events;
 using Freem.Web.Api.Public.ModelBinders.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

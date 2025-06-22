@@ -5,19 +5,20 @@ using Freem.Entities.UseCases.Contracts.Activities.List;
 using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
-using Freem.Web.Api.Public.Contracts.Activities;
+using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiListActivityRequest = Freem.Web.Api.Public.Contracts.Activities.ListActivityRequest;
+using ApiListActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.ListActivityRequest;
 using UseCaseListActivityRequest = Freem.Entities.UseCases.Contracts.Activities.List.ListActivityRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/activities")]
 [Tags(ControllerTags.Activities)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<ActivityResponse>))]

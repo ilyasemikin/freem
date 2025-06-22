@@ -5,7 +5,7 @@ using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Contracts.Users.Tokens;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Tokens;
 
 namespace Freem.Web.Api.Public.Client;
 

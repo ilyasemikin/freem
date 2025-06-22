@@ -31,9 +31,9 @@ public class RefreshUserAccessTokenResponse : IResponse<RefreshUserAccessTokenEr
         return new RefreshUserAccessTokenResponse(tokens);
     }
     
-    public static RefreshUserAccessTokenResponse CreateFailure(RefreshUserAccessTokenErrorCode code, string? message = null)
+    public static RefreshUserAccessTokenResponse CreateFailure(RefreshUserAccessTokenErrorCode code)
     {
-        var error = new Error<RefreshUserAccessTokenErrorCode>(code, message);
+        var error = new Error<RefreshUserAccessTokenErrorCode>(code);
         return new RefreshUserAccessTokenResponse(error: error);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;

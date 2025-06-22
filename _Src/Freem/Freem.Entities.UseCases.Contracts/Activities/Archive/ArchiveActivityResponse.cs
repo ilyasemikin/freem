@@ -22,9 +22,9 @@ public sealed class ArchiveActivityResponse : IResponse<ArchiveActivityErrorCode
         return new ArchiveActivityResponse();
     }
 
-    public static ArchiveActivityResponse CreateFailure(ArchiveActivityErrorCode code, string? message = null)
+    public static ArchiveActivityResponse CreateFailure(ArchiveActivityErrorCode code)
     {
-        var error = new Error<ArchiveActivityErrorCode>(code, message);
+        var error = new Error<ArchiveActivityErrorCode>(code);
         return new ArchiveActivityResponse(error);
     }
 }

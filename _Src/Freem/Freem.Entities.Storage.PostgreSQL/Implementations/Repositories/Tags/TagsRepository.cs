@@ -29,7 +29,7 @@ internal sealed class TagsRepository : ITagsRepository
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        
+
         _database = database;
         _exceptionHandler = exceptionHandler;
         _equalityComparer = equalityComparer;
@@ -38,7 +38,7 @@ internal sealed class TagsRepository : ITagsRepository
     public async Task CreateAsync(Tag entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        
+
         var dbEntity = entity.MapToDatabaseEntity();
 
         await _database.Tags.AddAsync(dbEntity, cancellationToken);
@@ -80,48 +80,49 @@ internal sealed class TagsRepository : ITagsRepository
     }
 
     public async Task<SearchEntityResult<Tag>> FindByIdAsync(
-        TagIdentifier id, 
+        TagIdentifier id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
         return await _database.Tags.FindAsync(e => e.Id == id, TagMapper.MapToDomainEntity, cancellationToken);
     }
-    
+
     public async Task<SearchEntityResult<Tag>> FindByMultipleIdAsync(
-        TagAndUserIdentifiers ids, 
+        TagAndUserIdentifiers ids,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
-        
+
         return await _database.Tags.FindAsync(
             e => e.Id == ids.TagId && e.UserId == ids.UserId,
-            TagMapper.MapToDomainEntity, 
+            TagMapper.MapToDomainEntity,
             cancellationToken);
     }
 
     public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
-        TagsByUserFilter filter, 
+        TagsByUserFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
-        
+
         return await _database.Tags
             .Where(e => e.UserId == filter.UserId)
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
     }
-    
-    public async Task<SearchEntityResult<Tag>> FindByNameAsync(
-        TagName name, 
+
+    public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
+        TagsFilter filter,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(name);
-
-        return await _database.Tags.FindAsync(
-            e => e.Name == (string)name,
-            TagMapper.MapToDomainEntity,
-            cancellationToken);
+        ArgumentNullException.ThrowIfNull(filter);
+        
+        return await _database.Tags
+            .Where(e => e.UserId == filter.UserId && e.Name.Contains(filter.SearchText))
+            .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
+            .SliceByLimitFilter(filter)
+            .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
     }
 }

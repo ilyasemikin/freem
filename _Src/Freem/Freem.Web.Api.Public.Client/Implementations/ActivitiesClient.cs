@@ -5,7 +5,7 @@ using Freem.Http.Requests.Entities;
 using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Activities;
+using Freem.Web.Api.Public.Contracts.DTO.Activities;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -74,7 +74,7 @@ public sealed class ActivitiesClient : BaseClient
         ListActivityRequest query, 
         CancellationToken cancellationToken = default)
     {
-        var request = HttpRequest.Get($"api/v1/activities")
+        var request = HttpRequest.Get("api/v1/activities")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         

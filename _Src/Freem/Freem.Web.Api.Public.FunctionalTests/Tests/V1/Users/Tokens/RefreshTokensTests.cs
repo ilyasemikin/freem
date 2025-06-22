@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Web.Api.Public.Contracts.Users.Tokens;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Tokens;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
 

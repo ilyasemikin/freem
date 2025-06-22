@@ -22,9 +22,9 @@ public class UpdateRecordResponse : IResponse<UpdateRecordErrorCode>
         return new UpdateRecordResponse();
     }
 
-    public static UpdateRecordResponse CreateFailure(UpdateRecordErrorCode code, string? message = null)
+    public static UpdateRecordResponse CreateFailure(UpdateRecordErrorCode code)
     {
-        var error = new Error<UpdateRecordErrorCode>(code, message);
+        var error = new Error<UpdateRecordErrorCode>(code);
         return new UpdateRecordResponse(error);
     }
 }

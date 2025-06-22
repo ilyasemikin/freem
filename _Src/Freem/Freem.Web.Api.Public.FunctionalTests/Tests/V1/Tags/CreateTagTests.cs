@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Freem.Entities.Tags.Models;
-using Freem.Web.Api.Public.Contracts.Tags;
+using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Tags.Base;
 using Xunit.Abstractions;

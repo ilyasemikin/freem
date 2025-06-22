@@ -5,18 +5,19 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiCreateActivityRequest = Freem.Web.Api.Public.Contracts.Activities.CreateActivityRequest;
-using ApiCreateActivityResponse = Freem.Web.Api.Public.Contracts.Activities.CreateActivityResponse;
+using ApiCreateActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.CreateActivityRequest;
+using ApiCreateActivityResponse = Freem.Web.Api.Public.Contracts.DTO.Activities.CreateActivityResponse;
 using UseCaseCreateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Create.CreateActivityRequest;
 using UseCaseCreateActivityResponse = Freem.Entities.UseCases.Contracts.Activities.Create.CreateActivityResponse;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/activities")]
 [Tags(ControllerTags.Activities)]
 [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateActivityResponse))]

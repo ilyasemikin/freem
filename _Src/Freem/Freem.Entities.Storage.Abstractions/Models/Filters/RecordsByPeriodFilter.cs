@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;
-using Freem.Entities.Storage.Abstractions.Models.Filters.Models;
+﻿using Freem.Entities.Records.Identifiers;
+using Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;using Freem.Entities.Storage.Abstractions.Models.Filters.Models;
 using Freem.Entities.Users.Identifiers;
 using Freem.Time.Models;
 
@@ -17,8 +17,9 @@ public sealed class RecordsByPeriodFilter : ILimitFilter
     
     public UserIdentifier UserId { get; }
     public DateTimePeriod Period { get; }
+    public RecordIdentifier? AfterRecordId { get; }
 
-    public RecordsByPeriodFilter(UserIdentifier userId, DateTimePeriod period)
+    public RecordsByPeriodFilter(UserIdentifier userId, DateTimePeriod period, RecordIdentifier? afterRecordId = null)
     {
         ArgumentNullException.ThrowIfNull(userId);
         ArgumentNullException.ThrowIfNull(period);
@@ -26,5 +27,6 @@ public sealed class RecordsByPeriodFilter : ILimitFilter
         _limit = Limit.Default;
         UserId = userId;
         Period = period;
+        AfterRecordId = afterRecordId;
     }
 }

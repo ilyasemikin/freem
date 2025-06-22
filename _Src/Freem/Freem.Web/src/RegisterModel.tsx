@@ -1,134 +1,68 @@
-import "./PasswordCredentials.css";
-import { ChangeEvent } from "react";
-import { Button } from "primereact/button";
-import { useState } from "react";
-import { UserClient } from "./clients/UserClient";
-import { RegisterPasswordCredentialsRequest } from "./clients/models/users/LoginPassword/RegisterPasswordCredentialsRequest";
-import { PasswordCredentialsInputText } from "./components/PasswordCredentialsInputText";
-
-interface AccountData {
-  nickname: string;
-  login: string;
-  password: string;
-  confirmPassword: string;
-}
-
-interface AccountValidationResult {
-  nicknameError?: string;
-  loginError?: string;
-  passwordError?: string;
-  confirmPasswordError?: string;
-}
+import {useRef, useState} from "react";
+import {Button} from "primereact/button";
+import {
+  RegisterPasswordCredentialsRequest
+} from "./clients/models/users/LoginPassword/RegisterPasswordCredentialsRequest";
+import {useNavigate} from "react-router";
+import {IRegisterEditorHandle, RegisterEditor, RegisterEditorError} from "./RegisterEditor.tsx";
+import { NavLink } from "react-router";
+import {AuthorizationPanel} from "./AuthorizationPanel.tsx";
+import {useBackendClients} from "./contexts/clients/useBackendClients.ts";
 
 export function RegisterModel() {
-  const [data, setData] = useState<AccountData>({
-    nickname: "",
-    login: "",
-    password: "",
-    confirmPassword: ""
-  });
+  const [loading, setLoading] = useState(false);
 
-  const [validationResult, setValidationResult] = useState<AccountValidationResult>({});
+  const navigator = useNavigate();
+  const clients = useBackendClients();
 
-  const client = new UserClient("http://localhost:30000");
+  const editorRef = useRef<IRegisterEditorHandle>(null);
 
-  function validate(data: AccountData): AccountValidationResult {
-    const result: AccountValidationResult = {};
-
-    if (data.confirmPassword !== "" && data.password !== data.confirmPassword) {
-      result.confirmPasswordError = "Passwords not match";
+  async function signUp() {
+    if (editorRef.current === null) {
+      throw new Error();
     }
 
-    return result;
-  }
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const newData = {
-      ...data,
-      [e.target.name]: e.target.value
-    };
-
-    const validationResult = validate(newData);
-
-    setData(newData);
-    setValidationResult(validationResult);
-  }
-
-  async function handleSignUp() {
-    const newValidationResult = { ...validationResult };
-    var valid = true;
-
-    if (data.login === "") {
-      newValidationResult.loginError = "Login required";
-      valid = false;
-    }
-
-    if (data.nickname === "") {
-      newValidationResult.nicknameError = "Nickname required";
-      valid = false;
-    }
-
-    if (data.password === "") {
-      newValidationResult.passwordError = "Password required";
-      valid = false;
-    }
-
-    if (data.confirmPassword === "") {
-      newValidationResult.confirmPasswordError = "Confirm password required";
-      valid = false;
-    }
-
+    const valid = editorRef.current.validate();
     if (!valid) {
-      setValidationResult(newValidationResult);
       return;
     }
 
-    const request = new RegisterPasswordCredentialsRequest(
-      data.nickname,
-      data.login,
-      data.password);
+    const data = editorRef.current.data();
 
-    await client.register(request);
+    const request = new RegisterPasswordCredentialsRequest(
+        data.nickname,
+        data.login,
+        data.password)
+
+    setLoading(true);
+
+    const response = await clients.authorization.register(request);
+    if (response.ok) {
+      navigator("/login");
+    } else if (response.status === 422) {
+      editorRef.current.setError(RegisterEditorError.LoginAlreadyExist);
+    }
+
+    setLoading(false);
   }
 
   return (
-    <>
-      <div className="container">
-        <PasswordCredentialsInputText
-          name="nickname"
-          placeholder="Nickname"
-          value={data.nickname}
-          error={validationResult.nicknameError}
-          onChange={handleChange} />
-        <PasswordCredentialsInputText
-          name="login"
-          placeholder="Login"
-          value={data.login}
-          error={validationResult.loginError}
-          onChange={handleChange} />
-        <PasswordCredentialsInputText
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={data.password}
-          error={validationResult.passwordError}
-          onChange={handleChange} />
-        <PasswordCredentialsInputText
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm password"
-          value={data.confirmPassword}
-          error={validationResult.confirmPasswordError}
-          onChange={handleChange} />
-        <Button
-          size="small"
-          label="Sign Up"
-          onClick={handleSignUp} />
-      </div>
-      <div className="footer-oneline">
-        <p>Have an account?</p>
-        <a href="">Sign In</a>
-      </div>
-    </>
+      <AuthorizationPanel>
+        <div>
+          <RegisterEditor
+              ref={editorRef}
+              loading={loading}/>
+          <Button
+              style={{ display: "block", width: "100%", margin: "10px 0 0 0" }}
+              size="small"
+              label="Sign Up"
+              loading={loading}
+              onClick={signUp}/>
+        </div>
+        <div style={{margin: "15px", textAlign: "center"}}>
+          <span style={{fontSize: "13px", margin: "0 5px"}}>Have an account?</span>
+          <NavLink style={{fontSize: "13px", margin: "0 5px"}} to="/login">Sign In</NavLink>
+        </div>
+      </AuthorizationPanel>
   )
 }

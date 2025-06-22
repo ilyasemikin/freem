@@ -37,9 +37,9 @@ public sealed class ListTagResponse : IResponse<ListTagErrorCode>
         return new ListTagResponse(tags, totalCount);
     }
 
-    public static ListTagResponse CreateSuccess(ListTagErrorCode code, string? message = null)
+    public static ListTagResponse CreateSuccess(ListTagErrorCode code)
     {
-        var error = new Error<ListTagErrorCode>(code, message);
+        var error = new Error<ListTagErrorCode>(code);
         return new ListTagResponse(error: error);
     }
 }

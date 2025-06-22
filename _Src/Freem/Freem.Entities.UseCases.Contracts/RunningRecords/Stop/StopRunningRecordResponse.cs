@@ -24,7 +24,7 @@ public sealed class StopRunningRecordResponse : IResponse<StopRunningRecordError
 
     public static StopRunningRecordResponse CreateFailure(StopRunningRecordErrorCode code, string? message = null)
     {
-        var error = new Error<StopRunningRecordErrorCode>(code, message);
+        var error = new Error<StopRunningRecordErrorCode>(code);
         return new StopRunningRecordResponse(error);
     }
 }

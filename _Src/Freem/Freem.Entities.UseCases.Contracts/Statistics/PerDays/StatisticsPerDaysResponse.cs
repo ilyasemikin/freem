@@ -30,9 +30,9 @@ public sealed class StatisticsPerDaysResponse : IResponse<StatisticsPerDaysError
         return new StatisticsPerDaysResponse(statistics);
     }
 
-    public static StatisticsPerDaysResponse CreateFailure(StatisticsPerDaysErrorCode code, string? message = null)
+    public static StatisticsPerDaysResponse CreateFailure(StatisticsPerDaysErrorCode code)
     {
-        var error = new Error<StatisticsPerDaysErrorCode>(code, message);
+        var error = new Error<StatisticsPerDaysErrorCode>(code);
         return new StatisticsPerDaysResponse(error: error);
     }
 }

@@ -22,9 +22,9 @@ public sealed class UpdateLoginCredentialsResponse : IResponse<UpdateLoginCreden
         return new UpdateLoginCredentialsResponse();
     }
     
-    public static UpdateLoginCredentialsResponse CreateFailure(UpdateLoginCredentialsErrorCode code, string? message = null)
+    public static UpdateLoginCredentialsResponse CreateFailure(UpdateLoginCredentialsErrorCode code)
     {
-        var error = new Error<UpdateLoginCredentialsErrorCode>(code, message);
+        var error = new Error<UpdateLoginCredentialsErrorCode>(code);
         return new UpdateLoginCredentialsResponse(error);
     }
 }

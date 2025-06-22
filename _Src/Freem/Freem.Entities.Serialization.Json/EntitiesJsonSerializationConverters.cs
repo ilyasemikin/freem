@@ -14,6 +14,7 @@ using Freem.Entities.Serialization.Json.RunningRecords.Identifiers;
 using Freem.Entities.Serialization.Json.Statistics;
 using Freem.Entities.Serialization.Json.Tags.Identifiers;
 using Freem.Entities.Serialization.Json.Tags.Models;
+using Freem.Entities.Serialization.Json.Users.Identifiers;
 using Freem.Entities.Serialization.Json.Users.Models;
 using Freem.Entities.Tags;
 using Freem.Entities.Tags.Identifiers;
@@ -75,6 +76,8 @@ public static class EntitiesJsonSerialization
         yield return new NicknameJsonConverter();
         yield return new PasswordJsonConverter();
 
+        yield return new UserIdentifierJsonConverter();
+        
         yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<ActivityIdentifier>();
         yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<TagIdentifier>();
 

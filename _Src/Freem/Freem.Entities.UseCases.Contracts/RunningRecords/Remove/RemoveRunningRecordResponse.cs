@@ -22,9 +22,9 @@ public sealed class RemoveRunningRecordResponse : IResponse<RemoveRunningRecordE
         return new RemoveRunningRecordResponse();
     }
 
-    public static RemoveRunningRecordResponse CreateFailure(RemoveRunningRecordErrorCode code, string? message = null)
+    public static RemoveRunningRecordResponse CreateFailure(RemoveRunningRecordErrorCode code)
     {
-        var error = new Error<RemoveRunningRecordErrorCode>(code, message);
+        var error = new Error<RemoveRunningRecordErrorCode>(code);
         return new RemoveRunningRecordResponse(error);
     }
 }

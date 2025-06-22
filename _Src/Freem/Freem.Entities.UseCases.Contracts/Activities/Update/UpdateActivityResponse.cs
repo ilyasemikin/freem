@@ -22,9 +22,9 @@ public sealed class UpdateActivityResponse : IResponse<UpdateActivityErrorCode>
         return new UpdateActivityResponse();
     }
 
-    public static UpdateActivityResponse CreateFailure(UpdateActivityErrorCode code, string? message = null)
+    public static UpdateActivityResponse CreateFailure(UpdateActivityErrorCode code)
     {
-        var error = new Error<UpdateActivityErrorCode>(code, message);
+        var error = new Error<UpdateActivityErrorCode>(code);
         return new UpdateActivityResponse(error);
     }
 }

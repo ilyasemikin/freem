@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Password.Login;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,9 +44,9 @@ public sealed class LoginPasswordCredentialsController : BaseController
         var request = Map(body);
 
         var response = await _executor.ExecuteAsync<LoginUserPasswordRequest, LoginUserPasswordResponse>(context, request, cancellationToken);
-
+        
         return response.Success
-            ? CreateSuccess(response.Tokens)
+            ? CreateSuccess(Response, response.Tokens)
             : CreateFailure(response.Error);
     }
 
@@ -53,10 +55,10 @@ public sealed class LoginPasswordCredentialsController : BaseController
         return new LoginUserPasswordRequest(request.Login, request.Password);
     }
 
-    private static IActionResult CreateSuccess(UserTokens tokens)
+    private static IActionResult CreateSuccess(HttpResponse response, UserTokens tokens)
     {
-        var response = new LoginPasswordCredentialsResponse(tokens);
-        return new OkObjectResult(response);
+        var value = new LoginPasswordCredentialsResponse(tokens);
+        return new OkObjectResult(value);
     }
 
     private static IActionResult CreateFailure(Error<LoginUserPasswordErrorCode> error)

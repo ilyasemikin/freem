@@ -22,9 +22,9 @@ public sealed class UnarchiveActivityResponse : IResponse<UnarchiveActivityError
         return new UnarchiveActivityResponse();
     }
 
-    public static UnarchiveActivityResponse CreateFailure(UnarchiveActivityErrorCode code, string? message = null)
+    public static UnarchiveActivityResponse CreateFailure(UnarchiveActivityErrorCode code)
     {
-        var error = new Error<UnarchiveActivityErrorCode>(code, message);
+        var error = new Error<UnarchiveActivityErrorCode>(code);
         return new UnarchiveActivityResponse(error);
     }
 }

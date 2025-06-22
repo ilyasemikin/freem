@@ -7,17 +7,18 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiListEventRequest = Freem.Web.Api.Public.Contracts.Events.ListEventRequest;
+using ApiListEventRequest = Freem.Web.Api.Public.Contracts.DTO.Events.ListEventRequest;
 using UseCaseListEventRequest = Freem.Entities.UseCases.Contracts.Events.List.ListEventRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Events;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/events")]
 [Tags(ControllerTags.Events)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>))]

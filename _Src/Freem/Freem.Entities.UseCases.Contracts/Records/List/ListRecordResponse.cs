@@ -37,9 +37,9 @@ public sealed class ListRecordResponse : IResponse<ListRecordErrorCode>
         return new ListRecordResponse(records, totalCount);
     }
 
-    public static ListRecordResponse CreateFailure(ListRecordErrorCode code, string? message = null)
+    public static ListRecordResponse CreateFailure(ListRecordErrorCode code)
     {
-        var error = new Error<ListRecordErrorCode>(code, message);
+        var error = new Error<ListRecordErrorCode>(code);
         return new ListRecordResponse(error: error);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Freem.Entities.Tags.Identifiers;
-using Freem.Web.Api.Public.Contracts.Tags;
+using Freem.Web.Api.Public.Contracts.DTO.Tags;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 

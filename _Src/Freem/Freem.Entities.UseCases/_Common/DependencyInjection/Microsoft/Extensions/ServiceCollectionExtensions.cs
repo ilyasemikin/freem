@@ -4,6 +4,7 @@ using Freem.Entities.UseCases.Records;
 using Freem.Entities.UseCases.RunningRecords;
 using Freem.Entities.UseCases.Statistics;
 using Freem.Entities.UseCases.Tags;
+using Freem.Entities.UseCases.Users;
 using Freem.Entities.UseCases.Users.Password;
 using Freem.Entities.UseCases.Users.Settings;
 using Freem.Entities.UseCases.Users.Tokens;
@@ -29,6 +30,7 @@ public static class ServiceCollectionExtensions
             .AddRecordsUseCases()
             .AddRunningRecordsUseCases()
             .AddEventsUseCases()
+            .AddUserUseCases()
             .AddUserSettingsUseCases()
             .AddUsersPasswordUseCases()
             .AddUsersTokensUseCases()
@@ -47,6 +49,7 @@ public static class ServiceCollectionExtensions
         builder.Add<UnarchiveActivityUseCase>();
         
         builder.Add<GetActivityUseCase>();
+        builder.Add<FindActivityUseCase>();
         builder.Add<ListActivityUseCase>();
         
         return builder;
@@ -60,7 +63,7 @@ public static class ServiceCollectionExtensions
         builder.Add<RemoveTagUseCase>();
         
         builder.Add<GetTagUseCase>();
-        builder.Add<GetTagByNameUseCase>();
+        builder.Add<FindTagByNameUseCase>();
         builder.Add<ListTagUseCase>();
         
         return builder;
@@ -101,6 +104,14 @@ public static class ServiceCollectionExtensions
         return builder;
     }
 
+    private static UseCasesBuilder<UseCaseExecutionContext> AddUserUseCases(
+        this UseCasesBuilder<UseCaseExecutionContext> builder)
+    {
+        builder.Add<GetUserUseCase>();
+
+        return builder;
+    }
+    
     private static UseCasesBuilder<UseCaseExecutionContext> AddUserSettingsUseCases(
         this UseCasesBuilder<UseCaseExecutionContext> builder)
     {
@@ -132,6 +143,7 @@ public static class ServiceCollectionExtensions
         this UseCasesBuilder<UseCaseExecutionContext> builder)
     {
         builder.Add<StatisticsPerDaysUseCase>();
+        builder.Add<StatisticsPerPeriodUseCase>();
 
         return builder;
     }

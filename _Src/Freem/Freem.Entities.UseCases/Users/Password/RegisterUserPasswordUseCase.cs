@@ -75,7 +75,7 @@ internal sealed class RegisterUserPasswordUseCase
         }
         catch (DuplicateKeyStorageException ex)
         {
-            return ProcessDuplicateKeyStorageException(ex);
+            return ProcessDuplicateKeyStorageException(request, ex);
         }
 
         return RegisterUserPasswordResponse.CreateSuccess(id);
@@ -91,12 +91,13 @@ internal sealed class RegisterUserPasswordUseCase
         }, cancellationToken);
     }
 
-    private static RegisterUserPasswordResponse ProcessDuplicateKeyStorageException(DuplicateKeyStorageException ex)
+    private static RegisterUserPasswordResponse ProcessDuplicateKeyStorageException(
+        RegisterUserPasswordRequest request, DuplicateKeyStorageException ex)
     {
         return ex.Code switch
         {
-            DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin => RegisterUserPasswordResponse.CreateFailure(RegisterUserPasswordErrorCode.LoginAlreadyUsed),
-            _ => RegisterUserPasswordResponse.CreateFailure(RegisterUserPasswordErrorCode.UnknownError, ex.Message)
+            DuplicateKeyStorageException.ErrorCode.DuplicateUserLogin => RegisterUserPasswordResponse.CreateLoginAlreadyUsedFailure(request.Login),
+            _ => RegisterUserPasswordResponse.CreateUnknownFailure(ex.Message)
         };
     }
 }

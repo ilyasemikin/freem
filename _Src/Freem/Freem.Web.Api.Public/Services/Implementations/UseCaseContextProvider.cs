@@ -19,7 +19,7 @@ public sealed class UseCaseContextProvider
             return UseCaseExecutionContext.Empty;
         
         var user = _accessor.HttpContext.User;
-        var userId = user.FindFirstValue(JwtBearerAuthenticationClaimTypes.UserId);
+        var userId = user.FindFirstValue(JwtAuthenticationClaimTypes.UserId);
         
         return userId is not null 
             ? new UseCaseExecutionContext(userId) 

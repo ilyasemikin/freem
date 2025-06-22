@@ -3,15 +3,16 @@ using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts.Users.Settings;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.Settings;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/user/settings")]
 [Tags(ControllerTags.User, ControllerTags.Settings)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSettingsResponse))]

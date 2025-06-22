@@ -5,7 +5,7 @@ using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts.Users.Tokens;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Tokens;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +14,7 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users.Tokens;
 [Route("api/v1/user/tokens/refresh")]
 [Tags(ControllerTags.User, ControllerTags.AuthTokens)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokensResponse))]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RefreshTokensController : BaseController

@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Web.Api.Public.Contracts.Events;
+using Freem.Web.Api.Public.Contracts.DTO.Events;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Events.Base;
 using Xunit.Abstractions;

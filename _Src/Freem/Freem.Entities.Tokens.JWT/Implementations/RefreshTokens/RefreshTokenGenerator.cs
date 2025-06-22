@@ -43,7 +43,8 @@ public sealed class RefreshTokenGenerator
             SigningCredentials = credentials,
             Issuer = _settings.Issuer,
             Audience = _settings.Audience,
-            Expires = expires.DateTime,
+            NotBefore = now.UtcDateTime,
+            Expires = expires.UtcDateTime,
             Claims = properties.ToClaims()
         };
 

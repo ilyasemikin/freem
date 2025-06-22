@@ -9,5 +9,5 @@ public interface IResponse<TErrorCode>
     [MemberNotNullWhen(false, nameof(Error))]
     bool Success { get; }
     
-    Error<TErrorCode>? Error { get; } 
+    Error<TErrorCode>? Error { get; }
 }

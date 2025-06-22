@@ -3,9 +3,9 @@ using System.Text.Json;
 using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client;
-using Freem.Web.Api.Public.Client.Constants;
 using Freem.Web.Api.Public.Client.Implementations.Extensions;
 using Freem.Web.Api.Public.Client.Models;
+using Freem.Web.Api.Public.Contracts;
 
 namespace Freem.Web.Api.Public.SyncClient.Implementations.Base;
 
@@ -92,13 +92,13 @@ public abstract class BaseSyncClient
 
     private static HttpRequest PopulateRequest(HttpRequest request)
     {
-        return request.WithHeader(ClientHeadersNames.ClientVersion, ClientVersion.Version10);
+        const string client = "C# Freem.Web.Api.Public.Client";
+        return request.WithHeader(HeaderNames.ClientName, client);
     }
 
     private static HttpRequest PopulateAuthorizedRequest(HttpRequest request, string token)
     {
-        return request
-            .WithHeader(ClientHeadersNames.ClientVersion, ClientVersion.Version10)
-            .WithHeader("Authorization", $"Bearer {token}");
+        request = request.WithHeader("Authorization", $"Bearer {token}");
+        return PopulateRequest(request);
     }
 }

@@ -4,8 +4,8 @@ using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Time.Models;
-using Freem.Web.Api.Public.Contracts.Records;
-using Freem.Web.Api.Public.Contracts.Records.Running;
+using Freem.Web.Api.Public.Contracts.DTO.Records;
+using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 

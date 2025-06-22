@@ -1,4 +1,4 @@
-﻿using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+﻿using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 

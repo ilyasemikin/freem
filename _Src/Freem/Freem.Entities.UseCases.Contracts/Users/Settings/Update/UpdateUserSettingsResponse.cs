@@ -22,9 +22,9 @@ public sealed class UpdateUserSettingsResponse : IResponse<UpdateUserSettingsErr
         return new UpdateUserSettingsResponse();
     }
 
-    public static UpdateUserSettingsResponse CreateFailure(UpdateUserSettingsErrorCode code, string? message = null)
+    public static UpdateUserSettingsResponse CreateFailure(UpdateUserSettingsErrorCode code)
     {
-        var error = new Error<UpdateUserSettingsErrorCode>(code, message);
+        var error = new Error<UpdateUserSettingsErrorCode>(code);
         return new UpdateUserSettingsResponse(error);
     }
 }

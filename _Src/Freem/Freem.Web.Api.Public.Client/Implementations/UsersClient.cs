@@ -4,9 +4,11 @@ using Freem.Http.Requests.Entities;
 using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
-using Freem.Web.Api.Public.Contracts.Users.Settings;
-using Freem.Web.Api.Public.Contracts.Users.Tokens;
+using Freem.Web.Api.Public.Contracts;
+using Freem.Web.Api.Public.Contracts.DTO.Users;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Tokens;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -38,6 +40,15 @@ public sealed class UsersClient : BaseClient
             .WithJsonBody(body, _options);
         
         return SendAsync<LoginPasswordCredentialsResponse>(request, cancellationToken);
+    }
+
+    public async Task<ClientResult> LoginCookieAsync(
+        LoginPasswordCredentialsRequest body, CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Post("api/v1/user/password-credentials/login/cookie")
+            .WithJsonBody(body, _options);
+        
+        return await SendAsync<LoginPasswordCredentialsResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdatePasswordCredentialsAsync(
@@ -72,5 +83,28 @@ public sealed class UsersClient : BaseClient
             .WithJsonBody(body, _options);
         
         return SendAsync<RefreshTokensResponse>(request, cancellationToken);
+    }
+
+    public Task<ClientResult> RefreshCookieTokensAsync(
+        string refreshTokenCookie, CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Post("api/v1/user/cookie-tokens/refresh")
+            .WithHeader(CookieNames.RefreshToken, refreshTokenCookie);
+        
+        return SendAsync(request, cancellationToken);
+    }
+
+    public Task<ClientResult> DeleteCookieTokensAsync(CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Delete("api/v1/user/cookie-tokens");
+        
+        return SendAsync(request, cancellationToken);
+    }
+
+    public Task<ClientResult<MeResponse>> MeAsync(CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Get("api/v1/user/me");
+        
+        return SendAsync<MeResponse>(request, cancellationToken);
     }
 }

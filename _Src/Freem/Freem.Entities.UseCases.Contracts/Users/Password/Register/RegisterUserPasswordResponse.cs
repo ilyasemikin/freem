@@ -30,9 +30,22 @@ public sealed class RegisterUserPasswordResponse : IResponse<RegisterUserPasswor
         return new RegisterUserPasswordResponse(userId);
     }
 
-    public static RegisterUserPasswordResponse CreateFailure(RegisterUserPasswordErrorCode code, string? message = null)
+    public static RegisterUserPasswordResponse CreateLoginAlreadyUsedFailure(string login)
     {
-        var error = new Error<RegisterUserPasswordErrorCode>(code, message);
+        var properties = new Dictionary<string, string>()
+        {
+            ["LOGIN"] = login
+        };
+
+        var error = new Error<RegisterUserPasswordErrorCode>(
+            RegisterUserPasswordErrorCode.LoginAlreadyUsed,
+            properties: properties);
+        return new RegisterUserPasswordResponse(error: error);
+    }
+
+    public static RegisterUserPasswordResponse CreateUnknownFailure(string message)
+    {
+        var error = new Error<RegisterUserPasswordErrorCode>(RegisterUserPasswordErrorCode.UnknownError, message);
         return new RegisterUserPasswordResponse(error: error);
     }
 }

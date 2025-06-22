@@ -5,18 +5,19 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiCreateRecordRequest = Freem.Web.Api.Public.Contracts.Records.CreateRecordRequest;
-using ApiCreateRecordResponse = Freem.Web.Api.Public.Contracts.Records.CreateRecordResponse;
+using ApiCreateRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.CreateRecordRequest;
+using ApiCreateRecordResponse = Freem.Web.Api.Public.Contracts.DTO.Records.CreateRecordResponse;
 using UseCaseCreateRecordRequest = Freem.Entities.UseCases.Contracts.Records.Create.CreateRecordRequest;
 using UseCaseCreateRecordResponse = Freem.Entities.UseCases.Contracts.Records.Create.CreateRecordResponse;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/records")]
 [Tags(ControllerTags.Records)]
 [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateRecordResponse))]

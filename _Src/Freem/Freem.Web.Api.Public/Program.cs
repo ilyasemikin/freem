@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Freem.Credentials.Password.DependencyInjection.Microsoft.Extensions;
 using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.DependencyInjection;
@@ -11,10 +12,13 @@ using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
+using Freem.Web.Api.Public.Authentication;
 using Freem.Web.Api.Public.Authentication.DependencyInjection.Microsoft;
 using Freem.Web.Api.Public.Authentication.OpenApi;
+using Freem.Web.Api.Public.Autherization.Extensions;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
+using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.ModelBinders.Providers;
 using Freem.Web.Api.Public.OpenApi;
 using Freem.Web.Api.Public.OpenApi.Headers;
@@ -54,9 +58,10 @@ builder.Services.AddCors(options =>
         {
             policy
                 .WithOrigins(configuration.CorsOrigins.ToArray())
-                .AllowCredentials()
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .WithExposedHeaders([HeaderNames.ItemsCount, HeaderNames.TotalItemsCount]);
         }
     });
 });
@@ -89,8 +94,11 @@ builder.Services
     .AddAccessTokens(builder.Configuration.GetAccessTokenSettings())
     .AddRefreshTokens(builder.Configuration.GetRefreshTokenSettings());
 
-builder.Services.AddAuthentication()
-    .AddJwtBearerAuthentication();
+builder.Services.AddAuthentication(JwtBearerAuthenticationOptions.SchemeName)
+    .AddJwtBearerAuthentication()
+    .AddJwtCookieAuthentication();
+
+builder.Services.AddAuthorization(options => options.AddJwtPolicy());
 
 builder.Services
     .AddControllers(options =>
@@ -100,6 +108,8 @@ builder.Services
     .AddJsonOptions(options =>
     {
         EntitiesJsonSerialization.Populate(options.JsonSerializerOptions);
+        
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
 builder.Services.AddOpenApi(options =>
@@ -113,12 +123,15 @@ builder.Services.AddOpenApi(options =>
 
 var application = builder.Build();
 
-application.UseCors();
-
 application
     .MapOpenApi()
     .CacheOutput();
 application.MapScalarApiReference();
+
+application.UseCors();
+
+application.UseAuthentication();
+application.UseAuthorization();
 
 application.MapControllers();
 

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Freem.Time.Models;
-using Freem.Web.Api.Public.Contracts.Records;
+using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Records.Base;
 using Xunit.Abstractions;

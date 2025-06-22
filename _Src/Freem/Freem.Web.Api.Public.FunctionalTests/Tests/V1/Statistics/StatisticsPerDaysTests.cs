@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
-using Freem.Web.Api.Public.Contracts.Statistics;
+using Freem.Web.Api.Public.Contracts.DTO.Statistics;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Statistics.Base;
 using Xunit.Abstractions;

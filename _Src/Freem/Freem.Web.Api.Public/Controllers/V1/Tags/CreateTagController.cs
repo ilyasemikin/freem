@@ -4,18 +4,19 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiCreateTagRequest = Freem.Web.Api.Public.Contracts.Tags.CreateTagRequest;
-using ApiCreateTagResponse = Freem.Web.Api.Public.Contracts.Tags.CreateTagResponse;
+using ApiCreateTagRequest = Freem.Web.Api.Public.Contracts.DTO.Tags.CreateTagRequest;
+using ApiCreateTagResponse = Freem.Web.Api.Public.Contracts.DTO.Tags.CreateTagResponse;
 using UseCaseCreateTagRequest = Freem.Entities.UseCases.Contracts.Tags.Create.CreateTagRequest;
 using UseCaseCreateTagResponse = Freem.Entities.UseCases.Contracts.Tags.Create.CreateTagResponse;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/tags")]
 [Tags(ControllerTags.Tags)]
 [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiCreateTagResponse))]

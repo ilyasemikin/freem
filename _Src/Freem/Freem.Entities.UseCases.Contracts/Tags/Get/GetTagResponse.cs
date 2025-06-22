@@ -29,9 +29,9 @@ public sealed class GetTagResponse : IResponse<GetTagErrorCode>
         return new GetTagResponse(tag);
     }
 
-    public static GetTagResponse CreateFailure(GetTagErrorCode code, string? message = null)
+    public static GetTagResponse CreateFailure(GetTagErrorCode code)
     {
-        var error = new Error<GetTagErrorCode>(code, message);
+        var error = new Error<GetTagErrorCode>(code);
         return new GetTagResponse(error: error);
     }
 

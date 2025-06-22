@@ -27,10 +27,7 @@ internal sealed class PeriodListRecordUseCase :
     {
         context.ThrowsIfUnauthorized();
 
-        var filter = new RecordsByPeriodFilter(context.UserId, request.Period)
-        {
-            Limit = (int)request.Limit
-        };
+        var filter = new RecordsByPeriodFilter(context.UserId, request.Period);
         
         var result = await _repository.FindAsync(filter, cancellationToken);
         var records = await result.ToArrayAsync(cancellationToken);

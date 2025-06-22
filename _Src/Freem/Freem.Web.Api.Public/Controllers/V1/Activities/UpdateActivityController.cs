@@ -6,19 +6,21 @@ using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiUpdateActivityRequest = Freem.Web.Api.Public.Contracts.Activities.UpdateActivityRequest;
+using ApiUpdateActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.UpdateActivityRequest;
 using UseCaseUpdateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Update.UpdateActivityRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize]
-[Route("api/v1/activities/{activityId:required}")][ProducesResponseType(StatusCodes.Status200OK)]
+[Authorize(JwtAuthorizationPolicy.Name)]
+[Route("api/v1/activities/{activityId:required}")]
 [Tags(ControllerTags.Activities)]
+[ProducesResponseType(StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status400BadRequest)]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,7 +37,7 @@ public class UpdateActivityController : BaseController
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
         ArgumentNullException.ThrowIfNull(executor);
-        
+
         _contextProvider = contextProvider;
         _executor = executor;
     }
@@ -49,8 +51,10 @@ public class UpdateActivityController : BaseController
     {
         var context = _contextProvider.Get();
         var request = Map(activityId, body);
-        
-        var response = await _executor.ExecuteAsync<UseCaseUpdateActivityRequest, UpdateActivityResponse>(context, request, cancellationToken);
+
+        var response =
+            await _executor.ExecuteAsync<UseCaseUpdateActivityRequest, UpdateActivityResponse>(context, request,
+                cancellationToken);
 
         return response.Success
             ? Ok()
@@ -64,7 +68,7 @@ public class UpdateActivityController : BaseController
         var tags = request.Tags is not null
             ? new UpdateField<RelatedTagsCollection>(new RelatedTagsCollection(request.Tags.Value))
             : null;
-        
+
         return new UseCaseUpdateActivityRequest(activityId)
         {
             Name = request.Name?.Map(),

@@ -117,9 +117,19 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
         ArgumentNullException.ThrowIfNull(filter);
         
         return await _database.Activities
+            .Include(e => e.Tags)
             .Where(e => e.UserId == filter.UserId)
             .OrderBy(filter.Sorting, ActivityFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
+            .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
+    }
+
+    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(ActivitiesFilter filter, CancellationToken cancellationToken = default)
+    {
+        return await _database.Activities
+            .Include(e => e.Tags)
+            .Where(e => e.UserId == filter.UserId && e.Name.Contains(filter.SearchText))
+            .SliceByLimitFilter(filter)
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 }

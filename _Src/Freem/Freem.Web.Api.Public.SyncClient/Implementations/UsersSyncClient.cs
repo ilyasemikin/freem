@@ -4,9 +4,10 @@ using Freem.Http.Requests.Entities;
 using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
-using Freem.Web.Api.Public.Contracts.Users.Settings;
-using Freem.Web.Api.Public.Contracts.Users.Tokens;
+using Freem.Web.Api.Public.Contracts.DTO.Users;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
+using Freem.Web.Api.Public.Contracts.DTO.Users.Tokens;
 using Freem.Web.Api.Public.SyncClient.Implementations.Base;
 
 namespace Freem.Web.Api.Public.SyncClient.Implementations;
@@ -68,5 +69,12 @@ public sealed class UsersSyncClient : BaseSyncClient
             .WithJsonBody(body, _options);
 
         return Send<RefreshTokensResponse>(request);
+    }
+    
+    public ClientResult<MeResponse> Me()
+    {
+        var request = HttpRequest.Get("api/v1/user/me");
+        
+        return Send<MeResponse>(request);
     }
 }

@@ -3,15 +3,16 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Password.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/user/password-credentials")]
 [Tags(ControllerTags.User, ControllerTags.PasswordCredentials)]
 [ProducesResponseType(StatusCodes.Status200OK)]

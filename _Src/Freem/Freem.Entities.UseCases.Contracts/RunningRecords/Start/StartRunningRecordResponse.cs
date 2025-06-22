@@ -28,9 +28,9 @@ public sealed class StartRunningRecordResponse : IResponse<StartRunningRecordErr
         return new StartRunningRecordResponse(record);
     }
 
-    public static StartRunningRecordResponse CreateFailure(StartRunningRecordErrorCode code, string? message = null)
+    public static StartRunningRecordResponse CreateFailure(StartRunningRecordErrorCode code)
     {
-        var error = new Error<StartRunningRecordErrorCode>(code, message);
+        var error = new Error<StartRunningRecordErrorCode>(code);
         return new StartRunningRecordResponse(error: error);
     }
 }

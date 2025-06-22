@@ -37,9 +37,9 @@ public sealed class PeriodListResponse : IResponse<PeriodListErrorCode>
         return new PeriodListResponse(records, totalCount);
     }
 
-    public static PeriodListResponse CreateFailure(PeriodListErrorCode code, string? message = null)
+    public static PeriodListResponse CreateFailure(PeriodListErrorCode code)
     {
-        var error = new Error<PeriodListErrorCode>(code, message);
+        var error = new Error<PeriodListErrorCode>(code);
         return new PeriodListResponse(error: error);
     }
 }

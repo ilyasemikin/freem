@@ -45,7 +45,7 @@ public sealed class StatisticsPerDaysUseCase :
         var end = request.Period.EndAt.ToUtcDateTime(time);
 
         var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
-        while (current <= end)
+        while (current < end)
         {
             var records = await FindRecordsAsync(context.UserId, current, cancellationToken);
 

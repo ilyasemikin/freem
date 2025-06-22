@@ -29,9 +29,9 @@ public sealed class GetRecordResponse : IResponse<GetRecordErrorCode>
         return new GetRecordResponse(record);
     }
 
-    public static GetRecordResponse CreateFailure(GetRecordErrorCode code, string? message = null)
+    public static GetRecordResponse CreateFailure(GetRecordErrorCode code)
     {
-        var error = new Error<GetRecordErrorCode>(code, message);
+        var error = new Error<GetRecordErrorCode>(code);
         return new GetRecordResponse(error: error);
     }
 

@@ -22,9 +22,9 @@ public sealed class RemoveTagResponse : IResponse<RemoveTagErrorCode>
         return new RemoveTagResponse();
     }
 
-    public static RemoveTagResponse CreateFailure(RemoveTagErrorCode code, string? message = null)
+    public static RemoveTagResponse CreateFailure(RemoveTagErrorCode code)
     {
-        var error = new Error<RemoveTagErrorCode>(code, message);
+        var error = new Error<RemoveTagErrorCode>(code);
         return new RemoveTagResponse(error);
     }
 }

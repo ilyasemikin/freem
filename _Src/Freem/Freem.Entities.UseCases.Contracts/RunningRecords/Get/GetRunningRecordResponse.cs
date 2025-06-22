@@ -29,9 +29,9 @@ public sealed class GetRunningRecordResponse : IResponse<GetRunningRecordErrorCo
         return new GetRunningRecordResponse(record);
     }
 
-    public static GetRunningRecordResponse CreateFailure(GetRunningRecordErrorCode code, string? message = null)
+    public static GetRunningRecordResponse CreateFailure(GetRunningRecordErrorCode code)
     {
-        var error = new Error<GetRunningRecordErrorCode>(code, message);
+        var error = new Error<GetRunningRecordErrorCode>(code);
         return new GetRunningRecordResponse(error: error);
     }
 

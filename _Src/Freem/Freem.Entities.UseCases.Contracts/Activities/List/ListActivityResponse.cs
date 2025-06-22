@@ -37,10 +37,4 @@ public sealed class ListActivityResponse : IResponse<ListActivityErrorCode>
         
         return new ListActivityResponse(activities, totalCount);
     }
-
-    public static ListActivityResponse CreateFailure(ListActivityErrorCode code, string? message = null)
-    {
-        var error = new Error<ListActivityErrorCode>(code, message);
-        return new ListActivityResponse(error: error);
-    }
 }

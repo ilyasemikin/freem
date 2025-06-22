@@ -28,9 +28,9 @@ public sealed class GetUserSettingsResponse : IResponse<GetUserSettingsErrorCode
         return new GetUserSettingsResponse(settings);
     }
 
-    public static GetUserSettingsResponse CreateFailure(GetUserSettingsErrorCode code, string? message = null)
+    public static GetUserSettingsResponse CreateFailure(GetUserSettingsErrorCode code)
     {
-        var error = new Error<GetUserSettingsErrorCode>(code, message);
+        var error = new Error<GetUserSettingsErrorCode>(code);
         return new GetUserSettingsResponse(error: error);
     }
 }

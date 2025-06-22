@@ -2,7 +2,7 @@
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
-using Freem.Web.Api.Public.Contracts.Activities;
+using Freem.Web.Api.Public.Contracts.DTO.Activities;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 

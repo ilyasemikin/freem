@@ -29,9 +29,9 @@ public sealed class GetActivityResponse : IResponse<GetActivityErrorCode>
         return new GetActivityResponse(activity);
     }
 
-    public static GetActivityResponse CreateFailure(GetActivityErrorCode code, string? message = null)
+    public static GetActivityResponse CreateFailure(GetActivityErrorCode code)
     {
-        var error = new Error<GetActivityErrorCode>(code, message);
+        var error = new Error<GetActivityErrorCode>(code);
         return new GetActivityResponse(error: error);
     }
 

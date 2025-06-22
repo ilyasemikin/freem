@@ -6,7 +6,7 @@ using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Events;
+using Freem.Web.Api.Public.Contracts.DTO.Events;
 using Freem.Web.Api.Public.SyncClient.Implementations.Base;
 
 namespace Freem.Web.Api.Public.SyncClient.Implementations;

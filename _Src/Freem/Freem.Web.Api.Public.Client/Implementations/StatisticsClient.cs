@@ -3,7 +3,7 @@ using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
-using Freem.Web.Api.Public.Contracts.Statistics;
+using Freem.Web.Api.Public.Contracts.DTO.Statistics;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 

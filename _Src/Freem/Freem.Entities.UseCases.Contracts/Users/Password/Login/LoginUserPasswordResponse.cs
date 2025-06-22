@@ -29,9 +29,9 @@ public sealed class LoginUserPasswordResponse : IResponse<LoginUserPasswordError
         return new LoginUserPasswordResponse(tokens);
     }
     
-    public static LoginUserPasswordResponse CreateFailure(LoginUserPasswordErrorCode code, string? message = null)
+    public static LoginUserPasswordResponse CreateFailure(LoginUserPasswordErrorCode code)
     {
-        var error = new Error<LoginUserPasswordErrorCode>(code, message);
+        var error = new Error<LoginUserPasswordErrorCode>(code);
         return new LoginUserPasswordResponse(error: error);
     }
 }

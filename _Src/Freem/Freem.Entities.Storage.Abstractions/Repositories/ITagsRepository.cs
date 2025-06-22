@@ -13,7 +13,7 @@ public interface ITagsRepository :
     IWriteRepository<Tag, TagIdentifier>,
     ISearchByIdRepository<Tag, TagIdentifier>,
     ISearchByMultipleIdsRepository<Tag, TagIdentifier, TagAndUserIdentifiers>,
-    IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsByUserFilter>
+    IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsByUserFilter>,
+    IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsFilter>
 {
-    Task<SearchEntityResult<Tag>> FindByNameAsync(TagName name, CancellationToken cancellationToken = default);
 }

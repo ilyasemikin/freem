@@ -4,7 +4,9 @@ using Freem.Entities.UseCases.Contracts.Users.Password.Register;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts.Users.LoginPassword;
+using Freem.Web.Api.Public.Contracts;
+using Freem.Web.Api.Public.Contracts.DTO;
+using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +15,7 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users.PasswordCredentials;
 [Route("api/v1/user/password-credentials/register")]
 [Tags(ControllerTags.User, ControllerTags.PasswordCredentials)]
 [ProducesResponseType(StatusCodes.Status200OK)]
-[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RegisterPasswordCredentialsController : BaseController
 {
@@ -54,10 +56,14 @@ public sealed class RegisterPasswordCredentialsController : BaseController
 
     private static IActionResult CreateFailure(Error<RegisterUserPasswordErrorCode> error)
     {
-        return error.Code switch
-        {
-            RegisterUserPasswordErrorCode.LoginAlreadyUsed => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Code is not RegisterUserPasswordErrorCode.LoginAlreadyUsed)
+            return CreateResult(StatusCodes.Status500InternalServerError);
+        
+        var response = new ErrorResponse(
+            "0001",
+            "Login already used",
+            error.Properties);
+
+        return CreateResult(response, StatusCodes.Status422UnprocessableEntity);
     }
 }

@@ -1,8 +1,8 @@
-﻿using Freem.Web.Api.Public.Contracts.Activities;
-using Freem.Web.Api.Public.Contracts.Events;
-using Freem.Web.Api.Public.Contracts.Records;
-using Freem.Web.Api.Public.Contracts.Statistics;
-using Freem.Web.Api.Public.Contracts.Tags;
+﻿using Freem.Web.Api.Public.Contracts.DTO.Activities;
+using Freem.Web.Api.Public.Contracts.DTO.Events;
+using Freem.Web.Api.Public.Contracts.DTO.Records;
+using Freem.Web.Api.Public.Contracts.DTO.Statistics;
+using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.ModelBinders.Binders;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,7 +21,9 @@ internal sealed class QueryListModelBinderProvider : IModelBinderProvider
             [typeof(ListRecordRequest)] = new ListRecordRequestModelBinder(),
             [typeof(ListRecordByPeriodRequest)] = new ListRecordByPeriodRequestModelBinder(),
             [typeof(ListEventRequest)] = new ListEventRequestModelBinder(),
-            [typeof(StatisticsPerDaysRequest)] = new StatisticsPerDaysRequestModelBinder()
+            [typeof(StatisticsPerDaysRequest)] = new StatisticsPerDaysRequestModelBinder(),
+            [typeof(FindActivityByNameRequest)] = new FindActivityByNameRequestModelBinder(),
+            [typeof(StatisticsPerPeriodRequest)] = new StatisticsPerPeriodRequestModelBinder(),
         };
     }
     

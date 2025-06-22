@@ -41,9 +41,9 @@ public sealed class ListEventResponse : IResponse<ListEventErrorCode>
         return new ListEventResponse(events, totalCount);
     }
     
-    public static ListEventResponse CreateFailure(ListEventErrorCode code, string? message = null)
+    public static ListEventResponse CreateFailure(ListEventErrorCode code)
     {
-        var error = new Error<ListEventErrorCode>(code, message);
+        var error = new Error<ListEventErrorCode>(code);
         return new ListEventResponse(error: error);
     }
 }

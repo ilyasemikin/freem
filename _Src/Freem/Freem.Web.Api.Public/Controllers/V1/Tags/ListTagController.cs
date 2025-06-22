@@ -5,19 +5,20 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Tags.List;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
-using Freem.Web.Api.Public.Contracts.Tags;
+using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ApiListTagRequest = Freem.Web.Api.Public.Contracts.Tags.ListTagRequest;
+using ApiListTagRequest = Freem.Web.Api.Public.Contracts.DTO.Tags.ListTagRequest;
 using UseCaseListTagRequest = Freem.Entities.UseCases.Contracts.Tags.List.ListTagRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/tags")]
 [Tags(ControllerTags.Tags)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<TagResponse>))]

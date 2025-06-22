@@ -22,9 +22,9 @@ public sealed class RemoveActivityResponse : IResponse<RemoveActivityErrorCode>
         return new RemoveActivityResponse();
     }
 
-    public static RemoveActivityResponse CreateFailure(RemoveActivityErrorCode code, string? message = null)
+    public static RemoveActivityResponse CreateFailure(RemoveActivityErrorCode code)
     {
-        var error = new Error<RemoveActivityErrorCode>(code, message);
+        var error = new Error<RemoveActivityErrorCode>(code);
         return new RemoveActivityResponse(error);
     }
 }

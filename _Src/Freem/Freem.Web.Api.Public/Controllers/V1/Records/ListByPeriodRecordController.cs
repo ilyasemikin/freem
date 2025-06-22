@@ -5,9 +5,10 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
-using Freem.Web.Api.Public.Contracts.Records;
+using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
-[Authorize]
+[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/records/by-period")]
 [Tags(ControllerTags.Records)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<RecordResponse>))]
@@ -73,7 +74,7 @@ public sealed class ListByPeriodRecordController : BaseController
         static async IAsyncEnumerable<RecordResponse> MapRecords(IReadOnlyList<Record> records)
         {
             foreach (var record in records)
-                yield return new RecordResponse(record.Id, record.Activities, record.Tags)
+                yield return new RecordResponse(record.Id, record.Period, record.Activities, record.Tags)
                 {
                     Name = record.Name,
                     Description = record.Description

@@ -1,5 +1,5 @@
 ﻿using Freem.Time.Models;
-using Freem.Web.Api.Public.Contracts.Statistics;
+using Freem.Web.Api.Public.Contracts.DTO.Statistics;
 using Freem.Web.Api.Public.ModelBinders.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 

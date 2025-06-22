@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Web.Api.Public.Contracts.Records.Running;
+using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Records.Running.Base;
 using Xunit.Abstractions;
