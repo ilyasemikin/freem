@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Freem.Web.Api.Public.Authentication.OpenApi;
 
@@ -10,15 +10,17 @@ internal sealed class JwtBearerOpenApiDocumentTransformer : IOpenApiDocumentTran
         OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
-        var schemes = new Dictionary<string, OpenApiSecurityScheme>
+        var scheme = new OpenApiSecurityScheme
         {
-            [JwtBearerOpenApiConstants.AuthenticationScheme] = new()
-            {
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                In = ParameterLocation.Header,
-                BearerFormat = "Json Web Token"
-            }
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            In = ParameterLocation.Header,
+            BearerFormat = "Json Web Token"
+        };
+
+        var schemes = new Dictionary<string, IOpenApiSecurityScheme>
+        {
+            [JwtBearerOpenApiConstants.AuthenticationScheme] = scheme
         };
 
         document.Components ??= new();

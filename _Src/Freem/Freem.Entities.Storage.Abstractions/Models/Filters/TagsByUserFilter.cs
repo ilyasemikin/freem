@@ -12,8 +12,8 @@ public sealed class TagsByUserFilter : ILimitFilter, IOffsetFilter, ISortingFilt
 
     private readonly SortOptions<TagSortField> _sorting = DefaultSorting;
     
-    public Limit Limit { get; init; }
-    public Offset Offset { get; init; }
+    public required Limit Limit { get; init; }
+    public required Offset Offset { get; init; }
 
     public SortOptions<TagSortField> Sorting
     {

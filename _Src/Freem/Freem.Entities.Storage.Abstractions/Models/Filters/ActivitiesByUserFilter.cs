@@ -14,8 +14,8 @@ public sealed class ActivitiesByUserFilter : ILimitFilter, IOffsetFilter, ISorti
 
     private readonly SortOptions<ActivitySortField> _sorting = DefaultSorting;
     
-    public Limit Limit { get; init; }
-    public Offset Offset { get; init; }
+    public required Limit Limit { get; init; }
+    public required Offset Offset { get; init; }
     
     public SortOptions<ActivitySortField> Sorting
     {

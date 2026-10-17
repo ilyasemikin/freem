@@ -1,6 +1,6 @@
 ﻿using Freem.Web.Api.Public.Configuration.Extensions;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Freem.Web.Api.Public.OpenApi;
 
@@ -21,6 +21,7 @@ internal sealed class OpenApiDocumentTransformer : IOpenApiDocumentTransformer
         if (info.ServerAddresses.Count == 0)
             return Task.CompletedTask;
         
+        document.Servers ??= new List<OpenApiServer>();
         document.Servers.Clear();
         foreach (var address in info.ServerAddresses)
         {

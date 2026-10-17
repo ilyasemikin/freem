@@ -94,7 +94,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.NotNull(exception);
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Equal(1, concreteException.RelatedIds.Count);
+        Assert.Single(concreteException.RelatedIds);
         Assert.Equal(record.Activities.Identifiers.First(), concreteException.RelatedIds[0]);
     }
 
@@ -121,7 +121,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.NotNull(exception);
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Equal(1, concreteException.RelatedIds.Count);
+        Assert.Single(concreteException.RelatedIds);
         Assert.Equal(record.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
     }
 
@@ -215,7 +215,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.NotNull(exception);
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Equal(1, concreteException.RelatedIds.Count);
+        Assert.Single(concreteException.RelatedIds);
         Assert.Equal(record.Activities.Identifiers.Last(), concreteException.RelatedIds[0]);
     }
 
@@ -248,7 +248,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.NotNull(exception);
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Equal(1, concreteException.RelatedIds.Count);
+        Assert.Single(concreteException.RelatedIds);
         Assert.Equal(record.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
     }
     

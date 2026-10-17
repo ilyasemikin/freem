@@ -67,7 +67,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         Assert.NotNull(exception);
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Equal(1, concreteException.RelatedIds.Count);
+        Assert.Single(concreteException.RelatedIds);
         Assert.Equal(activity.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
     }
     

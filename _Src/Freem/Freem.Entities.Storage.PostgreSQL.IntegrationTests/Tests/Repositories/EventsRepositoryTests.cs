@@ -292,7 +292,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         var activityId = IdentifiersGenerator.Generate<ActivityIdentifier>();
         foreach (var @case in ValidActivityEntitiesCases)
         {
-            var generator = (ActivityEventGenerator)@case[0];
+            var generator = @case;
             var @event = generator(id, activityId, userId);
             
             types.Add(@event.GetType());
@@ -301,7 +301,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         var recordId = IdentifiersGenerator.Generate<RecordIdentifier>();
         foreach (var @case in ValidRecordEntitiesCases)
         {
-            var generator = (RecordEventGenerator)@case[0];
+            var generator = @case;
             var @event = generator(id, recordId, userId);
             
             types.Add(@event.GetType());
@@ -310,7 +310,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         var runningRecordId = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
         foreach (var @case in ValidRunningRecordEventsCases)
         {
-            var generator = (RunningRecordEventGenerator)@case[0];
+            var generator = @case;
             var @event = generator(id, runningRecordId);
             
             types.Add(@event.GetType());
@@ -319,7 +319,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         var tagId = IdentifiersGenerator.Generate<TagIdentifier>();
         foreach (var @case in ValidTagEventsCase)
         {
-            var generator = (TagEventGenerator)@case[0];
+            var generator = @case;
             var @event = generator(id, tagId, userId);
             
             types.Add(@event.GetType());
@@ -327,7 +327,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
 
         foreach (var @case in ValidUserEventsCase)
         {
-            var generator = (UserEventGenerator)@case[0];
+            var generator = @case;
             var @event = generator(id, userId);
             
             types.Add(@event.GetType());

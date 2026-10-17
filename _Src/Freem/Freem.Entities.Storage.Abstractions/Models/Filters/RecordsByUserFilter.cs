@@ -6,8 +6,8 @@ namespace Freem.Entities.Storage.Abstractions.Models.Filters;
 
 public sealed class RecordsByUserFilter : ILimitFilter, IOffsetFilter
 {
-    public Limit Limit { get; init; }
-    public Offset Offset { get; init; }
+    public required Limit Limit { get; init; }
+    public required Offset Offset { get; init; }
     
     public UserIdentifier UserId { get; } 
     

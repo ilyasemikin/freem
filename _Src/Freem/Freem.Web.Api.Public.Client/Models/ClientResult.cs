@@ -41,5 +41,8 @@ public sealed class ClientResult<T> : ClientResult
     public new void EnsureSuccess()
     {
         base.EnsureSuccess();
+
+        if (Value is null)
+            throw new InvalidOperationException("Successful response has no value.");
     }
 }

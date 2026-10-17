@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Freem.Web.Api.Public.Authentication.OpenApi;
 
@@ -20,22 +20,16 @@ internal sealed class JwtBearerOpenApiOperationTransformer : IOpenApiOperationTr
         if (attribute is null)
             return Task.CompletedTask;
         
-        var reference = new OpenApiReference
-        {
-            Id = JwtBearerOpenApiConstants.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme
-        };
-
-        var scheme = new OpenApiSecurityScheme
-        {
-            Reference = reference
-        };
+        var scheme = new OpenApiSecuritySchemeReference(
+            JwtBearerOpenApiConstants.AuthenticationScheme, 
+            context.Document);
         
         var requirement = new OpenApiSecurityRequirement
         {
-            [scheme] = Array.Empty<string>() 
+            [scheme] = new List<string>() 
         };
         
+        operation.Security ??= new List<OpenApiSecurityRequirement>();
         operation.Security.Add(requirement);
 
         return Task.CompletedTask;

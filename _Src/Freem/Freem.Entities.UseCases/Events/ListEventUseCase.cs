@@ -6,7 +6,6 @@ using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.Users.Identifiers;
-using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Events;
 

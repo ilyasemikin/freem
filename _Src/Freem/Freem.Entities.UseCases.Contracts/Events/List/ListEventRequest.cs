@@ -15,8 +15,6 @@ public sealed class ListEventRequest
     
     public ListEventRequest(Limit limit)
     {
-        ArgumentNullException.ThrowIfNull(limit);
-        
         Limit = limit;
     }
 }

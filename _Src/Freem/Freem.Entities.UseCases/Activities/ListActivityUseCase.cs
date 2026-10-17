@@ -4,7 +4,6 @@ using Freem.Entities.Storage.Abstractions.Base.Search;
 using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.List;
-using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Activities;
 

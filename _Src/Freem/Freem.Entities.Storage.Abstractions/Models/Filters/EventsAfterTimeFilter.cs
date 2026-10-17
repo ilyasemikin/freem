@@ -6,7 +6,7 @@ namespace Freem.Entities.Storage.Abstractions.Models.Filters;
 
 public sealed class EventsAfterTimeFilter : ILimitFilter
 {
-    public Limit Limit { get; init; }
+    public required Limit Limit { get; init; }
     
     public UserIdentifier UserId { get; }
     public DateTimeOffset? After { get; }

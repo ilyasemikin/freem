@@ -6,7 +6,6 @@ using Freem.Entities.Storage.Abstractions.Models.Filters;
 using Freem.Entities.Storage.Abstractions.Models.Filters.Models;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Find;
-using Freem.Linq;
 
 namespace Freem.Entities.UseCases.Activities;
 
