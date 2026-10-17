@@ -1,6 +1,10 @@
-You must create file with name "configuration.json" in this folder before run tests.
+The tests read connection settings from the committed "configuration.json" in this folder, which contains
+empty placeholders. Put your local values there and hide the change from git:
 
-File "configuration.json" must contain (There is also an example in "configuration_example.json")
+```shell
+git update-index --skip-worktree configuration.json
+```
+
 ```JSON
 {
 	"ConnectionString": "Your PostgreSQL connection string"
