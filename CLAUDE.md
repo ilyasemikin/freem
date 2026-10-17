@@ -68,7 +68,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 
 ## Repository Layout
 
-All code lives in `_Src/Freem/` (solution `Freem.sln`, ~65 projects, `net9.0`, nullable enabled). Frontend is
+All code lives in `_Src/Freem/` (solution `Freem.sln`, ~64 projects, `net10.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 7).
 
 Layers (names differ from StashIt):
@@ -96,5 +96,5 @@ cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
 docker build -f Freem.Web.Api.Public/Dockerfile .   # run from _Src/Freem
 ```
 
-`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) copy a `configuration.json` that is not committed
-(gitignored), so a fresh `dotnet build Freem.sln` fails with MSB3030 on those three projects until the file exists.
+`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) keep a committed `configuration.json` with empty
+placeholders; hide local values with `git update-index --skip-worktree` (see "Local Environment").
