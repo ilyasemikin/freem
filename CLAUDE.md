@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Freem is a personal time tracker: the user explicitly starts an activity (a running record), stops it, and the
 record is stored in a database for later analysis. Entities: users, activities, tags, records, running records,
 statistics, events. The project was dormant from 2025-06 and is being revived; the sibling project
-`../StashIt` is the reference for conventions, structure and workflow (see "Actualization" below).
+`../StashIt` is the reference for conventions, structure and workflow.
 
 ## Git Commits
 
@@ -71,7 +71,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 All code lives in `_Src/Freem/` (solution `Freem.sln`, ~65 projects, `net9.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 7).
 
-Layers (names differ from StashIt — aligning them is part of the actualization plan):
+Layers (names differ from StashIt):
 
 ```
 Freem.Web.Api.Public                       # ASP.NET Core API (+ .Client, .SyncClient, .FunctionalTests)
@@ -98,20 +98,3 @@ docker build -f Freem.Web.Api.Public/Dockerfile .   # run from _Src/Freem
 
 `.IntegrationTests` projects (PostgreSQL, Redis, UseCases) copy a `configuration.json` that is not committed
 (gitignored), so a fresh `dotnet build Freem.sln` fails with MSB3030 on those three projects until the file exists.
-
-## Actualization
-
-Baseline observed on 2026-10-18: SDK is .NET 10 (10.0.400), projects target net9.0 (StashIt, EgoHub, Trandoma and
-CSharpUtilities packages are on net10.0); EF Core 8.0.4 with
-Npgsql 8.0.4; test stack is mixed (xunit 2.4.2/2.9.2 plus NUnit in one project); shared utilities are
-reimplemented in-repo (`Freem.Results`, `Freem.Locking.*`, `Freem.Time`, ...) while the sibling
-`../CSharpUtilities` (`Utilities.*`) provides equivalents used by StashIt/Trandoma/EgoHub. No Docker
-environments. Decisions: own auth is removed first (temporary `userId` from query in `UseCaseContextProvider`; the registration
-endpoint and user settings stay; the only allowed DB change is dropping the password credentials entity (one migration) — anything else touching
-the DB or storage schema must be agreed with the user first; integration tests are not a readiness
-criterion before stage 6), identity later moves to EgoHub; Kafka is
-removed, Redis stays for now; data is disposable (pet project); frontend keeps Vite + PrimeReact; no CI, only
-Docker Compose environments (incl. `test`) modelled on the siblings, integration tests use a separate database;
-architectural stabilization (Domain/Domain.Entities split, Events, UseCases, layer naming) is a separate draft plan,
-`plans/freem-architecture/`, whose naming stage must be agreed with the user step by step. The revival is tracked in
-`plans/` — read it before starting work.
