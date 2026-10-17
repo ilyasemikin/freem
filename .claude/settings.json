@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(git commit *)"
+    ],
+    "deny": [
+      "Bash(git push *)"
+    ]
+  },
+  "attribution": {
+    "commit": ""
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/ilyasemikin/Sources/Freem/.claude/hooks/block-coauthored-commits.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
