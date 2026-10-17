@@ -1,44 +1,48 @@
 ﻿using Freem.Time.Models;
 using Freem.Time.UnitTests.Tests.Models.DataFactory;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.Models;
 
 public class Operators
 {
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public static void EqualsOperator_WhenSame_ShouldTrue(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var first = new DateTimePeriod(startAt, endAt);
         var second = new DateTimePeriod(startAt, endAt);
 
-        Assert.That(first == second, Is.True);
+        Assert.True(first == second);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public static void EqualsOperator_WhenSame_ShouldFalse(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var first = new DateTimePeriod(startAt, endAt);
         var second = new DateTimePeriod(startAt.AddDays(1), endAt.AddDays(1));
 
-        Assert.That(first == second, Is.False);
+        Assert.False(first == second);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public static void NotEqualsOperator_WhenSame_ShouldFalse(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var first = new DateTimePeriod(startAt, endAt);
         var second = new DateTimePeriod(startAt, endAt);
 
-        Assert.That(first != second, Is.False);
+        Assert.False(first != second);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public static void NotEqualsOperator_WhenSame_ShouldTrue(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var first = new DateTimePeriod(startAt, endAt);
         var second = new DateTimePeriod(startAt.AddDays(1), endAt.AddDays(1));
 
-        Assert.That(first != second, Is.True);
+        Assert.True(first != second);
     }
 }

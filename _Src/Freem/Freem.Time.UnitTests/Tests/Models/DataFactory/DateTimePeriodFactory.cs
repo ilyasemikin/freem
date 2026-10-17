@@ -1,56 +1,56 @@
 ﻿using Freem.Time.Models;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.Models.DataFactory;
 
 internal static class DateTimePeriodFactory
 {
-    public static IEnumerable<TestCaseData> CreateTwoOverlapsedPeriods()
+    public static IEnumerable<object[]> CreateTwoOverlapsedPeriods()
     {
         foreach (var data in CreateTwoOverlapsedPeriodsData())
         {
-            yield return new TestCaseData(data.FirstPeriod, data.SecondPeriod);
-            yield return new TestCaseData(data.SecondPeriod, data.FirstPeriod);
+            yield return new object[] { data.FirstPeriod, data.SecondPeriod };
+            yield return new object[] { data.SecondPeriod, data.FirstPeriod };
         }
     }
 
-    public static IEnumerable<TestCaseData> CreateTwoNonOverlapsedPeriods()
+    public static IEnumerable<object[]> CreateTwoNonOverlapsedPeriods()
     {
         foreach (var data in CreateTwoNonOverlapsedPeriodsData())
         {
-            yield return new TestCaseData(data.FirstPeriod, data.SecondPeriod);
-            yield return new TestCaseData(data.SecondPeriod, data.FirstPeriod);
+            yield return new object[] { data.FirstPeriod, data.SecondPeriod };
+            yield return new object[] { data.SecondPeriod, data.FirstPeriod };
         }
     }
 
-    public static IEnumerable<TestCaseData> CreateTwoOverlapsedPeriodsWithCombined()
+    public static IEnumerable<object[]> CreateTwoOverlapsedPeriodsWithCombined()
     {
         foreach (var data in CreateTwoOverlapsedPeriodsData())
         {
-            yield return new TestCaseData(data.FirstPeriod, data.SecondPeriod, data.CombinedPeriod);
-            yield return new TestCaseData(data.SecondPeriod, data.FirstPeriod, data.CombinedPeriod);
+            yield return new object[] { data.FirstPeriod, data.SecondPeriod, data.CombinedPeriod };
+            yield return new object[] { data.SecondPeriod, data.FirstPeriod, data.CombinedPeriod };
         }
     }
 
-    public static IEnumerable<TestCaseData> CreateTwoOverlapsedPeriodsWithDuration()
+    public static IEnumerable<object[]> CreateTwoOverlapsedPeriodsWithDuration()
     {
         foreach (var data in CreateTwoOverlapsedPeriodsData())
         {
-            yield return new TestCaseData(data.FirstPeriod, data.SecondPeriod, data.CombinedPeriod.Duration);
-            yield return new TestCaseData(data.SecondPeriod, data.FirstPeriod, data.CombinedPeriod.Duration);
+            yield return new object[] { data.FirstPeriod, data.SecondPeriod, data.CombinedPeriod.Duration };
+            yield return new object[] { data.SecondPeriod, data.FirstPeriod, data.CombinedPeriod.Duration };
         }
     }
 
-    public static IEnumerable<TestCaseData> CreateTwoNonOverlapsedPeriodsWithDuration()
+    public static IEnumerable<object[]> CreateTwoNonOverlapsedPeriodsWithDuration()
     {
         foreach (var data in CreateTwoNonOverlapsedPeriodsData())
         {
-            yield return new TestCaseData(data.FirstPeriod, data.SecondPeriod, data.SummaryDuration);
-            yield return new TestCaseData(data.SecondPeriod, data.FirstPeriod, data.SummaryDuration);
+            yield return new object[] { data.FirstPeriod, data.SecondPeriod, data.SummaryDuration };
+            yield return new object[] { data.SecondPeriod, data.FirstPeriod, data.SummaryDuration };
         }
     }
 
-    public static IEnumerable<TestCaseData> CreateMultiplePeriods()
+    public static IEnumerable<object[]> CreateMultiplePeriods()
     {
         var startAt = new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
@@ -65,7 +65,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(8);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
 
         {
@@ -76,7 +76,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(8);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
 
         {
@@ -93,7 +93,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(8);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
 
         {
@@ -108,7 +108,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(8);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
 
         {
@@ -121,7 +121,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(12);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
 
         {
@@ -135,7 +135,7 @@ internal static class DateTimePeriodFactory
 
             var duration = TimeSpan.FromHours(18);
 
-            yield return new TestCaseData(periods, duration);
+            yield return new object[] { periods, duration };
         }
     }
 

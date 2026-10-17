@@ -2,23 +2,23 @@
 using Freem.Time.Abstractions;
 using Freem.Time.DependencyInjection.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.DependencyInjection.Microsoft;
 
 public class ServiceCollectionExtensionsTests
 {
-    [Test]
+    [Fact]
     public void AddUtcCurrentTimeGetter_ShouldAddGetter()
     {
         var services = new ServiceCollection();
 
         services.AddUtcCurrentTimeGetter();
 
-        Assert.DoesNotThrow(() => services.BuildAndValidateServiceProvider());
+        services.BuildAndValidateServiceProvider();
     }
 
-    [Test]
+    [Fact]
     public void AddUtcCurrentTimeGetter_ShouldAddGetterOnlyOneTime_WhenCallTwice()
     {
         var services = new ServiceCollection();
@@ -27,6 +27,6 @@ public class ServiceCollectionExtensionsTests
         services.AddUtcCurrentTimeGetter();
 
         var count = services.Count(service => service.ServiceType == typeof(ICurrentTimeGetter));
-        Assert.That(count, Is.EqualTo(1));
+        Assert.Equal(1, count);
     }
 }

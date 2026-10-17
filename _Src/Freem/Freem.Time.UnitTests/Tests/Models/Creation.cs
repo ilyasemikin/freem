@@ -1,12 +1,13 @@
 using Freem.Time.Models;
 using Freem.Time.UnitTests.Tests.Models.DataFactory;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.Models;
 
 public class Creation
 {
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void Constructor_WhenParametersCorrect_ShouldNotThrow(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         void TestMethod()
@@ -14,10 +15,11 @@ public class Creation
             new DateTimePeriod(startAt, endAt);
         }
 
-        Assert.DoesNotThrow(TestMethod);
+        TestMethod();
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateInvalidDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateInvalidDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void Constructor_WhenParametersInvalid_ShouldThrow(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         void TestMethod()
@@ -28,7 +30,8 @@ public class Creation
         Assert.Throws<ArgumentException>(TestMethod);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void TryCreate_WhenParametersCorrect_ShouldTrue(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         DateTimePeriod? period = null;
@@ -39,15 +42,13 @@ public class Creation
             result = DateTimePeriod.TryCreate(startAt, endAt, out period);
         }
 
-        Assert.Multiple(() =>
-        {
-            Assert.DoesNotThrow(TestMethod);
-            Assert.That(result, Is.EqualTo(true));
-            Assert.That(period, Is.Not.Null);
-        });
+        TestMethod();
+        Assert.Equal(true, result);
+        Assert.NotNull(period);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateInvalidDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateInvalidDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void TryCreate_WhenParametersInvalid_ShouldFalse(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         DateTimePeriod? period = null;
@@ -58,10 +59,7 @@ public class Creation
             result = DateTimePeriod.TryCreate(startAt, endAt, out period);
         }
 
-        Assert.Multiple(() =>
-        {
-            Assert.DoesNotThrow(TestMethod);
-            Assert.That(result, Is.EqualTo(false));
-        });
+        TestMethod();
+        Assert.Equal(false, result);
     }
 }

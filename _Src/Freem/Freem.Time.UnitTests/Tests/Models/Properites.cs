@@ -1,12 +1,13 @@
 ﻿using Freem.Time.Models;
 using Freem.Time.UnitTests.Tests.Models.DataFactory;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.Models;
 
 public class Properites
 {
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void DateTimeOffsets_ShouldHaveUtcTimeZone(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var expectedStart = (DateTimeOffset)startAt.UtcDateTime;
@@ -14,14 +15,11 @@ public class Properites
 
         var period = new DateTimePeriod(startAt, endAt);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(period.StartAt, Is.EqualTo(expectedStart));
-            Assert.That(period.EndAt, Is.EqualTo(expectedEnd));
-        });
+        Assert.Equal(expectedStart, period.StartAt);
+        Assert.Equal(expectedEnd, period.EndAt);
     }
 
-    [Test]
+    [Fact]
     public void DateTimeOffsets_ShouldEraseMilliseconds()
     {
         var input = new DateTimeOffset(2025, 1, 1, 0, 0, 0, 10, TimeSpan.Zero);
@@ -29,20 +27,18 @@ public class Properites
 
         var period = new DateTimePeriod(input, input);
         
-        Assert.Multiple(() =>
-        {
-            Assert.That(period.StartAt, Is.EqualTo(expected));
-            Assert.That(period.EndAt, Is.EqualTo(expected));
-        });
+        Assert.Equal(expected, period.StartAt);
+        Assert.Equal(expected, period.EndAt);
     }
 
-    [TestCaseSource(typeof(DateTimeRangesFactory), nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange))]
+    [Theory]
+    [MemberData(nameof(DateTimeRangesFactory.CreateCorrectDateTimeRange), MemberType = typeof(DateTimeRangesFactory))]
     public void Duration_ShouldBeCorrect(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         var expected = endAt.UtcDateTime - startAt.UtcDateTime;
 
         var period = new DateTimePeriod(startAt, endAt);
 
-        Assert.That(period.Duration, Is.EqualTo(expected));
+        Assert.Equal(expected, period.Duration);
     }
 }

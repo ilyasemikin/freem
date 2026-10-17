@@ -1,44 +1,49 @@
 ﻿using Freem.Time.Models;
 using Freem.Time.UnitTests.Tests.Models.DataFactory;
-using NUnit.Framework;
+using Xunit;
 
 namespace Freem.Time.UnitTests.Tests.Models;
 
 public class StaticMethods
 {
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void IsOverlapsed_WhenPeriodsOverlapsed_ShouldRetursTrue(DateTimePeriod left, DateTimePeriod right)
     {
         var result = DateTimePeriod.IsOverlapsed(left, right);
 
-        Assert.That(result, Is.True);
+        Assert.True(result);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void IsOverlapsed_WhenPeriodsNonOverlapsed_ShouldRetursFalse(DateTimePeriod left, DateTimePeriod right)
     {
         var result = DateTimePeriod.IsOverlapsed(left, right);
 
-        Assert.That(result, Is.False);
+        Assert.False(result);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void IsNonOverlapsed_WhenPeriodsOverlapsed_ShouldRetursFalse(DateTimePeriod left, DateTimePeriod right)
     {
         var result = DateTimePeriod.IsNonOverlapsed(left, right);
 
-        Assert.That(result, Is.False);
+        Assert.False(result);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void IsNonOverlapsed_WhenPeriodsNonOverlapsed_ShouldRetursTrue(DateTimePeriod left, DateTimePeriod right)
     {
         var result = DateTimePeriod.IsNonOverlapsed(left, right);
 
-        Assert.That(result, Is.True);
+        Assert.True(result);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void TryCombine_WhenPeriodsOverlapsed_ShouldReturnsTrue(DateTimePeriod first, DateTimePeriod second)
     {
         bool? result = null;
@@ -49,15 +54,13 @@ public class StaticMethods
             result = DateTimePeriod.TryCombine(first, second, out combined);
         }
 
-        Assert.Multiple(() =>
-        {
-            Assert.DoesNotThrow(TestMethod);
-            Assert.That(result, Is.True);
-            Assert.That(combined, Is.Not.Null);
-        });
+        TestMethod();
+        Assert.True(result);
+        Assert.NotNull(combined);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriods), MemberType = typeof(DateTimePeriodFactory))]
     public void TryCombine_WhenPeriodsNonOverlapsed_ShouldReturnsFalse(DateTimePeriod first, DateTimePeriod second)
     {
         bool? result = null;
@@ -67,35 +70,30 @@ public class StaticMethods
             result = DateTimePeriod.TryCombine(first, second, out var _);
         }
 
-        Assert.Multiple(() =>
-        {
-            Assert.DoesNotThrow(TestMethod);
-            Assert.That(result, Is.False);
-        });
+        TestMethod();
+        Assert.False(result);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriodsWithCombined))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriodsWithCombined), MemberType = typeof(DateTimePeriodFactory))]
     public void TryCombine_ShouldCorrectCombined(DateTimePeriod first, DateTimePeriod second, DateTimePeriod expected)
     {
         var success = DateTimePeriod.TryCombine(first, second, out var actual);
 
-        Assert.Multiple(() =>
-        {
-            if (!success)
-                Assert.Fail();
+        Assert.True(success);
 
-            Assert.That(actual!.StartAt, Is.EqualTo(expected.StartAt));
-            Assert.That(actual!.EndAt, Is.EqualTo(expected.EndAt));
-            Assert.That(actual!.Duration, Is.EqualTo(expected.Duration));
-        });
+        Assert.Equal(expected.StartAt, actual!.StartAt);
+        Assert.Equal(expected.EndAt, actual!.EndAt);
+        Assert.Equal(expected.Duration, actual!.Duration);
     }
 
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriodsWithDuration))]
-    [TestCaseSource(typeof(DateTimePeriodFactory), nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriodsWithDuration))]
+    [Theory]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoOverlapsedPeriodsWithDuration), MemberType = typeof(DateTimePeriodFactory))]
+    [MemberData(nameof(DateTimePeriodFactory.CreateTwoNonOverlapsedPeriodsWithDuration), MemberType = typeof(DateTimePeriodFactory))]
     public void CombineDuration_ShouldCorrect(DateTimePeriod first, DateTimePeriod second, TimeSpan expected)
     {
         var duration = DateTimePeriod.CombineDuration(first, second);
 
-        Assert.That(duration, Is.EqualTo(expected));
+        Assert.Equal(expected, duration);
     }
 }
