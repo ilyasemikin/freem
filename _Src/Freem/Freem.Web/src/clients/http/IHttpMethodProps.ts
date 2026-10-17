@@ -1,6 +1,4 @@
-﻿export interface QueryParams {
-  [key: string]: any;
-}
+﻿export type QueryParams = object;
 
 export interface IHttpMethodProps<T> {
   url?: string;

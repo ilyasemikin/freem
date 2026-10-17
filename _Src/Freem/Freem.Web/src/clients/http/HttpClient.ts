@@ -32,14 +32,15 @@ export class HttpClient implements IHttpClient{
     }
 
     const params = new URLSearchParams();
-    for (const key of Object.keys(query)) {
-      const item = query[key];
+    const values = query as Record<string, unknown>;
+    for (const key of Object.keys(values)) {
+      const item = values[key];
       if (Array.isArray(item)) {
         for (const value of item) {
-          params.append(key, value);
+          params.append(key, String(value));
         }
       } else if (item != null) {
-        params.append(key, item);
+        params.append(key, String(item));
       }
     }
 
