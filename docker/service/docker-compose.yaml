@@ -54,6 +54,10 @@ services:
       Api__CorsOrigins__0: ${WEB_PUBLIC_URL}
       Postgres__ConnectionString: Host=postgres; Port=5432; UserID=${POSTGRES_USER}; Password=${POSTGRES_PASSWORD}; Database=freem
       Redis__ConnectionString: redis:6379
+      EgoHubIntegration__Url: ${EGOHUB_INTEGRATION_URL}
+      EgoHubIntegration__Token: ${EGOHUB_INTEGRATION_TOKEN}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - ${API_PORT}:8080
     depends_on:

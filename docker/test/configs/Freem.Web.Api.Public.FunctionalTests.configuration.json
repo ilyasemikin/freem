@@ -12,6 +12,10 @@
     },
     "Redis": {
       "ConnectionString": "redis:6379,allowAdmin=true"
+    },
+    "EgoHubIntegration": {
+      "Url": "http://host.docker.internal:10080",
+      "Token": ""
     }
   }
 }
