@@ -3,7 +3,22 @@ export class AuthSession {
   private accessToken?: string;
   private refreshing?: Promise<boolean>;
 
-  public onSignedOut?: () => void;
+  private readonly signedOutListeners = new Set<() => void>();
+
+  // Returns the function that removes the listener.
+  public onSignedOut(listener: () => void): () => void {
+    this.signedOutListeners.add(listener);
+
+    return () => {
+      this.signedOutListeners.delete(listener);
+    };
+  }
+
+  public notifySignedOut() {
+    for (const listener of this.signedOutListeners) {
+      listener();
+    }
+  }
 
   constructor(baseUrl?: string) {
     this.baseUrl = baseUrl;

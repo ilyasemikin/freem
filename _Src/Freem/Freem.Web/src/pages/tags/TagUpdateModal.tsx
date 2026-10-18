@@ -1,8 +1,8 @@
-﻿import {TagEntity} from "./entities/TagEntity.ts";
+﻿import {TagEntity} from "../../entities/TagEntity.ts";
 import {ITagEditorData, ITagEditorHandle, TagEditor} from "./TagEditor.tsx";
 import {useRef, useState} from "react";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import {DialogFooter} from "./components/DialogFooter.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
 
 export interface ITagUpdateModalProps {
   tag?: TagEntity;

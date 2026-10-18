@@ -1,6 +1,6 @@
 ﻿import {ReactNode, useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {DialogWindow} from "../../components/DialogWindow.tsx";
+import {DialogWindow} from "../DialogWindow.tsx";
 import {DialogContext, IDialogOptions} from "./DialogContext.ts";
 
 interface IDialogProviderProps {

@@ -1,11 +1,11 @@
-﻿import {RecordEntity} from "./entities/RecordEntity.ts";
+﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
 import {RecordPanel} from "./RecordPanel.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
-import {UpdateField} from "./clients/models/UpdateField.ts";
-import {UpdateRecordRequest} from "./clients/models/records/UpdateRecordRequest.ts";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
-import {useBackendClients} from "./contexts/clients/useBackendClients.ts";
-import {Divider} from "./components/Divider.tsx";
+import {UpdateField} from "../../clients/models/UpdateField.ts";
+import {UpdateRecordRequest} from "../../clients/models/records/UpdateRecordRequest.ts";
+import {useDialog} from "../../dialog/context/useDialog.ts";
+import {useBackendClients} from "../../clients/context/useBackendClients.ts";
+import {Divider} from "../../components/Divider.tsx";
 
 export interface IRecordListProps {
   date?: string;

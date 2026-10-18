@@ -1,7 +1,7 @@
 ﻿import {TagEntity} from "../../entities/TagEntity.ts";
 import {useState} from "react";
 import {AutoComplete, AutoCompleteChangeEvent, AutoCompleteCompleteEvent} from "primereact/autocomplete";
-import {useEntitiesCache} from "../../contexts/cache/useEntitiesCache.ts";
+import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {ValidationError} from "../ValidationError.tsx";
 
 export interface ITagsPickerProps {

@@ -1,4 +1,4 @@
-﻿import {StatisticsPerActivityEntity} from "./entities/StatisticsPerActivityEntity.ts";
+﻿import {StatisticsPerActivityEntity} from "../../entities/StatisticsPerActivityEntity.ts";
 import {ReactNode, useState} from "react";
 
 export interface IStatisticsPerActivityDonutChartProps {

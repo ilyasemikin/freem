@@ -1,12 +1,12 @@
-﻿import {RunningRecordEntity} from "./entities/RunningRecordEntity.ts";
+﻿import {RunningRecordEntity} from "../../entities/RunningRecordEntity.ts";
 import {ChangeEvent, forwardRef, useImperativeHandle, useState} from "react";
-import {InputText} from "./components/inputs/InputText.tsx";
+import {InputText} from "../../components/inputs/InputText.tsx";
 import {InputTextarea} from "primereact/inputtextarea";
-import {DatePicker} from "./components/inputs/DatePicker.tsx";
-import {ActivitiesPicker} from "./components/inputs/ActivitiesPicker.tsx";
-import {ActivityEntity} from "./entities/ActivityEntity.ts";
-import {TagEntity} from "./entities/TagEntity.ts";
-import {TagsPicker} from "./components/inputs/TagsPicker.tsx";
+import {DatePicker} from "../../components/inputs/DatePicker.tsx";
+import {ActivitiesPicker} from "../../components/inputs/ActivitiesPicker.tsx";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
+import {TagEntity} from "../../entities/TagEntity.ts";
+import {TagsPicker} from "../../components/inputs/TagsPicker.tsx";
 
 export interface IRunningRecordEditorHandle {
   validate: () => boolean;

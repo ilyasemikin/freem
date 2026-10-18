@@ -1,10 +1,10 @@
-﻿import {RecordResponse} from "../../../clients/models/records/RecordResponse.ts";
-import {RecordsClient} from "../../../clients/RecordsClient.ts";
+﻿import {RecordResponse} from "../../clients/models/records/RecordResponse.ts";
+import {RecordsClient} from "../../clients/RecordsClient.ts";
 import {TagsEntitiesCache} from "./TagsEntitiesCache.ts";
 import {ActivitiesEntitiesCache} from "./ActivitiesEntitiesCache.ts";
-import {ListRecordByPeriodRequest} from "../../../clients/models/records/ListRecordByPeriodRequest.ts";
-import {RecordEntity} from "../../../entities/RecordEntity.ts";
-import {DateTimePeriod} from "../../../data/DateTimePeriod.ts";
+import {ListRecordByPeriodRequest} from "../../clients/models/records/ListRecordByPeriodRequest.ts";
+import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 
 export class RecordsEntitiesCache {
   private recordsClient: RecordsClient;

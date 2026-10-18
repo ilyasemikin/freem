@@ -1,8 +1,8 @@
 ﻿import {StatisticsPerActivityDonutChart} from "./StatisticsPerActivityDonutChart.tsx";
-import {StatisticsPerActivityEntity} from "./entities/StatisticsPerActivityEntity.ts";
+import {StatisticsPerActivityEntity} from "../../entities/StatisticsPerActivityEntity.ts";
 import {useState} from "react";
-import {TimeDuration} from "./data/TimeDuration.ts";
-import {NamedTimeDurationSummary} from "./components/NamedTimeDurationSummary.tsx";
+import {TimeDuration} from "../../data/TimeDuration.ts";
+import {NamedTimeDurationSummary} from "../../components/NamedTimeDurationSummary.tsx";
 
 export interface IStatisticsPerActivityChartProps {
   total?: TimeDuration;

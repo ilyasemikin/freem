@@ -90,7 +90,7 @@ export class HttpClient implements IHttpClient{
 
     // The access token has expired: rotate the session and repeat the request once.
     if (!await this.session.refresh()) {
-      this.session.onSignedOut?.();
+      this.session.notifySignedOut();
       return response;
     }
 

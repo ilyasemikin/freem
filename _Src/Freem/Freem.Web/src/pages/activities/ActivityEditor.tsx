@@ -1,8 +1,8 @@
 ﻿import {ChangeEvent, forwardRef, useImperativeHandle, useState} from "react";
-import {ActivityEntity} from "./entities/ActivityEntity.ts";
-import {InputText} from "./components/inputs/InputText.tsx";
-import {TagsPicker} from "./components/inputs/TagsPicker.tsx";
-import {TagEntity} from "./entities/TagEntity.ts";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
+import {InputText} from "../../components/inputs/InputText.tsx";
+import {TagsPicker} from "../../components/inputs/TagsPicker.tsx";
+import {TagEntity} from "../../entities/TagEntity.ts";
 
 export interface IActivityEditorHandle {
   validate: () => boolean;

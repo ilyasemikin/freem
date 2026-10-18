@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
-import {RunningRecordEntity} from "./entities/RunningRecordEntity.ts";
+import {RunningRecordEntity} from "../../entities/RunningRecordEntity.ts";
 import {RunningRecordUpdateModal} from "./RunningRecordUpdateModal.tsx";
 import {IRunningRecordEditorData} from "./RunningRecordEditor.tsx";
-import {ItemPanel} from "./components/ItemPanel.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import { useDialog } from "./contexts/dialog/useDialog.ts";
-import {DateTimePeriod} from "./data/DateTimePeriod.ts";
+import {ItemPanel} from "../../components/ItemPanel.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import { useDialog } from "../../dialog/context/useDialog.ts";
+import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 import {ActivitiesListPanel} from "./ActivitiesListPanel.tsx";
-import {DateTimePeriodDurationPanel} from "./components/DateTimePeriodDurationPanel.tsx";
+import {DateTimePeriodDurationPanel} from "../../components/DateTimePeriodDurationPanel.tsx";
 
 export interface IRunningRecordPanelProps {
   record: RunningRecordEntity;

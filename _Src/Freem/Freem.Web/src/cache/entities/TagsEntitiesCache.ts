@@ -1,7 +1,7 @@
-﻿import {TagResponse} from "../../../clients/models/tags/TagResponse.ts";
-import {TagsClient} from "../../../clients/TagsClient.ts";
-import {TagEntity} from "../../../entities/TagEntity.ts";
-import {ListTagRequest} from "../../../clients/models/tags/ListTagRequest.ts";
+﻿import {TagResponse} from "../../clients/models/tags/TagResponse.ts";
+import {TagsClient} from "../../clients/TagsClient.ts";
+import {TagEntity} from "../../entities/TagEntity.ts";
+import {ListTagRequest} from "../../clients/models/tags/ListTagRequest.ts";
 import {EntitiesCache} from "./data/EntitiesCache.ts";
 
 export class TagsEntitiesCache {

@@ -2,7 +2,7 @@
 import {useState} from "react";
 import {AutoComplete, AutoCompleteChangeEvent, AutoCompleteCompleteEvent} from "primereact/autocomplete";
 import {FindActivityByNameRequest} from "../../clients/models/activities/FindActivityByNameRequest.ts";
-import {useEntitiesCache} from "../../contexts/cache/useEntitiesCache.ts";
+import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {ValidationError} from "../ValidationError.tsx";
 
 export interface IActivitiesPickerProps {

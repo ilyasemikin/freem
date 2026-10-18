@@ -1,11 +1,11 @@
-﻿import {ActivitiesDashboard} from "./ActivitiesDashboard.tsx";
-import {DashboardPanel} from "./components/DashboardPanel.tsx";
-import {RecordsDashboard} from "./RecordsDashboard.tsx";
+﻿import {ActivitiesDashboard} from "../activities/ActivitiesDashboard.tsx";
+import {DashboardPanel} from "../../components/DashboardPanel.tsx";
+import {RecordsDashboard} from "../records/RecordsDashboard.tsx";
 import {useState} from "react";
-import {TagsDashboard} from "./TagsDashboard.tsx";
-import {StatisticsDashboard} from "./StatisticsDashboard.tsx";
+import {TagsDashboard} from "../tags/TagsDashboard.tsx";
+import {StatisticsDashboard} from "../statistics/StatisticsDashboard.tsx";
 import {Button} from "primereact/button";
-import {useAuth} from "./contexts/auth/useAuth.ts";
+import {useAuth} from "../../authorization/context/useAuth.ts";
 
 enum Tab {
   Tags,

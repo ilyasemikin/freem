@@ -1,7 +1,7 @@
 import {ReactNode} from "react";
-import {useAuth} from "./useAuth.ts";
+import {useAuth} from "../context/useAuth.ts";
 import {Loading} from "../../components/Loading.tsx";
-import {LoginPage} from "../../LoginPage.tsx";
+import {LoginPage} from "../../pages/login/LoginPage.tsx";
 
 interface IAuthGateProps {
   children: ReactNode;

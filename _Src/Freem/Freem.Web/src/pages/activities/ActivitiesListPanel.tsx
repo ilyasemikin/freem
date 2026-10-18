@@ -1,4 +1,4 @@
-﻿import {ActivityEntity} from "./entities/ActivityEntity.ts";
+﻿import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 
 export interface IActivitiesListPanelProps {
   activities?: ActivityEntity[];

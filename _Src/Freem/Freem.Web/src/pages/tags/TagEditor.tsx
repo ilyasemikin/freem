@@ -1,6 +1,6 @@
-﻿import {TagEntity} from "./entities/TagEntity.ts";
+﻿import {TagEntity} from "../../entities/TagEntity.ts";
 import {ChangeEvent, forwardRef, useImperativeHandle, useState} from "react";
-import {InputText} from "./components/inputs/InputText.tsx";
+import {InputText} from "../../components/inputs/InputText.tsx";
 
 export interface ITagEditorHandle {
   validate: () => boolean;

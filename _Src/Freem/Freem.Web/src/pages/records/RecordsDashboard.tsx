@@ -1,23 +1,25 @@
 ﻿import {useEffect, useState} from "react";
-import {RecordEntity} from "./entities/RecordEntity.ts";
-import {useEntitiesCache} from "./contexts/cache/useEntitiesCache.ts";
-import {ListRecordByPeriodRequest} from "./clients/models/records/ListRecordByPeriodRequest.ts";
-import {Loading} from "./components/Loading.tsx";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
+import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
+import {ListRecordByPeriodRequest} from "../../clients/models/records/ListRecordByPeriodRequest.ts";
+import {Loading} from "../../components/Loading.tsx";
+import {ValidationError} from "../../components/ValidationError.tsx";
+import {useDialog} from "../../dialog/context/useDialog.ts";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 import {RecordAddModal} from "./RecordAddModal.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
-import {CreateRecordRequest} from "./clients/models/records/CreateRecordRequest.ts";
-import {useBackendClients} from "./contexts/clients/useBackendClients.ts";
-import {DatePeriodPicker} from "./components/inputs/DatePeriodPicker.tsx";
-import {DateHelper} from "./helpers/DateHelper.ts";
-import {DateUnit} from "./data/DateUnit.ts";
-import {DatePeriod} from "./data/DatePeriod.ts";
-import {Divider} from "./components/Divider.tsx";
+import {CreateRecordRequest} from "../../clients/models/records/CreateRecordRequest.ts";
+import {useBackendClients} from "../../clients/context/useBackendClients.ts";
+import {DatePeriodPicker} from "../../components/inputs/DatePeriodPicker.tsx";
+import {DateHelper} from "../../helpers/DateHelper.ts";
+import {DateUnit} from "../../data/DateUnit.ts";
+import {DatePeriod} from "../../data/DatePeriod.ts";
+import {Divider} from "../../components/Divider.tsx";
 import {RecordListGrouped} from "./RecordListGrouped.tsx";
 
 export function RecordsDashboard() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState(false);
 
   const [, setUnit] = useState<DateUnit>(DateUnit.Day);
@@ -29,17 +31,32 @@ export function RecordsDashboard() {
   const cache = useEntitiesCache();
 
   useEffect(() => {
-    async function loadRecords() {
+    let current = true;
+
+    async function load() {
       const request = new ListRecordByPeriodRequest(period.toString())
       const entities = await cache.records.listByPeriodRequest(request);
 
-      setRecords(entities);
+      if (current) {
+        setRecords(entities);
+        setError(undefined);
+      }
     }
 
-    setLoading(true);
-    loadRecords();
-    setLoading(false);
-  }, [update, period]);
+    load().catch(error => {
+      if (current) {
+        setError(error instanceof Error ? error.message : "Failed to load data");
+      }
+    }).finally(() => {
+      if (current) {
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      current = false;
+    };
+  }, [update, period, cache.records]);
 
   function openAdd() {
     openDialog({
@@ -91,6 +108,7 @@ export function RecordsDashboard() {
           </CustomButton>
         </div>
         <Divider/>
+        <ValidationError error={error}/>
         {records?.length === 0 && <span>No records</span>}
         {records &&
             <RecordListGrouped

@@ -1,8 +1,8 @@
-﻿import {RunningRecordEntity} from "./entities/RunningRecordEntity.ts";
+﻿import {RunningRecordEntity} from "../../entities/RunningRecordEntity.ts";
 import {IRunningRecordEditorData, IRunningRecordEditorHandle, RunningRecordEditor} from "./RunningRecordEditor.tsx";
 import {useRef, useState} from "react";
-import {DialogFooter} from "./components/DialogFooter.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 
 export interface IRunningRecordUpdateModalProps {
   record: RunningRecordEntity;

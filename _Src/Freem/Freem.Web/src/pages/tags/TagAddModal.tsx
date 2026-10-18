@@ -1,4 +1,4 @@
-﻿import {DialogFooter} from "./components/DialogFooter.tsx";
+﻿import {DialogFooter} from "../../dialog/DialogFooter.tsx";
 import {useRef, useState} from "react";
 import {ITagEditorData, ITagEditorHandle, TagEditor} from "./TagEditor.tsx";
 

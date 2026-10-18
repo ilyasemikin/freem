@@ -1,13 +1,13 @@
 ﻿import {ReactNode, useMemo} from "react";
-import {HttpClient} from "../../clients/http/HttpClient.ts";
-import {ActivitiesClient} from "../../clients/ActivitiesClient.ts";
-import {TagsClient} from "../../clients/TagsClient.ts";
-import {UserClient} from "../../clients/UserClient.ts";
-import {RecordsClient} from "../../clients/RecordsClient.ts";
+import {HttpClient} from "../http/HttpClient.ts";
+import {ActivitiesClient} from "../ActivitiesClient.ts";
+import {TagsClient} from "../TagsClient.ts";
+import {UserClient} from "../UserClient.ts";
+import {RecordsClient} from "../RecordsClient.ts";
 import {BackendClientsContext, IBackendClientsContext} from "./BackendClientsContext.ts";
-import {StatisticsClient} from "../../clients/StatisticsClient.ts";
-import {AuthClient} from "../../clients/AuthClient.ts";
-import {AuthSession} from "../../clients/AuthSession.ts";
+import {StatisticsClient} from "../StatisticsClient.ts";
+import {AuthClient} from "../AuthClient.ts";
+import {AuthSession} from "../AuthSession.ts";
 
 interface IBackendClientsProviderProps {
   children: ReactNode;

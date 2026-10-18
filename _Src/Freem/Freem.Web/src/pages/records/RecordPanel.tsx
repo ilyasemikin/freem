@@ -1,12 +1,12 @@
-﻿import {RecordEntity} from "./entities/RecordEntity.ts";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import {DateHelper} from "./helpers/DateHelper.ts";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
+﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {DateHelper} from "../../helpers/DateHelper.ts";
+import {useDialog} from "../../dialog/context/useDialog.ts";
 import {RecordUpdateModal} from "./RecordUpdateModal.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
-import {ExpandableItemPanel} from "./components/ExpandableItemPanel.tsx";
-import {ActivitiesListPanel} from "./ActivitiesListPanel.tsx";
-import {DateTimePeriodDurationPanel} from "./components/DateTimePeriodDurationPanel.tsx";
+import {ExpandableItemPanel} from "../../components/ExpandableItemPanel.tsx";
+import {ActivitiesListPanel} from "../activities/ActivitiesListPanel.tsx";
+import {DateTimePeriodDurationPanel} from "../../components/DateTimePeriodDurationPanel.tsx";
 
 export interface IRecordPanelProps {
   record: RecordEntity;

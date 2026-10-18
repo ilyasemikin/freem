@@ -1,6 +1,6 @@
 ﻿import {IRecordEditorData, IRecordEditorHandle, RecordEditor} from "./RecordEditor.tsx";
 import {useRef, useState} from "react";
-import {DialogFooter} from "./components/DialogFooter.tsx";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
 
 export interface IRecordAddModalProps {
   onAdd?: (data: IRecordEditorData) => void;

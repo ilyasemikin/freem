@@ -1,28 +1,30 @@
-﻿import {ActivityEntity} from "./entities/ActivityEntity.ts";
+﻿import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 import {useEffect, useState} from "react";
-import {ListActivityRequest} from "./clients/models/activities/ListActivityRequest.ts";
-import {Loading} from "./components/Loading.tsx";
+import {ListActivityRequest} from "../../clients/models/activities/ListActivityRequest.ts";
+import {Loading} from "../../components/Loading.tsx";
+import {ValidationError} from "../../components/ValidationError.tsx";
 import {ActivityPanel} from "./ActivityPanel.tsx";
-import {RunningRecordEntity} from "./entities/RunningRecordEntity.ts";
+import {RunningRecordEntity} from "../../entities/RunningRecordEntity.ts";
 import {RunningRecordPanel} from "./RunningRecordPanel.tsx";
-import {StartRunningRecordRequest} from "./clients/models/records/running/StartRunningRecordRequest.ts";
-import {StopRunningRecordRequest} from "./clients/models/records/running/StopRunningRecordRequest.ts";
+import {StartRunningRecordRequest} from "../../clients/models/records/running/StartRunningRecordRequest.ts";
+import {StopRunningRecordRequest} from "../../clients/models/records/running/StopRunningRecordRequest.ts";
 import {IActivityEditorData} from "./ActivityEditor.tsx";
-import {UpdateActivityRequest} from "./clients/models/activities/UpdateActivityRequest.ts";
-import {UpdateField} from "./clients/models/UpdateField.ts";
+import {UpdateActivityRequest} from "../../clients/models/activities/UpdateActivityRequest.ts";
+import {UpdateField} from "../../clients/models/UpdateField.ts";
 import {ActivityAddModal} from "./ActivityAddModal.tsx";
-import {CreateActivityRequest} from "./clients/models/activities/CreateActivityRequest.ts";
+import {CreateActivityRequest} from "../../clients/models/activities/CreateActivityRequest.ts";
 import {IRunningRecordEditorData} from "./RunningRecordEditor.tsx";
-import {UpdateRunningRecordRequest} from "./clients/models/records/running/UpdateRunningRecordRequest.ts";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import {RunningRecordResponse} from "./clients/models/records/running/RunningRecordResponse.ts";
-import {useBackendClients} from "./contexts/clients/useBackendClients.ts";
-import {useEntitiesCache} from "./contexts/cache/useEntitiesCache.ts";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
-import {Divider} from "./components/Divider.tsx";
+import {UpdateRunningRecordRequest} from "../../clients/models/records/running/UpdateRunningRecordRequest.ts";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {RunningRecordResponse} from "../../clients/models/records/running/RunningRecordResponse.ts";
+import {useBackendClients} from "../../clients/context/useBackendClients.ts";
+import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
+import {useDialog} from "../../dialog/context/useDialog.ts";
+import {Divider} from "../../components/Divider.tsx";
 
 export function ActivitiesDashboard() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState(false);
 
   const [activities, setActivities] = useState<ActivityEntity[] | undefined>();
@@ -33,11 +35,15 @@ export function ActivitiesDashboard() {
   const cache = useEntitiesCache();
 
   useEffect(() => {
+    let current = true;
+
     async function loadActivities() {
       const request = new ListActivityRequest(0, 100);
       const activities = await cache.activities.listByRequest(request);
 
-      setActivities(activities);
+      if (current) {
+        setActivities(activities);
+      }
     }
 
     async function loadRunningRecord() {
@@ -60,19 +66,35 @@ export function ActivitiesDashboard() {
                 : undefined
         );
 
-        setRunning(record);
-      } else {
+        if (current) {
+          setRunning(record);
+        }
+      } else if (current) {
         setRunning(undefined);
       }
     }
 
-    setLoading(true);
+    async function load() {
+      await Promise.all([loadActivities(), loadRunningRecord()]);
+      if (current) {
+        setError(undefined);
+      }
+    }
 
-    loadActivities()
-    loadRunningRecord();
+    load().catch(error => {
+      if (current) {
+        setError(error instanceof Error ? error.message : "Failed to load data");
+      }
+    }).finally(() => {
+      if (current) {
+        setLoading(false);
+      }
+    });
 
-    setLoading(false);
-  }, [update, clients.records]);
+    return () => {
+      current = false;
+    };
+  }, [update, clients.records, cache.activities, cache.tags]);
 
   function openAdd() {
     openDialog({
@@ -161,6 +183,10 @@ export function ActivitiesDashboard() {
 
   if (loading) {
     return (<Loading/>);
+  }
+
+  if (error !== undefined) {
+    return <ValidationError error={error}/>;
   }
 
   const showed = activities === undefined ? [] : activities.filter(activity => !running?.activities?.find(value => value.id === activity.id));

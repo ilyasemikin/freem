@@ -1,4 +1,4 @@
-﻿import {StatisticsPerDayEntity} from "./entities/StatisticsPerDayEntity.ts";
+﻿import {StatisticsPerDayEntity} from "../../entities/StatisticsPerDayEntity.ts";
 import {StatisticsPerActivityList} from "./StatisticsPerActivityList.tsx";
 
 export interface IStatisticsListProps {

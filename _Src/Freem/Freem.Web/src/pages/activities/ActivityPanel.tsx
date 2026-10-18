@@ -1,9 +1,9 @@
-import {ActivityEntity} from "./entities/ActivityEntity.ts";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 import {IActivityEditorData} from "./ActivityEditor.tsx";
 import {ActivityUpdateModal} from "./ActivityUpdateModal.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import {ItemPanel} from "./components/ItemPanel.tsx";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {ItemPanel} from "../../components/ItemPanel.tsx";
+import {useDialog} from "../../dialog/context/useDialog.ts";
 
 export interface IActivityPanelProps {
   activity: ActivityEntity;

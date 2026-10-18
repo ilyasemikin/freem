@@ -1,9 +1,9 @@
-﻿import {TagEntity} from "./entities/TagEntity.ts";
-import {ItemPanel} from "./components/ItemPanel.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
+﻿import {TagEntity} from "../../entities/TagEntity.ts";
+import {ItemPanel} from "../../components/ItemPanel.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 import {ITagEditorData} from "./TagEditor.tsx";
 import {TagUpdateModal} from "./TagUpdateModal.tsx";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
+import {useDialog} from "../../dialog/context/useDialog.ts";
 
 export interface ITagPanelProps {
   tag: TagEntity;

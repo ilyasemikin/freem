@@ -1,6 +1,6 @@
 import {ReactNode, useEffect, useState} from "react";
 import {AuthContext, AuthStatus, IAuthContext} from "./AuthContext.ts";
-import {useBackendClients} from "../clients/useBackendClients.ts";
+import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {UserClient} from "../../clients/UserClient.ts";
 import {CredentialsRequest} from "../../clients/models/auth/CredentialsRequest.ts";
 
@@ -24,7 +24,7 @@ export function AuthProvider({children}: IAuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>("loading");
 
   useEffect(() => {
-    session.onSignedOut = () => setStatus("anonymous");
+    const unsubscribe = session.onSignedOut(() => setStatus("anonymous"));
 
     async function restore() {
       if (!await session.refresh()) {
@@ -36,6 +36,8 @@ export function AuthProvider({children}: IAuthProviderProps) {
     }
 
     restore().catch(() => setStatus("anonymous"));
+
+    return unsubscribe;
   }, [session, user]);
 
   async function startSession(username: string, password: string): Promise<string | undefined> {

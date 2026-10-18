@@ -1,13 +1,13 @@
 ﻿import {forwardRef, useImperativeHandle, useState} from "react";
-import {DateTimePeriod} from "./data/DateTimePeriod.ts";
-import {ActivityEntity} from "./entities/ActivityEntity.ts";
-import {TagEntity} from "./entities/TagEntity.ts";
-import {RecordEntity} from "./entities/RecordEntity.ts";
-import {InputText} from "./components/inputs/InputText.tsx";
+import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
+import {TagEntity} from "../../entities/TagEntity.ts";
+import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {InputText} from "../../components/inputs/InputText.tsx";
 import {InputTextarea} from "primereact/inputtextarea";
-import {DatePicker} from "./components/inputs/DatePicker.tsx";
-import {ActivitiesPicker} from "./components/inputs/ActivitiesPicker.tsx";
-import {TagsPicker} from "./components/inputs/TagsPicker.tsx";
+import {DatePicker} from "../../components/inputs/DatePicker.tsx";
+import {ActivitiesPicker} from "../../components/inputs/ActivitiesPicker.tsx";
+import {TagsPicker} from "../../components/inputs/TagsPicker.tsx";
 
 export interface IRecordEditorHandle {
   validate: () => boolean;

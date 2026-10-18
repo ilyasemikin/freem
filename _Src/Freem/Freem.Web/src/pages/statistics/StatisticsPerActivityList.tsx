@@ -1,4 +1,4 @@
-﻿import {StatisticsPerActivityEntity} from "./entities/StatisticsPerActivityEntity.ts";
+﻿import {StatisticsPerActivityEntity} from "../../entities/StatisticsPerActivityEntity.ts";
 import {StatisticsPerActivityPanel} from "./StatisticsPerActivityPanel.tsx";
 
 export interface IStatisticsPerActivityListProps {

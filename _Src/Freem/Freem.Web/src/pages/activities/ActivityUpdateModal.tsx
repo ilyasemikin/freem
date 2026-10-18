@@ -1,8 +1,8 @@
 ﻿import {ActivityEditor, IActivityEditorData, IActivityEditorHandle} from "./ActivityEditor.tsx";
 import {useRef, useState} from "react";
-import {ActivityEntity} from "./entities/ActivityEntity.ts";
-import {DialogFooter} from "./components/DialogFooter.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 
 export interface IActivityUpdateModalProps {
   activity: ActivityEntity;

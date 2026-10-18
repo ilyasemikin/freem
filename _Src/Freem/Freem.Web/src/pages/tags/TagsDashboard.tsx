@@ -1,21 +1,23 @@
 ﻿import {useEffect, useState} from "react";
-import {TagEntity} from "./entities/TagEntity.ts";
-import {ListTagRequest} from "./clients/models/tags/ListTagRequest.ts";
-import {Loading} from "./components/Loading.tsx";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
+import {TagEntity} from "../../entities/TagEntity.ts";
+import {ListTagRequest} from "../../clients/models/tags/ListTagRequest.ts";
+import {Loading} from "../../components/Loading.tsx";
+import {ValidationError} from "../../components/ValidationError.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 import {TagAddModal} from "./TagAddModal.tsx";
 import {ITagEditorData} from "./TagEditor.tsx";
-import {CreateTagRequest} from "./clients/models/tags/CreateTagRequest.ts";
+import {CreateTagRequest} from "../../clients/models/tags/CreateTagRequest.ts";
 import {TagPanel} from "./TagPanel.tsx";
-import {UpdateTagRequest} from "./clients/models/tags/UpdateTagRequest.ts";
-import {UpdateField} from "./clients/models/UpdateField.ts";
-import {useBackendClients} from "./contexts/clients/useBackendClients.ts";
-import {useEntitiesCache} from "./contexts/cache/useEntitiesCache.ts";
-import {useDialog} from "./contexts/dialog/useDialog.ts";
-import {Divider} from "./components/Divider.tsx";
+import {UpdateTagRequest} from "../../clients/models/tags/UpdateTagRequest.ts";
+import {UpdateField} from "../../clients/models/UpdateField.ts";
+import {useBackendClients} from "../../clients/context/useBackendClients.ts";
+import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
+import {useDialog} from "../../dialog/context/useDialog.ts";
+import {Divider} from "../../components/Divider.tsx";
 
 export function TagsDashboard() {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState<boolean>(false);
 
   const [tags, setTags] = useState<TagEntity[] | undefined>();
@@ -25,15 +27,30 @@ export function TagsDashboard() {
   const cache = useEntitiesCache();
 
   useEffect(() => {
-    async function loadTags() {
+    let current = true;
+
+    async function load() {
       const request = new ListTagRequest(0, 100);
       const tags = await cache.tags.listByRequest(request);
-      setTags(tags);
+      if (current) {
+        setTags(tags);
+        setError(undefined);
+      }
     }
 
-    setLoading(true);
-    loadTags();
-    setLoading(false);
+    load().catch(error => {
+      if (current) {
+        setError(error instanceof Error ? error.message : "Failed to load data");
+      }
+    }).finally(() => {
+      if (current) {
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      current = false;
+    };
   }, [update, cache.tags]);
 
   function openAdd() {
@@ -74,6 +91,10 @@ export function TagsDashboard() {
 
   if (loading) {
     return (<Loading/>);
+  }
+
+  if (error !== undefined) {
+    return <ValidationError error={error}/>;
   }
 
   return (

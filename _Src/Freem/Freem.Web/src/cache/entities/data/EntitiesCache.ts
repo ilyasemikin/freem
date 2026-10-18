@@ -1,4 +1,4 @@
-﻿import {IEntityResponse} from "../../../../clients/models/IEntityResponse.ts";
+﻿import {IEntityResponse} from "../../../clients/models/IEntityResponse.ts";
 
 export interface IEntitiesCacheListResult<T> {
   founded: T[];

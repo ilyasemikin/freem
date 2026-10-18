@@ -1,8 +1,8 @@
-﻿import {RecordEntity} from "./entities/RecordEntity.ts";
+﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
 import {IRecordEditorData, IRecordEditorHandle, RecordEditor} from "./RecordEditor.tsx";
 import {useRef, useState} from "react";
-import {CustomButton} from "./components/inputs/CustomButton.tsx";
-import {DialogFooter} from "./components/DialogFooter.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
 
 export interface IRecordUpdateModalProps {
   record: RecordEntity;

@@ -1,11 +1,11 @@
 ﻿import {createContext} from "react";
-import {ActivitiesClient} from "../../clients/ActivitiesClient.ts";
-import {RecordsClient} from "../../clients/RecordsClient.ts";
-import {TagsClient} from "../../clients/TagsClient.ts";
-import {UserClient} from "../../clients/UserClient.ts";
-import {StatisticsClient} from "../../clients/StatisticsClient.ts";
-import {AuthClient} from "../../clients/AuthClient.ts";
-import {AuthSession} from "../../clients/AuthSession.ts";
+import {ActivitiesClient} from "../ActivitiesClient.ts";
+import {RecordsClient} from "../RecordsClient.ts";
+import {TagsClient} from "../TagsClient.ts";
+import {UserClient} from "../UserClient.ts";
+import {StatisticsClient} from "../StatisticsClient.ts";
+import {AuthClient} from "../AuthClient.ts";
+import {AuthSession} from "../AuthSession.ts";
 
 export interface IBackendClientsContext {
   activities: ActivitiesClient;

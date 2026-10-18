@@ -1,6 +1,6 @@
-﻿import {ActivityEntity} from "./entities/ActivityEntity.ts";
-import {ItemPanel} from "./components/ItemPanel.tsx";
-import {TimeDuration} from "./data/TimeDuration.ts";
+﻿import {ActivityEntity} from "../../entities/ActivityEntity.ts";
+import {ItemPanel} from "../../components/ItemPanel.tsx";
+import {TimeDuration} from "../../data/TimeDuration.ts";
 
 export interface IStatisticsPerActivityPanelProps {
   recorded: TimeDuration;

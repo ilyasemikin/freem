@@ -1,5 +1,5 @@
-﻿import {RecordEntity} from "./entities/RecordEntity.ts";
-import {DateHelper} from "./helpers/DateHelper.ts";
+﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {DateHelper} from "../../helpers/DateHelper.ts";
 import {useMemo} from "react";
 import {RecordList} from "./RecordList.tsx";
 

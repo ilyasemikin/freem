@@ -1,6 +1,6 @@
 ﻿import {useRef, useState} from "react";
 import {ActivityEditor, IActivityEditorData, IActivityEditorHandle} from "./ActivityEditor.tsx";
-import {DialogFooter} from "./components/DialogFooter.tsx";
+import {DialogFooter} from "../../dialog/DialogFooter.tsx";
 
 export interface IActivityAddModalProps {
   onAdd?: (data: IActivityEditorData) => void;

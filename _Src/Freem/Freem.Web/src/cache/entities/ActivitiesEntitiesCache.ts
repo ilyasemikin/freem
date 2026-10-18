@@ -1,10 +1,10 @@
-﻿import {ActivityResponse} from "../../../clients/models/activities/ActivityResponse.ts";
-import {ActivitiesClient} from "../../../clients/ActivitiesClient.ts";
-import {ListActivityRequest} from "../../../clients/models/activities/ListActivityRequest.ts";
-import {ActivityEntity} from "../../../entities/ActivityEntity.ts";
+﻿import {ActivityResponse} from "../../clients/models/activities/ActivityResponse.ts";
+import {ActivitiesClient} from "../../clients/ActivitiesClient.ts";
+import {ListActivityRequest} from "../../clients/models/activities/ListActivityRequest.ts";
+import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 import {TagsEntitiesCache} from "./TagsEntitiesCache.ts";
 import {EntitiesCache} from "./data/EntitiesCache.ts";
-import {FindActivityByNameRequest} from "../../../clients/models/activities/FindActivityByNameRequest.ts";
+import {FindActivityByNameRequest} from "../../clients/models/activities/FindActivityByNameRequest.ts";
 
 export class ActivitiesEntitiesCache {
   private readonly cache: EntitiesCache<ActivityResponse>
