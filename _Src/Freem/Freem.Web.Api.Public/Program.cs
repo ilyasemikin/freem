@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Freem.Entities.DependencyInjection;
-using Freem.Entities.Events.Producer.Kafka.DependencyInjection.Microsoft.Extensions;
+using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Entities.Serialization.Json;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
@@ -65,7 +65,7 @@ builder.Services
 builder.Services
     .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration())
     .AddSimpleRedisDistributedLocks(builder.Configuration.GetRedisLockingConfiguration())
-    .AddKafkaEventProduction(builder.Configuration.GetKafkaProducerConfiguration());
+    .AddNullEventPublishing();
 
 builder.Services
     .AddUseCaseContextProvider()

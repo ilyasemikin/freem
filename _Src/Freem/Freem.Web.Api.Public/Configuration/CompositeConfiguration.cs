@@ -10,5 +10,4 @@ public sealed class CompositeConfiguration
     
     public required PostgresConfiguration Postgres { get; init; }
     public required RedisConfiguration Redis { get; init; }
-    public required KafkaConfiguration Kafka { get; init; }
 }

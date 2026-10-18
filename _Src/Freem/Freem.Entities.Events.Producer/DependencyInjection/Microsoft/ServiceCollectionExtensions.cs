@@ -32,4 +32,9 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddNullEventPublishing(this IServiceCollection services)
+    {
+        return services.AddEventProduction<NullEventPublisher>();
+    }
 }

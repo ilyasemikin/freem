@@ -1,4 +1,3 @@
-﻿using Freem.Entities.Events.Producer.Kafka.Models;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Web.Api.Public.Configuration.Instances;
 
@@ -22,12 +21,6 @@ internal static class ConfigurationManagerExtensions
         var configuration = section.GetConfiguration();
         return new Freem.Locking.Redis.DependencyInjection.Microsoft.RedisConfiguration(
             configuration.Redis.ConnectionString);
-    }
-    
-    public static KafkaProducerConfiguration GetKafkaProducerConfiguration(this IConfiguration section)
-    {
-        var configuration = section.GetConfiguration();
-        return new KafkaProducerConfiguration(configuration.Kafka.BootstrapServers);
     }
     
     public static OpenApiConfiguration GetOpenApiConfiguration(this IConfiguration section)

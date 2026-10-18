@@ -79,7 +79,7 @@ Freem.Entities                             # domain entities per area: Activitie
 Freem.Entities.UseCases(.Contracts/.Plain) # use cases and their DTOs
 Freem.Entities.Storage.Abstractions        # repository interfaces and filters
 Freem.Entities.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
-Freem.Entities.Events.*                    # event producers/consumers (Local, Kafka)
+Freem.Entities.Events.*                    # event producers/consumers (Local)
 Freem.Locking.*                            # locking (Local, Redis)
 Freem.*                                    # small shared libraries (Results, Collections, Time, ...)
 ```
