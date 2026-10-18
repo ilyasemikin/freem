@@ -16,7 +16,11 @@ export class UserClient {
     return await this.client.put({url: "api/v1/user/settings", body: request});
   }
 
-  public async me(): Promise<Response> {
-    return await this.client.get({url: "api/v1/user/me"});
+  public async me(skipRefresh?: boolean): Promise<Response> {
+    return await this.client.get({url: "api/v1/user/me", skipRefresh: skipRefresh});
+  }
+
+  public async register(request: {nickname: string}): Promise<Response> {
+    return await this.client.post({url: "api/v1/user/register", body: request});
   }
 }

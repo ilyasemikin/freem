@@ -1,11 +1,15 @@
 import {IHttpMethodProps} from "./IHttpMethodProps.ts";
 import {IHttpClient} from "./IHttpClient.ts";
+import {AuthSession} from "../AuthSession.ts";
 
 export class HttpClient implements IHttpClient{
   private readonly baseUrl?: string;
 
-  constructor(baseUrl?: string) {
+  private readonly session?: AuthSession;
+
+  constructor(baseUrl?: string, session?: AuthSession) {
     this.baseUrl = baseUrl;
+    this.session = session;
   }
 
   public async post<TBody>(props?: IHttpMethodProps<TBody>): Promise<Response> {
@@ -48,7 +52,13 @@ export class HttpClient implements IHttpClient{
   }
 
   private getRequestInfo<TBody>(method: string, props?: IHttpMethodProps<TBody>): RequestInit {
-    const {body, headers} = props || {};
+    const {body} = props || {};
+    const headers: Record<string, string> = {...props?.headers};
+
+    const accessToken = this.session?.getAccessToken();
+    if (accessToken !== undefined) {
+      headers["Authorization"] = `Bearer ${accessToken}`;
+    }
 
     if (body !== undefined) {
       return {
@@ -71,7 +81,19 @@ export class HttpClient implements IHttpClient{
 
   private async send<TBody>(method: string, props?: IHttpMethodProps<TBody>): Promise<Response> {
     const url = this.buildUrl(props);
-    const requestInfo = this.getRequestInfo(method, props);
-    return await fetch(url, requestInfo);
+    const response = await fetch(url, this.getRequestInfo(method, props));
+
+    const isAuthRequest = props?.url?.startsWith("api/v1/auth/") ?? false;
+    if (response.status !== 401 || this.session === undefined || isAuthRequest || props?.skipRefresh) {
+      return response;
+    }
+
+    // The access token has expired: rotate the session and repeat the request once.
+    if (!await this.session.refresh()) {
+      this.session.onSignedOut?.();
+      return response;
+    }
+
+    return await fetch(url, this.getRequestInfo(method, props));
   }
 }

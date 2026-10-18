@@ -4,6 +4,8 @@ import {RecordsClient} from "../../clients/RecordsClient.ts";
 import {TagsClient} from "../../clients/TagsClient.ts";
 import {UserClient} from "../../clients/UserClient.ts";
 import {StatisticsClient} from "../../clients/StatisticsClient.ts";
+import {AuthClient} from "../../clients/AuthClient.ts";
+import {AuthSession} from "../../clients/AuthSession.ts";
 
 export interface IBackendClientsContext {
   activities: ActivitiesClient;
@@ -13,6 +15,9 @@ export interface IBackendClientsContext {
   statistics: StatisticsClient;
 
   user: UserClient;
+
+  auth: AuthClient;
+  session: AuthSession;
 }
 
 export const BackendClientsContext = createContext<IBackendClientsContext>(undefined!);

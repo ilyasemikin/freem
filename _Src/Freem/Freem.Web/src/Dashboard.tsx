@@ -5,6 +5,7 @@ import {useState} from "react";
 import {TagsDashboard} from "./TagsDashboard.tsx";
 import {StatisticsDashboard} from "./StatisticsDashboard.tsx";
 import {Button} from "primereact/button";
+import {useAuth} from "./contexts/auth/useAuth.ts";
 
 enum Tab {
   Tags,
@@ -14,6 +15,7 @@ enum Tab {
 
 export function Dashboard() {
   const [tab, setTab] = useState<Tab>(Tab.Records);
+  const {logout} = useAuth();
 
   function disabled(buttonTab: Tab) {
     return buttonTab === tab;
@@ -36,6 +38,7 @@ export function Dashboard() {
           <Button disabled={disabled(Tab.Tags)} size="small" onClick={() => setTab(Tab.Tags)}>Tags</Button>
           <Button disabled={disabled(Tab.Records)} size="small" onClick={() => setTab(Tab.Records)}>Records</Button>
           <Button disabled={disabled(Tab.Statistics)} size="small" onClick={() => setTab(Tab.Statistics)}>Statistics</Button>
+          <Button size="small" severity="secondary" onClick={logout}>Log out</Button>
         </div>
     );
   }

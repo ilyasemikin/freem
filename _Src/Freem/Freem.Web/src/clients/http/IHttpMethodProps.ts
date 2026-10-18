@@ -5,4 +5,6 @@ export interface IHttpMethodProps<T> {
   body?: T;
   headers?: Record<string, string>;
   query?: QueryParams;
+  // Do not rotate the session and repeat the request on 401.
+  skipRefresh?: boolean;
 }

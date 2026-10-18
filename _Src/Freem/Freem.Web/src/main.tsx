@@ -12,6 +12,8 @@ import {EntitiesCacheProvider} from "./contexts/cache/EntitiesCacheProvider.tsx"
 import {RecordsDashboard} from "./RecordsDashboard.tsx";
 import {StatisticsDashboard} from "./StatisticsDashboard.tsx";
 import {Dashboard} from "./Dashboard.tsx";
+import {AuthProvider} from "./contexts/auth/AuthProvider.tsx";
+import {AuthGate} from "./contexts/auth/AuthGate.tsx";
 import "./main.css"
 
 const router = createBrowserRouter([
@@ -48,11 +50,15 @@ createRoot(root).render(
     <StrictMode>
       <PrimeReactProvider>
         <BackendClientsProvider>
-          <EntitiesCacheProvider>
-            <DialogProvider>
-              <RouterProvider router={router}/>
-            </DialogProvider>
-          </EntitiesCacheProvider>
+          <AuthProvider>
+            <AuthGate>
+              <EntitiesCacheProvider>
+                <DialogProvider>
+                  <RouterProvider router={router}/>
+                </DialogProvider>
+              </EntitiesCacheProvider>
+            </AuthGate>
+          </AuthProvider>
         </BackendClientsProvider>
       </PrimeReactProvider>
     </StrictMode>
