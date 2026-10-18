@@ -22,8 +22,6 @@ internal sealed class UserEntity :
     
     public UserSettingsEntity? Settings { get; set; }
     
-    public UserTelegramIntegrationEntity? TelegramIntegration { get; set; }
-    
     [Timestamp]
     public uint RowVersion { get; private set; }
 

@@ -117,7 +117,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable("events", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("events_entity_name_check", "entity_name = 'activity' and (action = 'created' or action = 'updated' or action = 'removed' or action = 'archived' or action = 'unarchived') or entity_name = 'record' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'running_record' and (action = 'started' or action = 'stopped' or action = 'updated' or action = 'removed') or entity_name = 'tag' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'user' and (action = 'registered' or action = 'settings_changed' or action = 'telegram_integration_changed')");
+                            t.HasCheckConstraint("events_entity_name_check", "entity_name = 'activity' and (action = 'created' or action = 'updated' or action = 'removed' or action = 'archived' or action = 'unarchived') or entity_name = 'record' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'running_record' and (action = 'started' or action = 'stopped' or action = 'updated' or action = 'removed') or entity_name = 'tag' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'user' and (action = 'registered' or action = 'settings_changed')");
                         });
                 });
 
@@ -427,42 +427,6 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.ToTable("user_settings", "core_entities");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserTelegramIntegrationEntity", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id")
-                        .HasColumnOrder(0);
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<string>("TelegramUserId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("telegram_user_id");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("UserId")
-                        .HasName("user_telegram_integrations_pk");
-
-                    b.HasIndex("TelegramUserId")
-                        .IsUnique()
-                        .HasDatabaseName("user_telegram_integrations_telegram_user_id_unique");
-
-                    b.ToTable("user_telegram_integrations", "core_entities");
-                });
-
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
                 {
                     b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
@@ -628,23 +592,9 @@ namespace Freem.Entities.Storage.PostgreSQL.Migrations.Instances
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserTelegramIntegrationEntity", b =>
-                {
-                    b.HasOne("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
-                        .WithOne("TelegramIntegration")
-                        .HasForeignKey("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserTelegramIntegrationEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("user_telegram_integrations_users_fk");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Freem.Entities.Storage.PostgreSQL.Database.Entities.UserEntity", b =>
                 {
                     b.Navigation("Settings");
-
-                    b.Navigation("TelegramIntegration");
                 });
 #pragma warning restore 612, 618
         }

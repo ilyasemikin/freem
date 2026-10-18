@@ -28,7 +28,6 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
-using Freem.Entities.Users.Events.TelegramIntegrationChanged;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Events;
@@ -112,7 +111,6 @@ public sealed class EventsFactory
         {
             UserEventActions.Registered => new UserRegisteredEvent(id, entityId),
             UserEventActions.SettingsChanged => new UserSettingsChanged(id, entityId),
-            UserEventActions.TelegramIntegrationChanged => new UserTelegramIntegrationChangedEvent(id, entityId),
             _ => throw new Exception()
         };
     }

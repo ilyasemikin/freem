@@ -17,7 +17,6 @@ internal sealed class DatabaseContext : DbContext
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
     public DbSet<UserSettingsEntity> UserSettings => Set<UserSettingsEntity>();
-    public DbSet<UserTelegramIntegrationEntity> UserTelegramIntegrations => Set<UserTelegramIntegrationEntity>();
     
     public DbSet<EventEntity> Events => Set<EventEntity>();
 

@@ -23,7 +23,6 @@ using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
-using Freem.Entities.Users.Events.TelegramIntegrationChanged;
 using Freem.Entities.Users.Identifiers;
 using Freem.Reflection;
 using Utilities.Collections;
@@ -242,7 +241,6 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         {
             (id, userId) => new UserRegisteredEvent(id, userId),
             (id, userId) => new UserSettingsChanged(id, userId),
-            (id, userId) => new UserTelegramIntegrationChangedEvent(id, userId),
         };
 
     [Theory]
