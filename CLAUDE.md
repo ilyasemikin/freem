@@ -63,7 +63,15 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   the bit: re-check with `git ls-files -v` (`S` = set, `H` = cleared).
 - EgoHub is started manually by the user and may be down; ask the user to start it.
 - Kill only processes you started yourself, by PID, never by name grep.
-- `.IntegrationTests` run via local `dotnet test` against locally running services, not via a Docker test pipeline.
+- Docker environments live in `docker/{develop,service,test}` (PostgreSQL 18, Redis, `postgres-migration` container
+  built from `Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile`; `service` adds API, web and manual
+  `postgres-backup`/`postgres-restore`). `.env` is created from `.env.example` by the user. Ports: `develop` Postgres
+  10150, Redis 10151; `service` API 10170, web 10171; local `dotnet run` API 10190, `npm run dev` 10191 (strict).
+  Images need `.nupkg` files in `_Src/Freem/packages/`.
+- `.IntegrationTests` and `FunctionalTests` run in `docker/test` (`docker compose up --build --abort-on-container-exit
+  test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; each test assembly has its own database `freem_{storage,usecases,api}_test`, because assemblies run in parallel and truncate tables). `TruncateTables` refuses a
+  database whose name does not end with `_test`. The committed `configuration.json` files of the test projects hold
+  empty placeholders for local runs against `develop` (use a `*_test` database).
 - Do not spend time on manual browser passes once build and tests pass; ask first.
 
 ## Repository Layout
@@ -103,5 +111,6 @@ cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
 docker build -f Freem.Web.Api.Public/Dockerfile .   # run from _Src/Freem
 ```
 
-`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) keep a committed `configuration.json` with empty
-placeholders; hide local values with `git update-index --skip-worktree` (see "Local Environment").
+`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) and `FunctionalTests` keep a committed
+`configuration.json` with empty placeholders; hide local values with `git update-index --skip-worktree` (see
+"Local Environment"). Frontend API address: `VITE_API_URL` (`Freem.Web/.env.example`).

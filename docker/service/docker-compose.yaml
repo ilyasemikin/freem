@@ -1,0 +1,123 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: freem
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - freem_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d freem"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: "always"
+
+  redis:
+    image: redis:8
+    volumes:
+      - redis_data:/data
+    networks:
+      - freem_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: "always"
+
+  postgres-migration:
+    build:
+      context: ../../_Src/Freem
+      dockerfile: ./Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: freem
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - freem_network
+    restart: "no"
+
+  api:
+    build:
+      context: ../../_Src/Freem
+      dockerfile: ./Freem.Web.Api.Public/Dockerfile
+    environment:
+      Api__Ports__0: 8080
+      Api__CorsOrigins__0: ${WEB_PUBLIC_URL}
+      Postgres__ConnectionString: Host=postgres; Port=5432; UserID=${POSTGRES_USER}; Password=${POSTGRES_PASSWORD}; Database=freem
+      Redis__ConnectionString: redis:6379
+    ports:
+      - ${API_PORT}:8080
+    depends_on:
+      postgres-migration:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      - freem_network
+    restart: "always"
+
+  web:
+    build:
+      context: ../../_Src/Freem/Freem.Web
+      args:
+        VITE_API_URL: ${API_PUBLIC_URL}
+    ports:
+      - ${WEB_PORT}:80
+    depends_on:
+      - api
+    networks:
+      - freem_network
+    restart: "always"
+
+  postgres-backup:
+    image: postgres:18
+    profiles: ["manual"]
+    entrypoint: ["sh", "/runner/backup.sh"]
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./scripts/backup.sh:/runner/backup.sh:ro
+      - ./backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - freem_network
+    restart: "no"
+
+  postgres-restore:
+    image: postgres:18
+    profiles: ["manual"]
+    entrypoint: ["sh", "/runner/restore.sh"]
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./scripts/restore.sh:/runner/restore.sh:ro
+      - ./backups:/backups:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - freem_network
+    restart: "no"
+
+networks:
+  freem_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

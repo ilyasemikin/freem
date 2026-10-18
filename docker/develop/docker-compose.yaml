@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: freem
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - freem_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d freem"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: "unless-stopped"
+
+  redis:
+    image: redis:8
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - freem_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: "unless-stopped"
+
+  postgres-migration:
+    build:
+      context: ../../_Src/Freem
+      dockerfile: ./Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: freem
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - freem_network
+    restart: "no"
+
+networks:
+  freem_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

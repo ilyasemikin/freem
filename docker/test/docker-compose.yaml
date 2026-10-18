@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: freem_test
+    networks:
+      - freem_test_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d freem_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: "no"
+
+  redis:
+    image: redis:8
+    networks:
+      - freem_test_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: "no"
+
+  postgres-migration:
+    build:
+      context: ../../_Src/Freem
+      dockerfile: ./Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: "freem_storage_test freem_usecases_test freem_api_test"
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - freem_test_network
+    restart: "no"
+
+  test:
+    build:
+      context: ../../
+      dockerfile: ./docker/test/Dockerfile
+    depends_on:
+      postgres-migration:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    networks:
+      - freem_test_network
+    restart: "no"
+
+networks:
+  freem_test_network:
+    driver: bridge
