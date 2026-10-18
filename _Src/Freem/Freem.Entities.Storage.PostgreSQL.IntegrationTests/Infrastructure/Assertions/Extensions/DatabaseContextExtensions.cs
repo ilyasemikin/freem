@@ -11,9 +11,12 @@ internal static class DatabaseContextExtensions
         var exception = await Xunit.Record.ExceptionAsync(() => context.SaveChangesAsync());
 
         Assert.NotNull(exception);
-        Assert.IsType<TException>(exception);
 
-        if (exception is TException concreteException && exceptionPredicate is not null)
+        // EF Core may wrap the provider exception (DbUpdateException), depending on the moment it is thrown
+        var concreteException = FindException<TException>(exception);
+        Assert.NotNull(concreteException);
+
+        if (exceptionPredicate is not null)
             Assert.True(exceptionPredicate(concreteException));
     }
 
@@ -34,5 +37,15 @@ internal static class DatabaseContextExtensions
         var exception = await Xunit.Record.ExceptionAsync(() => context.SaveChangesAsync());
 
         Assert.Null(exception);
+    }
+
+    private static TException? FindException<TException>(Exception exception)
+        where TException : Exception
+    {
+        Exception? current = exception;
+        while (current is not null && current is not TException)
+            current = current.InnerException;
+
+        return current as TException;
     }
 }
