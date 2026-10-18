@@ -2,12 +2,11 @@
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Users.Identifiers;
-using Freem.Http.Requests.Abstractions;
-using Freem.Http.Requests.Entities;
-using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Events;
+using Utilities.Http;
+using Utilities.Http.Extensions;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -22,9 +21,15 @@ public sealed class EventsClient : BaseClient
         ListEventRequest query, 
         CancellationToken cancellationToken = default)
     {
+        var limit = query.Limit.ToString();
         var request = HttpRequest.Get("api/v1/events")
-            .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
-            .WithQueryParameterIfNotNull(nameof(query.After), query.After?.ToString("O"));
+            .WithQueryParameter(nameof(query.Limit), limit);
+
+        if (query.After is not null)
+        {
+            var after = query.After.Value.ToString("O");
+            request = request.WithQueryParameter(nameof(query.After), after);
+        }
 
         return SendForUserAsync<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(
             request, 

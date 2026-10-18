@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using Freem.Collections.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Npgsql;
+using Utilities.Collections;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 

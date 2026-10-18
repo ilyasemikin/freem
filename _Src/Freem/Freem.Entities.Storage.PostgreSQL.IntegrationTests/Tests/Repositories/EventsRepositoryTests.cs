@@ -1,5 +1,4 @@
-﻿using Freem.Collections.Extensions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Activities.Events.Arhived;
 using Freem.Entities.Activities.Events.Created;
@@ -27,6 +26,7 @@ using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
 using Freem.Entities.Users.Identifiers;
 using Freem.Reflection;
+using Utilities.Collections;
 using Xunit;
 using Xunit.Abstractions;
 

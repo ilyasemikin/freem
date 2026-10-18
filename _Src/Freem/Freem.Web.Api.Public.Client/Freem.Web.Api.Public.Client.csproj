@@ -8,11 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Utilities.Http" Version="0.0.8"/>
+        <PackageReference Include="Utilities.Http.SystemNet" Version="0.0.8"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
         <ProjectReference Include="..\Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj" />
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
         <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj" />
-        <ProjectReference Include="..\Freem.Http.Requests\Freem.Http.Requests.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
         <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />

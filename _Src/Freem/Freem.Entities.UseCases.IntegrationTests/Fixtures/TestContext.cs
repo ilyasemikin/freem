@@ -10,12 +10,12 @@ using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Locking.Local.DependencyInjection;
-using Freem.Time.Abstractions;
-using Freem.Time.DependencyInjection.Microsoft;
 using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Utilities.Clock.Abstractions;
+using Utilities.Clock.DependencyInjection.Microsoft;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
@@ -49,7 +49,7 @@ public sealed class TestContext
     {
         using var scope = _services.CreateScope();
         var provider = scope.ServiceProvider;
-        var clock = provider.GetRequiredService<ICurrentTimeGetter>();
+        var clock = provider.GetRequiredService<IClock>();
         return clock.Get();
     }
 
@@ -95,7 +95,7 @@ public sealed class TestContext
         };
 
         services
-            .AddUtcCurrentTimeGetter()
+            .AddUtcTruncatedToSecondsClock()
             .AddIdentifiersGenerators()
             .AddEntitiesIdentifiersNameConverters()
             .AddEmptyLocking()

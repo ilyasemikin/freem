@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
+        <PackageReference Include="Utilities.Collections" Version="0.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -23,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.Collections\Freem.Collections.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj"/>
         <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>

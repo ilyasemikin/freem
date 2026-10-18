@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <RestoreAdditionalProjectSources>
+            $(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)packages
+        </RestoreAdditionalProjectSources>
+    </PropertyGroup>
+</Project>

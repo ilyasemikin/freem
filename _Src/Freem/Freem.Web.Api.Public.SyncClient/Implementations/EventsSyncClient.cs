@@ -2,12 +2,11 @@
 using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Users.Identifiers;
-using Freem.Http.Requests.Abstractions;
-using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Events;
 using Freem.Web.Api.Public.SyncClient.Implementations.Base;
+using Utilities.Http;
 
 namespace Freem.Web.Api.Public.SyncClient.Implementations;
 

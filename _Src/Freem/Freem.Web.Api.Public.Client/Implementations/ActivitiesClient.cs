@@ -1,11 +1,10 @@
 ﻿using System.Text.Json;
 using Freem.Entities.Activities.Identifiers;
-using Freem.Http.Requests.Abstractions;
-using Freem.Http.Requests.Entities;
-using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
+using Utilities.Http;
+using Utilities.Http.Extensions;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 

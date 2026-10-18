@@ -2,12 +2,12 @@
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
-using Freem.Time.Abstractions;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Clock.Abstractions;
 using ApiStartRunningRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.Running.StartRunningRecordRequest;
 using UseCaseStartRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Start.StartRunningRecordRequest;
 
@@ -23,20 +23,20 @@ public sealed class StartRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
     private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
-    private readonly ICurrentTimeGetter _currentTimeGetter;
+    private readonly IClock _clock;
 
     public StartRunningRecordController(
         UseCaseContextProvider contextProvider, 
         IUseCaseExecutor<UseCaseExecutionContext> executor, 
-        ICurrentTimeGetter currentTimeGetter)
+        IClock clock)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
         ArgumentNullException.ThrowIfNull(executor);
-        ArgumentNullException.ThrowIfNull(currentTimeGetter);
+        ArgumentNullException.ThrowIfNull(clock);
         
         _contextProvider = contextProvider;
         _executor = executor;
-        _currentTimeGetter = currentTimeGetter;
+        _clock = clock;
     }
 
     [HttpPost]
@@ -57,7 +57,7 @@ public sealed class StartRunningRecordController : BaseController
 
     private UseCaseStartRunningRecordRequest Map(ApiStartRunningRecordRequest request)
     {
-        var startAt = request.StartAt ?? _currentTimeGetter.Get();
+        var startAt = request.StartAt ?? _clock.Get();
         return new UseCaseStartRunningRecordRequest(startAt, new RelatedActivitiesCollection(request.Activities))
         {
             Name = request.Name,

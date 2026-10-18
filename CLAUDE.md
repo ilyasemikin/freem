@@ -81,8 +81,13 @@ Freem.Entities.Storage.Abstractions        # repository interfaces and filters
 Freem.Entities.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
 Freem.Entities.Events.*                    # event producers/consumers (Local)
 Freem.Locking.*                            # locking (Local, Redis)
-Freem.*                                    # small shared libraries (Results, Collections, Time, ...)
+Freem.*                                    # small shared libraries (Results, Time, Locking, ...)
 ```
+
+Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`) come from a local NuGet feed:
+`_Src/Freem/Directory.Build.props` registers `_Src/Freem/packages/`, whose `.nupkg` files are not in git (only
+`.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
+`packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.
 
 There is no own authentication (removed in the revival plan, stage 2): the API takes the user from the `userId`
 query parameter (`UseCaseContextProvider`) until the EgoHub integration. Do not expose this scheme publicly.

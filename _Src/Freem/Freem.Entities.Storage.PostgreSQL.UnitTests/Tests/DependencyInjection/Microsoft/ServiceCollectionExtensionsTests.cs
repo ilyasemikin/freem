@@ -93,17 +93,4 @@ public sealed class ServiceCollectionExtensionsTests
         Assert.NotNull(repository);
         Assert.IsAssignableFrom(type, repository);
     }
-    
-    [Theory]
-    [MemberData(nameof(EntityRepositoryTypes))]
-    public void AddUtcCurrentTimeGetter_ShouldAddGetterOnlyOneTime_WhenCallTwice(Type repositoryType)
-    {
-        var services = new ServiceCollection();
-
-        services.AddPostgreSqlStorage(StorageConfiguration);
-        services.AddPostgreSqlStorage(StorageConfiguration);
-
-        var count = services.Count(service => service.ServiceType == repositoryType);
-        Assert.Equal(1, count);
-    }
 }

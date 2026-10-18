@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
-using Freem.Http.Requests.Abstractions;
-using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client.Implementations.Extensions;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts;
+using Utilities.Http;
 
 namespace Freem.Web.Api.Public.Client.Implementations.Base;
 

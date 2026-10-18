@@ -1,7 +1,7 @@
-﻿using Freem.Collections.Extensions;
-using Freem.Entities.Relations.Collections.Base;
+﻿using Freem.Entities.Relations.Collections.Base;
 using Freem.Entities.UnitTests.Fixtures.Identifiers;
 using Freem.Entities.UnitTests.Mocs.Entities;
+using Utilities.Collections;
 
 // ReSharper disable once CheckNamespace
 namespace Freem.Entities.UnitTests.Tests.Common.Relations;

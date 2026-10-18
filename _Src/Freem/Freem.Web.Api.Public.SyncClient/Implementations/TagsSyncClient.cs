@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Tags.Models;
-using Freem.Http.Requests.Abstractions;
-using Freem.Http.Requests.Entities;
-using Freem.Http.Requests.Entities.Extensions;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.SyncClient.Implementations.Base;
+using Utilities.Http;
+using Utilities.Http.Extensions;
 
 namespace Freem.Web.Api.Public.SyncClient.Implementations;
 

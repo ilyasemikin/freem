@@ -6,7 +6,6 @@ using Freem.Entities.Serialization.Json;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
-using Freem.Time.DependencyInjection.Microsoft;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.Contracts;
@@ -15,6 +14,7 @@ using Freem.Web.Api.Public.OpenApi;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.DependencyInjection.Microsoft.Extensions;
 using Scalar.AspNetCore;
+using Utilities.Clock.DependencyInjection.Microsoft;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services
-    .AddUtcCurrentTimeGetter()
+    .AddUtcTruncatedToSecondsClock()
     .AddHttpContextAccessor()
     .AddLogging();
 

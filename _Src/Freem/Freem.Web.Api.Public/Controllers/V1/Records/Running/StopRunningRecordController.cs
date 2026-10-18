@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
-using Freem.Time.Abstractions;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Clock.Abstractions;
 using ApiStopRunningRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.Running.StopRunningRecordRequest;
 using UseCaseStopRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Stop.StopRunningRecordRequest;
 
@@ -23,20 +23,20 @@ public sealed class StopRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
     private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
-    private readonly ICurrentTimeGetter _currentTimeGetter;
+    private readonly IClock _clock;
 
     public StopRunningRecordController(
         UseCaseContextProvider contextProvider, 
         IUseCaseExecutor<UseCaseExecutionContext> executor, 
-        ICurrentTimeGetter currentTimeGetter)
+        IClock clock)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
         ArgumentNullException.ThrowIfNull(executor);
-        ArgumentNullException.ThrowIfNull(currentTimeGetter);
+        ArgumentNullException.ThrowIfNull(clock);
         
         _contextProvider = contextProvider;
         _executor = executor;
-        _currentTimeGetter = currentTimeGetter;
+        _clock = clock;
     }
 
     [HttpPost]
@@ -57,7 +57,7 @@ public sealed class StopRunningRecordController : BaseController
 
     private UseCaseStopRunningRecordRequest Map(ApiStopRunningRecordRequest request)
     {
-        var endAt = request.EndAt ?? _currentTimeGetter.Get();
+        var endAt = request.EndAt ?? _clock.Get();
         return new UseCaseStopRunningRecordRequest(endAt);
     }
 
