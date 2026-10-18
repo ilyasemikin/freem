@@ -1,6 +1,7 @@
 ﻿using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Records.Models;
 using Freem.Entities.Relations.Collections;
+using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Update;
 
@@ -8,6 +9,8 @@ public sealed class UpdateRecordRequest
 {
     public RecordIdentifier Id { get; }
     
+    public UpdateField<DateTimePeriod>? Period { get; init; }
+
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
@@ -24,6 +27,7 @@ public sealed class UpdateRecordRequest
     public bool HasChanges()
     {
         return 
+            Period is not null ||
             Name is not null ||
             Description is not null ||
             Activities is not null ||

@@ -11,6 +11,7 @@ using Freem.Entities.UseCases.Contracts.Records.Update;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -42,6 +43,30 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
         
         var updateTag = filler.Tags.Create(_context);
         _updatedTagId = updateTag.Id;
+    }
+
+    [Fact]
+    public async Task ShouldSuccess_WhenUpdatePeriod()
+    {
+        var startAt = DateTimeOffset.UnixEpoch.AddYears(55);
+        var endAt = startAt.AddHours(2);
+        var period = new DateTimePeriod(startAt, endAt);
+        var request = new UpdateRecordRequest(_recordId)
+        {
+            Period = new UpdateField<DateTimePeriod>(period)
+        };
+        
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.Null(response.Error);
+
+        using var executor = Context.CreateExecutor();
+        var actual = executor.Records.RequiredGet(_context, _recordId);
+        
+        Assert.Equal(startAt, actual.Period.StartAt);
+        Assert.Equal(endAt, actual.Period.EndAt);
     }
 
     [Fact]

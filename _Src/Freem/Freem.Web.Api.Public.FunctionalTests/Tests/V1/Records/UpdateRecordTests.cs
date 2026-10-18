@@ -5,6 +5,7 @@ using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Records.Models;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Tags.Identifiers;
+using Freem.Time.Models;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
@@ -20,6 +21,29 @@ public sealed class UpdateRecordTests : RecordTestBase
     public UpdateRecordTests(TestContext context, ITestOutputHelper? output = null) 
         : base(context, output)
     {
+    }
+
+    [Fact]
+    public async Task Request_ShouldSuccess_WhenUpdatePeriod()
+    {
+        var startAt = DateTimeOffset.UnixEpoch.AddYears(55);
+        var period = new DateTimePeriod(startAt, startAt.AddHours(2));
+        var request = new UpdateRecordRequest
+        {
+            Period = new UpdateField<DateTimePeriod>(period)
+        };
+
+        var response = await Context.Client.Records.UpdateAsync(AddedRecordIds[0], request);
+        
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var actual = await Context.Client.Records.GetAsync(AddedRecordIds[0]);
+        
+        Assert.NotNull(actual);
+        Assert.NotNull(actual.Value);
+        Assert.Equal(period.StartAt, actual.Value.Period.StartAt);
+        Assert.Equal(period.EndAt, actual.Value.Period.EndAt);
     }
 
     [Fact]

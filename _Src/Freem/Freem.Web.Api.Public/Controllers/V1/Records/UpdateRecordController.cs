@@ -70,6 +70,7 @@ public sealed class UpdateRecordController : BaseController
         
         return new UseCaseUpdateRecordRequest(recordId)
         {
+            Period = request.Period?.Map(),
             Name = request.Name?.Map(),
             Description = request.Description?.Map(),
             Activities = activities,

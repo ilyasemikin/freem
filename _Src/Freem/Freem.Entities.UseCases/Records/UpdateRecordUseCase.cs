@@ -56,6 +56,8 @@ internal sealed class UpdateRecordUseCase
             return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RecordNotFound);
         
         var record = result.Entity;
+        if (request.Period is not null)
+            record.Period = request.Period;
         if (request.Name is not null)
             record.Name = request.Name;
         if (request.Description is not null)
