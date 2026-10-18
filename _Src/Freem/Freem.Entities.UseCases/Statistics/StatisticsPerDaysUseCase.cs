@@ -42,7 +42,8 @@ public sealed class StatisticsPerDaysUseCase :
 
         var time = TimeOnly.MinValue.Add(settings.DayUtcOffset);
         var current = request.Period.StartAt.ToUtcDateTime(time);
-        var end = request.Period.EndAt.ToUtcDateTime(time);
+        // The end of the period is inclusive
+        var end = request.Period.EndAt.AddDays(1).ToUtcDateTime(time);
 
         var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
         while (current < end)
