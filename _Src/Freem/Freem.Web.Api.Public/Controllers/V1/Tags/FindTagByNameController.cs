@@ -17,6 +17,7 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 [Tags(ControllerTags.Tags)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TagResponse))]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class FindTagByNameController : BaseController
 {
@@ -35,7 +36,7 @@ public sealed class FindTagByNameController : BaseController
     }
 
     [HttpGet]
-    [EndpointSummary("Find tags by name")]
+    [EndpointSummary("Find tag by name")]
     public async Task<IActionResult> GetAsync(
         [Required] [FromRoute] string tagName,
         CancellationToken cancellationToken = default)
@@ -45,31 +46,21 @@ public sealed class FindTagByNameController : BaseController
 
         var response = await _executor.ExecuteAsync<FindTagByNameRequest, FindTagByNameResponse>(context, request, cancellationToken);
 
-        return response.Success
-            ? CreateSuccess(Response, response.Tags, response.TotalCount)
-            : CreateFailure(response.Error);
+        if (!response.Success)
+            return CreateFailure(response.Error);
+
+        var tag = response.Tags.FirstOrDefault();
+        if (tag is null)
+            return new NotFoundResult();
+
+        var value = new TagResponse(tag.Id, tag.Name);
+        return new OkObjectResult(value);
     }
 
     private static FindTagByNameRequest Map(string tagNameString)
     {
         var tagName = new TagName(tagNameString);
         return new FindTagByNameRequest(tagName);
-    }
-
-    private static IActionResult CreateSuccess(
-        HttpResponse response, IReadOnlyList<Tag> tag, int totalCount)
-    {
-        response.Headers.Append(HeaderNames.ItemsCount, tag.Count.ToString());
-        response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());
-
-        var value = MapTags(tag);
-        return new OkObjectResult(value);
-
-        static async IAsyncEnumerable<TagResponse> MapTags(IReadOnlyList<Tag> activities)
-        {
-            foreach (var activity in activities)
-                yield return new TagResponse(activity.Id, activity.Name);
-        }
     }
 
     private static IActionResult CreateFailure(Error<FindTagByNameErrorCode> error)
