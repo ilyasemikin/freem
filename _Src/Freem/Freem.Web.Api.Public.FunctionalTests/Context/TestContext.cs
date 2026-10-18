@@ -63,6 +63,7 @@ public sealed class TestContext
     {
         return new ConfigurationBuilder()
             .AddJsonFile(ConfigurationFileName)
+            .AddEnvironmentVariables()
             .Build();
     }
     

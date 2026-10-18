@@ -50,6 +50,9 @@ services:
         condition: service_completed_successfully
       redis:
         condition: service_healthy
+    environment:
+      WebApiApplication__EgoHubIntegration__Url: ${EGOHUB_INTEGRATION_URL:?Set EGOHUB_INTEGRATION_URL in docker/test/.env}
+      WebApiApplication__EgoHubIntegration__Token: ${EGOHUB_INTEGRATION_TOKEN:?Set EGOHUB_INTEGRATION_TOKEN in docker/test/.env}
     networks:
       - freem_test_network
     extra_hosts:
