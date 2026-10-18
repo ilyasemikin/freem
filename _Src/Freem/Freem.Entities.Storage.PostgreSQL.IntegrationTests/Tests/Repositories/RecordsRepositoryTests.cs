@@ -394,7 +394,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
             : IdentifiersGenerator.Generate<RecordIdentifier>();
         var userId = userIdExists 
             ? (UserIdentifier)dbUser.Id 
-            : IdentifiersGenerator.Generate<UserIdentifier>();
+            : GenerateUserIdentifier();
         
         var ids = new RecordAndUserIdentifiers(recordId, userId);
         

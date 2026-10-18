@@ -226,7 +226,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
         await Database.SaveChangesAsync();
 
         var tagId = tagIdExists ? new TagIdentifier(dbTag.Id) : IdentifiersGenerator.Generate<TagIdentifier>();
-        var userId = userIdExists ? new UserIdentifier(dbUser.Id) : IdentifiersGenerator.Generate<UserIdentifier>();
+        var userId = userIdExists ? new UserIdentifier(dbUser.Id) : GenerateUserIdentifier();
         
         var ids = new TagAndUserIdentifiers(tagId, userId);
         

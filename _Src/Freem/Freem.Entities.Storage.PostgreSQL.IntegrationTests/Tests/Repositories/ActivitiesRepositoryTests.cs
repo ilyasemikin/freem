@@ -272,7 +272,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
             : IdentifiersGenerator.Generate<ActivityIdentifier>();
         var userId = userIdExists 
             ? (UserIdentifier)dbUser.Id 
-            : IdentifiersGenerator.Generate<UserIdentifier>();
+            : GenerateUserIdentifier();
         
         var ids = new ActivityAndUserIdentifiers(activityId, userId);
         

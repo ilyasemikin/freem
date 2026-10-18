@@ -283,7 +283,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
         var types = new List<Type>();
         
         var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var userId = IdentifiersGenerator.Generate<UserIdentifier>();
+        var userId = GenerateUserIdentifier();
 
         var activityId = IdentifiersGenerator.Generate<ActivityIdentifier>();
         foreach (var @case in ValidActivityEntitiesCases)
