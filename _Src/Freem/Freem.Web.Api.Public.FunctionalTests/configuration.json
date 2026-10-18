@@ -1,11 +1,17 @@
-﻿{
-  "WebApiConfiguration": {
+{
+  "WebApiApplication": {
+    "Api": {
+      "Ports": []
+    },
+    "OpenApi": {
+      "ServerAddresses": []
+    },
     "Postgres": {
-      "ConnectionString": "Host=192.168.1.2; Port=24000; UserID=user; Password=78urhnqf3dw; Database=freem; Include Error Detail=true",
+      "ConnectionString": "",
       "EnableSensitiveDataLogging": true
     },
     "Redis": {
-      "ConnectionString": "192.168.1.2:24001,allowAdmin=true"
+      "ConnectionString": ""
     }
   }
 }
