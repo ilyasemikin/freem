@@ -6,8 +6,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 
 internal static class DatabaseContextExtensions
 {
+    private const string TestDatabaseSuffix = "_test";
+
+    public static bool IsTestDatabaseName(string? name)
+    {
+        return name is not null && name.EndsWith(TestDatabaseSuffix, StringComparison.Ordinal);
+    }
+
     public static void TruncateTables(this DatabaseContext context)
     {
+        var databaseName = context.Database.GetDbConnection().Database;
+        if (!IsTestDatabaseName(databaseName))
+            throw new InvalidOperationException(
+                $"Tables can be truncated only in a database whose name ends with '{TestDatabaseSuffix}', got '{databaseName}'.");
+
         context.Database.ExecuteSqlRaw($"""
 
                                         BEGIN;
