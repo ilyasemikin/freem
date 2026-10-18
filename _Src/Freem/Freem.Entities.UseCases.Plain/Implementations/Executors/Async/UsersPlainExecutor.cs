@@ -21,7 +21,11 @@ public sealed class UsersPlainExecutor
     {
         ArgumentNullException.ThrowIfNull(request);
         
-        var response = await _executor.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(UseCaseExecutionContext.Empty, request, cancellationToken);
+        var value = Guid.NewGuid().ToString("N");
+        var userId = new UserIdentifier(value);
+        var context = new UseCaseExecutionContext(userId);
+        
+        var response = await _executor.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(context, request, cancellationToken);
         if (!response.Success)
             throw new PlainRequestFailedException();
 
