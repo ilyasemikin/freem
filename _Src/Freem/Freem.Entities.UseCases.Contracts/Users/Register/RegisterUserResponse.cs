@@ -30,6 +30,12 @@ public sealed class RegisterUserResponse : IResponse<RegisterUserErrorCode>
         return new RegisterUserResponse(userId);
     }
 
+    public static RegisterUserResponse CreateAlreadyRegisteredFailure(string message)
+    {
+        var error = new Error<RegisterUserErrorCode>(RegisterUserErrorCode.UserAlreadyRegistered, message);
+        return new RegisterUserResponse(error: error);
+    }
+
     public static RegisterUserResponse CreateUnknownFailure(string message)
     {
         var error = new Error<RegisterUserErrorCode>(RegisterUserErrorCode.UnknownError, message);

@@ -5,7 +5,6 @@ using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Entities.Users;
 using Freem.Entities.Users.Identifiers;
-using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
@@ -14,23 +13,19 @@ namespace Freem.Entities.UseCases.Users;
 internal sealed class RegisterUserUseCase 
     : IEntitiesUseCase<RegisterUserRequest, RegisterUserResponse, RegisterUserErrorCode>
 {
-    private readonly IIdentifierGenerator<UserIdentifier> _identifierGenerator;
     private readonly ICreateRepository<User, UserIdentifier> _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RegisterUserUseCase(
-        IIdentifierGenerator<UserIdentifier> identifierGenerator, 
         ICreateRepository<User, UserIdentifier> repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
-        ArgumentNullException.ThrowIfNull(identifierGenerator);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
         
-        _identifierGenerator = identifierGenerator;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
@@ -40,7 +35,9 @@ internal sealed class RegisterUserUseCase
         UseCaseExecutionContext context, RegisterUserRequest request,
         CancellationToken cancellationToken = default)
     {
-        var id = _identifierGenerator.Generate();
+        context.ThrowsIfUnauthorized();
+
+        var id = context.UserId;
         var user = new User(id, request.Nickname);
 
         try
@@ -49,7 +46,7 @@ internal sealed class RegisterUserUseCase
         }
         catch (DuplicateKeyStorageException ex)
         {
-            return RegisterUserResponse.CreateUnknownFailure(ex.Message);
+            return RegisterUserResponse.CreateAlreadyRegisteredFailure(ex.Message);
         }
 
         return RegisterUserResponse.CreateSuccess(id);

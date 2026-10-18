@@ -44,7 +44,6 @@ public static class ServiceCollectionExtensions
             .AddGenerator<RecordIdentifier>(value => new RecordIdentifier(value))
             .AddGenerator<RunningRecordIdentifier>(value => new RunningRecordIdentifier(value))
             .AddGenerator<TagIdentifier>(value => new TagIdentifier(value))
-            .AddGenerator<UserIdentifier>(value => new UserIdentifier(value))
             .AddGenerator<EventIdentifier>(value => new EventIdentifier(value));
         
         services.AddSingletonExistedService<
@@ -59,9 +58,6 @@ public static class ServiceCollectionExtensions
         services.AddSingletonExistedService<
             IIdentifierGenerator<IIdentifier>,
             IIdentifierGenerator<TagIdentifier>>();
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>,
-            IIdentifierGenerator<UserIdentifier>>();
         services.AddSingletonExistedService<
             IIdentifierGenerator<IIdentifier>,
             IIdentifierGenerator<EventIdentifier>>();

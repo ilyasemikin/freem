@@ -3,4 +3,5 @@
 public enum RegisterUserErrorCode
 {
     UnknownError,
+    UserAlreadyRegistered,
 }

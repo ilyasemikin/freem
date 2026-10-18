@@ -7,6 +7,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class UsersRegisterUseCaseTests : UseCaseTestBase
 {
     private const string Nickname = "user";
+    private const string UserId = "user-id";
     
     public UsersRegisterUseCaseTests(TestContext context)
         : base(context)
@@ -19,7 +20,7 @@ public sealed class UsersRegisterUseCaseTests : UseCaseTestBase
         var request = new RegisterUserRequest(Nickname);
         
         var response = await Context.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(
-            UseCaseExecutionContext.Empty, 
+            new UseCaseExecutionContext(UserId), 
             request);
         
         Assert.NotNull(response);
