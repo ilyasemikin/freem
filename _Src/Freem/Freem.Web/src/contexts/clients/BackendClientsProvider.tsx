@@ -12,7 +12,7 @@ interface IBackendClientsProviderProps {
 }
 
 export function BackendClientsProvider({children}: IBackendClientsProviderProps) {
-  const httpClient = new HttpClient("http://localhost:30000");
+  const httpClient = new HttpClient(import.meta.env.VITE_API_URL);
 
   const activities = new ActivitiesClient(httpClient);
   const records = new RecordsClient(httpClient);
