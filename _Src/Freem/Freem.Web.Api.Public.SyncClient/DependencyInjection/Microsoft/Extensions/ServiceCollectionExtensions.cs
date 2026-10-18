@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Serialization.Json;
+﻿using System.Text.Json;
+using Freem.Entities.Serialization.Json;
 using Freem.Web.Api.Public.Client.Configuration;
 using Freem.Web.Api.Public.SyncClient.Implementations;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,9 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddWebClientSpecific(this IServiceCollection services)
     {
         var jso = EntitiesJsonSerialization.CreateSerializerOptions();
+        
+        // The API host overrides the naming policy with camelCase (Program.cs), the client must match it.
+        jso.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ActivitiesSyncClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<EventsSyncClient>(provider, jso));
