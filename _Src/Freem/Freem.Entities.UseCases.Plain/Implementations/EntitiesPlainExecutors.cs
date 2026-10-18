@@ -11,8 +11,7 @@ public class EntitiesPlainExecutors
     public RecordsPlainExecutor Records { get; }
     public RunningRecordsPlainExecutor RunningRecords { get; }
     
-    public UsersPasswordPlainExecutor UsersPassword { get; }
-    public UsersTokensPlainExecutor UsersTokens { get; }
+    public UsersPlainExecutor Users { get; }
     public UsersSettingsPlainExecutor UsersSettings { get; }
     
     public EntitiesPlainExecutors(IUseCaseExecutor<UseCaseExecutionContext> executor)
@@ -25,8 +24,7 @@ public class EntitiesPlainExecutors
         Records = new RecordsPlainExecutor(executor);
         RunningRecords = new RunningRecordsPlainExecutor(executor);
         
-        UsersPassword = new UsersPasswordPlainExecutor(executor);
-        UsersTokens = new UsersTokensPlainExecutor(executor);
+        Users = new UsersPlainExecutor(executor);
         UsersSettings = new UsersSettingsPlainExecutor(executor);
     }
 }

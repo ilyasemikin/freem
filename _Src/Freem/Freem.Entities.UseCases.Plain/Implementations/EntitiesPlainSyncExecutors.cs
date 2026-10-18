@@ -11,8 +11,7 @@ public class EntitiesPlainSyncExecutors
     public RecordsPlainSyncExecutor Records { get; }
     public RunningRecordsPlainSyncExecutor RunningRecords { get; }
     
-    public UsersPasswordPlainSyncExecutor UsersPassword { get; }
-    public UsersTokensPlainSyncExecutor UsersTokens { get; }
+    public UsersPlainSyncExecutor Users { get; }
     public UsersSettingsPlainSyncExecutor UsersSettings { get; }
     
     public EntitiesPlainSyncExecutors(IUseCaseExecutor<UseCaseExecutionContext> executor)
@@ -25,8 +24,7 @@ public class EntitiesPlainSyncExecutors
         Records = new RecordsPlainSyncExecutor(executor);
         RunningRecords = new RunningRecordsPlainSyncExecutor(executor);
         
-        UsersPassword = new UsersPasswordPlainSyncExecutor(executor);
-        UsersTokens = new UsersTokensPlainSyncExecutor(executor);
+        Users = new UsersPlainSyncExecutor(executor);
         UsersSettings = new UsersSettingsPlainSyncExecutor(executor);
     }
 }

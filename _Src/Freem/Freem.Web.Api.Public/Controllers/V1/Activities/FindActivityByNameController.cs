@@ -4,17 +4,14 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Find;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/activities/by-name")]
 [Tags(ControllerTags.Activities)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<ActivityResponse>))]

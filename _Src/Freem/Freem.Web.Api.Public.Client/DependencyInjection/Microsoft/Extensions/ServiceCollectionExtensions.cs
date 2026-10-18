@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
     {
         var jso = EntitiesJsonSerialization.CreateSerializerOptions();
 
-        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<TokenLoader>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<CurrentUser>(provider, jso));
         
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ActivitiesClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<EventsClient>(provider, jso));

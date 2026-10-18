@@ -6,18 +6,15 @@ using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Records.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.UpdateRecordRequest;
 using UseCaseUpdateRecordRequest = Freem.Entities.UseCases.Contracts.Records.Update.UpdateRecordRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/records/{recordId:required}")]
 [Tags(ControllerTags.Records)]
 [ProducesResponseType(StatusCodes.Status200OK)]

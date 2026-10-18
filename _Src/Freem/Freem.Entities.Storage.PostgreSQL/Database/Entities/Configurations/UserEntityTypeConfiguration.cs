@@ -39,13 +39,6 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
             .HasName(EntitiesNames.Users.Constraints.PrimaryKey);
 
         builder
-            .HasOne(e => e.PasswordCredentials)
-            .WithOne(e => e.User)
-            .HasForeignKey<UserPasswordCredentialsEntity>(e => e.UserId)
-            .HasConstraintName(EntitiesNames.UsersLoginCredentials.Constraints.UsersForeignKey)
-            .IsRequired();
-
-        builder
             .HasOne(e => e.TelegramIntegration)
             .WithOne(e => e.User)
             .HasForeignKey<UserTelegramIntegrationEntity>(e => e.UserId)

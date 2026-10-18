@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client.Implementations.Extensions;
@@ -12,16 +11,16 @@ public abstract class BaseClient
 {
     private readonly IHttpClient _client;
     private readonly JsonSerializerOptions _options;
-    private readonly TokenLoader? _tokenLoader;
+    private readonly CurrentUser? _currentUser;
 
-    protected BaseClient(IHttpClient client, JsonSerializerOptions options, TokenLoader? tokenLoader = null)
+    protected BaseClient(IHttpClient client, JsonSerializerOptions options, CurrentUser? currentUser = null)
     {
         ArgumentNullException.ThrowIfNull(client);
         ArgumentNullException.ThrowIfNull(options);
         
         _client = client;
         _options = options;
-        _tokenLoader = tokenLoader;
+        _currentUser = currentUser;
     }
 
     protected async Task<ClientResult> SendAsync(HttpRequest request, CancellationToken cancellationToken = default)
@@ -30,9 +29,9 @@ public abstract class BaseClient
         return response.ToClientResult();
     }
 
-    protected async Task<ClientResult> SendAuthorizedAsync(HttpRequest request, CancellationToken cancellationToken = default)
+    protected async Task<ClientResult> SendForUserAsync(HttpRequest request, CancellationToken cancellationToken = default)
     {
-        var response = await SendAuthorizedInnerAsync(request, cancellationToken);
+        var response = await SendForUserInnerAsync(request, cancellationToken);
         return response.ToClientResult();
     }
 
@@ -42,9 +41,9 @@ public abstract class BaseClient
         return await response.ToClientResultAsync<T>(_options);
     }
 
-    protected async Task<ClientResult<T>> SendAuthorizedAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
+    protected async Task<ClientResult<T>> SendForUserAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
     {
-        var response = await SendAuthorizedInnerAsync(request, cancellationToken);
+        var response = await SendForUserInnerAsync(request, cancellationToken);
         return await response.ToClientResultAsync<T>(_options);
     }
 
@@ -55,35 +54,20 @@ public abstract class BaseClient
         return await _client.SendAsync(request, cancellationToken);
     }
     
-    private async Task<HttpResponse> SendAuthorizedInnerAsync(HttpRequest request, CancellationToken cancellationToken = default)
+    private async Task<HttpResponse> SendForUserInnerAsync(HttpRequest request, CancellationToken cancellationToken = default)
     {
-        if (_tokenLoader is null || !_tokenLoader.TryGet(out var tokens))
-            throw new InvalidOperationException(); 
+        if (_currentUser is null || !_currentUser.TryGet(out var userId))
+            throw new InvalidOperationException("Current user is not set");
         
-        request = PopulateAuthorizedRequest(request, tokens.AccessToken);
+        request = request.WithQueryParameter(QueryParameterNames.UserId, userId.ToString());
+        request = PopulateRequest(request);
         
-        var response = await _client.SendAsync(request, cancellationToken);
-        if (response.StatusCode is HttpStatusCode.Unauthorized)
-        {
-            var refreshed = await _tokenLoader.TryRefreshAsync(cancellationToken);
-            if (!refreshed)
-                throw new InvalidOperationException();
-            
-            response = await _client.SendAsync(request, cancellationToken);
-        }
-
-        return response;
+        return await _client.SendAsync(request, cancellationToken);
     }
     
     private static HttpRequest PopulateRequest(HttpRequest request)
     {
         const string client = "C# Freem.Web.Api.Public.Client";
         return request.WithHeader(HeaderNames.ClientName, client);
-    }
-
-    private static HttpRequest PopulateAuthorizedRequest(HttpRequest request, string token)
-    {
-        request = request.WithHeader("Authorization", $"Bearer {token}");
-        return PopulateRequest(request);
     }
 }

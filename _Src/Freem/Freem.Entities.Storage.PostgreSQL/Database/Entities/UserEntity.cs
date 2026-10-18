@@ -22,7 +22,6 @@ internal sealed class UserEntity :
     
     public UserSettingsEntity? Settings { get; set; }
     
-    public UserPasswordCredentialsEntity? PasswordCredentials { get; set; }
     public UserTelegramIntegrationEntity? TelegramIntegration { get; set; }
     
     [Timestamp]

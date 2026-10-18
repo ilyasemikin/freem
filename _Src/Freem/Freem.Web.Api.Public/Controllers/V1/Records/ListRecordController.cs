@@ -5,20 +5,17 @@ using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Records.List;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiListRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.ListRecordRequest;
 using UseCaseListRecordRequest = Freem.Entities.UseCases.Contracts.Records.List.ListRecordRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records;
 
-[Authorize(JwtAuthorizationPolicy .Name)]
 [Route("api/v1/records")]
 [Tags(ControllerTags.Records)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<RecordResponse>))]

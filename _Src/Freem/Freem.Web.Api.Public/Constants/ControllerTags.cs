@@ -10,7 +10,5 @@ public static class ControllerTags
     public const string Events = "Events";
     public const string User = "User";
     
-    public const string PasswordCredentials = "Password credentials";
     public const string Settings = "Settings";
-    public const string AuthTokens = "Authentication tokens";
 }

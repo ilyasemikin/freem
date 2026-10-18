@@ -24,31 +24,6 @@ internal static class EntitiesNames
         }
     }
 
-    public static class UsersLoginCredentials
-    {
-        public const string EntityName = "user_password_credentials";
-        public const string Table = "user_password_credentials";
-
-        public static class Properties
-        {
-            public const string UserId = "user_id";
-            public const string Login = "login";
-            public const string HashAlgorithm = "password_hash_algorithm";
-            public const string PasswordHash = "password_hash";
-            public const string PasswordSalt = "password_salt";
-            public const string CreatedAt = "created_at";
-            public const string UpdatedAt = "updated_at";
-        }
-
-        public static class Constraints
-        {
-            public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
-            public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
-            public const string LoginIndex = $"{Table}_{Properties.Login}_{NamingConvention.IndexSuffix}";
-            public const string LoginUnique = $"{Table}_{Properties.Login}_{NamingConvention.UniqueSuffix}";
-        }
-    }
-
     public static class UserTelegramIntegration
     {
         public const string EntityName = "user_telegram_integration";

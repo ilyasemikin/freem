@@ -4,10 +4,8 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiStatisticsPerDaysRequest = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerDaysRequest;
 using ApiStatisticsPerDaysResponse = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerDaysResponse;
@@ -16,7 +14,6 @@ using UseCaseStatisticsPerDaysResponse = Freem.Entities.UseCases.Contracts.Stati
 
 namespace Freem.Web.Api.Public.Controllers.V1.Statistics;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/statistics/per-days")]
 [Tags(ControllerTags.Statistics)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiStatisticsPerDaysResponse))]

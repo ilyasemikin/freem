@@ -1,4 +1,3 @@
 ﻿{
-  "PostgresConnectionString": "",
-  "RedisConnectionString": ""
+  "PostgresConnectionString": ""
 }

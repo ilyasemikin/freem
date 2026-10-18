@@ -13,8 +13,8 @@ namespace Freem.Web.Api.Public.Client.Implementations;
 
 public sealed class EventsClient : BaseClient
 {
-    public EventsClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public EventsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
     }
 
@@ -26,7 +26,7 @@ public sealed class EventsClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameterIfNotNull(nameof(query.After), query.After?.ToString("O"));
 
-        return SendAuthorizedAsync<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(
+        return SendForUserAsync<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(
             request, 
             cancellationToken);
     }

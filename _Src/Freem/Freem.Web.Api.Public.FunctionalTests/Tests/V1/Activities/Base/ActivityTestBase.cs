@@ -18,7 +18,6 @@ public abstract class ActivityTestBase : TestBase
         : base(context, output)
     {
         Context.Preparer.Users.Register();
-        Context.Preparer.Users.Login();
 
         var tagId = Context.Preparer.Tags.Create();
         AddedRelatedTags = new RelatedTagsCollection([tagId]);

@@ -21,7 +21,6 @@ public abstract class RecordTestBase : TestBase
         : base(context, output)
     {
         Context.Preparer.Users.Register();
-        Context.Preparer.Users.Login();
 
         var tagId = Context.Preparer.Tags.Create();
         var activityId = Context.Preparer.Activities.Create();

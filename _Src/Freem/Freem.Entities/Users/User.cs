@@ -1,7 +1,6 @@
 ﻿using Freem.Clones;
 using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
@@ -21,7 +20,6 @@ public sealed class User :
 
     public UserSettings Settings { get; set; }
     
-    public UserPasswordCredentials? PasswordCredentials { get; set; }
     public UserTelegramIntegration? TelegramIntegration { get; set; }
     
     public User(UserIdentifier id, Nickname nickname)
@@ -46,14 +44,6 @@ public sealed class User :
     public UserSettingsChanged BuildSettingsChangedEvent(EventIdentifier eventId)
     {
         return new UserSettingsChanged(eventId, Id);
-    }
-
-    public UserPasswordCredentialsChangedEvent BuildPasswordCredentialsChangedEvent(EventIdentifier eventId)
-    {
-        if (PasswordCredentials is null)
-            throw new InvalidOperationException("PasswordCredentials not added");
-
-        return new UserPasswordCredentialsChangedEvent(eventId, Id);
     }
 
     public UserTelegramIntegrationChangedEvent BuildTelegramIntegrationChangedEvent(EventIdentifier eventId)

@@ -19,7 +19,7 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.UsersPassword.Register();
+        var userId = filler.Users.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var tags = filler.Tags.CreateMany(_context, TagsCount);

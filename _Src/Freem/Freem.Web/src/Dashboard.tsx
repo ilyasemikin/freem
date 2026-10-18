@@ -1,7 +1,6 @@
 ﻿import {ActivitiesDashboard} from "./ActivitiesDashboard.tsx";
 import {DashboardPanel} from "./components/DashboardPanel.tsx";
 import {RecordsDashboard} from "./RecordsDashboard.tsx";
-import {Header} from "./Header.tsx";
 import {useState} from "react";
 import {TagsDashboard} from "./TagsDashboard.tsx";
 import {StatisticsDashboard} from "./StatisticsDashboard.tsx";
@@ -43,7 +42,6 @@ export function Dashboard() {
 
   return (
       <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
-        <Header/>
         <div style={{display: "flex", flexDirection: "row", flex: "1", overflow: "hidden"}}>
           <DashboardPanel style={{display: "flex", flex: "1"}}>
             <ActivitiesDashboard/>

@@ -4,15 +4,12 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/activities/{activityId:required}/archive")]
 [Tags(ControllerTags.Activities)]
 [ProducesResponseType(StatusCodes.Status200OK)]

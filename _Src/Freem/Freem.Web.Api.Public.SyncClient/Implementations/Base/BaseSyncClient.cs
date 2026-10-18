@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Freem.Http.Requests.Abstractions;
 using Freem.Http.Requests.Entities;
 using Freem.Web.Api.Public.Client;
@@ -13,16 +12,16 @@ public abstract class BaseSyncClient
 {
     private readonly IHttpClient _client;
     private readonly JsonSerializerOptions _options;
-    private readonly TokenLoader? _tokenLoader;
+    private readonly CurrentUser? _currentUser;
 
-    protected BaseSyncClient(IHttpClient client, JsonSerializerOptions options, TokenLoader? tokenLoader = null)
+    protected BaseSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser? currentUser = null)
     {
         ArgumentNullException.ThrowIfNull(client);
         ArgumentNullException.ThrowIfNull(options);
         
         _client = client;
         _options = options;
-        _tokenLoader = tokenLoader;
+        _currentUser = currentUser;
     }
 
     protected ClientResult Send(HttpRequest request)
@@ -31,9 +30,9 @@ public abstract class BaseSyncClient
         return response.ToClientResult();
     }
 
-    public ClientResult SendAuthorized(HttpRequest request)
+    public ClientResult SendForUser(HttpRequest request)
     {
-        var response = SendAuthorizedInner(request);
+        var response = SendForUserInner(request);
         return response.ToClientResult();
     }
 
@@ -45,9 +44,9 @@ public abstract class BaseSyncClient
             .GetResult();
     }
 
-    public ClientResult<T> SendAuthorized<T>(HttpRequest request)
+    public ClientResult<T> SendForUser<T>(HttpRequest request)
     {
-        var response = SendAuthorizedInner(request);
+        var response = SendForUserInner(request);
         return response.ToClientResultAsync<T>(_options)
             .GetAwaiter()
             .GetResult();
@@ -62,43 +61,22 @@ public abstract class BaseSyncClient
             .GetResult();
     }
 
-    private HttpResponse SendAuthorizedInner(HttpRequest request)
+    private HttpResponse SendForUserInner(HttpRequest request)
     {
-        if (_tokenLoader is null || !_tokenLoader.TryGet(out var tokens))
-            throw new InvalidOperationException();
+        if (_currentUser is null || !_currentUser.TryGet(out var userId))
+            throw new InvalidOperationException("Current user is not set");
 
-        request = PopulateAuthorizedRequest(request, tokens.AccessToken);
+        request = request.WithQueryParameter(QueryParameterNames.UserId, userId.ToString());
+        request = PopulateRequest(request);
 
-        var response = _client.SendAsync(request)
+        return _client.SendAsync(request)
             .GetAwaiter()
             .GetResult();
-
-        if (response.StatusCode is HttpStatusCode.Unauthorized)
-        {
-            var refreshed = _tokenLoader.TryRefreshAsync()
-                .GetAwaiter()
-                .GetResult();
-
-            if (refreshed)
-                throw new InvalidCastException();
-            
-            response = _client.SendAsync(request)
-                .GetAwaiter()
-                .GetResult();
-        }
-
-        return response;
     }
 
     private static HttpRequest PopulateRequest(HttpRequest request)
     {
         const string client = "C# Freem.Web.Api.Public.Client";
         return request.WithHeader(HeaderNames.ClientName, client);
-    }
-
-    private static HttpRequest PopulateAuthorizedRequest(HttpRequest request, string token)
-    {
-        request = request.WithHeader("Authorization", $"Bearer {token}");
-        return PopulateRequest(request);
     }
 }

@@ -79,11 +79,13 @@ Freem.Entities                             # domain entities per area: Activitie
 Freem.Entities.UseCases(.Contracts/.Plain) # use cases and their DTOs
 Freem.Entities.Storage.Abstractions        # repository interfaces and filters
 Freem.Entities.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
-Freem.Entities.Events.*                    # event producers/consumers (InPlace, Local, Kafka)
-Freem.Entities.Tokens.JWT, Freem.Tokens.*  # JWT auth, token blacklist in Redis
+Freem.Entities.Events.*                    # event producers/consumers (Local, Kafka)
 Freem.Locking.*                            # locking (Local, Redis)
-Freem.*                                    # small shared libraries (Results, Collections, Linq, Time, ...)
+Freem.*                                    # small shared libraries (Results, Collections, Time, ...)
 ```
+
+There is no own authentication (removed in the revival plan, stage 2): the API takes the user from the `userId`
+query parameter (`UseCaseContextProvider`) until the EgoHub integration. Do not expose this scheme publicly.
 
 ## Commands
 

@@ -3,16 +3,13 @@ using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/records/running")]
 [Tags(ControllerTags.RunningRecords)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetRunningRecordRequest))]

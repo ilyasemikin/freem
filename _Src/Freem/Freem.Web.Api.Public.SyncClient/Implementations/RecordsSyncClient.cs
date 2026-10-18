@@ -15,8 +15,8 @@ public sealed class RecordsSyncClient : BaseSyncClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public RecordsSyncClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public RecordsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -28,7 +28,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         var request = HttpRequest.Post("api/v1/records")
             .WithJsonBody(body, _options);
 
-        return SendAuthorized<CreateRecordResponse>(request);
+        return SendForUser<CreateRecordResponse>(request);
     }
 
     public ClientResult Update(RecordIdentifier id, UpdateRecordRequest body)
@@ -36,14 +36,14 @@ public sealed class RecordsSyncClient : BaseSyncClient
         var request = HttpRequest.Put($"api/v1/records/{id}")
             .WithJsonBody(body, _options);
 
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult Remove(RecordIdentifier id)
     {
         var request = HttpRequest.Delete($"api/v1/records/{id}");
         
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult Start(StartRunningRecordRequest body)
@@ -51,7 +51,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         var request = HttpRequest.Post("api/v1/records/running/start")
             .WithJsonBody(body, _options);
 
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult Stop(StopRunningRecordRequest body)
@@ -59,7 +59,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         var request = HttpRequest.Post("api/v1/records/running/stop")
             .WithJsonBody(body, _options);
         
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult UpdateRunning(UpdateRunningRecordRequest body)
@@ -67,28 +67,28 @@ public sealed class RecordsSyncClient : BaseSyncClient
         var request = HttpRequest.Put("api/v1/records/running")
             .WithJsonBody(body, _options);
 
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult RemoveRunning()
     {
         var request = HttpRequest.Delete("api/v1/records/running");
         
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
     
     public ClientResult<RunningRecordResponse> GetRunning()
     {
         var request = HttpRequest.Get($"api/v1/records/running");
         
-        return SendAuthorized<RunningRecordResponse>(request);
+        return SendForUser<RunningRecordResponse>(request);
     }
 
     public ClientResult<RunningRecordResponse> Get(RecordIdentifier id)
     {
         var request = HttpRequest.Get($"api/v1/records/{id}");
         
-        return SendAuthorized<RunningRecordResponse>(request);
+        return SendForUser<RunningRecordResponse>(request);
     }
 
     public ClientResult<IAsyncEnumerable<RunningRecordResponse>> List(ListRecordRequest query)
@@ -97,7 +97,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
 
-        return SendAuthorized<IAsyncEnumerable<RunningRecordResponse>>(request);
+        return SendForUser<IAsyncEnumerable<RunningRecordResponse>>(request);
     }
 
     public ClientResult<IAsyncEnumerable<RunningRecordResponse>> ListByPeriod(ListRecordByPeriodRequest query)
@@ -106,6 +106,6 @@ public sealed class RecordsSyncClient : BaseSyncClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Period), query.Period.ToString());
 
-        return SendAuthorized<IAsyncEnumerable<RunningRecordResponse>>(request);
+        return SendForUser<IAsyncEnumerable<RunningRecordResponse>>(request);
     }
 }

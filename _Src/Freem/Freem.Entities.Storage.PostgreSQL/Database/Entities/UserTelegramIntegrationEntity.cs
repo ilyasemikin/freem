@@ -44,7 +44,7 @@ internal sealed class UserTelegramIntegrationEntity :
 
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is UserPasswordCredentialsEntity other && Equals(other);
+        return ReferenceEquals(this, obj) || obj is UserTelegramIntegrationEntity other && Equals(other);
     }
 
     public override int GetHashCode()

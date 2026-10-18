@@ -9,27 +9,10 @@
     "ConnectionString": "string"
   },
   "Redis": {
-    "ConnectionString": "string",
-    "TokensBlackListKey": "string"
+    "ConnectionString": "string"
   },
   "Kafka": {
     "BootstrapServers": "string"
-  },
-  "PasswordCredentials": {
-    "HashAlgorithmName": "string"
-  },
-  "Tokens": {
-    "SecretKey": "string",
-    "Access": {
-      "Issuer": "string",
-      "Audience": "string",
-      "ExpirationPeriod": "0.00:00:00"
-    },
-    "Refresh": {
-      "Issuer": "string",
-      "Audience": "string",
-      "ExpirationPeriod": "0.00:00:00"
-    }
   },
   "Logging": {
     "LogLevel": {

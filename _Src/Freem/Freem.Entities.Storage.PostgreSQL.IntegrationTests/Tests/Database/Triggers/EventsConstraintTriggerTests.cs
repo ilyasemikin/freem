@@ -56,7 +56,7 @@ public class EventsConstraintTriggerTests : ConstraintTriggerTestsBase
     [InlineData(Record.EntityName, RecordEventActions.Created)]
     [InlineData(RunningRecord.EntityName, RunningRecordEventActions.Started)]
     [InlineData(Tag.EntityName, TagEventActions.Created)]
-    [InlineData(User.EntityName, UserEventActions.SignedIn)]
+    [InlineData(User.EntityName, UserEventActions.Registered)]
     public async Task Events_ShouldThrowException_WhenRelatedEntityNotExists(string name, string action)
     {
         var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();

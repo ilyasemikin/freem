@@ -10,8 +10,8 @@ namespace Freem.Web.Api.Public.SyncClient.Implementations;
 
 public sealed class StatisticsSyncClient : BaseSyncClient
 {
-    public StatisticsSyncClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public StatisticsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
     }
 
@@ -20,6 +20,6 @@ public sealed class StatisticsSyncClient : BaseSyncClient
         var request = HttpRequest.Get("api/v1/statistics/per-days")
             .WithQueryParameter(nameof(query.Period), query.Period.ToString());
         
-        return SendAuthorized<StatisticsPerDaysResponse>(request);
+        return SendForUser<StatisticsPerDaysResponse>(request);
     }
 }

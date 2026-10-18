@@ -19,7 +19,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.UsersPassword.Register();
+        var userId = filler.Users.Register();
         _context = new UseCaseExecutionContext(userId);
     }
 
@@ -66,7 +66,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.UsersPassword.Register();
+        var anotherUserId = executor.Users.Register();
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         

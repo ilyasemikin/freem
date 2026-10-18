@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
 using Freem.Entities.UseCases;
-using Freem.Web.Api.Public.Authentication;
+using Freem.Web.Api.Public.Contracts;
 
 namespace Freem.Web.Api.Public.Services.Implementations;
 
+// Temporary scheme until EgoHub integration: the user id is taken from the query string.
 public sealed class UseCaseContextProvider
 {
     private readonly IHttpContextAccessor _accessor;
@@ -17,12 +17,11 @@ public sealed class UseCaseContextProvider
     {
         if (_accessor.HttpContext is null)
             return UseCaseExecutionContext.Empty;
-        
-        var user = _accessor.HttpContext.User;
-        var userId = user.FindFirstValue(JwtAuthenticationClaimTypes.UserId);
-        
-        return userId is not null 
-            ? new UseCaseExecutionContext(userId) 
+
+        var userId = _accessor.HttpContext.Request.Query[QueryParameterNames.UserId].ToString();
+
+        return !string.IsNullOrWhiteSpace(userId)
+            ? new UseCaseExecutionContext(userId)
             : UseCaseExecutionContext.Empty;
     }
 }

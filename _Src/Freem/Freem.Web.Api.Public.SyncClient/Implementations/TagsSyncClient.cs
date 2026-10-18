@@ -15,8 +15,8 @@ public sealed class TagsSyncClient : BaseSyncClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public TagsSyncClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public TagsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
         _options = options;
     }
@@ -26,7 +26,7 @@ public sealed class TagsSyncClient : BaseSyncClient
         var request = HttpRequest.Post("api/v1/tags")
             .WithJsonBody(body, _options);
 
-        return SendAuthorized<CreateTagResponse>(request);
+        return SendForUser<CreateTagResponse>(request);
     }
 
     public ClientResult Update(TagIdentifier id, UpdateTagRequest body)
@@ -34,28 +34,28 @@ public sealed class TagsSyncClient : BaseSyncClient
         var request = HttpRequest.Put($"api/v1/tags/{id}")
             .WithJsonBody(body, _options);
         
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult Remove(TagIdentifier id)
     {
         var request = HttpRequest.Delete($"api/v1/tags/{id}");
         
-        return SendAuthorized(request);
+        return SendForUser(request);
     }
 
     public ClientResult<TagResponse> Get(TagIdentifier id)
     {
         var request = HttpRequest.Get($"api/v1/tags/{id}");
         
-        return SendAuthorized<TagResponse>(request);
+        return SendForUser<TagResponse>(request);
     }
 
     public ClientResult<TagResponse> Get(TagName name)
     {
         var request = HttpRequest.Get($"api/v1/tags/by-name/{name}");
         
-        return SendAuthorized<TagResponse>(request);
+        return SendForUser<TagResponse>(request);
     }
 
     public ClientResult<IAsyncEnumerable<TagResponse>> List(ListTagRequest query)
@@ -64,6 +64,6 @@ public sealed class TagsSyncClient : BaseSyncClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendAuthorized<IAsyncEnumerable<TagResponse>>(request);
+        return SendForUser<IAsyncEnumerable<TagResponse>>(request);
     }
 }

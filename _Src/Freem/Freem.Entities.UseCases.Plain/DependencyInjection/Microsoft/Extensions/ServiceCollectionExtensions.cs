@@ -14,15 +14,13 @@ public static class ServiceCollectionExtensions
         services.TryAddTransient<TagsPlainExecutor>();
         services.TryAddTransient<RecordsPlainExecutor>();
         services.TryAddTransient<RunningRecordsPlainExecutor>();
-        services.TryAddTransient<UsersPasswordPlainExecutor>();
-        services.TryAddTransient<UsersTokensPlainExecutor>();
+        services.TryAddTransient<UsersPlainExecutor>();
         
         services.TryAddTransient<ActivitiesPlainSyncExecutor>();
         services.TryAddTransient<TagsPlainSyncExecutor>();
         services.TryAddTransient<RecordsPlainSyncExecutor>();
         services.TryAddTransient<RunningRecordsPlainSyncExecutor>();
-        services.TryAddTransient<UsersPasswordPlainSyncExecutor>();
-        services.TryAddTransient<UsersTokensPlainSyncExecutor>();
+        services.TryAddTransient<UsersPlainSyncExecutor>();
         
         services.TryAddTransient<EntitiesPlainExecutors>();
         services.TryAddTransient<EntitiesPlainSyncExecutors>();

@@ -9,6 +9,5 @@ public abstract class SettingsTestBase : TestBase
         : base(context)
     {
         Context.Preparer.Users.Register();
-        Context.Preparer.Users.Login();
     }
 }

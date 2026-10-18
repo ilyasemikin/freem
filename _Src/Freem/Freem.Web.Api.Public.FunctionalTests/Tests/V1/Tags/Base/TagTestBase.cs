@@ -15,7 +15,6 @@ public abstract class TagTestBase : TestBase
         : base(context, output)
     {
         Context.Preparer.Users.Register();
-        Context.Preparer.Users.Login();
 
         
         AddedTagIds = Context.Preparer.Tags

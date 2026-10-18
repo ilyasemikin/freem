@@ -17,7 +17,6 @@ public sealed class DuplicateKeyStorageException : StorageException
 
     public enum ErrorCode
     {
-        DuplicateUserLogin,
         DuplicateRunningRecord,
         DuplicateTagName,
     }
@@ -26,7 +25,6 @@ public sealed class DuplicateKeyStorageException : StorageException
     {
         return error switch
         {
-            ErrorCode.DuplicateUserLogin => "Duplicate user login",
             _ => "Duplicate error, unknown reason"
         };
     }

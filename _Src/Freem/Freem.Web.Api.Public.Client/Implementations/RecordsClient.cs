@@ -14,8 +14,8 @@ public sealed class RecordsClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public RecordsClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public RecordsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -27,7 +27,7 @@ public sealed class RecordsClient : BaseClient
         var request = HttpRequest.Post("api/v1/records")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync<CreateRecordResponse>(request, cancellationToken);
+        return SendForUserAsync<CreateRecordResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdateAsync(
@@ -38,14 +38,14 @@ public sealed class RecordsClient : BaseClient
         var request = HttpRequest.Put($"api/v1/records/{id}")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> RemoveAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/records/{id}");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> StartAsync(StartRunningRecordRequest body, CancellationToken cancellationToken = default)
@@ -53,7 +53,7 @@ public sealed class RecordsClient : BaseClient
         var request = HttpRequest.Post("api/v1/records/running/start")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> StopAsync(StopRunningRecordRequest body, CancellationToken cancellationToken = default)
@@ -61,7 +61,7 @@ public sealed class RecordsClient : BaseClient
         var request = HttpRequest.Post("api/v1/records/running/stop")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdateRunningAsync(
@@ -70,21 +70,21 @@ public sealed class RecordsClient : BaseClient
         var request = HttpRequest.Put("api/v1/records/running")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> RemoveRunningAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete("api/v1/records/running");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult<RunningRecordResponse>> GetRunningAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/running");
         
-        return SendAuthorizedAsync<RunningRecordResponse>(request, cancellationToken);
+        return SendForUserAsync<RunningRecordResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult<RecordResponse>> GetAsync(
@@ -92,7 +92,7 @@ public sealed class RecordsClient : BaseClient
     {
         var request = HttpRequest.Get($"api/v1/records/{id}");
         
-        return SendAuthorizedAsync<RecordResponse>(request, cancellationToken);
+        return SendForUserAsync<RecordResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult<IAsyncEnumerable<RunningRecordResponse>>> ListAsync(
@@ -102,7 +102,7 @@ public sealed class RecordsClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendAuthorizedAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
     }
 
     public Task<ClientResult<IAsyncEnumerable<RunningRecordResponse>>> ListByPeriodAsync(
@@ -112,6 +112,6 @@ public sealed class RecordsClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Period), query.Period.ToString());
         
-        return SendAuthorizedAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
     }
 }

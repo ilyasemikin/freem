@@ -26,10 +26,8 @@ using Freem.Entities.Tags.Events.Removed;
 using Freem.Entities.Tags.Events.Updated;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events;
-using Freem.Entities.Users.Events.PasswordCredentialsChanged;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
-using Freem.Entities.Users.Events.SignedIn;
 using Freem.Entities.Users.Events.TelegramIntegrationChanged;
 using Freem.Entities.Users.Identifiers;
 
@@ -113,9 +111,7 @@ public sealed class EventsFactory
         return (string)action switch
         {
             UserEventActions.Registered => new UserRegisteredEvent(id, entityId),
-            UserEventActions.SignedIn => new UserSignedInEvent(id, entityId),
             UserEventActions.SettingsChanged => new UserSettingsChanged(id, entityId),
-            UserEventActions.LoginCredentialsChanged => new UserPasswordCredentialsChangedEvent(id, entityId),
             UserEventActions.TelegramIntegrationChanged => new UserTelegramIntegrationChangedEvent(id, entityId),
             _ => throw new Exception()
         };

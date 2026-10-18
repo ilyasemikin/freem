@@ -72,9 +72,7 @@ public static class EntitiesJsonSerialization
         yield return new TimeStatisticsPerActivityCollectionJsonConverter();
 
         yield return new DayUtcOffsetJsonConverter();
-        yield return new LoginJsonConverter();
         yield return new NicknameJsonConverter();
-        yield return new PasswordJsonConverter();
 
         yield return new UserIdentifierJsonConverter();
         

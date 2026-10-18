@@ -18,7 +18,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
     {
         using var filler = Context.CreateExecutor();
 
-        var userId = filler.UsersPassword.Register();
+        var userId = filler.Users.Register();
         _context = new UseCaseExecutionContext(userId);
     }
 

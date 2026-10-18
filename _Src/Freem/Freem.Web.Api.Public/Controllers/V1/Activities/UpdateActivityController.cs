@@ -6,18 +6,15 @@ using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiUpdateActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.UpdateActivityRequest;
 using UseCaseUpdateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Update.UpdateActivityRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/activities/{activityId:required}")]
 [Tags(ControllerTags.Activities)]
 [ProducesResponseType(StatusCodes.Status200OK)]

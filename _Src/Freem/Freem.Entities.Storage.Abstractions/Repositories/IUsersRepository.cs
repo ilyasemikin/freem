@@ -10,6 +10,4 @@ namespace Freem.Entities.Storage.Abstractions.Repositories;
 public interface IUsersRepository :
     IWriteRepository<User, UserIdentifier>,
     ISearchByIdRepository<User, UserIdentifier>
-{
-    Task<SearchEntityResult<User>> FindByLoginAsync(Login login, CancellationToken cancellationToken = default);
-}
+{}

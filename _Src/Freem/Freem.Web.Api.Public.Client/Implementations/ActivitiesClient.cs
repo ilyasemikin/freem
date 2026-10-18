@@ -13,8 +13,8 @@ public sealed class ActivitiesClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
 
-    public ActivitiesClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader)
-        : base(client, options, tokenLoader)
+    public ActivitiesClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser)
+        : base(client, options, currentUser)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -26,7 +26,7 @@ public sealed class ActivitiesClient : BaseClient
         var request = HttpRequest.Post("api/v1/activities")
             .WithJsonBody(body, _options);
         
-        return SendAuthorizedAsync<CreateActivityResponse>(request, cancellationToken);
+        return SendForUserAsync<CreateActivityResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdateAsync(
@@ -37,28 +37,28 @@ public sealed class ActivitiesClient : BaseClient
         var request = HttpRequest.Put($"api/v1/activities/{id}")
             .WithJsonBody(body, _options);
 
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> RemoveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/activities/{id}");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> ArchiveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/archive");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> UnarchiveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/unarchive");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult<ActivityResponse>> GetAsync(
@@ -67,7 +67,7 @@ public sealed class ActivitiesClient : BaseClient
     {
         var request = HttpRequest.Get($"api/v1/activities/{id}");
         
-        return SendAuthorizedAsync<ActivityResponse>(request, cancellationToken);
+        return SendForUserAsync<ActivityResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult<IAsyncEnumerable<ActivityResponse>>> ListAsync(
@@ -78,6 +78,6 @@ public sealed class ActivitiesClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendAuthorizedAsync<IAsyncEnumerable<ActivityResponse>>(request, cancellationToken);
+        return SendForUserAsync<IAsyncEnumerable<ActivityResponse>>(request, cancellationToken);
     }
 }

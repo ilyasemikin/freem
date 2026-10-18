@@ -1,21 +1,12 @@
 using System.Net;
 using System.Text.Json;
-using Freem.Credentials.Password.DependencyInjection.Microsoft.Extensions;
-using Freem.Crypto.Hashes.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.DependencyInjection;
 using Freem.Entities.Events.Producer.Kafka.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Serialization.Json;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Tokens.JWT.DependencyInjection;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Time.DependencyInjection.Microsoft;
-using Freem.Tokens.Blacklist.Redis.DependencyInjection.Microsoft.Extensions;
-using Freem.Tokens.DependencyInjection.Microsoft.Extensions;
-using Freem.Web.Api.Public.Authentication;
-using Freem.Web.Api.Public.Authentication.DependencyInjection.Microsoft;
-using Freem.Web.Api.Public.Authentication.OpenApi;
-using Freem.Web.Api.Public.Autherization.Extensions;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.Contracts;
@@ -72,15 +63,8 @@ builder.Services
     .AddLogging();
 
 builder.Services
-    .AddCryptoHashes()
-    .AddPasswordRawHahser()
-    .AddGuidSaltGenerator()
-    .AddStaticCurrentPasswordHashAlgorithmGetter(builder.Configuration.GetPasswordCredentialsHashAlgorithm());
-
-builder.Services
     .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration())
     .AddSimpleRedisDistributedLocks(builder.Configuration.GetRedisLockingConfiguration())
-    .AddRedisTokensBlacklist(builder.Configuration.GetRedisTokensConfiguration())
     .AddKafkaEventProduction(builder.Configuration.GetKafkaProducerConfiguration());
 
 builder.Services
@@ -88,17 +72,6 @@ builder.Services
     .AddIdentifiersGenerators()
     .AddEntitiesIdentifiersNameConverters()
     .AddEntitiesUseCases();
-
-builder.Services
-    .AddStaticSecurityKeyGetter(builder.Configuration.GetTokensSecretKey())
-    .AddAccessTokens(builder.Configuration.GetAccessTokenSettings())
-    .AddRefreshTokens(builder.Configuration.GetRefreshTokenSettings());
-
-builder.Services.AddAuthentication(JwtBearerAuthenticationOptions.SchemeName)
-    .AddJwtBearerAuthentication()
-    .AddJwtCookieAuthentication();
-
-builder.Services.AddAuthorization(options => options.AddJwtPolicy());
 
 builder.Services
     .AddControllers(options =>
@@ -114,9 +87,6 @@ builder.Services
 
 builder.Services.AddOpenApi(options =>
 {
-    options.AddDocumentTransformer<JwtBearerOpenApiDocumentTransformer>();
-    options.AddOperationTransformer<JwtBearerOpenApiOperationTransformer>();
-
     options.AddDocumentTransformer<OpenApiDocumentTransformer>();
     options.AddOperationTransformer<HeadersOpenApiOperationTransformer>();
 });
@@ -129,9 +99,6 @@ application
 application.MapScalarApiReference();
 
 application.UseCors();
-
-application.UseAuthentication();
-application.UseAuthorization();
 
 application.MapControllers();
 

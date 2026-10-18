@@ -10,6 +10,5 @@ public abstract class StatisticsTestBase : TestBase
         : base(context, output)
     {
         Context.Preparer.Users.Register();
-        Context.Preparer.Users.Login();
     }
 }

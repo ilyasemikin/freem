@@ -1,12 +1,10 @@
-﻿using Freem.Web.Api.Public.Contracts.DTO.Users.LoginPassword;
+﻿using Freem.Web.Api.Public.Contracts.DTO.Users;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 
 public sealed class UserPreparer
 {
     public const string NicknameValue = "nickname";
-    public const string LoginValue = "login";
-    public const string PasswordValue = "password";
     
     private readonly TestContext _context;
     
@@ -19,17 +17,10 @@ public sealed class UserPreparer
 
     public void Register()
     {
-        var request = new RegisterPasswordCredentialsRequest(NicknameValue, LoginValue, PasswordValue);
+        var request = new RegisterUserRequest(NicknameValue);
         var response = _context.SyncClient.Users.Register(request);
         response.EnsureSuccess();
-    }
-
-    public void Login()
-    {
-        var lrq = new LoginPasswordCredentialsRequest(LoginValue, PasswordValue);
-        var lrs = _context.SyncClient.Users.Login(lrq);
-        lrs.EnsureSuccess();
         
-        _context.TokenLoader.Update(lrs.Value.Tokens);
+        _context.CurrentUser.Set(response.Value.UserId);
     }
 }

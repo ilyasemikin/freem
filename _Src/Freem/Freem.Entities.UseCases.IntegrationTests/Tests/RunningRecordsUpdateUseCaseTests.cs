@@ -28,7 +28,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.UsersPassword.Register();
+        var userId = filler.Users.Register();
         _context = new UseCaseExecutionContext(userId);
         
         var activity = filler.Activities.Create(_context);
@@ -167,7 +167,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenActivitiesBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.UsersPassword.Register();
+        var anotherUserId = executor.Users.Register();
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var activity = executor.Activities.Create(anotherContext);
         
@@ -211,7 +211,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.UsersPassword.Register();
+        var anotherUserId = executor.Users.Register();
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         

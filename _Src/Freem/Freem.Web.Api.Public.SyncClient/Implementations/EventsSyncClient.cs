@@ -13,8 +13,8 @@ namespace Freem.Web.Api.Public.SyncClient.Implementations;
 
 public sealed class EventsSyncClient : BaseSyncClient
 {
-    public EventsSyncClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public EventsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
     }
 
@@ -23,6 +23,6 @@ public sealed class EventsSyncClient : BaseSyncClient
         var request = HttpRequest.Get("api/v1/events")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString());
 
-        return SendAuthorized<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(request);
+        return SendForUser<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(request);
     }
 }

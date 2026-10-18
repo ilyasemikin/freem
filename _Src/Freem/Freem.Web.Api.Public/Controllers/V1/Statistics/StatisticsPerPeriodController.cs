@@ -6,10 +6,8 @@ using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Contracts.DTO.Statistics.Periods;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiStatisticsPerPeriodRequest = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerPeriodRequest;
 using ApiStatisticsPerPeriodResponse = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerPeriodResponse;
@@ -18,7 +16,6 @@ using UseCaseStatisticsPerPeriodResponse = Freem.Entities.UseCases.Contracts.Sta
 
 namespace Freem.Web.Api.Public.Controllers.V1.Statistics;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/statistics/per-period")]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiStatisticsPerPeriodResponse))]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]

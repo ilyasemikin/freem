@@ -21,7 +21,7 @@ public sealed class TestContext
     
     public ITestOutputHelper? Output { get; set; }
     
-    public TokenLoader TokenLoader { get; }
+    public CurrentUser CurrentUser { get; }
     
     public CompositeClient Client { get; }
     public CompositeSyncClient SyncClient { get; }
@@ -35,7 +35,7 @@ public sealed class TestContext
         _application = BuildApplication(configuration);
         var services = BuildServices(_application);
         
-        TokenLoader = services.GetRequiredService<TokenLoader>();
+        CurrentUser = services.GetRequiredService<CurrentUser>();
         
         Client = services.GetRequiredService<CompositeClient>();
         SyncClient = services.GetRequiredService<CompositeSyncClient>();

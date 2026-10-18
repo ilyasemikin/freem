@@ -5,17 +5,14 @@ using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Time.Abstractions;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
-using Freem.Web.Api.Public.Autherization;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ApiStartRunningRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.Running.StartRunningRecordRequest;
 using UseCaseStartRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Start.StartRunningRecordRequest;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
-[Authorize(JwtAuthorizationPolicy.Name)]
 [Route("api/v1/records/running/start")]
 [Tags(ControllerTags.RunningRecords)]
 [ProducesResponseType(StatusCodes.Status200OK)]

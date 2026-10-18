@@ -14,8 +14,8 @@ public sealed class TagsClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public TagsClient(IHttpClient client, JsonSerializerOptions options, TokenLoader tokenLoader) 
-        : base(client, options, tokenLoader)
+    public TagsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
+        : base(client, options, currentUser)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -27,7 +27,7 @@ public sealed class TagsClient : BaseClient
         var request = HttpRequest.Post("api/v1/tags")
             .WithJsonBody(body, _options);
 
-        return SendAuthorizedAsync<CreateTagResponse>(request, cancellationToken);
+        return SendForUserAsync<CreateTagResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdateAsync(
@@ -38,28 +38,28 @@ public sealed class TagsClient : BaseClient
         var request = HttpRequest.Put($"api/v1/tags/{id}")
             .WithJsonBody(body, _options);
 
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult> RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/tags/{id}");
         
-        return SendAuthorizedAsync(request, cancellationToken);
+        return SendForUserAsync(request, cancellationToken);
     }
 
     public Task<ClientResult<TagResponse>> GetAsync(TagIdentifier id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/tags/{id}");
         
-        return SendAuthorizedAsync<TagResponse>(request, cancellationToken);
+        return SendForUserAsync<TagResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult<TagResponse>> GetAsync(TagName name, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/tags/by-name/{name}");
         
-        return SendAuthorizedAsync<TagResponse>(request, cancellationToken);
+        return SendForUserAsync<TagResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult<IAsyncEnumerable<TagResponse>>> ListAsync(
@@ -69,6 +69,6 @@ public sealed class TagsClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendAuthorizedAsync<IAsyncEnumerable<TagResponse>>(request, cancellationToken);
+        return SendForUserAsync<IAsyncEnumerable<TagResponse>>(request, cancellationToken);
     }
 }

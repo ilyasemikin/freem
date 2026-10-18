@@ -15,8 +15,7 @@ public sealed class UserEqualityComparer : IEqualityComparer<User>
         return
             x.Id.Equals(y.Id) &&
             x.Nickname == y.Nickname &&
-            UserSettingsEqualityComparer.Instance.Equals(x.Settings, y.Settings) &&
-            UserPasswordCredentialsEqualityComparer.Instance.Equals(x.PasswordCredentials, y.PasswordCredentials);
+            UserSettingsEqualityComparer.Instance.Equals(x.Settings, y.Settings);
     }
 
     public int GetHashCode(User obj)
