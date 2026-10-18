@@ -19,12 +19,14 @@ public sealed class DuplicateKeyStorageException : StorageException
     {
         DuplicateRunningRecord,
         DuplicateTagName,
+        DuplicateUser,
     }
 
     private static string GenerateMessage(ErrorCode error)
     {
         return error switch
         {
+            ErrorCode.DuplicateUser => "Duplicate user",
             _ => "Duplicate error, unknown reason"
         };
     }

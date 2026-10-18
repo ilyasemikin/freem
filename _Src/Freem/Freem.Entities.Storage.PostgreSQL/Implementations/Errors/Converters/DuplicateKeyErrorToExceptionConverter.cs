@@ -12,6 +12,7 @@ internal sealed class DuplicateKeyErrorToExceptionConverter :
     private static readonly IReadOnlyDictionary<string, DuplicateKeyStorageException.ErrorCode> Map
         = new Dictionary<string, DuplicateKeyStorageException.ErrorCode>()
         {
+            [EntitiesNames.Users.Constraints.PrimaryKey] = DuplicateKeyStorageException.ErrorCode.DuplicateUser,
             [EntitiesNames.RunningRecords.Constraints.PrimaryKey] = DuplicateKeyStorageException.ErrorCode.DuplicateRunningRecord,
             [EntitiesNames.Tags.Constraints.NameUnique] = DuplicateKeyStorageException.ErrorCode.DuplicateTagName
         };
