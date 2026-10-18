@@ -2,6 +2,7 @@
 
 public static class HeaderNames
 {
+    public const string Authorization = "Authorization";
     public const string ClientName = "X-CLIENT-NAME";
     
     public const string ItemsCount = "X-ITEMS-COUNT";

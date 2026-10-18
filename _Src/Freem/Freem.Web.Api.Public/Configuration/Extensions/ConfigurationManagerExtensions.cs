@@ -35,6 +35,12 @@ internal static class ConfigurationManagerExtensions
         return configuration.Api;
     }
 
+    public static EgoHubIntegrationConfiguration GetEgoHubIntegrationConfiguration(this IConfiguration section)
+    {
+        var configuration = section.GetConfiguration();
+        return configuration.EgoHubIntegration;
+    }
+
     public static CompositeConfiguration GetConfiguration(this IConfiguration section)
     {
         var configuration = section.Get<CompositeConfiguration>();

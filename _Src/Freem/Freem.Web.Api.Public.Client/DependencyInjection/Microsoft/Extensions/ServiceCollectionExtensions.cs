@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
         // The API host overrides the naming policy with camelCase (Program.cs), the client must match it.
         jso.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-        services.TryAddSingleton<CurrentUser>();
+        services.TryAddSingleton<ClientSession>();
         
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ActivitiesClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<EventsClient>(provider, jso));
@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<StatisticsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<TagsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<UsersClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<AuthClient>(provider, jso));
         
         services.TryAddSingleton<CompositeClient>();
 

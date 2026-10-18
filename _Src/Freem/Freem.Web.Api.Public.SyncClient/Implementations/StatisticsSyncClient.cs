@@ -9,8 +9,8 @@ namespace Freem.Web.Api.Public.SyncClient.Implementations;
 
 public sealed class StatisticsSyncClient : BaseSyncClient
 {
-    public StatisticsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public StatisticsSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
     }
 

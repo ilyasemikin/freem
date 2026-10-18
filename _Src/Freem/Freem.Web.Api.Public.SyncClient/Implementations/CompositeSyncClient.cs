@@ -10,6 +10,7 @@ public sealed class CompositeSyncClient
     public StatisticsSyncClient Statistics { get; }
     
     public UsersSyncClient Users { get; }
+    public AuthSyncClient Auth { get; }
     
     public CompositeSyncClient(
         ActivitiesSyncClient activities, 
@@ -17,7 +18,8 @@ public sealed class CompositeSyncClient
         TagsSyncClient tags, 
         EventsSyncClient events, 
         StatisticsSyncClient statistics, 
-        UsersSyncClient users)
+        UsersSyncClient users,
+        AuthSyncClient auth)
     {
         ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(records);
@@ -25,6 +27,7 @@ public sealed class CompositeSyncClient
         ArgumentNullException.ThrowIfNull(events);
         ArgumentNullException.ThrowIfNull(statistics);
         ArgumentNullException.ThrowIfNull(users);
+        ArgumentNullException.ThrowIfNull(auth);
         
         Activities = activities;
         Records = records;
@@ -32,5 +35,6 @@ public sealed class CompositeSyncClient
         Events = events;
         Statistics = statistics;
         Users = users;
+        Auth = auth;
     }
 }

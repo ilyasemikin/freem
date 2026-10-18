@@ -13,8 +13,8 @@ public sealed class ActivitiesSyncClient : BaseSyncClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public ActivitiesSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public ActivitiesSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         ArgumentNullException.ThrowIfNull(options);
         

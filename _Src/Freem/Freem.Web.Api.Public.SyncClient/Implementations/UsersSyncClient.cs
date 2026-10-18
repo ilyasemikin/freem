@@ -13,8 +13,8 @@ public sealed class UsersSyncClient : BaseSyncClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public UsersSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public UsersSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -26,7 +26,7 @@ public sealed class UsersSyncClient : BaseSyncClient
         var request = HttpRequest.Post("api/v1/user/register")
             .WithJsonBody(body, _options);
 
-        return Send<RegisterUserResponse>(request);
+        return SendForUser<RegisterUserResponse>(request);
     }
 
     public ClientResult UpdateSettings(UpdateUserSettingsRequest body)

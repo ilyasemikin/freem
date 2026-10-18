@@ -13,8 +13,8 @@ public sealed class TagsClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public TagsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public TagsClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         ArgumentNullException.ThrowIfNull(options);
         

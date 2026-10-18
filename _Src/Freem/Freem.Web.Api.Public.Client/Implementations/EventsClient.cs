@@ -12,8 +12,8 @@ namespace Freem.Web.Api.Public.Client.Implementations;
 
 public sealed class EventsClient : BaseClient
 {
-    public EventsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public EventsClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
     }
 

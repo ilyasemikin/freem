@@ -21,7 +21,7 @@ public sealed class TestContext
     
     public ITestOutputHelper? Output { get; set; }
     
-    public CurrentUser CurrentUser { get; }
+    public ClientSession ClientSession { get; }
     
     public CompositeClient Client { get; }
     public CompositeSyncClient SyncClient { get; }
@@ -35,7 +35,7 @@ public sealed class TestContext
         _application = BuildApplication(configuration);
         var services = BuildServices(_application);
         
-        CurrentUser = services.GetRequiredService<CurrentUser>();
+        ClientSession = services.GetRequiredService<ClientSession>();
         
         Client = services.GetRequiredService<CompositeClient>();
         SyncClient = services.GetRequiredService<CompositeSyncClient>();

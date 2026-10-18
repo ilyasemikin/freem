@@ -17,6 +17,7 @@ public sealed class RegisterUserTests : TestBase
     public async Task Request_ShouldSuccess()
     {
         var client = Context.Client;
+        Context.Preparer.Users.Authenticate();
 
         var request = new RegisterUserRequest(UserPreparer.NicknameValue);
         
@@ -24,5 +25,19 @@ public sealed class RegisterUserTests : TestBase
 
         Assert.NotNull(result);
         Assert.Equal(HttpStatusCode.OK, result.StatusCode);
+    }
+
+    [Fact]
+    public async Task Request_WhenAlreadyRegistered_ShouldConflict()
+    {
+        var client = Context.Client;
+        Context.Preparer.Users.Register();
+
+        var request = new RegisterUserRequest(UserPreparer.NicknameValue);
+
+        var result = await client.Users.RegisterAsync(request);
+
+        Assert.NotNull(result);
+        Assert.Equal(HttpStatusCode.Conflict, result.StatusCode);
     }
 }

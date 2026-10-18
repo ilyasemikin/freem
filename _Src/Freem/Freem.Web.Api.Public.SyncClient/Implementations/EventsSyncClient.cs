@@ -12,8 +12,8 @@ namespace Freem.Web.Api.Public.SyncClient.Implementations;
 
 public sealed class EventsSyncClient : BaseSyncClient
 {
-    public EventsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public EventsSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
     }
 

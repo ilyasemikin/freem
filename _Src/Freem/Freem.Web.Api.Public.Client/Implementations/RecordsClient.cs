@@ -13,8 +13,8 @@ public sealed class RecordsClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public RecordsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public RecordsClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         ArgumentNullException.ThrowIfNull(options);
         

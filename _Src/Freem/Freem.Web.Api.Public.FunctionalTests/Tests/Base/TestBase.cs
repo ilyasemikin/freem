@@ -20,7 +20,7 @@ public abstract class TestBase : IDisposable
 
     public void Dispose()
     {
-        Context.CurrentUser.Clean();
+        Context.ClientSession.Clean();
         Context.CleanDatabase();
         
         GC.SuppressFinalize(this);

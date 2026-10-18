@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.UseCases.Abstractions;
+using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,8 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users;
 [Route("api/v1/user/register")]
 [Tags(ControllerTags.User)]
 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiRegisterUserResponse))]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType(StatusCodes.Status409Conflict)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class RegisterUserController : BaseController
 {
@@ -43,9 +47,18 @@ public sealed class RegisterUserController : BaseController
         var response = await _executor.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(context, request, cancellationToken);
 
         if (!response.Success)
-            return CreateResult(StatusCodes.Status500InternalServerError);
+            return CreateFailure(response.Error);
 
         var result = new ApiRegisterUserResponse(response.UserId);
         return Ok(result);
+    }
+
+    private static IActionResult CreateFailure(Error<RegisterUserErrorCode> error)
+    {
+        return error.Code switch
+        {
+            RegisterUserErrorCode.UserAlreadyRegistered => CreateResult(StatusCodes.Status409Conflict),
+            _ => CreateResult(StatusCodes.Status500InternalServerError)
+        };
     }
 }

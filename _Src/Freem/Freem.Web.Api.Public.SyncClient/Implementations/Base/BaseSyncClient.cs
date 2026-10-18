@@ -11,16 +11,16 @@ public abstract class BaseSyncClient
 {
     private readonly IHttpClient _client;
     private readonly JsonSerializerOptions _options;
-    private readonly CurrentUser? _currentUser;
+    private readonly ClientSession? _session;
 
-    protected BaseSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser? currentUser = null)
+    protected BaseSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession? session = null)
     {
         ArgumentNullException.ThrowIfNull(client);
         ArgumentNullException.ThrowIfNull(options);
         
         _client = client;
         _options = options;
-        _currentUser = currentUser;
+        _session = session;
     }
 
     protected ClientResult Send(HttpRequest request)
@@ -62,10 +62,10 @@ public abstract class BaseSyncClient
 
     private HttpResponse SendForUserInner(HttpRequest request)
     {
-        if (_currentUser is null || !_currentUser.TryGet(out var userId))
-            throw new InvalidOperationException("Current user is not set");
+        if (_session is null || !_session.TryGet(out var accessToken))
+            throw new InvalidOperationException("Client session is not set");
 
-        request = request.WithQueryParameter(QueryParameterNames.UserId, userId.ToString());
+        request = request.WithHeader(HeaderNames.Authorization, $"Bearer {accessToken}");
         request = PopulateRequest(request);
 
         return _client.SendAsync(request)

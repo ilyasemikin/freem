@@ -14,8 +14,8 @@ public sealed class TagsSyncClient : BaseSyncClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public TagsSyncClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public TagsSyncClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         _options = options;
     }

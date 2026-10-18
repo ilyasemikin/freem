@@ -9,6 +9,7 @@ public static class ControllerTags
     public const string Statistics = "Statistics";
     public const string Events = "Events";
     public const string User = "User";
+    public const string Auth = "Auth";
     
     public const string Settings = "Settings";
 }

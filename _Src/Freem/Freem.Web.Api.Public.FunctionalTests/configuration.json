@@ -12,6 +12,10 @@
     },
     "Redis": {
       "ConnectionString": ""
+    },
+    "EgoHubIntegration": {
+      "Url": "",
+      "Token": ""
     }
   }
 }

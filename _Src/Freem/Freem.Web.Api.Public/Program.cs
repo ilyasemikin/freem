@@ -1,11 +1,19 @@
 using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
+using EgoHub.Api.Public.Client.Abstractions;
+using EgoHub.Api.Public.Client.DependencyInjection.Microsoft.Extensions;
+using EgoHub.Api.Public.Client.Implementations;
+using EgoHub.Authentication.AspNetCore;
+using EgoHub.Authentication.AspNetCore.DependencyInjection;
+using EgoHub.Domain.Services;
 using Freem.Entities.DependencyInjection;
 using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Entities.Serialization.Json;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
+using Freem.Web.Api.Public.Authentication.EgoHub;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.Contracts;
@@ -73,6 +81,30 @@ builder.Services
     .AddEntitiesIdentifiersNameConverters()
     .AddEntitiesUseCases();
 
+var egoHubConfiguration = builder.Configuration.GetEgoHubIntegrationConfiguration();
+var egoHubToken = TokenCredential.Parse(egoHubConfiguration.Token, null);
+builder.Services.AddTransient<ITokenCredentialLoader>(_ => new StaticTokenCredentialLoader(egoHubToken));
+builder.Services.AddPublicClient(egoHubConfiguration.Url);
+
+builder.Services
+    .AddAuthentication(EgoHubBearerAuthenticationDefaults.SchemeName)
+    .AddEgoHubBearerAuthentication(options =>
+    {
+        options.OnTokenValidated = context =>
+        {
+            if (!EgoHubClaimsMapper.TryMapUserIdClaim(context.Principal!, out var claim))
+            {
+                context.Fail("EgoHub access token is missing a valid subject claim.");
+                return Task.CompletedTask;
+            }
+
+            var identity = (ClaimsIdentity)context.Principal!.Identity!;
+            identity.AddClaim(claim);
+            return Task.CompletedTask;
+        };
+    });
+builder.Services.AddAuthorization();
+
 builder.Services
     .AddControllers(options =>
     {
@@ -99,6 +131,9 @@ application
 application.MapScalarApiReference();
 
 application.UseCors();
+
+application.UseAuthentication();
+application.UseAuthorization();
 
 application.MapControllers();
 

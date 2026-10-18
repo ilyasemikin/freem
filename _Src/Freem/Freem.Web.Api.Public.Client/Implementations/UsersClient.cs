@@ -12,8 +12,8 @@ public sealed class UsersClient : BaseClient
 {
     private readonly JsonSerializerOptions _options;
     
-    public UsersClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public UsersClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
         ArgumentNullException.ThrowIfNull(options);
         
@@ -26,7 +26,7 @@ public sealed class UsersClient : BaseClient
         var request = HttpRequest.Post("api/v1/user/register")
             .WithJsonBody(body, _options);
 
-        return SendAsync<RegisterUserResponse>(request, cancellationToken);
+        return SendForUserAsync<RegisterUserResponse>(request, cancellationToken);
     }
 
     public Task<ClientResult> UpdateSettingsAsync(

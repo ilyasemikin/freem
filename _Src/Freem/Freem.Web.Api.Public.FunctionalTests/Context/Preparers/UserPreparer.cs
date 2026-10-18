@@ -1,4 +1,5 @@
-﻿using Freem.Web.Api.Public.Contracts.DTO.Users;
+using Freem.Web.Api.Public.Contracts.DTO.Auth;
+using Freem.Web.Api.Public.Contracts.DTO.Users;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
 
@@ -15,12 +16,29 @@ public sealed class UserPreparer
         _context = context;
     }
 
+    // Creates a new EgoHub identity and starts a session; the user is not registered in Freem yet.
+    public void Authenticate()
+    {
+        var username = $"it-{Guid.NewGuid():N}";
+        var password = $"Aa1!{Guid.NewGuid():N}";
+
+        var registerRequest = new RegisterRequest(username, password);
+        var registerResponse = _context.SyncClient.Auth.Register(registerRequest);
+        registerResponse.EnsureSuccess();
+
+        var loginRequest = new LoginRequest(username, password);
+        var loginResponse = _context.SyncClient.Auth.Login(loginRequest);
+        loginResponse.EnsureSuccess();
+
+        _context.ClientSession.Set(loginResponse.Value.AccessToken);
+    }
+
     public void Register()
     {
+        Authenticate();
+
         var request = new RegisterUserRequest(NicknameValue);
         var response = _context.SyncClient.Users.Register(request);
         response.EnsureSuccess();
-        
-        _context.CurrentUser.Set(response.Value.UserId);
     }
 }

@@ -10,16 +10,16 @@ public abstract class BaseClient
 {
     private readonly IHttpClient _client;
     private readonly JsonSerializerOptions _options;
-    private readonly CurrentUser? _currentUser;
+    private readonly ClientSession? _session;
 
-    protected BaseClient(IHttpClient client, JsonSerializerOptions options, CurrentUser? currentUser = null)
+    protected BaseClient(IHttpClient client, JsonSerializerOptions options, ClientSession? session = null)
     {
         ArgumentNullException.ThrowIfNull(client);
         ArgumentNullException.ThrowIfNull(options);
         
         _client = client;
         _options = options;
-        _currentUser = currentUser;
+        _session = session;
     }
 
     protected async Task<ClientResult> SendAsync(HttpRequest request, CancellationToken cancellationToken = default)
@@ -55,10 +55,10 @@ public abstract class BaseClient
     
     private async Task<HttpResponse> SendForUserInnerAsync(HttpRequest request, CancellationToken cancellationToken = default)
     {
-        if (_currentUser is null || !_currentUser.TryGet(out var userId))
-            throw new InvalidOperationException("Current user is not set");
+        if (_session is null || !_session.TryGet(out var accessToken))
+            throw new InvalidOperationException("Client session is not set");
         
-        request = request.WithQueryParameter(QueryParameterNames.UserId, userId.ToString());
+        request = request.WithHeader(HeaderNames.Authorization, $"Bearer {accessToken}");
         request = PopulateRequest(request);
         
         return await _client.SendAsync(request, cancellationToken);

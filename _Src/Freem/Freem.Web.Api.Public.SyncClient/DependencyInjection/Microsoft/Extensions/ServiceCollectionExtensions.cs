@@ -38,6 +38,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<StatisticsSyncClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<TagsSyncClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<UsersSyncClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<AuthSyncClient>(provider, jso));
         
         services.TryAddSingleton<CompositeSyncClient>();
         

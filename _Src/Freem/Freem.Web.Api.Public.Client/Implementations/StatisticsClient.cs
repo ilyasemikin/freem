@@ -8,8 +8,8 @@ namespace Freem.Web.Api.Public.Client.Implementations;
 
 public sealed class StatisticsClient : BaseClient
 {
-    public StatisticsClient(IHttpClient client, JsonSerializerOptions options, CurrentUser currentUser) 
-        : base(client, options, currentUser)
+    public StatisticsClient(IHttpClient client, JsonSerializerOptions options, ClientSession session) 
+        : base(client, options, session)
     {
     }
 
