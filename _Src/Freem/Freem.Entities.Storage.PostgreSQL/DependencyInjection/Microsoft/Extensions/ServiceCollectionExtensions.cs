@@ -7,6 +7,7 @@ using Freem.Entities.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
@@ -26,6 +27,7 @@ using Freem.Storage.EFCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ActivityStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 
@@ -58,6 +60,7 @@ public static class ServiceCollectionExtensions
                 {
                     options.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
                     options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
+                    options.MapEnum<ActivityStatusDb>(EntitiesNames.Activities.Models.Status, EnvironmentNames.Schema);
                 })
                 .EnableServiceProviderCaching(configuration.EnableServiceProviderCaching);
 

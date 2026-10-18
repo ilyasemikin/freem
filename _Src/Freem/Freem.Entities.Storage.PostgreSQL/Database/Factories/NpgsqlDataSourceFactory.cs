@@ -1,4 +1,6 @@
 ﻿using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
+using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Npgsql;
 using ActivityStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 
@@ -10,7 +12,7 @@ internal static class NpgsqlDataSourceFactory
     {
         var builder = new NpgsqlDataSourceBuilder(configuration.ConnectionString);
         
-        builder.MapEnum<ActivityStatusDb>();
+        builder.MapEnum<ActivityStatusDb>($"{EnvironmentNames.Schema}.{EntitiesNames.Activities.Models.Status}");
         
         if (configuration.SensitiveDataLogging)
             builder.EnableParameterLogging();
