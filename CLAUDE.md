@@ -77,7 +77,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 ## Repository Layout
 
 All code lives in `_Src/Freem/` (solution `Freem.sln`, ~64 projects, `net10.0`, nullable enabled). Frontend is
-`_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 7).
+`_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
 Layers (names differ from StashIt):
 

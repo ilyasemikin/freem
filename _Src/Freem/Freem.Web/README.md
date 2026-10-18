@@ -1,54 +1,34 @@
-# React + TypeScript + Vite
+# Freem.Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web client of Freem: React 19 + Vite + PrimeReact + Chart.js, routing by react-router.
 
-Currently, two official plugins are available:
+## Commands
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev      # dev server on http://localhost:10191 (strict port)
+npm run build    # tsc -b && vite build, output in dist/
+npm run lint     # eslint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Configuration
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+`VITE_API_URL` is the address of the Freem API (see `.env.example`; the local `dotnet run` API listens on 10190).
+It is baked into the bundle at build time, so the Docker image takes it as the build argument `VITE_API_URL`.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## Layout
+
 ```
+src/
+  app/            router
+  pages/          screens by area: home, login, activities, records, statistics, tags
+  authorization/  sign-in state (context, AuthGate)
+  cache/          entities cache (context + per-entity caches)
+  clients/        HTTP clients, request/response models, context with the clients
+  dialog/         dialog host and window components
+  components/     shared UI components and inputs
+  data/ entities/ helpers/
+```
+
+Authentication goes through the Freem API (`api/v1/auth/*`): the access token is kept in memory, the refresh token
+lives in an HttpOnly cookie.
