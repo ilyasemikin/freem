@@ -1,4 +1,4 @@
-﻿using Freem.Storage.Migrations.Scripts.Models;
+﻿using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Extensions;

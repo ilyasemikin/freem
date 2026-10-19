@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.UnitTests.Extensions;
 using Freem.Entities.Users.Events;
-using Freem.Reflection;
 
 namespace Freem.Entities.UnitTests.Tests.Users.Events;
 
@@ -21,8 +20,8 @@ public sealed class UserEventActionsTests
     [Fact]
     public void All_ShouldNotContainsExtra()
     {
-        var expected = FieldsExtractor
-            .GetPublicConstants(typeof(UserEventActions))
+        var expected = typeof(UserEventActions)
+            .GetPublicConstants()
             .Count();
 
         var count = UserEventActions.All.Count;

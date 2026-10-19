@@ -1,6 +1,4 @@
-﻿using Freem.DependencyInjection.Microsoft;
-using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Activities.Identifiers;
@@ -38,7 +36,8 @@ public sealed class ServiceCollectionExtensionsTests
 
         services.AddPostgreSqlStorage(StorageConfiguration);
 
-        var exception = Record.Exception(() => services.BuildAndValidateServiceProvider());
+        var options = new ServiceProviderOptions { ValidateOnBuild = true };
+        var exception = Record.Exception(() => services.BuildServiceProvider(options));
         
         Assert.Null(exception);
     }
@@ -83,7 +82,11 @@ public sealed class ServiceCollectionExtensionsTests
     {
         object Resolve()
         {
-            return Services.Resolve(services => services.AddPostgreSqlStorage(StorageConfiguration), type);
+            var services = new ServiceCollection();
+            services.AddPostgreSqlStorage(StorageConfiguration);
+
+            var provider = services.BuildServiceProvider();
+            return provider.GetRequiredService(type);
         }
 
         object? repository = null;

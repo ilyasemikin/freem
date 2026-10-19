@@ -1,5 +1,4 @@
-﻿using Freem.Clones;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
@@ -9,8 +8,7 @@ using Freem.Entities.Users.Models;
 namespace Freem.Entities.Users;
 
 public sealed class User : 
-    IEntity<UserIdentifier>, 
-    ICloneable<User>
+    IEntity<UserIdentifier>
 {
     public const string EntityName = "user";
     
@@ -26,11 +24,6 @@ public sealed class User :
         Id = id;
         Nickname = nickname;
         Settings = UserSettings.Default;
-    }
-
-    public User Clone()
-    {
-        return new User(Id, Nickname);
     }
 
     public UserRegisteredEvent BuildRegisteredEvent(EventIdentifier eventId)

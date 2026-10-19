@@ -1,5 +1,4 @@
-﻿using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Abstractions.Events.Identifiers;
+﻿using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Activities;
 using Freem.Entities.Activities.Comparers;
 using Freem.Entities.Activities.Identifiers;
@@ -46,21 +45,16 @@ public static class ServiceCollectionExtensions
             .AddGenerator<TagIdentifier>(value => new TagIdentifier(value))
             .AddGenerator<EventIdentifier>(value => new EventIdentifier(value));
         
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>, 
-            IIdentifierGenerator<ActivityIdentifier>>();
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>, 
-            IIdentifierGenerator<RecordIdentifier>>();
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>,
-            IIdentifierGenerator<RunningRecordIdentifier>>();
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>,
-            IIdentifierGenerator<TagIdentifier>>();
-        services.AddSingletonExistedService<
-            IIdentifierGenerator<IIdentifier>,
-            IIdentifierGenerator<EventIdentifier>>();
+        services.AddSingleton<IIdentifierGenerator<IIdentifier>>(provider =>
+            provider.GetRequiredService<IIdentifierGenerator<ActivityIdentifier>>());
+        services.AddSingleton<IIdentifierGenerator<IIdentifier>>(provider =>
+            provider.GetRequiredService<IIdentifierGenerator<RecordIdentifier>>());
+        services.AddSingleton<IIdentifierGenerator<IIdentifier>>(provider =>
+            provider.GetRequiredService<IIdentifierGenerator<RunningRecordIdentifier>>());
+        services.AddSingleton<IIdentifierGenerator<IIdentifier>>(provider =>
+            provider.GetRequiredService<IIdentifierGenerator<TagIdentifier>>());
+        services.AddSingleton<IIdentifierGenerator<IIdentifier>>(provider =>
+            provider.GetRequiredService<IIdentifierGenerator<EventIdentifier>>());
         
         return services;
     }

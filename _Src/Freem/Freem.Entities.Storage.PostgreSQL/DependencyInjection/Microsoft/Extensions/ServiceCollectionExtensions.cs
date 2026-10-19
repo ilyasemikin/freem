@@ -1,7 +1,4 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Converters.DependencyInjection.Microsoft.Extensions;
-using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database;
@@ -76,25 +73,11 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddDatabaseContextErrorHandler(this IServiceCollection services)
     {
-        services
-            .TryAddSingleton<
-                IPossibleConverter<DatabaseColumnWithValue, IEntityIdentifier>,
-                DatabaseColumnToIdentifierPossibleConverter>();
+        services.TryAddSingleton<DatabaseColumnToIdentifierPossibleConverter>();
 
-        services.TryAddSingleton<
-            IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>,
-            DatabaseForeignKeyConstraintErrorToExceptionConverter>();
-        services.TryAddSingleton<
-            IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>,
-            TriggerConstraintErrorToExceptionConverter>();
-        services.TryAddSingleton<
-            IPossibleConverter<DatabaseContextWriteContext, DuplicateKeyError, Exception>,
-            DuplicateKeyErrorToExceptionConverter>();
-
-        services.AddConvertersCollection<DatabaseContextWriteContext, IDatabaseError, Exception>((provider, builder) => builder
-            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>>())
-            .Add(provider.GetRequiredService<IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>>())
-            .Add(provider.GetRequiredService<IPossibleConverter<DatabaseContextWriteContext, DuplicateKeyError, Exception>>()));
+        services.TryAddSingleton<DatabaseForeignKeyConstraintErrorToExceptionConverter>();
+        services.TryAddSingleton<TriggerConstraintErrorToExceptionConverter>();
+        services.TryAddSingleton<DuplicateKeyErrorToExceptionConverter>();
         
         services.TryAddSingleton<DatabaseContextWriteExceptionHandler>();
         
@@ -103,26 +86,33 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddEventsConverters(this IServiceCollection services)
     {
-        services.TryAddSingleton<
-            IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity>, 
-            EventEntityToDatabaseEntityConverter>();
-        
-        services.TryAddSingleton<
-            IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>>,
-            DatabaseEntityToEventEntityConverter>();
+        services.TryAddSingleton<EventEntityToDatabaseEntityConverter>();
+        services.TryAddSingleton<DatabaseEntityToEventEntityConverter>();
         
         return services;
     }
     
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.TryAddTransientServiceWithImplementedInterfaces<UsersRepository>();
-        services.TryAddTransientServiceWithImplementedInterfaces<TagsRepository>();
-        services.TryAddTransientServiceWithImplementedInterfaces<RecordsRepository>();
-        services.TryAddTransientServiceWithImplementedInterfaces<RunningRecordsRepository>();
-        services.TryAddTransientServiceWithImplementedInterfaces<ActivitiesRepository>();
-        services.TryAddTransientServiceWithImplementedInterfaces<EventsRepository>();
+        services.TryAddRepository<UsersRepository>();
+        services.TryAddRepository<TagsRepository>();
+        services.TryAddRepository<RecordsRepository>();
+        services.TryAddRepository<RunningRecordsRepository>();
+        services.TryAddRepository<ActivitiesRepository>();
+        services.TryAddRepository<EventsRepository>();
         
         return services;
+    }
+
+    private static void TryAddRepository<TRepository>(this IServiceCollection services)
+        where TRepository : class
+    {
+        services.TryAddTransient<TRepository>();
+
+        var interfaces = typeof(TRepository).GetInterfaces();
+        foreach (var @interface in interfaces)
+        {
+            services.TryAddTransient(@interface, provider => provider.GetRequiredService<TRepository>());
+        }
     }
 }

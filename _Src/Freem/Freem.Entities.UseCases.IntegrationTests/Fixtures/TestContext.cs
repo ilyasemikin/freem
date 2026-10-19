@@ -1,15 +1,15 @@
-﻿using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.DependencyInjection;
-using Freem.Entities.Events.Local.DependencyInjection.Microsoft;
+﻿using Freem.Entities.DependencyInjection;
+using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
+using Freem.Entities.UseCases.IntegrationTests.Infrastructure.Locking;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
-using Freem.Locking.Local.DependencyInjection;
+using Freem.Locking.Abstractions;
 using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -98,12 +98,14 @@ public sealed class TestContext
             .AddUtcTruncatedToSecondsClock()
             .AddIdentifiersGenerators()
             .AddEntitiesIdentifiersNameConverters()
-            .AddEmptyLocking()
+            .AddSingleton<IDistributedLocker, EmptyDistributedLocker>()
             .AddPostgreSqlStorage(storageConfiguration)
-            .AddLocalEventsProcessing()
+            .AddNullEventPublishing()
             .AddEntitiesUseCases()
             .AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
         
-        return services.BuildAndValidateServiceProvider();
+        var options = new ServiceProviderOptions { ValidateOnBuild = true };
+        
+        return services.BuildServiceProvider(options);
     }
 }

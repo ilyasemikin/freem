@@ -1,5 +1,4 @@
-﻿using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.DependencyInjection;
+﻿using Freem.Entities.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
@@ -40,7 +39,9 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
             .AddIdentifiersGenerators()
             .AddPostgreSqlStorage(configuration);
 
-        var provider = services.BuildAndValidateServiceProvider();
+        var options = new ServiceProviderOptions { ValidateOnBuild = true };
+
+        var provider = services.BuildServiceProvider(options);
 
         Database = provider.GetRequiredService<DatabaseContext>();
         Repository = provider.GetRequiredService<TRepository>();

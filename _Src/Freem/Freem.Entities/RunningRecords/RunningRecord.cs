@@ -1,5 +1,4 @@
-﻿using Freem.Clones;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Relations;
 using Freem.Entities.Abstractions.Relations.Collection;
@@ -22,8 +21,7 @@ namespace Freem.Entities.RunningRecords;
 public class RunningRecord : 
     IEntity<RunningRecordIdentifier>,
     IEntityRelation<Activity, ActivityIdentifier>, 
-    IEntityRelation<Tag, TagIdentifier>,
-    ICloneable<RunningRecord>
+    IEntityRelation<Tag, TagIdentifier>
 {
     public const string EntityName = "running_record";
     
@@ -74,14 +72,5 @@ public class RunningRecord :
     public RunningRecordRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
     {
         return new RunningRecordRemovedEvent(eventId, Id);
-    }
-
-    public RunningRecord Clone()
-    {
-        return new RunningRecord(UserId, Activities, Tags, StartAt)
-        {
-            Name = Name,
-            Description = Description,
-        };
     }
 }

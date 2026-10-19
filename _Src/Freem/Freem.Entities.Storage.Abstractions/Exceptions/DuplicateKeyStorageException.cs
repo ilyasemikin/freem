@@ -1,5 +1,4 @@
 ﻿using Freem.Entities.Storage.Abstractions.Exceptions.Base;
-using Freem.Enums.Exceptions;
 
 namespace Freem.Entities.Storage.Abstractions.Exceptions;
 
@@ -10,7 +9,8 @@ public sealed class DuplicateKeyStorageException : StorageException
     public DuplicateKeyStorageException(ErrorCode code) 
         : base(GenerateMessage(code))
     {
-        InvalidEnumValueException<ErrorCode>.ThrowIfValueInvalid(code);
+        if (!Enum.IsDefined(code))
+            throw new ArgumentOutOfRangeException(nameof(code), code, null);
         
         Code = code;
     }

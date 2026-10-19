@@ -1,13 +1,11 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
 
-internal class EventEntityToDatabaseEntityConverter 
-    : IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity>
+internal class EventEntityToDatabaseEntityConverter
 {
     private readonly EntityIdentifierNameProvider _nameProvider;
 

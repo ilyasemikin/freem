@@ -7,8 +7,4 @@
         <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Freem.Enums\Freem.Enums.csproj"/>
-    </ItemGroup>
-
 </Project>

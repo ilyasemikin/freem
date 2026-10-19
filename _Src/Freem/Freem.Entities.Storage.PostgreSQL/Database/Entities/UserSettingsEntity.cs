@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Clones;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
 internal sealed class UserSettingsEntity :
     IAuditableEntity,
-    IEquatable<UserSettingsEntity>,
-    ICloneable<UserSettingsEntity>
+    IEquatable<UserSettingsEntity>
 {
     public required string UserId { get; init; }
 
@@ -20,17 +18,6 @@ internal sealed class UserSettingsEntity :
     public uint RowVersion { get; private set; }
 
     public UserEntity? User { get; set; }
-
-    public UserSettingsEntity Clone()
-    {
-        return new UserSettingsEntity
-        {
-            UserId = UserId,
-            UtcOffsetTicks = UtcOffsetTicks,
-            CreatedAt = CreatedAt,
-            UpdatedAt = UpdatedAt,
-        };
-    }
     
     public bool Equals(UserSettingsEntity? other)
     {

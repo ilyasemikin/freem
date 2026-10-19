@@ -1,6 +1,4 @@
-﻿using Freem.Enums.Exceptions;
-
-namespace Freem.UseCases.Contracts.Abstractions.Errors;
+﻿namespace Freem.UseCases.Contracts.Abstractions.Errors;
 
 public sealed class Error<TCode>
     where TCode : struct, Enum
@@ -12,7 +10,8 @@ public sealed class Error<TCode>
 
     public Error(TCode code, string? message = null, IReadOnlyDictionary<string, string>? properties = null)
     {
-        InvalidEnumValueException<TCode>.ThrowIfValueInvalid(code);
+        if (!Enum.IsDefined(code))
+            throw new ArgumentOutOfRangeException(nameof(code), code, null);
         
         Code = code;
         Message = message;

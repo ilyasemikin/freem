@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.DependencyInjection.Microsoft\Freem.DependencyInjection.Microsoft.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
     </ItemGroup>
 

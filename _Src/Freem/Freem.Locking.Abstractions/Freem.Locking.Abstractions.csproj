@@ -7,8 +7,4 @@
         <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Freem.Timeouts\Freem.Timeouts.csproj"/>
-    </ItemGroup>
-
 </Project>

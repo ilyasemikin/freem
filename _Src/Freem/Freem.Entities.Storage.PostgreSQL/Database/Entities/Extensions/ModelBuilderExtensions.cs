@@ -1,5 +1,4 @@
-﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Storage.PostgreSQL.Database.Constants;
+﻿using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Configurations;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations.Extensions;
@@ -16,17 +15,17 @@ internal static class ModelBuilderExtensions
 
         builder.HasPostgresEnum<ActivityStatus>(EnvironmentNames.Schema, EntitiesNames.Activities.Models.Status);
         
-        builder.ApplyConfiguration<ActivityEntity, ActivityEntityTypeConfiguration>();
+        builder.ApplyConfiguration(new ActivityEntityTypeConfiguration());
         
-        builder.ApplyConfiguration<RecordEntity, RecordEntityTypeConfiguration>();
-        builder.ApplyConfiguration<RunningRecordEntity, RunningRecordEntityTypeConfiguration>();
+        builder.ApplyConfiguration(new RecordEntityTypeConfiguration());
+        builder.ApplyConfiguration(new RunningRecordEntityTypeConfiguration());
         
-        builder.ApplyConfiguration<TagEntity, TagEntityTypeConfiguration>();
+        builder.ApplyConfiguration(new TagEntityTypeConfiguration());
         
-        builder.ApplyConfiguration<UserEntity, UserEntityTypeConfiguration>();
-        builder.ApplyConfiguration<UserSettingsEntity, UserSettingsEntityTypeConfiguration>();
+        builder.ApplyConfiguration(new UserEntityTypeConfiguration());
+        builder.ApplyConfiguration(new UserSettingsEntityTypeConfiguration());
         
-        builder.ApplyConfiguration<EventEntity, EventEntityTypeConfiguration>();
+        builder.ApplyConfiguration(new EventEntityTypeConfiguration());
         
         return builder;
     }

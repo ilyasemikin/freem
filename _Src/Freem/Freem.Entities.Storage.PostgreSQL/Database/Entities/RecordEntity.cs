@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Clones;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 using Utilities.Collections;
 
@@ -8,8 +7,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 internal sealed class RecordEntity : 
     IAuditableEntity, 
     IRowVersionableEntity,
-    IEquatable<RecordEntity>, 
-    ICloneable<RecordEntity>
+    IEquatable<RecordEntity>
 {
     public required string Id { get; init; }
     public required string UserId { get; init; }
@@ -29,24 +27,6 @@ internal sealed class RecordEntity :
     
     [Timestamp]
     public uint RowVersion { get; private set; }
-
-    public RecordEntity Clone()
-    {
-        return new RecordEntity
-        {
-            Id = Id,
-            UserId = UserId,
-            Name = Name,
-            Description = Description,
-            StartAt = StartAt,
-            EndAt = EndAt,
-            User = User,
-            Activities = Activities?.ToList(),
-            Tags = Tags?.ToList(),
-            CreatedAt = CreatedAt,
-            UpdatedAt = UpdatedAt
-        };
-    }
 
     public bool Equals(RecordEntity? other)
     {

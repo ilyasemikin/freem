@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
-using Freem.Reflection.Extensions;
 
 namespace Freem.Identifiers.Implementations.Generators;
 
@@ -15,8 +14,11 @@ public sealed class TypedIdentifierGenerator
         foreach (var generator in generators)
         {
             var type = generator.GetType();
-            var @interface = type.GetRequiredInterface("IIdentifierGenerator`1");
-            var identifierType = @interface.GetRequiredGenericArgument(0);
+            var @interface = type.GetInterface("IIdentifierGenerator`1");
+            if (@interface is null)
+                throw new InvalidOperationException($"\"{type.Name}\" does not implement \"IIdentifierGenerator`1\"");
+
+            var identifierType = @interface.GetGenericArguments()[0];
 
             if (!dictionary.TryAdd(identifierType, generator))
                 throw new InvalidOperationException($"\"{identifierType}\" already added");

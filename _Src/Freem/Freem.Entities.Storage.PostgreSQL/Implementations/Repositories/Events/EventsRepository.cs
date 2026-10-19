@@ -1,5 +1,4 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Storage.Abstractions.Models;
@@ -9,6 +8,7 @@ using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
 using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
@@ -17,14 +17,14 @@ internal sealed class EventsRepository : IEventsRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity> _dbConverter;
-    private readonly IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>> _entityConverter;
+    private readonly EventEntityToDatabaseEntityConverter _dbConverter;
+    private readonly DatabaseEntityToEventEntityConverter _entityConverter;
 
     public EventsRepository(
         DatabaseContext database, 
         DatabaseContextWriteExceptionHandler exceptionHandler,
-        IConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventEntity> dbConverter, 
-        IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>> entityConverter)
+        EventEntityToDatabaseEntityConverter dbConverter, 
+        DatabaseEntityToEventEntityConverter entityConverter)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);

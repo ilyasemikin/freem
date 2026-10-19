@@ -1,5 +1,4 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
+﻿using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
 using Freem.Entities.Activities;
 using Freem.Entities.Relations.Collections;
 using Freem.Entities.Storage.Abstractions.Exceptions;
@@ -7,12 +6,10 @@ using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Extensions;
 using Freem.Entities.Tags;
-using Freem.Exceptions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
-internal sealed class TriggerConstraintErrorToExceptionConverter :
-    IConverter<DatabaseContextWriteContext, TriggerConstraintError, Exception>
+internal sealed class TriggerConstraintErrorToExceptionConverter
 {
     private readonly EntityIdentifierFactory _identifierFactory;
 
@@ -67,7 +64,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter :
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             default:
-                throw new UnknownConstantException(error.Code);
+                throw new InvalidOperationException($"Unknown trigger error code \"{error.Code}\"");
         }
     }
 }

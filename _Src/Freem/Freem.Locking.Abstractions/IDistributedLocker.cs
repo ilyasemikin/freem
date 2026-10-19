@@ -1,4 +1,4 @@
-﻿using Timeout = Freem.Timeouts.Models.Timeout;
+﻿using Timeout = Freem.Locking.Abstractions.Timeouts.Models.Timeout;
 
 namespace Freem.Locking.Abstractions;
 

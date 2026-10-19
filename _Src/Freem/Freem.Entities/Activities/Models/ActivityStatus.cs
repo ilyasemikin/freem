@@ -1,6 +1,4 @@
-﻿using Freem.Enums.Exceptions;
-
-namespace Freem.Entities.Activities.Models;
+﻿namespace Freem.Entities.Activities.Models;
 
 public sealed class ActivityStatus : IEquatable<ActivityStatus>
 {
@@ -11,7 +9,8 @@ public sealed class ActivityStatus : IEquatable<ActivityStatus>
     
     public ActivityStatus(Value value)
     {
-        InvalidEnumValueException<Value>.ThrowIfValueInvalid(value);
+        if (!Enum.IsDefined(value))
+            throw new ArgumentOutOfRangeException(nameof(value), value, null);
 
         _value = value;
     }

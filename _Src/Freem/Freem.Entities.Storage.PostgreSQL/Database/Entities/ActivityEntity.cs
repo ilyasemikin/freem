@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Clones;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 using Utilities.Collections;
 using ActivityStatusDb = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
@@ -9,8 +8,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 internal sealed class ActivityEntity : 
     IAuditableEntity, 
     IRowVersionableEntity, 
-    IEquatable<ActivityEntity>,
-    ICloneable<ActivityEntity>
+    IEquatable<ActivityEntity>
 {
     public required string Id { get; init; }
     public required string UserId { get; init; }
@@ -27,21 +25,6 @@ internal sealed class ActivityEntity :
     
     [Timestamp]
     public uint RowVersion { get; private set; }
-
-    public ActivityEntity Clone()
-    {
-        return new ActivityEntity
-        {
-            Id = Id,
-            UserId = UserId,
-            Name = Name,
-            Status = Status,
-            User = User,
-            Tags = Tags?.ToList(),
-            CreatedAt = CreatedAt,
-            UpdatedAt = UpdatedAt
-        };
-    }
 
     public bool Equals(ActivityEntity? other)
     {

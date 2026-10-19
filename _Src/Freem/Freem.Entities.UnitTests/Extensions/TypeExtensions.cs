@@ -1,4 +1,4 @@
-﻿using Freem.Reflection;
+﻿using System.Reflection;
 
 namespace Freem.Entities.UnitTests.Extensions;
 
@@ -6,7 +6,7 @@ internal static class TypeExtensions
 {
     public static TheoryData<string> GetPublicConstantsStringValues(this Type type)
     {
-        var infos = FieldsExtractor.GetPublicConstants(type);
+        var infos = type.GetPublicConstants();
 
         var result = new TheoryData<string>();
         foreach (var info in infos)
@@ -18,5 +18,12 @@ internal static class TypeExtensions
         }
 
         return result;
+    }
+
+    public static IEnumerable<FieldInfo> GetPublicConstants(this Type type)
+    {
+        return type
+            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+            .Where(info => info is { IsLiteral: true, IsInitOnly: false });
     }
 }

@@ -1,8 +1,8 @@
-﻿using Freem.EFCore.Extensions;
-using Freem.Entities.RunningRecords.Identifiers;
+﻿using Freem.Entities.RunningRecords.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -112,10 +112,10 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
 
         // Act
-        var dbUpdatedRecord = dbRecord.Clone();
+        var dbUpdatedRecord = dbRecord.Copy();
         dbUpdatedRecord.Name = "Updated";
         dbUpdatedRecord.Description = "Updated";
         dbUpdatedRecord.UpdatedAt = DateTimeOffset.UtcNow;
@@ -196,7 +196,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
         
         // Act
         dbRecord.Activities.Add(EntitiesFactory.CreateActivity());
@@ -229,7 +229,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
         
         // Act
         dbRecord.Tags.Add(EntitiesFactory.CreateTag());
@@ -262,7 +262,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
 
         // Act
         var record = dbRecord.MapToDomainEntity();

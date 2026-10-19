@@ -1,8 +1,8 @@
-﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Identifiers;
@@ -51,9 +51,9 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
 
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbTag);
+        Database.Entry(dbTag).State = EntityState.Detached;
 
-        var dbUpdatedTag = dbTag.Clone();
+        var dbUpdatedTag = dbTag.Copy();
         dbUpdatedTag.Name = "Updated";
         dbUpdatedTag.UpdatedAt = DateTimeOffset.UtcNow;
 
@@ -118,7 +118,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
 
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbTag);
+        Database.Entry(dbTag).State = EntityState.Detached;
 
         // Act
         var tag = dbTag.MapToDomainEntity();

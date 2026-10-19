@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Enums.Exceptions;
 
 namespace Freem.Time.Models;
 
@@ -62,7 +61,7 @@ public static class MonthExtensions
             Month.October => 10,
             Month.November => 11,
             Month.December => 12,
-            _ => throw new InvalidEnumValueException<Month>(value)
+            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
         };
     }
 }

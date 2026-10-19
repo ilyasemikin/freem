@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Converters.Abstractions;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
-internal sealed class DuplicateKeyErrorToExceptionConverter :
-    IPossibleConverter<DatabaseContextWriteContext, DuplicateKeyError, Exception>
+internal sealed class DuplicateKeyErrorToExceptionConverter
 {
     private static readonly IReadOnlyDictionary<string, DuplicateKeyStorageException.ErrorCode> Map
         = new Dictionary<string, DuplicateKeyStorageException.ErrorCode>()

@@ -1,10 +1,10 @@
-﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Activities.Identifiers;
+﻿using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
@@ -84,10 +84,10 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbActivity);
+        Database.Entry(dbActivity).State = EntityState.Detached;
         
         // Act
-        var dbUpdatedActivity = dbActivity.Clone();
+        var dbUpdatedActivity = dbActivity.Copy();
         dbUpdatedActivity.Name = "Updated";
         dbUpdatedActivity.UpdatedAt = DateTimeOffset.UtcNow;
 
@@ -155,7 +155,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesR
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbActivity);
+        Database.Entry(dbActivity).State = EntityState.Detached;
 
         // Act
         var activity = dbActivity.MapToDomainEntity();

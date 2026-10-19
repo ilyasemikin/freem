@@ -1,32 +1,13 @@
-﻿using Freem.Clones;
-using Freem.Validation;
-using Freem.Validation.Extensions;
-
-namespace Freem.Entities.Users.Models;
+﻿namespace Freem.Entities.Users.Models;
 
 public sealed class Nickname : 
-    IEquatable<Nickname>,
-    ICloneable<Nickname>
+    IEquatable<Nickname>
 {
-    public static Validator<string> Validator { get; }
-    
     private readonly string _value;
 
-    static Nickname()
-    {
-        var builder = new ValidatorBuilder<string>();
-
-        builder = builder
-            .ValueMust(value => !string.IsNullOrWhiteSpace(value), "Nickname cannot be null or empty");
-
-        Validator = builder.Build();
-    }
-    
     public Nickname(string value)
     {
-        Validator
-            .Validate(value)
-            .ThrowIfInvalid();
+        ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
         _value = value;
     }
@@ -58,11 +39,6 @@ public sealed class Nickname :
     public static bool operator !=(Nickname left, Nickname right)
     {
         return !(left == right);
-    }
-    
-    public Nickname Clone()
-    {
-        return this;
     }
 
     public static implicit operator Nickname(string value)

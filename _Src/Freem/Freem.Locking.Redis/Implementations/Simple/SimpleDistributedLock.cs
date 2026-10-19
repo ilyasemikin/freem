@@ -1,8 +1,8 @@
 ﻿using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Exceptions;
-using Freem.Timeouts;
+using Freem.Locking.Abstractions.Timeouts;
 using StackExchange.Redis;
-using Timeout = Freem.Timeouts.Models.Timeout;
+using Timeout = Freem.Locking.Abstractions.Timeouts.Models.Timeout;
 
 namespace Freem.Locking.Redis.Implementations.Simple;
 

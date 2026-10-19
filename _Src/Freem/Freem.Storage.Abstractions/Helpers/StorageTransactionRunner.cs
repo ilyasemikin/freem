@@ -3,18 +3,14 @@
 public sealed class StorageTransactionRunner
 {
     private readonly IStorageTransactionFactory _factory;
-    private readonly IStorageTransactionExceptionHandler? _exceptionHandler;
     
     private IStorageTransaction? _transaction;
 
-    public StorageTransactionRunner(
-        IStorageTransactionFactory factory, 
-        IStorageTransactionExceptionHandler? exceptionHandler = null)
+    public StorageTransactionRunner(IStorageTransactionFactory factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
         
         _factory = factory;
-        _exceptionHandler = exceptionHandler;
         _transaction = null;
     }
     
@@ -34,14 +30,10 @@ public sealed class StorageTransactionRunner
             await function(transaction);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch (Exception ex)
+        catch
         {
             await transaction.TryAbortAsync(cancellationToken);
-
-            if (_exceptionHandler is null)
-                throw;
-            
-            _exceptionHandler?.Handle(ex);
+            throw;
         }
     }
 

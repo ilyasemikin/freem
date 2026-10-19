@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Clones;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
@@ -7,8 +6,7 @@ namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
 internal sealed class TagEntity : 
     IAuditableEntity, 
     IRowVersionableEntity,
-    IEquatable<TagEntity>,
-    ICloneable<TagEntity>
+    IEquatable<TagEntity>
 {
     public required string Id { get; init; }
     public required string UserId { get; init; }
@@ -25,22 +23,6 @@ internal sealed class TagEntity :
     
     [Timestamp]
     public uint RowVersion { get; private set; }
-
-    public TagEntity Clone()
-    {
-        return new TagEntity
-        {
-            Id = Id,
-            UserId = UserId,
-            Name = Name,
-            User = User,
-            Activities = Activities?.ToList(),
-            Records = Records?.ToList(),
-            RunningRecords = RunningRecords?.ToList(),
-            CreatedAt = CreatedAt,
-            UpdatedAt = UpdatedAt
-        };
-    }
 
     public bool Equals(TagEntity? other)
     {

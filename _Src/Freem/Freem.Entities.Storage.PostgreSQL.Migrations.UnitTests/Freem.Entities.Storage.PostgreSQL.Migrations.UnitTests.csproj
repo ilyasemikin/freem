@@ -23,7 +23,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj"/>
-        <ProjectReference Include="..\Freem.Reflection\Freem.Reflection.csproj"/>
     </ItemGroup>
 
 </Project>

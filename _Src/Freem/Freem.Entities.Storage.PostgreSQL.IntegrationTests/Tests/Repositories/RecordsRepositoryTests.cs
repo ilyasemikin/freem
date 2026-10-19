@@ -1,12 +1,13 @@
-﻿using Freem.EFCore.Extensions;
-using Freem.Entities.Records.Identifiers;
+﻿using Freem.Entities.Records.Identifiers;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.Abstractions.Models.Identifiers;
 using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Entities.Users.Identifiers;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -141,7 +142,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
         
         var dbNewActivity = EntitiesFactory.CreateActivity();
         var dbNewTag = EntitiesFactory.CreateTag();
@@ -149,7 +150,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.SaveChangesAsync();
 
         // Act
-        var dbUpdatedRecord = dbRecord.Clone();
+        var dbUpdatedRecord = dbRecord.Copy();
         dbUpdatedRecord.Name = "Updated";
         dbUpdatedRecord.Description = "Updated";
         dbUpdatedRecord.UpdatedAt = DateTimeOffset.UtcNow;
@@ -202,7 +203,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
         
         // Act
         dbRecord.Activities.Add(EntitiesFactory.CreateActivity());
@@ -235,7 +236,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
         
         // Act
         dbRecord.Tags = [EntitiesFactory.CreateTag()];
@@ -268,7 +269,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         await Database.AddRangeAsync(dbActivities);
         await Database.AddRangeAsync(dbTags);
         await Database.SaveChangesAsync();
-        Database.DetachEntry(dbRecord);
+        Database.Entry(dbRecord).State = EntityState.Detached;
 
         // Act
         var record = dbRecord.MapToDomainEntity();

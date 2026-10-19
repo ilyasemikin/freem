@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Freem.Enums.Exceptions;
 
 namespace Freem.Web.Api.Public.Client.Models;
 
@@ -12,7 +11,8 @@ public class ClientResult
 
     public ClientResult(HttpStatusCode statusCode)
     {
-        InvalidEnumValueException<HttpStatusCode>.ThrowIfValueInvalid(statusCode);
+        if (!Enum.IsDefined(statusCode))
+            throw new ArgumentOutOfRangeException(nameof(statusCode), statusCode, null);
         
         StatusCode = statusCode;
     }

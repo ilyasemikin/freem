@@ -1,5 +1,4 @@
-﻿using Freem.Clones;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Tags.Events.Created;
 using Freem.Entities.Tags.Events.Removed;
@@ -11,8 +10,7 @@ using Freem.Entities.Users.Identifiers;
 namespace Freem.Entities.Tags;
 
 public sealed class Tag : 
-    IEntity<TagIdentifier>,
-    ICloneable<Tag>
+    IEntity<TagIdentifier>
 {
     public const string EntityName = "tag";
     
@@ -55,10 +53,5 @@ public sealed class Tag :
     public TagRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
     {
         return new TagRemovedEvent(eventId, Id, UserId);
-    }
-
-    public Tag Clone()
-    {
-        return new Tag(Id, UserId, Name);
     }
 }

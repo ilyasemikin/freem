@@ -1,7 +1,7 @@
-﻿using Freem.DependencyInjection.Microsoft;
-using Freem.Entities.Storage.PostgreSQL.Database;
+﻿using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 
@@ -21,6 +21,10 @@ internal static class DatabaseContextFactory
                 : null
         };
 
-        return Services.Resolve<DatabaseContext>(services => services.AddPostgreSqlStorage(storageConfiguration));
+        var services = new ServiceCollection();
+        services.AddPostgreSqlStorage(storageConfiguration);
+
+        var provider = services.BuildServiceProvider();
+        return provider.GetRequiredService<DatabaseContext>();
     }
 }

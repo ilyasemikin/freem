@@ -1,4 +1,5 @@
-﻿using Freem.Entities.Abstractions.Events;
+﻿using System.Reflection;
+using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Activities.Events.Arhived;
 using Freem.Entities.Activities.Events.Created;
@@ -24,7 +25,6 @@ using Freem.Entities.Tags.Identifiers;
 using Freem.Entities.Users.Events.Registered;
 using Freem.Entities.Users.Events.SettingsChanged;
 using Freem.Entities.Users.Identifiers;
-using Freem.Reflection;
 using Utilities.Collections;
 using Xunit;
 using Xunit.Abstractions;
@@ -327,7 +327,8 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
             types.Add(@event.GetType());
         }
 
-        var eventTypes = TypeLoader.GetImplementations("Freem.Entities", "IEntityEvent`2");
+        var assembly = Assembly.Load("Freem.Entities");
+        var eventTypes = assembly.ExportedTypes.Where(type => type.GetInterface("IEntityEvent`2") is not null);
 
         // Act
         var result = types.UnorderedEquals(eventTypes, EqualityComparer<Type>.Default);

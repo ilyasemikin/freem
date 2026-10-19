@@ -1,5 +1,4 @@
-﻿using Freem.DependencyInjection.Microsoft.Extensions;
-using Freem.Locking.Redis.DependencyInjection.Microsoft;
+﻿using Freem.Locking.Redis.DependencyInjection.Microsoft;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,8 +16,10 @@ public sealed class ServiceCollectionExtensions
         
         services.AddSimpleRedisDistributedLocks(configuration);
 
+        var options = new ServiceProviderOptions { ValidateOnBuild = true };
+
         IServiceProvider? provider = null;
-        var exception = Record.Exception(() => provider = services.BuildAndValidateServiceProvider());
+        var exception = Record.Exception(() => provider = services.BuildServiceProvider(options));
         
         Assert.Null(exception);
         Assert.NotNull(provider);

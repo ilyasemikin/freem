@@ -1,25 +1,23 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Identifiers;
+﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Entities.Storage.Abstractions.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
-using Freem.Entities.Storage.PostgreSQL.Database.Models;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
-internal sealed class DatabaseForeignKeyConstraintErrorToExceptionConverter : 
-    IPossibleConverter<DatabaseContextWriteContext, DatabaseForeignKeyConstraintError, Exception>
+internal sealed class DatabaseForeignKeyConstraintErrorToExceptionConverter
 {
-    private readonly IPossibleConverter<DatabaseColumnWithValue, IEntityIdentifier> _columnToIdentifierConverter;
+    private readonly DatabaseColumnToIdentifierPossibleConverter _columnToIdentifierConverter;
 
     public DatabaseForeignKeyConstraintErrorToExceptionConverter(
-        IPossibleConverter<DatabaseColumnWithValue, IEntityIdentifier> columnToIdentifierConverter)
+        DatabaseColumnToIdentifierPossibleConverter columnToIdentifierConverter)
     {
         _columnToIdentifierConverter = columnToIdentifierConverter;
     }
 
-    public bool TryConvert(DatabaseContextWriteContext context, DatabaseForeignKeyConstraintError error, out Exception output)
+    public bool TryConvert(DatabaseContextWriteContext context, DatabaseForeignKeyConstraintError error, [NotNullWhen(true)] out Exception? output)
     {
-        output = null!;
+        output = null;
         if (!_columnToIdentifierConverter.TryConvert(error.Column, out var identifier))
             return false;
 

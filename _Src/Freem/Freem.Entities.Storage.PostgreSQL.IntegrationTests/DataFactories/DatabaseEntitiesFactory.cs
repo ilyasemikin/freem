@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
-using Freem.AutoFixture.SpecimenBuilders;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories.SpecimenBuilders;
 using Freem.Time;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;

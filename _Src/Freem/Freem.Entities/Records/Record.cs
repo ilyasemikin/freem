@@ -1,5 +1,4 @@
-﻿using Freem.Clones;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Relations;
 using Freem.Entities.Abstractions.Relations.Collection;
@@ -21,8 +20,7 @@ namespace Freem.Entities.Records;
 public sealed class Record : 
     IEntity<RecordIdentifier>, 
     IEntityRelation<Activity, ActivityIdentifier>, 
-    IEntityRelation<Tag, TagIdentifier>,
-    ICloneable<Record>
+    IEntityRelation<Tag, TagIdentifier>
 {
     public const string EntityName = "record";
     
@@ -72,14 +70,5 @@ public sealed class Record :
     public RecordRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
     {
         return new RecordRemovedEvent(eventId, Id, UserId);
-    }
-    
-    public Record Clone()
-    {
-        return new Record(Id, UserId, Activities, Tags, Period)
-        {
-            Name = Name,
-            Description = Description
-        };
     }
 }

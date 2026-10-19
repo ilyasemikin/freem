@@ -1,5 +1,4 @@
-﻿using Freem.Converters.Abstractions;
-using Freem.Entities.Abstractions.Events;
+﻿using Freem.Entities.Abstractions.Events;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Events;
@@ -8,8 +7,7 @@ using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
 
-internal sealed class DatabaseEntityToEventEntityConverter 
-    : IConverter<EventEntity, IEntityEvent<IEntityIdentifier, UserIdentifier>>
+internal sealed class DatabaseEntityToEventEntityConverter
 {
     private readonly EntityIdentifierFactory _entityIdentifierFactory;
     private readonly EventsFactory _eventsFactory;

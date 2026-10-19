@@ -1,5 +1,4 @@
-﻿using Freem.Clones;
-using Freem.Entities.Abstractions;
+﻿using Freem.Entities.Abstractions;
 using Freem.Entities.Abstractions.Events.Identifiers;
 using Freem.Entities.Abstractions.Relations;
 using Freem.Entities.Abstractions.Relations.Collection;
@@ -19,8 +18,7 @@ namespace Freem.Entities.Activities;
 
 public sealed class Activity : 
     IEntity<ActivityIdentifier>, 
-    IEntityRelation<Tag, TagIdentifier>, 
-    ICloneable<Activity>
+    IEntityRelation<Tag, TagIdentifier>
 {
     public const string EntityName = "activity";
     
@@ -94,13 +92,5 @@ public sealed class Activity :
     public ActivityUnarchivedEvent BuildUnarchivedEvent(EventIdentifier eventId)
     {
         return new ActivityUnarchivedEvent(eventId, Id, UserId);
-    }
-    
-    public Activity Clone()
-    {
-        return new Activity(Id, UserId, Name, Tags, Status)
-        {
-            Status = Status
-        };
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Clones;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Database.Entities;
@@ -8,8 +7,7 @@ internal sealed class UserEntity :
     IAuditableEntity, 
     ISoftDeletedEntity, 
     IRowVersionableEntity,
-    IEquatable<UserEntity>,
-    ICloneable<UserEntity>
+    IEquatable<UserEntity>
 {
     public required string Id { get; init; }
 
@@ -24,18 +22,6 @@ internal sealed class UserEntity :
     
     [Timestamp]
     public uint RowVersion { get; private set; }
-
-    public UserEntity Clone()
-    {
-        return new UserEntity
-        {
-            Id = Id,
-            Nickname = Nickname,
-            CreatedAt = CreatedAt,
-            UpdatedAt = UpdatedAt,
-            DeletedAt = DeletedAt,
-        };
-    }
 
     public bool Equals(UserEntity? other)
     {

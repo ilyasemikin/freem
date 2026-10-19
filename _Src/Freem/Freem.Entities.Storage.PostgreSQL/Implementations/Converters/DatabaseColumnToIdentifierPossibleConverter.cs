@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Converters.Abstractions;
 using Freem.Entities.Abstractions.Identifiers;
 using Freem.Entities.Activities.Identifiers;
 using Freem.Entities.Records.Identifiers;
@@ -10,8 +9,7 @@ using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 
-internal sealed class DatabaseColumnToIdentifierPossibleConverter 
-    : IPossibleConverter<DatabaseColumnWithValue, IEntityIdentifier>
+internal sealed class DatabaseColumnToIdentifierPossibleConverter
 {
     private delegate IEntityIdentifier EntityIdentifierFactory(string value);
 

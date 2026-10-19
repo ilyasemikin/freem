@@ -1,4 +1,4 @@
-﻿using Freem.Configurations;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace Freem.Locking.Redis.IntegrationTests.Infrastructure;
 
@@ -17,6 +17,14 @@ public class TestsConfiguration
 
     public static TestsConfiguration Read()
     {
-        return Configuration.ReadFromJsonFile<TestsConfiguration>(DefaultFileName);
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile(DefaultFileName)
+            .Build();
+
+        var result = configuration.Get<TestsConfiguration>();
+        if (result is null)
+            throw new InvalidOperationException($"Can't read tests configuration from \"{DefaultFileName}\"");
+
+        return result;
     }
 }

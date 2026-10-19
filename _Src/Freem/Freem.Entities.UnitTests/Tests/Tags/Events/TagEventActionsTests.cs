@@ -1,6 +1,5 @@
 ﻿using Freem.Entities.Tags.Events;
 using Freem.Entities.UnitTests.Extensions;
-using Freem.Reflection;
 
 namespace Freem.Entities.UnitTests.Tests.Tags.Events;
 
@@ -21,8 +20,8 @@ public sealed class TagEventActionsTests
     [Fact]
     public void All_ShouldNotContainsExtra()
     {
-        var expected = FieldsExtractor
-            .GetPublicConstants(typeof(TagEventActions))
+        var expected = typeof(TagEventActions)
+            .GetPublicConstants()
             .Count();
 
         var count = TagEventActions.All.Count;
