@@ -1,14 +1,12 @@
 ﻿using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.RunningRecords.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.RunningRecords.Events.Started;
 
-public sealed class RunningRecordStartedEvent : EntityEvent<RunningRecordIdentifier, UserIdentifier>
+public sealed class RunningRecordStartedEvent : EntityEvent<RunningRecordId, UserId>
 {
-    public RunningRecordStartedEvent(EventIdentifier id, RunningRecordIdentifier entityId) 
-        : base(id, entityId, entityId, RunningRecordEventActions.Started)
+    public RunningRecordStartedEvent(EventId id, RunningRecordId entityId) 
+        : base(id, entityId, entityId.ToUserId(), RunningRecordEventActions.Started)
     {
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.Records.Comparers;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -42,7 +42,7 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenRecordDoesNotExist()
     {
-        var notExistedRecordId = Context.CreateIdentifier<RecordIdentifier>();
+        var notExistedRecordId = RecordId.Generate();
         
         var request = new GetRecordRequest(notExistedRecordId);
         

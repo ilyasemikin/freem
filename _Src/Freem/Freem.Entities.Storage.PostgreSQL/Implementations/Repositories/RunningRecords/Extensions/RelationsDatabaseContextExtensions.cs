@@ -1,6 +1,6 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.RunningRecords;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -14,11 +14,13 @@ internal static class RelationsDatabaseContextExtensions
         RunningRecord entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<ActivityIdentifier, RunningRecordActivityRelationEntity>(
+        var entityId = entity.Id.ToString();
+        var userId = entity.UserId.ToString();
+        await context.UpdateRelatedEntitiesAsync<ActivityId, RunningRecordActivityRelationEntity>(
             entity.Activities,
-            e => e.RunningRecordUserId == entity.Id,
+            e => e.RunningRecordUserId == entityId,
             e => e.ActivityId,
-            ids => e => ids.Contains(e.ActivityId) && e.RunningRecordUserId == entity.UserId,
+            ids => e => ids.Contains(e.ActivityId) && e.RunningRecordUserId == userId,
             id => RunningRecordRelationFactory.CreateDatabaseRunningRecordActivityRelation(entity.Id, id),
             cancellationToken);
     }
@@ -28,11 +30,13 @@ internal static class RelationsDatabaseContextExtensions
         RunningRecord entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<TagIdentifier, RunningRecordTagRelationEntity>(
+        var entityId = entity.Id.ToString();
+        var userId = entity.UserId.ToString();
+        await context.UpdateRelatedEntitiesAsync<TagId, RunningRecordTagRelationEntity>(
             entity.Tags,
-            e => e.RunningRecordUserId == entity.Id,
+            e => e.RunningRecordUserId == entityId,
             e => e.TagId,
-            ids => e => ids.Contains(e.TagId) && e.RunningRecordUserId == entity.UserId,
+            ids => e => ids.Contains(e.TagId) && e.RunningRecordUserId == userId,
             id => RunningRecordRelationFactory.CreateDatabaseRunningRecordTagRelation(entity.Id, id),
             cancellationToken);
     }

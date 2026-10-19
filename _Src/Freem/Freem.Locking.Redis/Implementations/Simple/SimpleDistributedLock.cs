@@ -15,7 +15,7 @@ internal class SimpleDistributedLock : IDistributedLock
     private bool _released;
     
     public string Key { get; }
-    public SimpleLockIdentifier Identifier { get; }
+    public string Token { get; }
 
     public DateTimeOffset? Expires { get; init; }
 
@@ -30,13 +30,13 @@ internal class SimpleDistributedLock : IDistributedLock
             "end");
     }
     
-    public SimpleDistributedLock(IConnectionMultiplexer connection, string key, SimpleLockIdentifier identifier)
+    public SimpleDistributedLock(IConnectionMultiplexer connection, string key, string token)
     {
         _released = false;
         _connection = connection;
         
         Key = key;
-        Identifier = identifier;
+        Token = token;
     }
     
     public async Task ReleaseAsync(Timeout? timeout = default, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ internal class SimpleDistributedLock : IDistributedLock
         
         var db = _connection.GetDatabase();
 
-        var parameters = new { key = Key, id = Identifier.ToString() };
+        var parameters = new { key = Key, id = Token };
         _released = await ExecutorWithTimeout.ExecuteAsync(TryRelease, timeout, cancellationToken);
         
         if (!_released)

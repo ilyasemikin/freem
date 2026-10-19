@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Storage.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
@@ -43,7 +43,7 @@ internal sealed class RemoveRecordUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
-        var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new RecordAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return RemoveRecordResponse.CreateFailure(RemoveRecordErrorCode.RecordNotFound);

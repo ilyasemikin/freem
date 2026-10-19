@@ -18,7 +18,7 @@ public sealed class UpdateTagTests : TagTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var name = new TagName("updated_name");
+        var name = TagName.Parse("updated_name", null);
         var request = new UpdateTagRequest
         {
             Name = new UpdateField<TagName>(name)
@@ -47,9 +47,10 @@ public sealed class UpdateTagTests : TagTestBase
         var name = "name";
         Context.Preparer.Tags.Create(name);
 
+        var tagName = TagName.Parse(name, null);
         var request = new UpdateTagRequest
         {
-            Name = new UpdateField<TagName>(name)
+            Name = new UpdateField<TagName>(tagName)
         };
         
         var response = await Context.Client.Tags.UpdateAsync(AddedTagIds[0], request);

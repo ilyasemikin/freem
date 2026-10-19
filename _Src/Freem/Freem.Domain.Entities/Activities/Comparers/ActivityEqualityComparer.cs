@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 
 namespace Freem.Domain.Entities.Activities.Comparers;
 
@@ -20,7 +20,7 @@ public sealed class ActivityEqualityComparer : IEqualityComparer<Activity>
             x.Name.Equals(y.Name) &&
             x.Status.Equals(y.Status) &&
             x.UserId.Equals(y.UserId) &&
-            IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals(x.Tags, y.Tags);
+            IReadOnlyRelatedIdsCollection<TagId>.Equals(x.Tags, y.Tags);
     }
 
     public int GetHashCode(Activity obj)

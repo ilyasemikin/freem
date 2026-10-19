@@ -1,7 +1,7 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -12,13 +12,13 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
 {
-    private const string UpdatedName = "record_name";
-    private const string UpdatedDescription = "record_description";
+    private static readonly RecordName UpdatedName = RecordName.Parse("record_name", null);
+    private static readonly RecordDescription UpdatedDescription = RecordDescription.Parse("record_description", null);
     
     private readonly UseCaseExecutionContext _context;
     
-    private readonly ActivityIdentifier _updatedActivityId;
-    private readonly TagIdentifier _updatedTagId;
+    private readonly ActivityId _updatedActivityId;
+    private readonly TagId _updatedTagId;
     
     public RunningRecordsUpdateUseCaseTests(TestContext context) 
         : base(context)
@@ -81,10 +81,10 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenUpdateActivities()
     {
-        var activities = new RelatedActivitiesIdentifiersCollection([_updatedActivityId]);
+        var activities = new RelatedActivityIdsCollection([_updatedActivityId]);
         var request = new UpdateRunningRecordRequest
         {
-            Activities = new UpdateField<RelatedActivitiesIdentifiersCollection>(activities)
+            Activities = new UpdateField<RelatedActivityIdsCollection>(activities)
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -96,16 +96,16 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.RunningRecords.RequiredGet(_context);
         
-        Assert.Equal(activities, actual.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
+        Assert.Equal(activities, actual.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
 
     [Fact]
     public async Task ShouldSuccess_WhenUpdateTags()
     {
-        var tags = new RelatedTagsIdentifiersCollection([_updatedTagId]);
+        var tags = new RelatedTagIdsCollection([_updatedTagId]);
         var request = new UpdateRunningRecordRequest
         {
-            Tags = new UpdateField<RelatedTagsIdentifiersCollection>(tags)
+            Tags = new UpdateField<RelatedTagIdsCollection>(tags)
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -117,7 +117,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.RunningRecords.RequiredGet(_context);
         
-        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals);
+        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedIdsCollection<TagId>.Equals);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         
         var request = new UpdateRunningRecordRequest
         {
-            Name = (RecordName)UpdatedName
+            Name = UpdatedName
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -143,8 +143,8 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
-        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
-        var activities = new RelatedActivitiesIdentifiersCollection([notExistedActivityId]);
+        var notExistedActivityId = ActivityId.Generate();
+        var activities = new RelatedActivityIdsCollection([notExistedActivityId]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -168,7 +168,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var activity = executor.Activities.Create(anotherContext);
         
-        var activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
+        var activities = new RelatedActivityIdsCollection([activity.Id]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -187,8 +187,8 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
+        var notExistedTagId = TagId.Generate();
+        var tags = new RelatedTagIdsCollection([notExistedTagId]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -212,7 +212,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         
-        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
+        var tags = new RelatedTagIdsCollection([tag.Id]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -247,7 +247,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRunningRecordRequest
         {
-            Tags = new RelatedTagsIdentifiersCollection()
+            Tags = new RelatedTagIdsCollection()
         };
 
         var exception = await Record.ExceptionAsync(async () => await Context

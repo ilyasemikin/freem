@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Remove;
 using Freem.UseCases.Abstractions;
@@ -50,7 +50,7 @@ public sealed class RemoveActivityController : BaseController
 
     private static RemoveActivityRequest Map(string activityIdString)
     {
-        var activityId = new ActivityIdentifier(activityIdString);
+        var activityId = ActivityId.Parse(activityIdString, null);
         return new RemoveActivityRequest(activityId);
     }
 

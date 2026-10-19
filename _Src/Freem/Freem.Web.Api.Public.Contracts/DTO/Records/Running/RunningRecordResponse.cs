@@ -1,28 +1,28 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.RunningRecords.Identifiers;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.RunningRecords;
+using Freem.Domain.Tags;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 
 public sealed class RunningRecordResponse
 {
-    public RunningRecordIdentifier Id { get; }
+    public RunningRecordId Id { get; }
     
     public DateTimeOffset StartAt { get; }
     
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
     
-    public IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> Activities { get; }
-    public IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier> Tags { get; }
+    public IReadOnlyRelatedIdsCollection<ActivityId> Activities { get; }
+    public IReadOnlyRelatedIdsCollection<TagId> Tags { get; }
     
     public RunningRecordResponse(
-        RunningRecordIdentifier id, 
+        RunningRecordId id, 
         DateTimeOffset startAt,
-        IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> activities, 
-        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier> tags)
+        IReadOnlyRelatedIdsCollection<ActivityId> activities, 
+        IReadOnlyRelatedIdsCollection<TagId> tags)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(activities);

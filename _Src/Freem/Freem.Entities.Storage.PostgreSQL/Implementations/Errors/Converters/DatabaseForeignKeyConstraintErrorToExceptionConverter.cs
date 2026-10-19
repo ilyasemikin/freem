@@ -7,21 +7,21 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
 internal sealed class DatabaseForeignKeyConstraintErrorToExceptionConverter
 {
-    private readonly DatabaseColumnToIdentifierPossibleConverter _columnToIdentifierConverter;
+    private readonly DatabaseColumnToIdPossibleConverter _columnToIdConverter;
 
     public DatabaseForeignKeyConstraintErrorToExceptionConverter(
-        DatabaseColumnToIdentifierPossibleConverter columnToIdentifierConverter)
+        DatabaseColumnToIdPossibleConverter columnToIdConverter)
     {
-        _columnToIdentifierConverter = columnToIdentifierConverter;
+        _columnToIdConverter = columnToIdConverter;
     }
 
     public bool TryConvert(DatabaseContextWriteContext context, DatabaseForeignKeyConstraintError error, [NotNullWhen(true)] out Exception? output)
     {
         output = null;
-        if (!_columnToIdentifierConverter.TryConvert(error.Column, out var identifier))
+        if (!_columnToIdConverter.TryConvert(error.Column, out var id))
             return false;
 
-        output = new NotFoundRelatedException(context.ProcessedId, identifier);
+        output = new NotFoundRelatedException(context.ProcessedId, id);
         return true;
     }
 }

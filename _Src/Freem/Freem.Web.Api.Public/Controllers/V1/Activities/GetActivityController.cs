@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
@@ -52,7 +52,7 @@ public sealed class GetActivityController : BaseController
 
     private static GetActivityRequest Map(string activityIdString)
     {
-        var activityId = new ActivityIdentifier(activityIdString);
+        var activityId = ActivityId.Parse(activityIdString, null);
         return new GetActivityRequest(activityId);
     }
 

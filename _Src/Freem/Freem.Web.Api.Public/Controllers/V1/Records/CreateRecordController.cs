@@ -55,11 +55,11 @@ public sealed class CreateRecordController : BaseController
 
     private static UseCaseCreateRecordRequest Map(ApiCreateRecordRequest request)
     {
-        return new UseCaseCreateRecordRequest(request.Period, new RelatedActivitiesIdentifiersCollection(request.Activities))
+        return new UseCaseCreateRecordRequest(request.Period, new RelatedActivityIdsCollection(request.Activities))
         {
             Name = request.Name,
             Description = request.Description,
-            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
+            Tags = new RelatedTagIdsCollection(request.Tags)
         };
     }
 

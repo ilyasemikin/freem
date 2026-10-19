@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts;
@@ -60,10 +60,10 @@ public class UpdateActivityController : BaseController
 
     private static UseCaseUpdateActivityRequest Map(string activityIdString, ApiUpdateActivityRequest request)
     {
-        var activityId = new ActivityIdentifier(activityIdString);
+        var activityId = ActivityId.Parse(activityIdString, null);
 
         var tags = request.Tags is not null
-            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagIdsCollection>(new RelatedTagIdsCollection(request.Tags.Value))
             : null;
 
         return new UseCaseUpdateActivityRequest(activityId)

@@ -1,8 +1,8 @@
 ﻿using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
-using Freem.Domain.Tags.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Tags;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
@@ -37,7 +37,8 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Repository.CreateAsync(tag);
         
         // Assert
-        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
+        var tagId = tag.Id.ToString();
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
 
         Assert.Equal(dbTag, dbTagActual);
     }
@@ -63,7 +64,8 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Repository.UpdateAsync(tag);
 
         // Assert
-        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
+        var tagId = tag.Id.ToString();
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
         
         Assert.NotEqual(dbTag, dbTagActual);
         Assert.Equal(dbUpdatedTag, dbTagActual);
@@ -85,7 +87,8 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Repository.UpdateAsync(tag);
         
         // Assert
-        var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
+        var tagId = tag.Id.ToString();
+        var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
         
         Assert.NotNull(dbActualTag);
         Assert.Null(dbActualTag.UpdatedAt);
@@ -126,7 +129,8 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Repository.DeleteAsync(tag.Id);
         
         // Assert
-        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tag.Id);
+        var tagId = tag.Id.ToString();
+        var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
 
         Assert.Null(dbTagActual);
     }
@@ -135,7 +139,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var id = IdentifiersGenerator.Generate<TagIdentifier>();
+        var id = TagId.Generate();
         
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
@@ -155,7 +159,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
         
-        var tagId = (TagIdentifier)dbTag.Id;
+        var tagId = TagId.Parse(dbTag.Id, null);
         
         // Act
         var result = await Repository.FindByIdAsync(tagId);
@@ -167,14 +171,15 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
 
         var tag = result.Entity;
         
-        Assert.Equal(dbTag.Id, tag.Id);
+        var actualId = tag.Id.ToString();
+        Assert.Equal(dbTag.Id, actualId);
     }
 
     [Fact]
     public async Task FindByIdAsync_ShouldFailure_WhenTagDoesNotExist()
     {
         // Arrange
-        var tagId = IdentifiersGenerator.Generate<TagIdentifier>();
+        var tagId = TagId.Generate();
         
         // Act
         var result = await Repository.FindByIdAsync(tagId);
@@ -195,9 +200,9 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
         
-        var tagId = (TagIdentifier)dbTag.Id;
-        var userId = (UserIdentifier)dbUser.Id;
-        var ids = new TagAndUserIdentifiers(tagId, userId);
+        var tagId = TagId.Parse(dbTag.Id, null);
+        var userId = UserId.Parse(dbUser.Id, null);
+        var ids = new TagAndUserIds(tagId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);
@@ -225,10 +230,10 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
 
-        var tagId = tagIdExists ? new TagIdentifier(dbTag.Id) : IdentifiersGenerator.Generate<TagIdentifier>();
-        var userId = userIdExists ? new UserIdentifier(dbUser.Id) : GenerateUserIdentifier();
+        var tagId = tagIdExists ? TagId.Parse(dbTag.Id, null) : TagId.Generate();
+        var userId = userIdExists ? UserId.Parse(dbUser.Id, null) : GenerateUserId();
         
-        var ids = new TagAndUserIdentifiers(tagId, userId);
+        var ids = new TagAndUserIds(tagId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);

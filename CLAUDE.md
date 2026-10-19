@@ -76,7 +76,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 
 ## Repository Layout
 
-All code lives in `_Src/Freem/` (solution `Freem.sln`, ~37 projects, `net10.0`, nullable enabled). Frontend is
+All code lives in `_Src/Freem/` (solution `Freem.sln`, ~34 projects, `net10.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
 Layers (names differ from StashIt):
@@ -93,7 +93,7 @@ Freem.Locking.*                            # locking (Redis)
 Freem.*                                    # small shared libraries (Results, Time, Locking, ...)
 ```
 
-Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`) come from a local NuGet feed:
+Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`) come from a local NuGet feed:
 `_Src/Freem/Directory.Build.props` registers `_Src/Freem/packages/`, whose `.nupkg` files are not in git (only
 `.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
 `packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.

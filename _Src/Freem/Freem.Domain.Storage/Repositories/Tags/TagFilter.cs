@@ -1,7 +1,7 @@
 ﻿using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Sorting;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Sorting;
 
 namespace Freem.Domain.Storage.Repositories.Tags;
@@ -27,10 +27,10 @@ public class TagFilter : ILimitFilter, ISortingFilter<TagSortField>
         }
     }
     
-    public UserIdentifier UserId { get; }
+    public UserId UserId { get; }
     public string SearchText { get; }
 
-    public TagFilter(UserIdentifier userId, string searchText)
+    public TagFilter(UserId userId, string searchText)
     {
         ArgumentNullException.ThrowIfNull(userId);
         ArgumentException.ThrowIfNullOrWhiteSpace(searchText);

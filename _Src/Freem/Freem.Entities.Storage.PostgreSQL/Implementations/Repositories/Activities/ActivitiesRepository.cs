@@ -1,8 +1,8 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
@@ -61,7 +61,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
         if (_equalityComparer.Equals(entity, actualEntity))
             return;
         
-        dbEntity.Name = entity.Name;
+        dbEntity.Name = entity.Name.ToString();
         dbEntity.Status = entity.Status.MapToDatabaseEntityStatus();
 
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
@@ -70,7 +70,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
@@ -85,26 +85,29 @@ internal sealed class ActivitiesRepository : IActivityRepository
     }
 
     public async Task<SearchEntityResult<Activity>> FindByIdAsync(
-        ActivityIdentifier id,
+        ActivityId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
+        var idString = id.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
-            .FindAsync(e => e.Id == id, ActivityMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.Id == idString, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Activity>> FindByMultipleIdAsync(
-        ActivityAndUserIdentifiers ids, 
+        ActivityAndUserIds ids, 
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(ids);
         
+        var activityIdString = ids.ActivityId.ToString();
+        var userIdString = ids.UserId.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
             .FindAsync(
-                e => e.Id == ids.ActivityId && e.UserId == ids.UserId,
+                e => e.Id == activityIdString && e.UserId == userIdString,
                 ActivityMapper.MapToDomainEntity, 
                 cancellationToken);
     }
@@ -115,9 +118,10 @@ internal sealed class ActivitiesRepository : IActivityRepository
     {
         ArgumentNullException.ThrowIfNull(filter);
         
+        var userIdString = filter.UserId.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
-            .Where(e => e.UserId == filter.UserId)
+            .Where(e => e.UserId == userIdString)
             .OrderBy(filter.Sorting, ActivityFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
@@ -125,9 +129,10 @@ internal sealed class ActivitiesRepository : IActivityRepository
 
     public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(ActivityFilter filter, CancellationToken cancellationToken = default)
     {
+        var userIdString = filter.UserId.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
-            .Where(e => e.UserId == filter.UserId && e.Name.Contains(filter.SearchText))
+            .Where(e => e.UserId == userIdString && e.Name.Contains(filter.SearchText))
             .SliceByLimitFilter(filter)
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
     }

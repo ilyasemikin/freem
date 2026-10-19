@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Activities.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
@@ -44,7 +44,7 @@ internal sealed class UnarchiveActivityUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
-        var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityNotFound);
@@ -53,7 +53,7 @@ internal sealed class UnarchiveActivityUseCase
         if (activity.Status == ActivityStatus.Active)
             return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityInvalidStatus);
         
-        activity.Status = ActivityStatus.Value.Active;
+        activity.Status = ActivityStatus.Active;
 
         await _transactionRunner.RunAsync(async () =>
         {

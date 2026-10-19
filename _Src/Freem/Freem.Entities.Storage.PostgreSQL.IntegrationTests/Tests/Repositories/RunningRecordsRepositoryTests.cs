@@ -1,6 +1,7 @@
-﻿using Freem.Domain.RunningRecords.Identifiers;
+﻿using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
@@ -41,7 +42,8 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Repository.CreateAsync(record);
 
         // Assert
-        var dbRecordActual = await Database.RunningRecords.FirstOrDefaultAsync(e => e.UserId == record.Id);
+        var recordId = record.Id.ToString();
+        var dbRecordActual = await Database.RunningRecords.FirstOrDefaultAsync(e => e.UserId == recordId);
 
         Assert.Equal(dbRecord, dbRecordActual);
     }
@@ -68,7 +70,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Activities.Ids.First(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Activities.Ids.First(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -125,10 +127,11 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Repository.UpdateAsync(record);
         
         // Assert
+        var userId = record.UserId.ToString();
         var dbRecordActual = await Database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == record.UserId);
+            .FirstOrDefaultAsync(e => e.UserId == userId);
         
         Assert.NotEqual(dbRecord, dbRecordActual);
         Assert.Equal(dbUpdatedRecord, dbRecordActual);
@@ -210,7 +213,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Identifiers.Last(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Activities.Ids.Last(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -243,7 +246,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Tags.Identifiers.Last(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Tags.Ids.Last(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -270,10 +273,11 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Repository.DeleteAsync(record.Id);
         
         // Assert
+        var userId = record.UserId.ToString();
         var dbRecordActual = await Database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FirstOrDefaultAsync(e => e.UserId == record.UserId);
+            .FirstOrDefaultAsync(e => e.UserId == userId);
         
         Assert.Null(dbRecordActual);
     }
@@ -282,7 +286,8 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var id = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
+        var userId = UserId.Generate();
+        var id = RunningRecordId.FromUserId(userId);
 
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
@@ -307,7 +312,7 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         await Database.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var userId = (RunningRecordIdentifier)dbRecord.UserId;
+        var userId = RunningRecordId.Parse(dbRecord.UserId, null);
         
         // Act
         var result = await Repository.FindByIdAsync(userId);
@@ -319,18 +324,21 @@ public sealed class RunningRecordsRepositoryTests : BaseRepositoryTests<IRunning
         
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.UserId, record.Id);
-        Assert.Equal(dbRecord.UserId, record.UserId);
+        var actualId = record.Id.ToString();
+        var actualUserId = record.UserId.ToString();
+        Assert.Equal(dbRecord.UserId, actualId);
+        Assert.Equal(dbRecord.UserId, actualUserId);
     }
 
     [Fact]
     public async Task FindByIdAsync_ShouldFailure_WhenEntityDoesNotExist()
     {
         // Arrange
-        var userId = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
+        var userId = UserId.Generate();
+        var id = RunningRecordId.FromUserId(userId);
         
         // Act
-        var result = await Repository.FindByIdAsync(userId);
+        var result = await Repository.FindByIdAsync(id);
         
         // Assert
         Assert.NotNull(result);

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.UseCases.Abstractions;
@@ -50,7 +50,7 @@ public sealed class RemoveRecordController : BaseController
 
     private static RemoveRecordRequest Map(string recordIdString)
     {
-        var recordId = new RecordIdentifier(recordIdString);
+        var recordId = RecordId.Parse(recordIdString, null);
         return new RemoveRecordRequest(recordId);
     }
 

@@ -1,13 +1,13 @@
-﻿namespace Freem.Domain.Events.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public sealed class EventAction : IEquatable<EventAction>
+namespace Freem.Domain.Events.Models;
+
+public sealed class EventAction : IEquatable<EventAction>, IParsable<EventAction>
 {
     private readonly string _value;
 
-    public EventAction(string value)
+    private EventAction(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
-
         _value = value;
     }
     
@@ -45,13 +45,25 @@ public sealed class EventAction : IEquatable<EventAction>
         return !(left == right);
     }
 
-    public static implicit operator string(EventAction value)
+    public static EventAction Parse(string s, IFormatProvider? provider)
     {
-        return value._value;
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for EventAction: {s}");
     }
 
-    public static implicit operator EventAction(string value)
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out EventAction? result)
     {
-        return new EventAction(value);
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = null;
+            return false;
+        }
+
+        result = new EventAction(s);
+        return true;
     }
 }

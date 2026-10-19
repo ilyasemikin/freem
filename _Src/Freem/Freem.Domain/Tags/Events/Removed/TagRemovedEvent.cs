@@ -1,13 +1,11 @@
 ﻿using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Tags.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Tags.Events.Removed;
 
-public sealed class TagRemovedEvent : EntityEvent<TagIdentifier, UserIdentifier>
+public sealed class TagRemovedEvent : EntityEvent<TagId, UserId>
 {
-    public TagRemovedEvent(EventIdentifier id, TagIdentifier entityId, UserIdentifier userId) 
+    public TagRemovedEvent(EventId id, TagId entityId, UserId userId) 
         : base(id, entityId, userId, TagEventActions.Removed)
     {
     }

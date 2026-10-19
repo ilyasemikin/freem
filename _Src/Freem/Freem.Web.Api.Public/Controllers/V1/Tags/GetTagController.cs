@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Entities.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.UseCases.Abstractions;
@@ -52,7 +52,7 @@ public sealed class GetTagController : BaseController
 
     private static GetTagRequest Map(string tagIdString)
     {
-        var tagId = new TagIdentifier(tagIdString);
+        var tagId = TagId.Parse(tagIdString, null);
         return new GetTagRequest(tagId);
     }
 

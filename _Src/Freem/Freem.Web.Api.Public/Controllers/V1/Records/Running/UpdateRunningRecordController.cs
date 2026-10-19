@@ -57,11 +57,11 @@ public sealed class UpdateRunningRecordController : BaseController
     private static UseCaseUpdateRunningRecordRequest Map(ApiUpdateRunningRecordRequest request)
     {
         var activities = request.Activities is not null
-            ? new UpdateField<RelatedActivitiesIdentifiersCollection>(new RelatedActivitiesIdentifiersCollection(request.Activities.Value))
+            ? new UpdateField<RelatedActivityIdsCollection>(new RelatedActivityIdsCollection(request.Activities.Value))
             : null;
         
         var tags = request.Tags is not null
-            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagIdsCollection>(new RelatedTagIdsCollection(request.Tags.Value))
             : null;
         
         return new UseCaseUpdateRunningRecordRequest()

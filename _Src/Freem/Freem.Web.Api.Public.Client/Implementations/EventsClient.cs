@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
+using Freem.Domain;
 using Freem.Domain.Events;
-using Freem.Domain.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Events;
@@ -16,7 +16,7 @@ public sealed class EventsClient : BaseClient
     {
     }
 
-    public Task<ClientResult<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>> ListAsync(
+    public Task<ClientResult<IAsyncEnumerable<IEntityEvent<Id, UserId>>>> ListAsync(
         ListEventRequest query, 
         CancellationToken cancellationToken = default)
     {
@@ -30,7 +30,7 @@ public sealed class EventsClient : BaseClient
             request = request.WithQueryParameter(nameof(query.After), after);
         }
 
-        return SendForUserAsync<IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>>(
+        return SendForUserAsync<IAsyncEnumerable<IEntityEvent<Id, UserId>>>(
             request, 
             cancellationToken);
     }

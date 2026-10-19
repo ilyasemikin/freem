@@ -1,6 +1,7 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 
 namespace Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
@@ -16,27 +17,29 @@ public sealed class ActivitiesPreparer
         _context = context;
     }
 
-    public ActivityIdentifier Create(string name = "name0")
+    public ActivityId Create(string name = "name0")
     {
-        var request = new CreateActivityRequest(name);
+        var activityName = ActivityName.Parse(name, null);
+        var request = new CreateActivityRequest(activityName);
         var response = _context.SyncClient.Activities.Create(request);
         response.EnsureSuccess();
 
         return response.Value.Id;
     }
 
-    public IEnumerable<ActivityIdentifier> CreateMany(
+    public IEnumerable<ActivityId> CreateMany(
         int count, 
-        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>? tags = null)
+        IReadOnlyRelatedIdsCollection<TagId>? tags = null)
     {
-        tags ??= RelatedTagsIdentifiersCollection.Empty;
+        tags ??= RelatedTagIdsCollection.Empty;
 
-        var ids = new ActivityIdentifier[count];
+        var ids = new ActivityId[count];
         for (var i = 0; i < count; i++)
         {
             var name = $"name{i}";
+            var activityName = ActivityName.Parse(name, null);
             
-            var request = new CreateActivityRequest(name, tags);
+            var request = new CreateActivityRequest(activityName, tags);
             var response = _context.SyncClient.Activities.Create(request);
             response.EnsureSuccess();
 
@@ -46,7 +49,7 @@ public sealed class ActivitiesPreparer
         return ids;
     }
 
-    public void Archive(ActivityIdentifier id)
+    public void Archive(ActivityId id)
     {
         var response = _context.SyncClient.Activities.Archive(id);
         response.EnsureSuccess();

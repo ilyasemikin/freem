@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Entities.UseCases.Contracts.Activities.Remove;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -9,7 +9,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly ActivityIdentifier _activityId;
+    private readonly ActivityId _activityId;
     
     public ActivitiesRemoveUseCase(TestContext context) 
         : base(context)
@@ -38,7 +38,7 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivityDoesNotExist()
     {
-        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
+        var notExistedActivityId = ActivityId.Generate();
         var request = new RemoveActivityRequest(notExistedActivityId);
         
         var response = await Context.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);

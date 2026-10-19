@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 
@@ -8,14 +8,16 @@ internal static class ActivityRelationFactory
 {
     public static IEnumerable<ActivityTagRelationEntity> CreateDatabaseActivityTagRelations(this Activity activity)
     {
-        return activity.Tags.Identifiers.Select(id => CreateDatabaseActivityTagRelation(activity.Id, id));
+        return activity.Tags.Ids
+            .Select(id => id.ToString())
+            .Select(tagId => CreateDatabaseActivityTagRelation(activity.Id, tagId));
     }
 
-    public static ActivityTagRelationEntity CreateDatabaseActivityTagRelation(ActivityIdentifier activityId, string tagIdString)
+    public static ActivityTagRelationEntity CreateDatabaseActivityTagRelation(ActivityId activityId, string tagIdString)
     {
         return new ActivityTagRelationEntity
         {
-            ActivityId = activityId,
+            ActivityId = activityId.ToString(),
             TagId = tagIdString
         };
     }

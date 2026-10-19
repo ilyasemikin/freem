@@ -1,7 +1,7 @@
 ﻿using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Sorting;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Sorting;
 
 namespace Freem.Domain.Storage.Repositories.Activities;
@@ -28,9 +28,9 @@ public sealed class ActivityByUserFilter : ILimitFilter, IOffsetFilter, ISorting
         }
     }
     
-    public UserIdentifier UserId { get; }
+    public UserId UserId { get; }
 
-    public ActivityByUserFilter(UserIdentifier userId) 
+    public ActivityByUserFilter(UserId userId) 
     {
         ArgumentNullException.ThrowIfNull(userId);
         

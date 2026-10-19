@@ -5,11 +5,11 @@ namespace Freem.Entities.UseCases.Contracts.Activities.Create;
 
 public sealed class CreateActivityRequest
 {
-    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
+    private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public ActivityName Name { get; }
 
-    public RelatedTagsIdentifiersCollection Tags
+    public RelatedTagIdsCollection Tags
     {
         get => _tags;
         init

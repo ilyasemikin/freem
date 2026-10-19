@@ -1,8 +1,8 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Statistics.Time;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Record = Freem.Domain.Entities.Records.Record;
@@ -11,15 +11,15 @@ namespace Freem.Domain.UnitTests.Tests.Statistics;
 
 public class TimeStatisticsTests
 {
-    private static readonly UserIdentifier DefaultUserId;
-    private static readonly ActivityIdentifier DefaultActivityId;
-    private static readonly RelatedActivitiesIdentifiersCollection DefaultRelatedActivities;
+    private static readonly UserId DefaultUserId;
+    private static readonly ActivityId DefaultActivityId;
+    private static readonly RelatedActivityIdsCollection DefaultRelatedActivities;
 
     static TimeStatisticsTests()
     {
-        DefaultUserId = new UserIdentifier(Guid.NewGuid().ToString());
-        DefaultActivityId = new ActivityIdentifier(Guid.NewGuid().ToString());
-        DefaultRelatedActivities = new RelatedActivitiesIdentifiersCollection([DefaultActivityId]);
+        DefaultUserId = UserId.Generate();
+        DefaultActivityId = ActivityId.Generate();
+        DefaultRelatedActivities = new RelatedActivityIdsCollection([DefaultActivityId]);
     }
 
     [Fact]
@@ -154,22 +154,22 @@ public class TimeStatisticsTests
         Assert.Equal(expected, statistics.PerActivities[DefaultActivityId].RecordedTime);
     }
 
-    public static TheoryData<IEnumerable<Record>, TimeSpan, IReadOnlyDictionary<ActivityIdentifier, TimeSpan>>
+    public static TheoryData<IEnumerable<Record>, TimeSpan, IReadOnlyDictionary<ActivityId, TimeSpan>>
         RecordsHasMultipleActivitiesCases
     {
         get
         {
-            var data = new TheoryData<IEnumerable<Record>, TimeSpan, IReadOnlyDictionary<ActivityIdentifier, TimeSpan>>();
+            var data = new TheoryData<IEnumerable<Record>, TimeSpan, IReadOnlyDictionary<ActivityId, TimeSpan>>();
 
             var date = new DateOnly(2025, 01, 01);
             var activityIds = Enumerable.Range(0, 2)
-                .Select(_ => new ActivityIdentifier(Guid.NewGuid().ToString()))
+                .Select(_ => ActivityId.Generate())
                 .ToArray();
             
             data.Add(
-                [CreateRecord(date.ToUtcDateTime(), date.ToUtcDateTime(2), new RelatedActivitiesIdentifiersCollection(activityIds))],
+                [CreateRecord(date.ToUtcDateTime(), date.ToUtcDateTime(2), new RelatedActivityIdsCollection(activityIds))],
                 TimeSpan.FromHours(2),
-                new Dictionary<ActivityIdentifier, TimeSpan>
+                new Dictionary<ActivityId, TimeSpan>
                 {
                     [activityIds[0]] = TimeSpan.FromHours(2),
                     [activityIds[1]] = TimeSpan.FromHours(2)
@@ -177,12 +177,12 @@ public class TimeStatisticsTests
             
             data.Add(
                 [
-                    CreateRecord(date.ToUtcDateTime(), date.ToUtcDateTime(4), new RelatedActivitiesIdentifiersCollection(activityIds)),
-                    CreateRecord(date.ToUtcDateTime(2), date.ToUtcDateTime(6), new RelatedActivitiesIdentifiersCollection(activityIds[0])),
-                    CreateRecord(date.ToUtcDateTime(10), date.ToUtcDateTime(14), new RelatedActivitiesIdentifiersCollection(activityIds[1])),
+                    CreateRecord(date.ToUtcDateTime(), date.ToUtcDateTime(4), new RelatedActivityIdsCollection(activityIds)),
+                    CreateRecord(date.ToUtcDateTime(2), date.ToUtcDateTime(6), new RelatedActivityIdsCollection(activityIds[0])),
+                    CreateRecord(date.ToUtcDateTime(10), date.ToUtcDateTime(14), new RelatedActivityIdsCollection(activityIds[1])),
                 ],
                 TimeSpan.FromHours(10),
-                new Dictionary<ActivityIdentifier, TimeSpan>
+                new Dictionary<ActivityId, TimeSpan>
                 {
                     [activityIds[0]] = TimeSpan.FromHours(6),
                     [activityIds[1]] = TimeSpan.FromHours(8)
@@ -196,7 +196,7 @@ public class TimeStatisticsTests
     [MemberData(nameof(RecordsHasMultipleActivitiesCases))]
     public void Calculate_ShouldValid_WhenRecordsHasMultipleActivities(
         IEnumerable<Record> records, 
-        TimeSpan expectedTotal, IReadOnlyDictionary<ActivityIdentifier, TimeSpan> expectedByActivities)
+        TimeSpan expectedTotal, IReadOnlyDictionary<ActivityId, TimeSpan> expectedByActivities)
     {
         var date = new DateOnly(2025, 01, 01);
         var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
@@ -213,12 +213,12 @@ public class TimeStatisticsTests
         }
     }
 
-    private static Record CreateRecord(DateTimeOffset startAt, DateTimeOffset endAt, RelatedActivitiesIdentifiersCollection? activities = null)
+    private static Record CreateRecord(DateTimeOffset startAt, DateTimeOffset endAt, RelatedActivityIdsCollection? activities = null)
     {
         activities ??= DefaultRelatedActivities;
         
         var period = new DateTimePeriod(startAt, endAt);
-        var id = new RecordIdentifier(Guid.NewGuid().ToString());
-        return new Record(id, DefaultUserId, activities, RelatedTagsIdentifiersCollection.Empty, period);
+        var id = RecordId.Generate();
+        return new Record(id, DefaultUserId, activities, RelatedTagIdsCollection.Empty, period);
     }
 }

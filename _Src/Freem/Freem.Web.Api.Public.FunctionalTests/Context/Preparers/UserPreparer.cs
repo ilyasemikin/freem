@@ -1,3 +1,4 @@
+using Freem.Domain.Users.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Auth;
 using Freem.Web.Api.Public.Contracts.DTO.Users;
 
@@ -37,7 +38,8 @@ public sealed class UserPreparer
     {
         Authenticate();
 
-        var request = new RegisterUserRequest(NicknameValue);
+        var nickname = Nickname.Parse(NicknameValue, null);
+        var request = new RegisterUserRequest(nickname);
         var response = _context.SyncClient.Users.Register(request);
         response.EnsureSuccess();
     }

@@ -1,15 +1,15 @@
-﻿using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Tags;
 
 public sealed class TagResponse
 {
-    public TagIdentifier Id { get; }
+    public TagId Id { get; }
     
     public TagName Name { get; }
 
-    public TagResponse(TagIdentifier id, TagName name)
+    public TagResponse(TagId id, TagName name)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(name);

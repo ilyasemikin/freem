@@ -33,7 +33,6 @@
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL.Migrations\Freem.Entities.Storage.PostgreSQL.Migrations.csproj" />
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
-        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
     </ItemGroup>
 

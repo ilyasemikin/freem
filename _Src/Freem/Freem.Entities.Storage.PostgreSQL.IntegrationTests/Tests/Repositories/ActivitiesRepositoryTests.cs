@@ -1,8 +1,8 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
@@ -68,7 +68,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(activity.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(activity.Tags.Ids.First(), concreteException.RelatedIds[0]);
     }
     
     [Fact]
@@ -118,7 +118,8 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         await Repository.UpdateAsync(activity);
         
         // Assert
-        var dbActualActivity = await Database.Activities.FirstOrDefaultAsync(e => e.Id == activity.Id);
+        var activityId = activity.Id.ToString();
+        var dbActualActivity = await Database.Activities.FirstOrDefaultAsync(e => e.Id == activityId);
 
         Assert.NotNull(dbActualActivity);
         Assert.Null(dbActualActivity.UpdatedAt);
@@ -172,7 +173,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var id = IdentifiersGenerator.Generate<ActivityIdentifier>();
+        var id = ActivityId.Generate();
         
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
@@ -198,7 +199,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         await Database.SaveChangesAsync();
 
         // Act
-        var id = (ActivityIdentifier)dbActivity.Id;
+        var id = ActivityId.Parse(dbActivity.Id, null);
         
         var result = await Repository.FindByIdAsync(id);
         
@@ -209,14 +210,15 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
 
         var activity = result.Entity;
 
-        Assert.Equal(dbActivity.Id, activity.Id);
+        var actualId = activity.Id.ToString();
+        Assert.Equal(dbActivity.Id, actualId);
     }
 
     [Fact]
     public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
     {
         // Act
-        var id = IdentifiersGenerator.Generate<ActivityIdentifier>();
+        var id = ActivityId.Generate();
 
         var result = await Repository.FindByIdAsync(id);
         
@@ -236,10 +238,10 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.SaveChangesAsync();
         
-        var activityId = (ActivityIdentifier)dbActivity.Id;
-        var userId = (UserIdentifier)dbUser.Id;
+        var activityId = ActivityId.Parse(dbActivity.Id, null);
+        var userId = UserId.Parse(dbUser.Id, null);
         
-        var ids = new ActivityAndUserIdentifiers(activityId, userId);
+        var ids = new ActivityAndUserIds(activityId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);
@@ -251,7 +253,8 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         var activity = result.Entity;
         
-        Assert.Equal(dbActivity.Id, activity.Id);
+        var actualId = activity.Id.ToString();
+        Assert.Equal(dbActivity.Id, actualId);
     }
 
     [Theory]
@@ -268,13 +271,13 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         await Database.SaveChangesAsync();
 
         var activityId = activityIdExists
-            ? (ActivityIdentifier)dbActivity.Id
-            : IdentifiersGenerator.Generate<ActivityIdentifier>();
+            ? ActivityId.Parse(dbActivity.Id, null)
+            : ActivityId.Generate();
         var userId = userIdExists 
-            ? (UserIdentifier)dbUser.Id 
-            : GenerateUserIdentifier();
+            ? UserId.Parse(dbUser.Id, null) 
+            : GenerateUserId();
         
-        var ids = new ActivityAndUserIdentifiers(activityId, userId);
+        var ids = new ActivityAndUserIds(activityId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);

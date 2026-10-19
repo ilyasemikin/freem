@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Time.Models;
 
 namespace Freem.Domain.Statistics.Time;
@@ -7,10 +7,10 @@ public sealed class TimeStatisticsPerActivity : IEquatable<TimeStatisticsPerActi
 {
     public DateTimePeriod Period { get; }
     
-    public ActivityIdentifier Id { get; }
+    public ActivityId Id { get; }
     public TimeSpan RecordedTime { get; }
 
-    public TimeStatisticsPerActivity(DateTimePeriod period, ActivityIdentifier id, TimeSpan recordedTime)
+    public TimeStatisticsPerActivity(DateTimePeriod period, ActivityId id, TimeSpan recordedTime)
     {
         ArgumentNullException.ThrowIfNull(period);
         ArgumentNullException.ThrowIfNull(id);

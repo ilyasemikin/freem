@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 
@@ -11,11 +11,11 @@ public sealed class RegisterUserResponse : IResponse<RegisterUserErrorCode>
     [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
-    public UserIdentifier? UserId { get; }
+    public UserId? UserId { get; }
     public Error<RegisterUserErrorCode>? Error { get; }
     
     private RegisterUserResponse(
-        UserIdentifier? userId = null, 
+        UserId? userId = null, 
         Error<RegisterUserErrorCode>? error = null)
     {
         Success = userId is not null;
@@ -23,7 +23,7 @@ public sealed class RegisterUserResponse : IResponse<RegisterUserErrorCode>
         Error = error;
     }
 
-    public static RegisterUserResponse CreateSuccess(UserIdentifier userId)
+    public static RegisterUserResponse CreateSuccess(UserId userId)
     {
         ArgumentNullException.ThrowIfNull(userId);
 

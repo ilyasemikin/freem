@@ -57,7 +57,7 @@ public sealed class CreateActivityController : BaseController
     {
         return new UseCaseCreateActivityRequest(request.Name)
         {
-            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
+            Tags = new RelatedTagIdsCollection(request.Tags)
         };
     }
 

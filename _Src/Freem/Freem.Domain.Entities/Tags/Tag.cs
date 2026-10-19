@@ -1,20 +1,20 @@
-﻿using Freem.Domain.Events.Identifiers;
+﻿using Freem.Domain.Events;
+using Freem.Domain.Tags;
 using Freem.Domain.Tags.Events.Created;
 using Freem.Domain.Tags.Events.Removed;
 using Freem.Domain.Tags.Events.Updated;
-using Freem.Domain.Tags.Identifiers;
 using Freem.Domain.Tags.Models;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Entities.Tags;
 
 public sealed class Tag : 
-    IEntity<TagIdentifier>
+    IEntity<TagId>
 {
     private TagName _name = null!;
 
-    public TagIdentifier Id { get; }
-    public UserIdentifier UserId { get; }
+    public TagId Id { get; }
+    public UserId UserId { get; }
 
     public TagName Name
     {
@@ -28,8 +28,8 @@ public sealed class Tag :
     }
 
     public Tag(
-        TagIdentifier id, 
-        UserIdentifier userId, 
+        TagId id, 
+        UserId userId, 
         TagName name)
     {
         Id = id;
@@ -37,17 +37,17 @@ public sealed class Tag :
         Name = name;
     }
 
-    public TagCreatedEvent BuildCreatedEvent(EventIdentifier eventId)
+    public TagCreatedEvent BuildCreatedEvent(EventId eventId)
     {
         return new TagCreatedEvent(eventId, Id, UserId);
     }
 
-    public TagUpdatedEvent BuildUpdatedEvent(EventIdentifier eventId)
+    public TagUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
         return new TagUpdatedEvent(eventId, Id, UserId);
     }
 
-    public TagRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
+    public TagRemovedEvent BuildRemovedEvent(EventId eventId)
     {
         return new TagRemovedEvent(eventId, Id, UserId);
     }

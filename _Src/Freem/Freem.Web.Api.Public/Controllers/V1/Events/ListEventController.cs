@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Events;
-using Freem.Domain.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.UseCases.Contracts.Filter;
@@ -18,7 +18,7 @@ namespace Freem.Web.Api.Public.Controllers.V1.Events;
 
 [Route("api/v1/events")]
 [Tags(ControllerTags.Events)]
-[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<IEntityIdentifier, UserIdentifier>>))]
+[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IAsyncEnumerable<IEntityEvent<Id, UserId>>))]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public sealed class ListEventController : BaseController
 {
@@ -62,7 +62,7 @@ public sealed class ListEventController : BaseController
     }
 
     private static IActionResult CreateSuccess(
-        HttpResponse response, IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>> events, int totalCount)
+        HttpResponse response, IReadOnlyList<IEntityEvent<Id, UserId>> events, int totalCount)
     {
         response.Headers.Append(HeaderNames.ItemsCount, events.Count.ToString());
         response.Headers.Append(HeaderNames.TotalItemsCount, totalCount.ToString());

@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Users;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Users;
 
 public sealed class RegisterUserResponse
 {
-    public UserIdentifier UserId { get; }
+    public UserId UserId { get; }
 
-    public RegisterUserResponse(UserIdentifier userId)
+    public RegisterUserResponse(UserId userId)
     {
         ArgumentNullException.ThrowIfNull(userId);
         

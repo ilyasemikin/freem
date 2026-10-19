@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Freem.Domain.Users.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Users;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Context.Preparers;
@@ -19,7 +20,8 @@ public sealed class RegisterUserTests : TestBase
         var client = Context.Client;
         Context.Preparer.Users.Authenticate();
 
-        var request = new RegisterUserRequest(UserPreparer.NicknameValue);
+        var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
+        var request = new RegisterUserRequest(nickname);
         
         var result = await client.Users.RegisterAsync(request);
 
@@ -33,7 +35,8 @@ public sealed class RegisterUserTests : TestBase
         var client = Context.Client;
         Context.Preparer.Users.Register();
 
-        var request = new RegisterUserRequest(UserPreparer.NicknameValue);
+        var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
+        var request = new RegisterUserRequest(nickname);
 
         var result = await client.Users.RegisterAsync(request);
 

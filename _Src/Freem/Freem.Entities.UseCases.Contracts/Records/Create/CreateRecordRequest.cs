@@ -6,16 +6,16 @@ namespace Freem.Entities.UseCases.Contracts.Records.Create;
 
 public sealed class CreateRecordRequest
 {
-    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
+    private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public DateTimePeriod Period { get; }
 
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
     
-    public RelatedActivitiesIdentifiersCollection Activities { get; }
+    public RelatedActivityIdsCollection Activities { get; }
 
-    public RelatedTagsIdentifiersCollection Tags
+    public RelatedTagIdsCollection Tags
     {
         get => _tags;
         init
@@ -26,7 +26,7 @@ public sealed class CreateRecordRequest
         }
     } 
     
-    public CreateRecordRequest(DateTimePeriod period, RelatedActivitiesIdentifiersCollection activities)
+    public CreateRecordRequest(DateTimePeriod period, RelatedActivityIdsCollection activities)
     {
         ArgumentNullException.ThrowIfNull(period);
         ArgumentNullException.ThrowIfNull(activities);

@@ -7,8 +7,8 @@ namespace Freem.Web.Api.Public.FunctionalTests.Tests.V1.Records.Running.Base;
 
 public abstract class RunningRecordTestBase : TestBase
 {
-    protected RelatedActivitiesIdentifiersCollection AddedRelatedActivities { get; }
-    protected RelatedTagsIdentifiersCollection AddedRelatedTags { get; }
+    protected RelatedActivityIdsCollection AddedRelatedActivities { get; }
+    protected RelatedTagIdsCollection AddedRelatedTags { get; }
     
     protected RunningRecordTestBase(TestContext context, ITestOutputHelper? output = null) 
         : base(context, output)
@@ -18,7 +18,7 @@ public abstract class RunningRecordTestBase : TestBase
         var tagId = Context.Preparer.Tags.Create();
         var activityId = Context.Preparer.Activities.Create();
 
-        AddedRelatedTags = new RelatedTagsIdentifiersCollection([tagId]);
-        AddedRelatedActivities = new RelatedActivitiesIdentifiersCollection([activityId]);
+        AddedRelatedTags = new RelatedTagIdsCollection([tagId]);
+        AddedRelatedActivities = new RelatedActivityIdsCollection([activityId]);
     }
 }

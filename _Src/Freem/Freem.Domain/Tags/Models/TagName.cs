@@ -1,17 +1,15 @@
-﻿namespace Freem.Domain.Tags.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public sealed class TagName : IEquatable<TagName>
+namespace Freem.Domain.Tags.Models;
+
+public sealed class TagName : IEquatable<TagName>, IParsable<TagName>
 {
     private readonly string _value;
 
     public const int MaxLength = 128;
     
-    public TagName(string value)
+    private TagName(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(nameof(value));
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Length cannot be more than {MaxLength}", nameof(value));
-        
         _value = value;
     }
 
@@ -49,13 +47,25 @@ public sealed class TagName : IEquatable<TagName>
         return !(left == right);
     }
 
-    public static implicit operator TagName(string value)
+    public static TagName Parse(string s, IFormatProvider? provider)
     {
-        return new TagName(value);
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for TagName: {s}");
     }
 
-    public static implicit operator string(TagName value)
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out TagName? result)
     {
-        return value._value;
+        if (string.IsNullOrWhiteSpace(s) || s.Length > MaxLength)
+        {
+            result = null;
+            return false;
+        }
+
+        result = new TagName(s);
+        return true;
     }
 }

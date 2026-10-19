@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts.Tags.Remove;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -9,7 +9,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly TagIdentifier _tagId;
+    private readonly TagId _tagId;
     
     public TagsRemoveUseCaseTests(TestContext context) 
         : base(context)
@@ -38,7 +38,7 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
+        var notExistedTagId = TagId.Generate();
 
         var request = new RemoveTagRequest(notExistedTagId);
         

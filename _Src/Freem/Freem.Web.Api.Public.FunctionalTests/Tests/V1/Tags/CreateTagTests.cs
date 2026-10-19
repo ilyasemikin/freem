@@ -17,7 +17,7 @@ public sealed class CreateTagTests : TagTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var name = new TagName("name");
+        var name = TagName.Parse("name", null);
         var request = new CreateTagRequest(name);
         
         var response = await Context.Client.Tags.CreateAsync(request);
@@ -30,8 +30,10 @@ public sealed class CreateTagTests : TagTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenNameAlreadyExists()
     {
-        var name = new TagName("name");
-        Context.Preparer.Tags.Create(name);
+        var nameValue = "name";
+        Context.Preparer.Tags.Create(nameValue);
+        
+        var name = TagName.Parse(nameValue, null);
         
         var request = new CreateTagRequest(name);
         

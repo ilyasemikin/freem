@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Freem.Domain.Entities.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Contracts.Tags.List;
@@ -39,7 +40,8 @@ public sealed class TagsPlainExecutor
 
     public async Task<Tag> CreateAsync(UseCaseExecutionContext context, CancellationToken cancellationToken = default)
     {
-        var name = Guid.NewGuid().ToString();
+        var value = Guid.NewGuid().ToString();
+        var name = TagName.Parse(value, null);
         
         var request = new CreateTagRequest(name);
         return await CreateAsync(context, request, cancellationToken);
@@ -84,7 +86,7 @@ public sealed class TagsPlainExecutor
     }
 
     public async Task RemoveAsync(
-        UseCaseExecutionContext context, TagIdentifier id,
+        UseCaseExecutionContext context, TagId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -97,7 +99,7 @@ public sealed class TagsPlainExecutor
     }
 
     public async Task<Result<Tag>> GetAsync(
-        UseCaseExecutionContext context, TagIdentifier id, 
+        UseCaseExecutionContext context, TagId id, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -114,7 +116,7 @@ public sealed class TagsPlainExecutor
     }
 
     public async Task<Tag> RequiredGetAsync(
-        UseCaseExecutionContext context, TagIdentifier id,
+        UseCaseExecutionContext context, TagId id,
         CancellationToken cancellationToken = default)
     {
         var result = await GetAsync(context, id, cancellationToken);

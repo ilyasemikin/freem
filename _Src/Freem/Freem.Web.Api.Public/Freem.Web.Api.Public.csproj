@@ -15,7 +15,6 @@
         <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj"/>
         <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
-        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
         <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj"/>

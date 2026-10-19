@@ -1,22 +1,21 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Domain.Activities.Identifiers;
-using Freem.Domain.Tags.Identifiers;
-using Freem.Entities.Serialization.Json.Activities.Identifiers;
-using Freem.Entities.Serialization.Json.Activities.Models;
+using Freem.Domain.Activities;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Events;
+using Freem.Domain.Events.Models;
+using Freem.Domain.Records;
+using Freem.Domain.Records.Models;
+using Freem.Domain.RunningRecords;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
+using Freem.Domain.Users;
+using Freem.Domain.Users.Models;
 using Freem.Entities.Serialization.Json.Events;
-using Freem.Entities.Serialization.Json.Events.Identifiers;
-using Freem.Entities.Serialization.Json.Events.Models;
-using Freem.Entities.Serialization.Json.Records.Identifiers;
-using Freem.Entities.Serialization.Json.Records.Models;
 using Freem.Entities.Serialization.Json.Relations;
-using Freem.Entities.Serialization.Json.RunningRecords.Identifiers;
 using Freem.Entities.Serialization.Json.Statistics;
-using Freem.Entities.Serialization.Json.Tags.Identifiers;
-using Freem.Entities.Serialization.Json.Tags.Models;
-using Freem.Entities.Serialization.Json.Users.Identifiers;
-using Freem.Entities.Serialization.Json.Users.Models;
-using Freem.Time.Serialization.Json;
+using Freem.Time.Models;
+using Utilities.Serialization.Json;
 
 namespace Freem.Entities.Serialization.Json;
 
@@ -47,35 +46,35 @@ public static class EntitiesJsonSerialization
     
     private static IEnumerable<JsonConverter> CreateConverters()
     {
-        yield return new DatePeriodJsonConverter();
-        yield return new DateTimePeriodJsonConverter();
+        yield return new ParsableJsonConverter<DatePeriod>();
+        yield return new ParsableJsonConverter<DateTimePeriod>();
         
-        yield return new ActivityIdentifierJsonConverter();
-        yield return new ActivityNameJsonConverter();
-        yield return new ActivityStatusJsonConverter();
+        yield return new ParsableJsonConverter<ActivityId>();
+        yield return new ParsableJsonConverter<ActivityName>();
+        yield return new ParsableJsonConverter<ActivityStatus>();
 
-        yield return new EventIdentifierJsonConverter();
-        yield return new EventActionJsonConverter();
+        yield return new ParsableJsonConverter<EventId>();
+        yield return new ParsableJsonConverter<EventAction>();
         yield return new EventJsonConverter();
 
-        yield return new RecordIdentifierJsonConverter();
-        yield return new RecordDescriptionJsonConverter();
-        yield return new RecordNameJsonConverter();
+        yield return new ParsableJsonConverter<RecordId>();
+        yield return new ParsableJsonConverter<RecordDescription>();
+        yield return new ParsableJsonConverter<RecordName>();
 
-        yield return new RunningRecordIdentifierJsonConverter();
+        yield return new ParsableJsonConverter<RunningRecordId>();
 
-        yield return new TagIdentifierJsonConverter();
-        yield return new TagNameJsonConverter();
+        yield return new ParsableJsonConverter<TagId>();
+        yield return new ParsableJsonConverter<TagName>();
 
         yield return new TimeStatisticsPerActivityCollectionJsonConverter();
 
-        yield return new DayUtcOffsetJsonConverter();
-        yield return new NicknameJsonConverter();
+        yield return new ParsableJsonConverter<DayUtcOffset>();
+        yield return new ParsableJsonConverter<Nickname>();
 
-        yield return new UserIdentifierJsonConverter();
+        yield return new ParsableJsonConverter<UserId>();
         
-        yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<ActivityIdentifier>();
-        yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<TagIdentifier>();
+        yield return new RelatedIdsCollectionJsonConverter<ActivityId>();
+        yield return new RelatedIdsCollectionJsonConverter<TagId>();
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Entities.Tags.Comparers;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -43,7 +43,7 @@ public sealed class TagsGetUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
+        var notExistedTagId = TagId.Generate();
         
         var request = new GetTagRequest(notExistedTagId);
         

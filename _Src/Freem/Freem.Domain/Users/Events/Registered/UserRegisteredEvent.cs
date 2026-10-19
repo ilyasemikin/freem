@@ -1,12 +1,10 @@
 ﻿using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Users.Identifiers;
 
 namespace Freem.Domain.Users.Events.Registered;
 
-public sealed class UserRegisteredEvent : EntityEvent<UserIdentifier, UserIdentifier>
+public sealed class UserRegisteredEvent : EntityEvent<UserId, UserId>
 {
-    public UserRegisteredEvent(EventIdentifier id, UserIdentifier entityId)
+    public UserRegisteredEvent(EventId id, UserId entityId)
         : base(id, entityId, entityId, UserEventActions.Registered)
     {
     }

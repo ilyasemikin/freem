@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Statistics.Time;
 using Freem.Time;
@@ -27,8 +27,8 @@ public static class TimeStatisticsCalculator
         private DateTimeOffset _lastEntAt;
         private TimeSpan _result;
 
-        private readonly Dictionary<ActivityIdentifier, DateTimeOffset> _lastEndAtByActivityIds;
-        private readonly Dictionary<ActivityIdentifier, TimeSpan> _resultByActivityIds;
+        private readonly Dictionary<ActivityId, DateTimeOffset> _lastEndAtByActivityIds;
+        private readonly Dictionary<ActivityId, TimeSpan> _resultByActivityIds;
 
         public Calculator(DateTimePeriod period)
         {
@@ -39,8 +39,8 @@ public static class TimeStatisticsCalculator
             _lastEntAt = period.StartAt;
             _result = TimeSpan.Zero;
 
-            _lastEndAtByActivityIds = new Dictionary<ActivityIdentifier, DateTimeOffset>();
-            _resultByActivityIds = new Dictionary<ActivityIdentifier, TimeSpan>();
+            _lastEndAtByActivityIds = new Dictionary<ActivityId, DateTimeOffset>();
+            _resultByActivityIds = new Dictionary<ActivityId, TimeSpan>();
         }
 
         public void Process(Record record)
@@ -60,7 +60,7 @@ public static class TimeStatisticsCalculator
                 _lastEntAt = endAt;
             }
 
-            foreach (var activityId in record.Activities.Identifiers)
+            foreach (var activityId in record.Activities.Ids)
             {
                 if (!_lastEndAtByActivityIds.TryGetValue(activityId, out var lastEndAtByActivityId))
                     lastEndAtByActivityId = _period.StartAt;

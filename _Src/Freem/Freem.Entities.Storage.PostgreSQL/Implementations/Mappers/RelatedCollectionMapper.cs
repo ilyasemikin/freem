@@ -1,28 +1,28 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 
 internal static class RelatedCollectionMapper
 {
-    public static RelatedTagsIdentifiersCollection MapToRelatedTagsCollection(this IEnumerable<TagEntity>? entities)
+    public static RelatedTagIdsCollection MapToRelatedTagsCollection(this IEnumerable<TagEntity>? entities)
     {
-        var identifiers = Enumerable.Empty<TagIdentifier>();
+        var ids = Enumerable.Empty<TagId>();
         if (entities is not null)
-            identifiers = entities.Select(entity => new TagIdentifier(entity.Id));
+            ids = entities.Select(entity => TagId.Parse(entity.Id, null));
 
-        return new RelatedTagsIdentifiersCollection(identifiers);
+        return new RelatedTagIdsCollection(ids);
     }
 
-    public static RelatedActivitiesIdentifiersCollection MapToRelatedActivitiesCollection(
+    public static RelatedActivityIdsCollection MapToRelatedActivitiesCollection(
         this IEnumerable<ActivityEntity>? entities)
     {
-        var identifiers = Enumerable.Empty<ActivityIdentifier>();
+        var ids = Enumerable.Empty<ActivityId>();
         if (entities is not null)
-            identifiers = entities.Select(entity => new ActivityIdentifier(entity.Id));
+            ids = entities.Select(entity => ActivityId.Parse(entity.Id, null));
 
-        return new RelatedActivitiesIdentifiersCollection(identifiers);
+        return new RelatedActivityIdsCollection(ids);
     }
 }

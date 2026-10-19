@@ -29,9 +29,9 @@ public sealed class TriggerConstraintErrorToExceptionConverterTests
     [MemberData(nameof(TriggerErrorCodeCases))]
     public void Convert_ShouldNotThrowInvalidOperationException_WhenPassAnyOfTriggerErrorCode(string code)
     {
-        var context = new DatabaseContextWriteContext(new SampleIdentifier());
+        var context = new DatabaseContextWriteContext(new SampleId());
         var error = new TriggerConstraintError(code, "message");
-        var converter = new TriggerConstraintErrorToExceptionConverter(new EntityIdentifierFactory());
+        var converter = new TriggerConstraintErrorToExceptionConverter(new EntityIdFactory());
         
         var exception = Record.Exception(() => converter.Convert(context, error));
         

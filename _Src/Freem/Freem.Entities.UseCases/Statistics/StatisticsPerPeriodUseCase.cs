@@ -1,9 +1,9 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Entities.Statistics.Time;
 using Freem.Domain.Entities.Users;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
@@ -43,7 +43,7 @@ internal sealed class StatisticsPerPeriodUseCase :
 
         var datePeriod = request.Period.ToDatePeriod();
         
-        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset);
+        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset.Value);
         var start = datePeriod.StartAt.ToUtcDateTime(time);
         var end = datePeriod.EndAt.ToUtcDateTime(time);
         
@@ -64,14 +64,14 @@ internal sealed class StatisticsPerPeriodUseCase :
     }
 
     private async Task<IReadOnlyList<Record>> FindRecordsAsync(
-        UserIdentifier userId, DateTimePeriod period, 
+        UserId userId, DateTimePeriod period, 
         CancellationToken cancellationToken)
     {
         var list = new List<Record>();
 
         var start = period.StartAt;
         var end = period.EndAt;
-        var recordId = (RecordIdentifier?)null;
+        var recordId = (RecordId?)null;
         
         do
         {

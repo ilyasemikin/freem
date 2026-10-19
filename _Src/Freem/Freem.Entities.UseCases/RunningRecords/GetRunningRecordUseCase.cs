@@ -1,4 +1,5 @@
-﻿using Freem.Domain.Storage.Repositories.RunningRecords;
+﻿using Freem.Domain.RunningRecords;
+using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 
@@ -22,7 +23,8 @@ internal class GetRunningRecordUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
+        var id = RunningRecordId.FromUserId(context.UserId);
+        var result = await _repository.FindByIdAsync(id, cancellationToken);
         return GetRunningRecordResponse.Create(result);
     }
 }

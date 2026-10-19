@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Storage.Repositories.Events;
 
@@ -8,10 +8,10 @@ public sealed class EventAfterTimeFilter : ILimitFilter
 {
     public required Limit Limit { get; init; }
     
-    public UserIdentifier UserId { get; }
+    public UserId UserId { get; }
     public DateTimeOffset? After { get; }
 
-    public EventAfterTimeFilter(UserIdentifier userId, DateTimeOffset? after)
+    public EventAfterTimeFilter(UserId userId, DateTimeOffset? after)
     {
         ArgumentNullException.ThrowIfNull(userId);
 

@@ -1,17 +1,15 @@
-﻿namespace Freem.Domain.Activities.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public sealed class ActivityName : IEquatable<ActivityName>
+namespace Freem.Domain.Activities.Models;
+
+public sealed class ActivityName : IEquatable<ActivityName>, IParsable<ActivityName>
 {
     private readonly string _value;
 
     public const int MaxLength = 128;
     
-    public ActivityName(string value)
+    private ActivityName(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Length cannot be more than {MaxLength}", nameof(value));
-        
         _value = value;
     }
 
@@ -48,14 +46,26 @@ public sealed class ActivityName : IEquatable<ActivityName>
     {
         return !(left == right);
     }
-    
-    public static implicit operator ActivityName(string value)
+
+    public static ActivityName Parse(string s, IFormatProvider? provider)
     {
-        return new ActivityName(value);
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for ActivityName: {s}");
     }
 
-    public static implicit operator string(ActivityName value)
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out ActivityName? result)
     {
-        return value._value;
+        if (string.IsNullOrWhiteSpace(s) || s.Length > MaxLength)
+        {
+            result = null;
+            return false;
+        }
+
+        result = new ActivityName(s);
+        return true;
     }
 }

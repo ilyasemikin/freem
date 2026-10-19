@@ -1,8 +1,8 @@
 ﻿using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Domain.Tags.Identifiers.Extensions;
+using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
@@ -49,7 +49,7 @@ internal sealed class UpdateActivityUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
-        var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.ActivityNotFound);
@@ -83,7 +83,7 @@ internal sealed class UpdateActivityUseCase
 
     private static UpdateActivityResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
     {
-        if (ex.RelatedIds.HasTagsIdentifiers())
+        if (ex.RelatedIds.HasTagIds())
             return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedTagsNotFound);
 
         return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedUnknownNotFound);

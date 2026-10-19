@@ -15,7 +15,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj" />
-        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
         <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj" />
     </ItemGroup>

@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Get;
 
 public sealed class GetRecordRequest
 {
-    public RecordIdentifier Id { get; }
+    public RecordId Id { get; }
 
-    public GetRecordRequest(RecordIdentifier id)
+    public GetRecordRequest(RecordId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

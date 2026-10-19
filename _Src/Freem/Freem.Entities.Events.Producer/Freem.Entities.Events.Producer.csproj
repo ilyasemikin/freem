@@ -10,7 +10,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
-        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
     </ItemGroup>
     
 </Project>

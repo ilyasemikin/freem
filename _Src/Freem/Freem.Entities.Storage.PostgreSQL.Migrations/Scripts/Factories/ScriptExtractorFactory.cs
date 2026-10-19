@@ -44,10 +44,10 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.EventUserEntityName, EntityNames.User);
         
         builder
-            .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsIdentifiersCollection.MinTagsCount.ToString())
-            .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsIdentifiersCollection.MaxTagsCount.ToString())
-            .WithConstant(ConstantNames.MinRelatedActivitiesCount, RelatedActivitiesIdentifiersCollection.MinActivitiesCount.ToString())
-            .WithConstant(ConstantNames.MaxRelatedActivitiesCount, RelatedActivitiesIdentifiersCollection.MaxActivitiesCount.ToString());
+            .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagIdsCollection.MinTagsCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagIdsCollection.MaxTagsCount.ToString())
+            .WithConstant(ConstantNames.MinRelatedActivitiesCount, RelatedActivityIdsCollection.MinActivitiesCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedActivitiesCount, RelatedActivityIdsCollection.MaxActivitiesCount.ToString());
 
         builder
             .WithConstant(ConstantNames.ActivityIdTriggerErrorParameterName, TriggerErrorParameters.ActivityId)

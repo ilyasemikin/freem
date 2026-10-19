@@ -1,9 +1,9 @@
 ﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
@@ -57,13 +57,13 @@ internal sealed class TagsRepository : ITagRepository
         if (_equalityComparer.Equals(actualEntity, entity))
             return;
 
-        dbEntity.Name = entity.Name;
+        dbEntity.Name = entity.Name.ToString();
 
         var context = new DatabaseContextWriteContext(entity.Id);
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(TagIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(TagId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
@@ -78,22 +78,25 @@ internal sealed class TagsRepository : ITagRepository
     }
 
     public async Task<SearchEntityResult<Tag>> FindByIdAsync(
-        TagIdentifier id,
+        TagId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        return await _database.Tags.FindAsync(e => e.Id == id, TagMapper.MapToDomainEntity, cancellationToken);
+        var idString = id.ToString();
+        return await _database.Tags.FindAsync(e => e.Id == idString, TagMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Tag>> FindByMultipleIdAsync(
-        TagAndUserIdentifiers ids,
+        TagAndUserIds ids,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
 
+        var tagIdString = ids.TagId.ToString();
+        var userIdString = ids.UserId.ToString();
         return await _database.Tags.FindAsync(
-            e => e.Id == ids.TagId && e.UserId == ids.UserId,
+            e => e.Id == tagIdString && e.UserId == userIdString,
             TagMapper.MapToDomainEntity,
             cancellationToken);
     }
@@ -104,8 +107,9 @@ internal sealed class TagsRepository : ITagRepository
     {
         ArgumentNullException.ThrowIfNull(filter);
 
+        var userIdString = filter.UserId.ToString();
         return await _database.Tags
-            .Where(e => e.UserId == filter.UserId)
+            .Where(e => e.UserId == userIdString)
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
             .SliceByLimitAndOffsetFilter(filter)
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
@@ -117,8 +121,9 @@ internal sealed class TagsRepository : ITagRepository
     {
         ArgumentNullException.ThrowIfNull(filter);
         
+        var userIdString = filter.UserId.ToString();
         return await _database.Tags
-            .Where(e => e.UserId == filter.UserId && e.Name.Contains(filter.SearchText))
+            .Where(e => e.UserId == userIdString && e.Name.Contains(filter.SearchText))
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
             .SliceByLimitFilter(filter)
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);

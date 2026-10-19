@@ -1,5 +1,4 @@
-﻿using Freem.Identifiers.Abstractions.Generators;
-using Freem.Locking.Abstractions;
+﻿using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Exceptions;
 using Freem.Locking.Abstractions.Timeouts;
 using StackExchange.Redis;
@@ -10,14 +9,10 @@ namespace Freem.Locking.Redis.Implementations.Simple;
 internal sealed class SimpleDistributedLocker : IDistributedLocker
 {
     private readonly IConnectionMultiplexer _connection;
-    private readonly IIdentifierGenerator<SimpleLockIdentifier> _idGenerator;
 
-    public SimpleDistributedLocker(
-        IConnectionMultiplexer connection, 
-        IIdentifierGenerator<SimpleLockIdentifier> idGenerator)
+    public SimpleDistributedLocker(IConnectionMultiplexer connection)
     {
         _connection = connection;
-        _idGenerator = idGenerator;
     }
 
     public async Task<SimpleDistributedLock> LockAsync(
@@ -26,17 +21,17 @@ internal sealed class SimpleDistributedLocker : IDistributedLocker
         Timeout? timeout = default,
         CancellationToken cancellationToken = default)
     {
-        var id = _idGenerator.Generate();
+        var token = Guid.NewGuid().ToString("N");
 
         var db = _connection.GetDatabase();
         var locked = await ExecutorWithTimeout.ExecuteAsync(
-            async () => await db.StringSetAsync(key, id, lockTime, When.NotExists),
+            async () => await db.StringSetAsync(key, token, lockTime, When.NotExists),
             timeout, cancellationToken);
 
         if (!locked)
             throw new CantLockException(key);
 
-        return new SimpleDistributedLock(_connection, key, id);
+        return new SimpleDistributedLock(_connection, key, token);
     }
     
     async Task<IDistributedLock> IDistributedLocker.LockAsync(

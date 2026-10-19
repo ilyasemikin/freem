@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Activities;
 
 public sealed class CreateActivityResponse
 {
-    public ActivityIdentifier Id { get; }
+    public ActivityId Id { get; }
 
-    public CreateActivityResponse(ActivityIdentifier id)
+    public CreateActivityResponse(ActivityId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

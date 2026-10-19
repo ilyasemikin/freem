@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Activities.Base;
 using Xunit.Abstractions;
@@ -38,7 +38,7 @@ public sealed class ArchiveActivityTests : ActivityTestBase
     public async Task Request_ShouldFail_WhenActivityNotExists()
     {
         var idString = Guid.NewGuid().ToString();
-        var id = new ActivityIdentifier(idString);
+        var id = ActivityId.Parse(idString, null);
         
         var response = await Context.Client.Activities.ArchiveAsync(id);
         

@@ -74,7 +74,7 @@ public sealed class RecordsActivitiesConstraintTriggerTests : ConstraintTriggerT
 
         var user = factory.User;
         var record = factory.CreateRecord();
-        var activities = factory.CreateActivities(RelatedActivitiesIdentifiersCollection.MaxActivitiesCount + 1);
+        var activities = factory.CreateActivities(RelatedActivityIdsCollection.MaxActivitiesCount + 1);
 
         record.Activities = new List<ActivityEntity>() { activities[0] };
 

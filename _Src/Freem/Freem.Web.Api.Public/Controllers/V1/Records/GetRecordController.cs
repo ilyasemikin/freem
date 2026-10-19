@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.UseCases.Abstractions;
@@ -52,7 +52,7 @@ public sealed class GetRecordController : BaseController
 
     private static GetRecordRequest Map(string recordIdString)
     {
-        var recordId = new RecordIdentifier(recordIdString);
+        var recordId = RecordId.Parse(recordIdString, null);
         return new GetRecordRequest(recordId);
     }
 

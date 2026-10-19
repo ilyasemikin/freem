@@ -1,16 +1,14 @@
-﻿using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Events.Models;
-using Freem.Domain.Identifiers;
+﻿using Freem.Domain.Events.Models;
 
 namespace Freem.Domain.Events;
 
-public interface IEntityEvent<out TEntityIdentifier, out TUserEntityIdentifier> 
-    : IEntity<EventIdentifier>
-    where TEntityIdentifier : IEntityIdentifier
-    where TUserEntityIdentifier : IEntityIdentifier
+public interface IEntityEvent<out TEntityId, out TUserEntityId> 
+    : IEntity<EventId>
+    where TEntityId : Id
+    where TUserEntityId : Id
 {
-    TEntityIdentifier EntityId { get; }
-    TUserEntityIdentifier UserEntityId { get; }
+    TEntityId EntityId { get; }
+    TUserEntityId UserEntityId { get; }
 
     EventAction Action { get; }
 }

@@ -8,8 +8,8 @@ public sealed class UpdateRunningRecordRequest
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
-    public UpdateField<RelatedActivitiesIdentifiersCollection>? Activities { get; init; }
-    public UpdateField<RelatedTagsIdentifiersCollection>? Tags { get; init; }
+    public UpdateField<RelatedActivityIdsCollection>? Activities { get; init; }
+    public UpdateField<RelatedTagIdsCollection>? Tags { get; init; }
 
     public bool HasChanges()
     {

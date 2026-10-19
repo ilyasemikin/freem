@@ -1,11 +1,10 @@
 ﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
-using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
@@ -14,23 +13,19 @@ namespace Freem.Entities.UseCases.Tags;
 internal sealed class CreateTagUseCase 
     : IEntitiesUseCase<CreateTagRequest, CreateTagResponse, CreateTagErrorCode>
 {
-    private readonly IIdentifierGenerator<TagIdentifier> _identifierGenerator;
     private readonly ITagRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateTagUseCase(
-        IIdentifierGenerator<TagIdentifier> identifierGenerator, 
         ITagRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
-        ArgumentNullException.ThrowIfNull(identifierGenerator);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
         
-        _identifierGenerator = identifierGenerator;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
@@ -42,7 +37,7 @@ internal sealed class CreateTagUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var id = _identifierGenerator.Generate();
+        var id = TagId.Generate();
         var tag = new Tag(id, context.UserId, request.Name);
 
         try

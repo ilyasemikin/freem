@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Tags.Base;
 using Xunit.Abstractions;
@@ -26,9 +26,9 @@ public sealed class GetTagTests : TagTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenTagNotExists()
     {
-        var tagId = Guid.NewGuid().ToString();
+        var tagId = TagId.Generate();
         
-        var response = await Context.Client.Tags.GetAsync((TagIdentifier)tagId);
+        var response = await Context.Client.Tags.GetAsync(tagId);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

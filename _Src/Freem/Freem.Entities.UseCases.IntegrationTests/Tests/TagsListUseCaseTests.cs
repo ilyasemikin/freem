@@ -24,7 +24,7 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
         
         var tags = filler.Tags.CreateMany(_context, TagsCount);
         _tags = tags
-            .OrderBy(x => (string)x.Id)
+            .OrderBy(x => x.Id.ToString())
             .ToArray();
     }
 
@@ -41,7 +41,7 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
 
         var tags = response.Tags
-            .OrderBy(x => (string)x.Id)
+            .OrderBy(x => x.Id.ToString())
             .ToArray();
         
         Assert.Equal(_tags, tags, new TagEqualityComparer());

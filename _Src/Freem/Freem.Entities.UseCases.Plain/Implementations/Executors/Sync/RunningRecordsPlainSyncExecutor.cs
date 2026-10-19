@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
@@ -26,7 +26,7 @@ public sealed class RunningRecordsPlainSyncExecutor
             .GetResult();
     }
 
-    public RunningRecord Start(UseCaseExecutionContext context, IEnumerable<ActivityIdentifier> activityIds)
+    public RunningRecord Start(UseCaseExecutionContext context, IEnumerable<ActivityId> activityIds)
     {
         return _executors.StartAsync(context, activityIds)
             .GetAwaiter()

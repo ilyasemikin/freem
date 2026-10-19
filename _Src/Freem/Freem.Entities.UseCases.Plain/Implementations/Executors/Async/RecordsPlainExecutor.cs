@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Entities.UseCases.Contracts.Records.Get;
@@ -41,7 +41,7 @@ public sealed class RecordsPlainExecutor
     }
 
     public async Task<Record> CreateAsync(
-        UseCaseExecutionContext context, IEnumerable<ActivityIdentifier> activityIds,
+        UseCaseExecutionContext context, IEnumerable<ActivityId> activityIds,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -49,7 +49,7 @@ public sealed class RecordsPlainExecutor
         var now = DateTimeOffset.UtcNow;
 
         var period = new DateTimePeriod(now.AddDays(-1), now);
-        var activities = new RelatedActivitiesIdentifiersCollection(activityIds);
+        var activities = new RelatedActivityIdsCollection(activityIds);
         
         var request = new CreateRecordRequest(period, activities);
         return await CreateAsync(context, request, cancellationToken);
@@ -64,7 +64,7 @@ public sealed class RecordsPlainExecutor
     }
 
     public async IAsyncEnumerable<Record> CreateManyAsync(
-        UseCaseExecutionContext context, IReadOnlyList<ActivityIdentifier> activityIds, int count,
+        UseCaseExecutionContext context, IReadOnlyList<ActivityId> activityIds, int count,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         foreach (var _ in Enumerable.Range(0, count))
@@ -90,7 +90,7 @@ public sealed class RecordsPlainExecutor
     }
 
     public async Task RemoveAsync(
-        UseCaseExecutionContext context, RecordIdentifier id,
+        UseCaseExecutionContext context, RecordId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -103,7 +103,7 @@ public sealed class RecordsPlainExecutor
     }
 
     public async Task<Result<Record>> GetAsync(
-        UseCaseExecutionContext context, RecordIdentifier id,
+        UseCaseExecutionContext context, RecordId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -117,7 +117,7 @@ public sealed class RecordsPlainExecutor
     }
 
     public async Task<Record> RequiredGetAsync(
-        UseCaseExecutionContext context, RecordIdentifier id,
+        UseCaseExecutionContext context, RecordId id,
         CancellationToken cancellationToken = default)
     {
         var result = await GetAsync(context, id, cancellationToken);

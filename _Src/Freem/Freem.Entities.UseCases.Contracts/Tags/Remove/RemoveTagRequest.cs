@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Tags;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Remove;
 
 public sealed class RemoveTagRequest
 {
-    public TagIdentifier Id { get; }
+    public TagId Id { get; }
 
-    public RemoveTagRequest(TagIdentifier id)
+    public RemoveTagRequest(TagId id)
     {
         ArgumentNullException.ThrowIfNull(id);
 

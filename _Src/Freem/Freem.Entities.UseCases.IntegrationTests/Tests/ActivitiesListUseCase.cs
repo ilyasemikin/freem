@@ -24,7 +24,7 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
 
         var activities = filler.Activities.CreateMany(_context, ActivitiesCount);
         _activities = activities
-            .OrderBy(e => (string)e.Name)
+            .OrderBy(e => e.Name.ToString())
             .ToArray();
     }
 
@@ -42,7 +42,7 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
         Assert.Null(response.Error);
         
         var orderedActivities = response.Activities
-            .OrderBy(activity => (string)activity.Name)
+            .OrderBy(activity => activity.Name.ToString())
             .ToArray();
         
         Assert.Equal(ActivitiesCount, (int)response.TotalCount);

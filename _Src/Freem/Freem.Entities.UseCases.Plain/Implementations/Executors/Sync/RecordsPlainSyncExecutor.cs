@@ -1,6 +1,6 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Entities.UseCases.Contracts.Records.List;
 using Freem.Entities.UseCases.Contracts.Records.Update;
@@ -28,7 +28,7 @@ public sealed class RecordsPlainSyncExecutor
             .GetResult();
     }
 
-    public Record Create(UseCaseExecutionContext context, IEnumerable<ActivityIdentifier> activityIds)
+    public Record Create(UseCaseExecutionContext context, IEnumerable<ActivityId> activityIds)
     {
         return _executor.CreateAsync(context, activityIds)
             .GetAwaiter()
@@ -45,7 +45,7 @@ public sealed class RecordsPlainSyncExecutor
     }
 
     public IEnumerable<Record> CreateMany(
-        UseCaseExecutionContext context, IReadOnlyList<ActivityIdentifier> activityIds, int count)
+        UseCaseExecutionContext context, IReadOnlyList<ActivityId> activityIds, int count)
     {
         return _executor.CreateManyAsync(context, activityIds, count)
             .ToArrayAsync()
@@ -61,21 +61,21 @@ public sealed class RecordsPlainSyncExecutor
             .GetResult();
     }
 
-    public void Remove(UseCaseExecutionContext context, RecordIdentifier id)
+    public void Remove(UseCaseExecutionContext context, RecordId id)
     {
         _executor.RemoveAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Result<Record> Get(UseCaseExecutionContext context, RecordIdentifier id)
+    public Result<Record> Get(UseCaseExecutionContext context, RecordId id)
     {
         return _executor.GetAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Record RequiredGet(UseCaseExecutionContext context, RecordIdentifier id)
+    public Record RequiredGet(UseCaseExecutionContext context, RecordId id)
     {
         return _executor.RequiredGetAsync(context, id)
             .GetAwaiter()

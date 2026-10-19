@@ -1,9 +1,9 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models.Filters.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -100,7 +100,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Activities.Ids.First(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Tags.Ids.First(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Identifiers.Last(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Activities.Ids.Last(), concreteException.RelatedIds[0]);
     }
 
     [Fact]
@@ -254,7 +254,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
         Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Tags.Identifiers.First(), concreteException.RelatedIds[0]);
+        Assert.Equal(record.Tags.Ids.First(), concreteException.RelatedIds[0]);
     }
     
     [Fact]
@@ -290,7 +290,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
     public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
     {
         // Arrange
-        var id = IdentifiersGenerator.Generate<RecordIdentifier>();
+        var id = RecordId.Generate();
         
         // Act
         var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
@@ -319,7 +319,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         await Database.SaveChangesAsync();
         
         // Act
-        var id = (RecordIdentifier)dbRecord.Id;
+        var id = RecordId.Parse(dbRecord.Id, null);
         
         var result = await Repository.FindByIdAsync(id);
         
@@ -330,14 +330,15 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
 
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.Id, record.Id);
+        var actualId = record.Id.ToString();
+        Assert.Equal(dbRecord.Id, actualId);
     }
 
     [Fact]
     public async Task FindByIdAsync_ShouldFailure_WhenEntityNotExists()
     {
         // Act
-        var id = IdentifiersGenerator.Generate<RecordIdentifier>();
+        var id = RecordId.Generate();
 
         var result = await Repository.FindByIdAsync(id);
         
@@ -360,10 +361,10 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         await Database.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var recordId = (RecordIdentifier)dbRecord.Id;
-        var userId = (UserIdentifier)dbRecord.UserId;
+        var recordId = RecordId.Parse(dbRecord.Id, null);
+        var userId = UserId.Parse(dbRecord.UserId, null);
         
-        var ids = new RecordAndUserIdentifiers(recordId, userId);
+        var ids = new RecordAndUserIds(recordId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);
@@ -375,16 +376,17 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var record = result.Entity;
         
-        Assert.Equal(dbRecord.Id, record.Id);
+        var actualId = record.Id.ToString();
+        Assert.Equal(dbRecord.Id, actualId);
     }
 
     [Fact]
-    public async Task FindAsyncByUser_ShouldReturnRelatedIdentifiers()
+    public async Task FindAsyncByUser_ShouldReturnRelatedIds()
     {
         // Arrange
         var dbRecord = await AddRecordWithRelationsAsync();
 
-        var userId = (UserIdentifier)dbRecord.UserId;
+        var userId = UserId.Parse(dbRecord.UserId, null);
         var filter = new RecordByUserFilter(userId)
         {
             Limit = new Limit(),
@@ -397,16 +399,16 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         var record = Assert.Single(records);
-        AssertRelatedIdentifiers(dbRecord, record);
+        AssertRelatedIds(dbRecord, record);
     }
 
     [Fact]
-    public async Task FindAsyncByPeriod_ShouldReturnRelatedIdentifiers()
+    public async Task FindAsyncByPeriod_ShouldReturnRelatedIds()
     {
         // Arrange
         var dbRecord = await AddRecordWithRelationsAsync();
 
-        var userId = (UserIdentifier)dbRecord.UserId;
+        var userId = UserId.Parse(dbRecord.UserId, null);
         var startAt = dbRecord.StartAt.AddHours(-1);
         var endAt = dbRecord.EndAt.AddHours(1);
         var period = new DateTimePeriod(startAt, endAt);
@@ -418,7 +420,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         var record = Assert.Single(records);
-        AssertRelatedIdentifiers(dbRecord, record);
+        AssertRelatedIds(dbRecord, record);
     }
 
     [Theory]
@@ -438,13 +440,13 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         await Database.SaveChangesAsync();
         
         var recordId = recordIdExists
-            ? (RecordIdentifier)dbRecord.Id
-            : IdentifiersGenerator.Generate<RecordIdentifier>();
+            ? RecordId.Parse(dbRecord.Id, null)
+            : RecordId.Generate();
         var userId = userIdExists 
-            ? (UserIdentifier)dbUser.Id 
-            : GenerateUserIdentifier();
+            ? UserId.Parse(dbUser.Id, null) 
+            : GenerateUserId();
         
-        var ids = new RecordAndUserIdentifiers(recordId, userId);
+        var ids = new RecordAndUserIds(recordId, userId);
         
         // Act
         var result = await Repository.FindByMultipleIdAsync(ids);
@@ -474,14 +476,14 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         return dbRecord;
     }
 
-    private static void AssertRelatedIdentifiers(RecordEntity expected, Domain.Entities.Records.Record actual)
+    private static void AssertRelatedIds(RecordEntity expected, Domain.Entities.Records.Record actual)
     {
         var expectedActivityIds = expected.Activities!.Select(activity => activity.Id);
-        var actualActivityIds = actual.Activities.Identifiers.Select(id => id.ToString());
+        var actualActivityIds = actual.Activities.Ids.Select(id => id.ToString());
         Assert.True(expectedActivityIds.UnorderedEquals(actualActivityIds));
 
         var expectedTagIds = expected.Tags!.Select(tag => tag.Id);
-        var actualTagIds = actual.Tags.Identifiers.Select(id => id.ToString());
+        var actualTagIds = actual.Tags.Ids.Select(id => id.ToString());
         Assert.True(expectedTagIds.UnorderedEquals(actualTagIds));
     }
 }

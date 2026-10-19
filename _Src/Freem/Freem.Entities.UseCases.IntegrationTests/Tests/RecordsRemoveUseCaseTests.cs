@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -9,7 +9,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class RecordsRemoveUseCaseTests : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly RecordIdentifier _recordId;
+    private readonly RecordId _recordId;
     
     public RecordsRemoveUseCaseTests(TestContext context) 
         : base(context)
@@ -39,7 +39,7 @@ public sealed class RecordsRemoveUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenRecordDoesNotExist()
     {
-        var notExistedRecordId = Context.CreateIdentifier<RecordIdentifier>();
+        var notExistedRecordId = RecordId.Generate();
             
         var request = new RemoveRecordRequest(notExistedRecordId);
         

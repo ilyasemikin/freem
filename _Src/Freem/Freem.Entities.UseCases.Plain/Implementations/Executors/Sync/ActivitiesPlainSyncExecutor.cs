@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Entities.UseCases.Contracts.Activities.List;
@@ -60,35 +60,35 @@ public sealed class ActivitiesPlainSyncExecutor
             .GetResult();
     }
 
-    public void Remove(UseCaseExecutionContext context, ActivityIdentifier id)
+    public void Remove(UseCaseExecutionContext context, ActivityId id)
     {
         _executor.RemoveAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public void Archive(UseCaseExecutionContext context, ActivityIdentifier id)
+    public void Archive(UseCaseExecutionContext context, ActivityId id)
     {
         _executor.ArchiveAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public void Unarchive(UseCaseExecutionContext context, ActivityIdentifier id)
+    public void Unarchive(UseCaseExecutionContext context, ActivityId id)
     {
         _executor.UnarchiveAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Result<Activity> Get(UseCaseExecutionContext context, ActivityIdentifier id)
+    public Result<Activity> Get(UseCaseExecutionContext context, ActivityId id)
     {
         return _executor.GetAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Activity RequiredGet(UseCaseExecutionContext context, ActivityIdentifier id)
+    public Activity RequiredGet(UseCaseExecutionContext context, ActivityId id)
     {
         return _executor.RequiredGetAsync(context, id)
             .GetAwaiter()

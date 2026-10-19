@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Freem.Domain.Records;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Records.Base;
 using Xunit.Abstractions;
@@ -24,7 +25,7 @@ public sealed class RemoveRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenRecordNotExists()
     {
-        var id = Guid.NewGuid().ToString();
+        var id = RecordId.Generate();
         
         var response = await Context.Client.Records.RemoveAsync(id);
 

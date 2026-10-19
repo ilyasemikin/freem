@@ -3,7 +3,7 @@ using Freem.Time.Models.Helpers;
 
 namespace Freem.Time.Models;
 
-public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
+public sealed class DateTimePeriod : IEquatable<DateTimePeriod>, IParsable<DateTimePeriod>
 {
     public static DateTimePeriod Empty { get; } = new(DateTimeOffset.MinValue, DateTimeOffset.MinValue);
 
@@ -67,19 +67,30 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
         return true;
     }
 
-    public static bool TryParse(string input, [NotNullWhen(true)] out DateTimePeriod? period)
+    public static DateTimePeriod Parse(string s, IFormatProvider? provider)
     {
-        period = null;
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for DateTimePeriod: {s}");
+    }
+
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out DateTimePeriod? result)
+    {
+        result = null;
+        if (s is null)
+            return false;
         
-        var parts = input.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        var parts = s.Split(",", StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length != 2)
             return false;
 
-        if (!DateTimeOffset.TryParse(parts[0], out var startAt) || !DateTimeOffset.TryParse(parts[1], out var endAt))
+        if (!DateTimeOffset.TryParse(parts[0], provider, out var startAt) || !DateTimeOffset.TryParse(parts[1], provider, out var endAt))
             return false;
         
-        period = new DateTimePeriod(startAt, endAt);
-        return true;
+        return TryCreate(startAt, endAt, out result);
     }
 
     public static bool IsOverlapsed(DateTimePeriod left, DateTimePeriod right)
@@ -116,11 +127,6 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>
         var endAt = DateTimeOffsetComparer.Max(left.EndAt, right.EndAt);
 
         return endAt - startAt;
-    }
-
-    public static implicit operator TimeSpan(DateTimePeriod period)
-    {
-        return period.Duration;
     }
 
     public static bool operator ==(DateTimePeriod? left, DateTimePeriod? right)

@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
@@ -11,7 +11,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
 {
-    private const string UpdatedName = "name";
+    private static readonly TagName UpdatedName = TagName.Parse("name", null);
     
     private readonly UseCaseExecutionContext _context;
     private readonly Tag _tag;
@@ -32,7 +32,7 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateTagRequest(_tag.Id)
         {
-            Name = (TagName)UpdatedName
+            Name = UpdatedName
         };
 
         var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
@@ -56,7 +56,7 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
         
         var request = new UpdateTagRequest(_tag.Id)
         {
-            Name = (TagName)UpdatedName
+            Name = UpdatedName
         };
         
         var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
@@ -71,10 +71,10 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
+        var notExistedTagId = TagId.Generate();
         var request = new UpdateTagRequest(notExistedTagId)
         {
-            Name = (TagName)UpdatedName
+            Name = UpdatedName
         };
         
         var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
@@ -105,7 +105,7 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateTagRequest(_tag.Id)
         {
-            Name = (TagName)UpdatedName
+            Name = UpdatedName
         };
 
         var exception = await Record.ExceptionAsync(async () => await Context

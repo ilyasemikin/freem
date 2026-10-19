@@ -1,7 +1,7 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 
 namespace Freem.Domain.Storage.Repositories.Activities;
 
@@ -9,13 +9,13 @@ public interface IActivityRepository
 {
     Task CreateAsync(Activity entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(Activity entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(ActivityIdentifier id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(ActivityId id, CancellationToken cancellationToken = default);
 
     Task<SearchEntityResult<Activity>> FindByIdAsync(
-        ActivityIdentifier id,
+        ActivityId id,
         CancellationToken cancellationToken = default);
     Task<SearchEntityResult<Activity>> FindByMultipleIdAsync(
-        ActivityAndUserIdentifiers ids,
+        ActivityAndUserIds ids,
         CancellationToken cancellationToken = default);
 
     Task<SearchEntitiesAsyncResult<Activity>> FindAsync(

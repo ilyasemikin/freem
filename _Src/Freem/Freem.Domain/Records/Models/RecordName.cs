@@ -1,17 +1,15 @@
-﻿namespace Freem.Domain.Records.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public sealed class RecordName : IEquatable<RecordName>
+namespace Freem.Domain.Records.Models;
+
+public sealed class RecordName : IEquatable<RecordName>, IParsable<RecordName>
 {
     private readonly string _value;
 
     public const int MaxLength = 128;
     
-    public RecordName(string value)
+    private RecordName(string value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-        if (value.Length > MaxLength)
-            throw new ArgumentException($"Length cannot be more than {MaxLength}", nameof(value));
-
         _value = value;
     }
 
@@ -54,13 +52,25 @@ public sealed class RecordName : IEquatable<RecordName>
         return !(left == right);
     }
 
-    public static implicit operator RecordName(string value)
+    public static RecordName Parse(string s, IFormatProvider? provider)
     {
-        return new RecordName(value);
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for RecordName: {s}");
     }
 
-    public static implicit operator string?(RecordName? value)
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out RecordName? result)
     {
-        return value?._value;
+        if (s is null || s.Length > MaxLength)
+        {
+            result = null;
+            return false;
+        }
+
+        result = new RecordName(s);
+        return true;
     }
 }

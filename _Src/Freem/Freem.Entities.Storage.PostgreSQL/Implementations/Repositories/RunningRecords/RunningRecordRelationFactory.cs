@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
@@ -8,28 +8,32 @@ internal static class RunningRecordRelationFactory
 {
     public static IEnumerable<RunningRecordActivityRelationEntity> CreateDatabaseRunningRecordActivityRelations(this RunningRecord entity)
     {
-        return entity.Activities.Identifiers.Select(activityId => CreateDatabaseRunningRecordActivityRelation(entity.Id, activityId));
+        return entity.Activities.Ids
+            .Select(id => id.ToString())
+            .Select(activityId => CreateDatabaseRunningRecordActivityRelation(entity.Id, activityId));
     }
 
-    public static RunningRecordActivityRelationEntity CreateDatabaseRunningRecordActivityRelation(UserIdentifier runningRecordUserId, string activityIdString)
+    public static RunningRecordActivityRelationEntity CreateDatabaseRunningRecordActivityRelation(RunningRecordId runningRecordId, string activityIdString)
     {
         return new RunningRecordActivityRelationEntity
         {
-            RunningRecordUserId = runningRecordUserId,
+            RunningRecordUserId = runningRecordId.ToString(),
             ActivityId = activityIdString
         };
     }
 
     public static IEnumerable<RunningRecordTagRelationEntity> CreateDatabaseRunningRecordTagRelations(this RunningRecord entity)
     {
-        return entity.Tags.Identifiers.Select(tagId => CreateDatabaseRunningRecordTagRelation(entity.Id, tagId));
+        return entity.Tags.Ids
+            .Select(id => id.ToString())
+            .Select(tagId => CreateDatabaseRunningRecordTagRelation(entity.Id, tagId));
     }
 
-    public static RunningRecordTagRelationEntity CreateDatabaseRunningRecordTagRelation(UserIdentifier runningRecordUserId, string tagIdString)
+    public static RunningRecordTagRelationEntity CreateDatabaseRunningRecordTagRelation(RunningRecordId runningRecordId, string tagIdString)
     {
         return new RunningRecordTagRelationEntity
         {
-            RunningRecordUserId = runningRecordUserId,
+            RunningRecordUserId = runningRecordId.ToString(),
             TagId = tagIdString
         };
     }

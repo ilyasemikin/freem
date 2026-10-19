@@ -1,6 +1,6 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -13,7 +13,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
 
     private readonly DateTimeOffset _startAt;
-    private readonly RelatedActivitiesIdentifiersCollection _activities;
+    private readonly RelatedActivityIdsCollection _activities;
     
     public RunningRecordsStartUseCaseTests(TestContext context) 
         : base(context)
@@ -26,7 +26,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var activity = filler.Activities.Create(_context);
 
         _startAt = Context.GetCurrentDateTime();
-        _activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
+        _activities = new RelatedActivityIdsCollection([activity.Id]);
     }
 
     [Fact]
@@ -42,14 +42,14 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
         
         Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
+        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
 
     [Fact]
     public async Task ShouldSuccess_WhenAnotherRunningRecordExist()
     {
         using var executor = Context.CreateExecutor();
-        executor.RunningRecords.Start(_context, [_activities.Identifiers.First()]);
+        executor.RunningRecords.Start(_context, [_activities.Ids.First()]);
         
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
@@ -61,14 +61,14 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
         
         Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
+        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
-        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
-        var activities = new RelatedActivitiesIdentifiersCollection([notExistedActivityId]);
+        var notExistedActivityId = ActivityId.Generate();
+        var activities = new RelatedActivityIdsCollection([notExistedActivityId]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
@@ -90,7 +90,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var activity = executor.Activities.Create(anotherContext);
         
-        var activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
+        var activities = new RelatedActivityIdsCollection([activity.Id]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
@@ -107,8 +107,8 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
+        var notExistedTagId = TagId.Generate();
+        var tags = new RelatedTagIdsCollection([notExistedTagId]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
         {
@@ -133,7 +133,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         
-        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
+        var tags = new RelatedTagIdsCollection([tag.Id]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
         {

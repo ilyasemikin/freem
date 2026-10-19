@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Records;
 
 public sealed class CreateRecordResponse
 {
-    public RecordIdentifier Id { get; }
+    public RecordId Id { get; }
     
-    public CreateRecordResponse(RecordIdentifier id)
+    public CreateRecordResponse(RecordId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

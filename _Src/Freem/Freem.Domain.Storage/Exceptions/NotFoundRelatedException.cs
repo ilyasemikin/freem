@@ -1,33 +1,32 @@
 ﻿using Freem.Domain.Storage.Exceptions.Base;
-using Freem.Identifiers.Abstractions;
 
 namespace Freem.Domain.Storage.Exceptions;
 
 public sealed class NotFoundRelatedException : StorageException
 {
-    public IIdentifier Id { get; }
-    public IReadOnlyList<IIdentifier> RelatedIds { get; }
+    public Id Id { get; }
+    public IReadOnlyList<Id> RelatedIds { get; }
 
-    public NotFoundRelatedException(IIdentifier id, IIdentifier relatedId)
+    public NotFoundRelatedException(Id id, Id relatedId)
         : base(GenerateMessage(relatedId))
     {
         Id = id;
         RelatedIds = [relatedId];
     }
     
-    public NotFoundRelatedException(IIdentifier id, params IIdentifier[] relatedIds)
+    public NotFoundRelatedException(Id id, params Id[] relatedIds)
         : base(GenerateMessage(relatedIds))
     {
         Id = id;
         RelatedIds = relatedIds;
     }
 
-    private static string GenerateMessage(IIdentifier relatedId)
+    private static string GenerateMessage(Id relatedId)
     {
         return $"Related id = \"{relatedId}\" not found";
     }
 
-    private static string GenerateMessage(IReadOnlyList<IIdentifier> relatedIds)
+    private static string GenerateMessage(IReadOnlyList<Id> relatedIds)
     {
         return relatedIds.Count switch
         {

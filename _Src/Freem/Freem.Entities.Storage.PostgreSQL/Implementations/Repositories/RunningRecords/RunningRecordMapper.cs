@@ -1,5 +1,6 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Records.Models;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 
@@ -11,25 +12,25 @@ internal static class RunningRecordMapper
     {
         return new RunningRecordEntity
         {
-            UserId = entity.UserId,
-            Name = entity.Name,
-            Description = entity.Description,
+            UserId = entity.UserId.ToString(),
+            Name = entity.Name?.ToString(),
+            Description = entity.Description?.ToString(),
             StartAt = entity.StartAt
         };
     }
 
     public static RunningRecord MapToDomainEntity(this RunningRecordEntity entity)
     {
-        var userId = new UserIdentifier(entity.UserId);
+        var userId = UserId.Parse(entity.UserId, null);
 
         var activities = entity.Activities.MapToRelatedActivitiesCollection();
         var tags = entity.Tags.MapToRelatedTagsCollection();
         
         var record = new RunningRecord(userId, activities, tags, entity.StartAt);
         if (entity.Name is not null)
-            record.Name = entity.Name;
+            record.Name = RecordName.Parse(entity.Name, null);
         if (entity.Description is not null)
-            record.Description = entity.Description;
+            record.Description = RecordDescription.Parse(entity.Description, null);
 
         return record;
     }

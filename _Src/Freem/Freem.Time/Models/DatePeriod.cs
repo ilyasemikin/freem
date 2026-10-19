@@ -2,7 +2,7 @@
 
 namespace Freem.Time.Models;
 
-public sealed class DatePeriod : IEquatable<DatePeriod>
+public sealed class DatePeriod : IEquatable<DatePeriod>, IParsable<DatePeriod>
 {
     public static DatePeriod Empty { get; } = new(DateOnly.MinValue, DateOnly.MinValue);
     
@@ -44,18 +44,33 @@ public sealed class DatePeriod : IEquatable<DatePeriod>
         return HashCode.Combine(StartAt, EndAt);
     }
 
-    public static bool TryParse(string input, [NotNullWhen(true)] out DatePeriod? period)
+    public static DatePeriod Parse(string s, IFormatProvider? provider)
     {
-        period = null;
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for DatePeriod: {s}");
+    }
+
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out DatePeriod? result)
+    {
+        result = null;
+        if (s is null)
+            return false;
         
-        var parts = input.Split(',');
+        var parts = s.Split(',');
         if (parts.Length != 2)
             return false;
 
-        if (!DateOnly.TryParse(parts[0], out var startAt) || !DateOnly.TryParse(parts[1], out var endAt))
+        if (!DateOnly.TryParse(parts[0], provider, out var startAt) || !DateOnly.TryParse(parts[1], provider, out var endAt))
+            return false;
+
+        if (startAt > endAt)
             return false;
         
-        period = new DatePeriod(startAt, endAt);
+        result = new DatePeriod(startAt, endAt);
         return true;
     }
 }

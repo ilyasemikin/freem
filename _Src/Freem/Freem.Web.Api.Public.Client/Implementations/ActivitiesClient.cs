@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
@@ -29,7 +29,7 @@ public sealed class ActivitiesClient : BaseClient
     }
 
     public Task<ClientResult> UpdateAsync(
-        ActivityIdentifier id,
+        ActivityId id,
         UpdateActivityRequest body, 
         CancellationToken cancellationToken = default)
     {
@@ -39,21 +39,21 @@ public sealed class ActivitiesClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult> RemoveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/activities/{id}");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> ArchiveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult> ArchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/archive");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> UnarchiveAsync(ActivityIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult> UnarchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/unarchive");
         
@@ -61,7 +61,7 @@ public sealed class ActivitiesClient : BaseClient
     }
 
     public Task<ClientResult<ActivityResponse>> GetAsync(
-        ActivityIdentifier id, 
+        ActivityId id, 
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/activities/{id}");

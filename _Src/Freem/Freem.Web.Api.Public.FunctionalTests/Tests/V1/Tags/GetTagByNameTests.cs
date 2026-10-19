@@ -19,7 +19,8 @@ public sealed class GetTagByNameTests : TagTestBase
         var name = "name";
         Context.Preparer.Tags.Create(name);
         
-        var response = await Context.Client.Tags.GetAsync((TagName)name);
+        var tagName = TagName.Parse(name, null);
+        var response = await Context.Client.Tags.GetAsync(tagName);
 
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -30,7 +31,7 @@ public sealed class GetTagByNameTests : TagTestBase
     public async Task Request_ShouldFail_WhenTagNotExists()
     {
         var tagIdString = Guid.NewGuid().ToString();
-        var name = new TagName(tagIdString);
+        var name = TagName.Parse(tagIdString, null);
         
         var response = await Context.Client.Tags.GetAsync(name);
         

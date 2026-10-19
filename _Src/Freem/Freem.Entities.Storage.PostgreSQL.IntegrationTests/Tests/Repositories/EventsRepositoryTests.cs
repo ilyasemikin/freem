@@ -1,28 +1,27 @@
-﻿using Freem.Domain.Activities.Events.Arhived;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Activities.Events.Arhived;
 using Freem.Domain.Activities.Events.Created;
 using Freem.Domain.Activities.Events.Removed;
 using Freem.Domain.Activities.Events.Unarchived;
 using Freem.Domain.Activities.Events.Updated;
-using Freem.Domain.Activities.Identifiers;
 using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Records.Events.Created;
 using Freem.Domain.Records.Events.Removed;
 using Freem.Domain.Records.Events.Updated;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.RunningRecords.Events.Removed;
 using Freem.Domain.RunningRecords.Events.Started;
 using Freem.Domain.RunningRecords.Events.Stopped;
 using Freem.Domain.RunningRecords.Events.Updated;
-using Freem.Domain.RunningRecords.Identifiers;
 using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Tags;
 using Freem.Domain.Tags.Events.Created;
 using Freem.Domain.Tags.Events.Removed;
 using Freem.Domain.Tags.Events.Updated;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Users;
 using Freem.Domain.Users.Events.Registered;
 using Freem.Domain.Users.Events.SettingsChanged;
-using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Utilities.Collections;
 using Xunit;
@@ -38,28 +37,28 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
     {
     }
 
-    public delegate IEntityEvent<ActivityIdentifier, UserIdentifier> ActivityEventGenerator(
-        EventIdentifier id,
-        ActivityIdentifier activityId, 
-        UserIdentifier userId);
+    public delegate IEntityEvent<ActivityId, UserId> ActivityEventGenerator(
+        EventId id,
+        ActivityId activityId, 
+        UserId userId);
 
-    public delegate IEntityEvent<RecordIdentifier, UserIdentifier> RecordEventGenerator(
-        EventIdentifier id,
-        RecordIdentifier recordId,
-        UserIdentifier userId);
+    public delegate IEntityEvent<RecordId, UserId> RecordEventGenerator(
+        EventId id,
+        RecordId recordId,
+        UserId userId);
 
-    public delegate IEntityEvent<RunningRecordIdentifier, UserIdentifier> RunningRecordEventGenerator(
-        EventIdentifier id,
-        RunningRecordIdentifier runningRecordId);
+    public delegate IEntityEvent<RunningRecordId, UserId> RunningRecordEventGenerator(
+        EventId id,
+        RunningRecordId runningRecordId);
 
-    public delegate IEntityEvent<TagIdentifier, UserIdentifier> TagEventGenerator(
-        EventIdentifier id,
-        TagIdentifier tagId,
-        UserIdentifier userId);
+    public delegate IEntityEvent<TagId, UserId> TagEventGenerator(
+        EventId id,
+        TagId tagId,
+        UserId userId);
     
-    public delegate IEntityEvent<UserIdentifier, UserIdentifier> UserEventGenerator(
-        EventIdentifier id,
-        UserIdentifier userId);
+    public delegate IEntityEvent<UserId, UserId> UserEventGenerator(
+        EventId id,
+        UserId userId);
     
     public static TheoryData<ActivityEventGenerator> ValidActivityEntitiesCases =>
         new()
@@ -82,9 +81,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         await Database.AddRangeAsync(dbUser, dbActivity);
         await Database.SaveChangesAsync();
 
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var userId = (UserIdentifier)dbUser.Id;
-        var entityId = (ActivityIdentifier)dbActivity.Id;
+        var id = EventId.Generate();
+        var userId = UserId.Parse(dbUser.Id, null);
+        var entityId = ActivityId.Parse(dbActivity.Id, null);
         
         var @event = factory(id, entityId, userId);
         var eventType = @event.GetType();
@@ -127,9 +126,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         await Database.Activities.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var userId = (UserIdentifier)dbUser.Id;
-        var entityId = (RecordIdentifier)dbRecord.Id;
+        var id = EventId.Generate();
+        var userId = UserId.Parse(dbUser.Id, null);
+        var entityId = RecordId.Parse(dbRecord.Id, null);
         
         var @event = factory(id, entityId, userId);
         var eventType = @event.GetType();
@@ -173,8 +172,8 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         await Database.Activities.AddRangeAsync(dbActivities);
         await Database.SaveChangesAsync();
         
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var entityId = (RunningRecordIdentifier)dbRecord.UserId;
+        var id = EventId.Generate();
+        var entityId = RunningRecordId.Parse(dbRecord.UserId, null);
 
         var @event = factory(id, entityId);
         var eventType = @event.GetType();
@@ -190,8 +189,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         
         Assert.Equal(eventType, result.Entity.GetType());
         Assert.Equal(id, result.Entity.Id);
+        var expectedUserId = entityId.ToUserId();
         Assert.Equal(entityId, result.Entity.EntityId);
-        Assert.Equal(entityId, result.Entity.UserEntityId);
+        Assert.Equal(expectedUserId, result.Entity.UserEntityId);
     }
 
     public static TheoryData<TagEventGenerator> ValidTagEventsCase =>
@@ -213,9 +213,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         await Database.AddRangeAsync(dbUser, dbTag);
         await Database.SaveChangesAsync();
         
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var entityId = (TagIdentifier)dbTag.Id;
-        var userId = (UserIdentifier)dbUser.Id;
+        var id = EventId.Generate();
+        var entityId = TagId.Parse(dbTag.Id, null);
+        var userId = UserId.Parse(dbUser.Id, null);
         
         var @event = factory(id, entityId, userId);
         var eventType = @event.GetType();
@@ -252,8 +252,8 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         await Database.Users.AddAsync(dbUser);
         await Database.SaveChangesAsync();
         
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var userId = (UserIdentifier)dbUser.Id;
+        var id = EventId.Generate();
+        var userId = UserId.Parse(dbUser.Id, null);
         
         var @event = factory(id, userId);
         var eventType = @event.GetType();
@@ -279,10 +279,10 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         // Arrange
         var types = new List<Type>();
         
-        var id = IdentifiersGenerator.Generate<EventIdentifier>();
-        var userId = GenerateUserIdentifier();
+        var id = EventId.Generate();
+        var userId = GenerateUserId();
 
-        var activityId = IdentifiersGenerator.Generate<ActivityIdentifier>();
+        var activityId = ActivityId.Generate();
         foreach (var @case in ValidActivityEntitiesCases)
         {
             var generator = @case;
@@ -291,7 +291,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
             types.Add(@event.GetType());
         }
         
-        var recordId = IdentifiersGenerator.Generate<RecordIdentifier>();
+        var recordId = RecordId.Generate();
         foreach (var @case in ValidRecordEntitiesCases)
         {
             var generator = @case;
@@ -300,7 +300,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
             types.Add(@event.GetType());
         }
 
-        var runningRecordId = IdentifiersGenerator.Generate<RunningRecordIdentifier>();
+        var runningRecordId = RunningRecordId.FromUserId(userId);
         foreach (var @case in ValidRunningRecordEventsCases)
         {
             var generator = @case;
@@ -309,7 +309,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
             types.Add(@event.GetType());
         }
         
-        var tagId = IdentifiersGenerator.Generate<TagIdentifier>();
+        var tagId = TagId.Generate();
         foreach (var @case in ValidTagEventsCase)
         {
             var generator = @case;

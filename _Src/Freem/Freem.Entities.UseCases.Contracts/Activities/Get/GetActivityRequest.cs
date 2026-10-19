@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Get;
 
 public sealed class GetActivityRequest
 {
-    public ActivityIdentifier Id { get; }
+    public ActivityId Id { get; }
 
-    public GetActivityRequest(ActivityIdentifier id)
+    public GetActivityRequest(ActivityId id)
     {
         ArgumentNullException.ThrowIfNull(id);
 

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
 using Freem.UseCases.Abstractions;
@@ -56,7 +56,7 @@ public sealed class UpdateTagController : BaseController
 
     private static UseCaseUpdateTagRequest Map(string tagIdString, ApiUpdateTagRequest request)
     {
-        var tagId = new TagIdentifier(tagIdString);
+        var tagId = TagId.Parse(tagIdString, null);
         return new UseCaseUpdateTagRequest(tagId)
         {
             Name = request.Name?.Map()

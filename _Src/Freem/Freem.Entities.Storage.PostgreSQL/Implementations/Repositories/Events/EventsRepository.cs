@@ -1,9 +1,8 @@
-﻿using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Identifiers;
+﻿using Freem.Domain;
+using Freem.Domain.Events;
 using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Repositories.Events;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -36,7 +35,7 @@ internal sealed class EventsRepository : IEventRepository
     }
 
     public async Task CreateAsync(
-        IEntityEvent<IEntityIdentifier, UserIdentifier> entity, 
+        IEntityEvent<Id, UserId> entity, 
         CancellationToken cancellationToken = default) 
     {
         ArgumentNullException.ThrowIfNull(entity);
@@ -49,16 +48,17 @@ internal sealed class EventsRepository : IEventRepository
         await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
     }
     
-    public async Task<SearchEntityResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindByIdAsync(
-        EventIdentifier id, 
+    public async Task<SearchEntityResult<IEntityEvent<Id, UserId>>> FindByIdAsync(
+        EventId id, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        return await _database.Events.FindAsync(e => e.Id == id, _entityConverter.Convert, cancellationToken);
+        var idString = id.ToString();
+        return await _database.Events.FindAsync(e => e.Id == idString, _entityConverter.Convert, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindAsync(
+    public async Task<SearchEntitiesAsyncResult<IEntityEvent<Id, UserId>>> FindAsync(
         EventAfterTimeFilter filter, 
         CancellationToken cancellationToken = default)
     {

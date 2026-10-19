@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
+using Freem.Domain.Activities.Models;
 using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
@@ -43,7 +44,8 @@ public sealed class ActivitiesPlainExecutor
     public async Task<Activity> CreateAsync(
         UseCaseExecutionContext context, CancellationToken cancellationToken = default)
     {
-        var name = Guid.NewGuid().ToString();
+        var value = Guid.NewGuid().ToString();
+        var name = ActivityName.Parse(value, null);
         
         var request = new CreateActivityRequest(name);
         return await CreateAsync(context, request, cancellationToken);
@@ -84,7 +86,7 @@ public sealed class ActivitiesPlainExecutor
     }
 
     public async Task RemoveAsync(
-        UseCaseExecutionContext context, ActivityIdentifier id,
+        UseCaseExecutionContext context, ActivityId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -97,7 +99,7 @@ public sealed class ActivitiesPlainExecutor
     }
 
     public async Task ArchiveAsync(
-        UseCaseExecutionContext context, ActivityIdentifier id, 
+        UseCaseExecutionContext context, ActivityId id, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -110,7 +112,7 @@ public sealed class ActivitiesPlainExecutor
     }
 
     public async Task UnarchiveAsync(
-        UseCaseExecutionContext context, ActivityIdentifier id,
+        UseCaseExecutionContext context, ActivityId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -123,7 +125,7 @@ public sealed class ActivitiesPlainExecutor
     }
 
     public async Task<Result<Activity>> GetAsync(
-        UseCaseExecutionContext context, ActivityIdentifier id, 
+        UseCaseExecutionContext context, ActivityId id, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -137,7 +139,7 @@ public sealed class ActivitiesPlainExecutor
     }
 
     public async Task<Activity> RequiredGetAsync(
-        UseCaseExecutionContext context, ActivityIdentifier id,
+        UseCaseExecutionContext context, ActivityId id,
         CancellationToken cancellationToken = default)
     {
         var result = await GetAsync(context, id, cancellationToken);

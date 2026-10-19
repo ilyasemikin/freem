@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Tags;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Get;
 
 public sealed class GetTagRequest
 {
-    public TagIdentifier Id { get; }
+    public TagId Id { get; }
 
-    public GetTagRequest(TagIdentifier id)
+    public GetTagRequest(TagId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

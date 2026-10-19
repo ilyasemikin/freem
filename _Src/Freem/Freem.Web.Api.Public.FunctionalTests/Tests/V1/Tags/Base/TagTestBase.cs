@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Tags;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
 using Xunit.Abstractions;
@@ -9,7 +9,7 @@ public abstract class TagTestBase : TestBase
 {
     private const int TagsCount = 3;
     
-    protected IReadOnlyList<TagIdentifier> AddedTagIds { get; }
+    protected IReadOnlyList<TagId> AddedTagIds { get; }
     
     public TagTestBase(TestContext context, ITestOutputHelper output) 
         : base(context, output)

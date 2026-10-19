@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts;
@@ -58,14 +58,14 @@ public sealed class UpdateRecordController : BaseController
 
     private static UseCaseUpdateRecordRequest Map(string recordIdString, ApiUpdateRecordRequest request)
     {
-        var recordId = new RecordIdentifier(recordIdString);
+        var recordId = RecordId.Parse(recordIdString, null);
 
         var activities = request.Activities is not null
-            ? new UpdateField<RelatedActivitiesIdentifiersCollection>(new RelatedActivitiesIdentifiersCollection(request.Activities.Value))
+            ? new UpdateField<RelatedActivityIdsCollection>(new RelatedActivityIdsCollection(request.Activities.Value))
             : null;
         
         var tags = request.Tags?.Value != null
-            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagIdsCollection>(new RelatedTagIdsCollection(request.Tags.Value))
             : null;
         
         return new UseCaseUpdateRecordRequest(recordId)

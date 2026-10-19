@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
@@ -29,7 +29,7 @@ public sealed class ActivitiesSyncClient : BaseSyncClient
         return SendForUser<CreateActivityResponse>(request);
     }
 
-    public ClientResult Update(ActivityIdentifier id, UpdateActivityRequest body)
+    public ClientResult Update(ActivityId id, UpdateActivityRequest body)
     {
         var request = HttpRequest.Put($"api/v1/activities/{id}")
             .WithJsonBody(body, _options);
@@ -37,28 +37,28 @@ public sealed class ActivitiesSyncClient : BaseSyncClient
         return SendForUser(request);
     }
 
-    public ClientResult Remove(ActivityIdentifier id)
+    public ClientResult Remove(ActivityId id)
     {
         var request = HttpRequest.Delete($"api/v1/activities/{id}");
         
         return SendForUser(request);
     }
 
-    public ClientResult Archive(ActivityIdentifier id)
+    public ClientResult Archive(ActivityId id)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/archive");
         
         return SendForUser(request);
     }
 
-    public ClientResult Unarchive(ActivityIdentifier id)
+    public ClientResult Unarchive(ActivityId id)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/unarchive");
         
         return SendForUser(request);
     }
 
-    public ClientResult<ActivityResponse> Get(ActivityIdentifier id)
+    public ClientResult<ActivityResponse> Get(ActivityId id)
     {
         var request = HttpRequest.Get($"api/v1/activities/{id}");
         

@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Users;
 using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
 using Freem.UseCases.Abstractions;
@@ -16,14 +16,14 @@ public sealed class UsersPlainSyncExecutor
         _executor = new UsersPlainExecutor(executor);
     }
 
-    public UserIdentifier Register(RegisterUserRequest request)
+    public UserId Register(RegisterUserRequest request)
     {
         return _executor.RegisterAsync(request)
             .GetAwaiter()
             .GetResult();
     }
 
-    public UserIdentifier Register()
+    public UserId Register()
     {
         return _executor.RegisterAsync()
             .GetAwaiter()

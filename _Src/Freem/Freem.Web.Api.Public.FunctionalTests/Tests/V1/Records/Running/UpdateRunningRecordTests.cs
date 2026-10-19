@@ -1,8 +1,9 @@
 ﻿using System.Net;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.Contracts.Models;
@@ -25,7 +26,7 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
-        var name = new RecordName("new_name");
+        var name = RecordName.Parse("new_name", null);
         var request = new UpdateRunningRecordRequest
         {
             Name = new UpdateField<RecordName?>(name)
@@ -40,7 +41,7 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateDescription()
     {
-        var description = new RecordDescription("new_description");
+        var description = RecordDescription.Parse("new_description", null);
         var request = new UpdateRunningRecordRequest
         {
             Description = new UpdateField<RecordDescription?>(description)
@@ -57,10 +58,10 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
     {
         var activityId = Context.Preparer.Activities.Create("name");
 
-        var activities = new RelatedActivitiesIdentifiersCollection(activityId);
+        var activities = new RelatedActivityIdsCollection(activityId);
         var request = new UpdateRunningRecordRequest
         {
-            Activities = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>>(activities)
+            Activities = new UpdateField<IReadOnlyRelatedIdsCollection<ActivityId>>(activities)
         };
         
         var response = await Context.Client.Records.UpdateRunningAsync(request);
@@ -72,14 +73,15 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateTags()
     {
-        var trq = new CreateTagRequest("name");
+        var tagName = TagName.Parse("name", null);
+        var trq = new CreateTagRequest(tagName);
         var trs = await Context.Client.Tags.CreateAsync(trq);
         trs.EnsureSuccess();
         
-        var tags = new RelatedTagsIdentifiersCollection([trs.Value.Id]);
+        var tags = new RelatedTagIdsCollection([trs.Value.Id]);
         var request = new UpdateRunningRecordRequest
         {
-            Tags = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>>(tags)
+            Tags = new UpdateField<IReadOnlyRelatedIdsCollection<TagId>>(tags)
         };
         
         var response = await Context.Client.Records.UpdateRunningAsync(request);
@@ -106,7 +108,7 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
         var srs = await Context.Client.Records.StopAsync(srq);
         srs.EnsureSuccess();
         
-        var name = new RecordName("new_name");
+        var name = RecordName.Parse("new_name", null);
         var request = new UpdateRunningRecordRequest
         {
             Name = new UpdateField<RecordName?>(name)

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
@@ -30,7 +30,7 @@ public sealed class RecordsClient : BaseClient
     }
 
     public Task<ClientResult> UpdateAsync(
-        RecordIdentifier id, 
+        RecordId id, 
         UpdateRecordRequest body,
         CancellationToken cancellationToken = default)
     {
@@ -40,7 +40,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult> RemoveAsync(RecordId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/records/{id}");
         
@@ -87,7 +87,7 @@ public sealed class RecordsClient : BaseClient
     }
 
     public Task<ClientResult<RecordResponse>> GetAsync(
-        RecordIdentifier id, CancellationToken cancellationToken = default)
+        RecordId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/{id}");
         

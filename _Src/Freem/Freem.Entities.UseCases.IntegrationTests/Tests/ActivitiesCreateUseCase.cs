@@ -1,5 +1,6 @@
-﻿using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -10,7 +11,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesCreateUseCase : UseCaseTestBase
 {
-    private const string ActivityName = "activity";
+    private static readonly ActivityName ActivityName = ActivityName.Parse("activity", null);
     
     private readonly UseCaseExecutionContext _context;
     
@@ -44,8 +45,8 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenRelatedTagsDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
+        var notExistedTagId = TagId.Generate();
+        var tags = new RelatedTagIdsCollection([notExistedTagId]);
 
         var request = new CreateActivityRequest(ActivityName)
         {
@@ -70,7 +71,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         
-        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
+        var tags = new RelatedTagIdsCollection([tag.Id]);
 
         var request = new CreateActivityRequest(ActivityName)
         {

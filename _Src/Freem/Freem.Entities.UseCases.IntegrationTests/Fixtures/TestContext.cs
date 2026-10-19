@@ -7,8 +7,6 @@ using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure.Locking;
-using Freem.Identifiers.Abstractions;
-using Freem.Identifiers.Abstractions.Generators;
 using Freem.Locking.Abstractions;
 using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,16 +33,6 @@ public sealed class TestContext
         return UseCasePlainExecutor.Create(_services);
     }
     
-    public T CreateIdentifier<T>()
-        where T : IIdentifier
-    {
-        using var scope = _services.CreateScope();
-        var provider = scope.ServiceProvider;
-
-        var generator = provider.GetRequiredService<IIdentifierGenerator<T>>();
-        return generator.Generate();
-    }
-
     public DateTimeOffset GetCurrentDateTime()
     {
         using var scope = _services.CreateScope();
@@ -96,8 +84,7 @@ public sealed class TestContext
 
         services
             .AddUtcTruncatedToSecondsClock()
-            .AddIdentifiersGenerators()
-            .AddEntitiesIdentifiersNameConverters()
+            .AddEntityIdNameConverters()
             .AddSingleton<IDistributedLocker, EmptyDistributedLocker>()
             .AddPostgreSqlStorage(storageConfiguration)
             .AddNullEventPublishing()

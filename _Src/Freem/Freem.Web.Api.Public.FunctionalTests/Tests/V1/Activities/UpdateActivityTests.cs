@@ -1,7 +1,8 @@
 ﻿using System.Net;
+using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.Contracts.Models;
 using Freem.Web.Api.Public.FunctionalTests.Context;
@@ -21,7 +22,7 @@ public sealed class UpdateActivityTests : ActivityTestBase
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
         var activityId = AddedActivityIds[0];
-        var name = new ActivityName("name");
+        var name = ActivityName.Parse("name", null);
         var request = new UpdateActivityRequest
         {
             Name = new UpdateField<ActivityName>(name)
@@ -37,10 +38,10 @@ public sealed class UpdateActivityTests : ActivityTestBase
     public async Task Request_ShouldSuccess_WhenUpdateTags()
     {
         var tagId = Context.Preparer.Tags.Create("name");
-        var tags = new RelatedTagsIdentifiersCollection(tagId);
+        var tags = new RelatedTagIdsCollection(tagId);
         var request = new UpdateActivityRequest
         {
-            Tags = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>>(tags)
+            Tags = new UpdateField<IReadOnlyRelatedIdsCollection<TagId>>(tags)
         };
         
         var response = await Context.Client.Activities.UpdateAsync(AddedActivityIds[0], request);
@@ -52,8 +53,8 @@ public sealed class UpdateActivityTests : ActivityTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenActivityDoesNotExist()
     {
-        var activityId = Guid.NewGuid().ToString();
-        var name = new ActivityName("name");
+        var activityId = ActivityId.Generate();
+        var name = ActivityName.Parse("name", null);
         var request = new UpdateActivityRequest
         {
             Name = new UpdateField<ActivityName>(name)

@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Events;
-using Freem.Domain.Identifiers;
-using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain;
+using Freem.Domain.Events;
+using Freem.Domain.Users;
 
 namespace Freem.Entities.Events.Producer.Abstractions;
 
 public interface IEventPublisher
 {
     Task PublishAsync(
-        IEntityEvent<IEntityIdentifier, UserIdentifier> @event,
+        IEntityEvent<Id, UserId> @event,
         CancellationToken cancellationToken = default);
 }

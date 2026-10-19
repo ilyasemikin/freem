@@ -1,8 +1,9 @@
-﻿using Freem.Domain.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Extensions;
 using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Tags.Identifiers.Extensions;
+using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
@@ -56,7 +57,8 @@ internal sealed class StartRunningRecordUseCase
             Description = request.Description
         };
         
-        var currentResult = await _repository.FindByIdAsync(context.UserId, cancellationToken);
+        var id = RunningRecordId.FromUserId(context.UserId);
+        var currentResult = await _repository.FindByIdAsync(id, cancellationToken);
         if (currentResult.Founded)
         {
             var stopRunningRecordRequest = new StopRunningRecordRequest(record.StartAt);
@@ -89,9 +91,9 @@ internal sealed class StartRunningRecordUseCase
     
     private static StartRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
     {
-        if (ex.RelatedIds.HasActivitiesIdentifiers())
+        if (ex.RelatedIds.HasActivityIds())
             return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagsIdentifiers())
+        if (ex.RelatedIds.HasTagIds())
             return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedTagsNotFound);
         
         return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedUnknownNotFound);

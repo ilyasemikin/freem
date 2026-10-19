@@ -3,7 +3,7 @@ using Freem.Domain.Entities.Statistics.Time;
 using Freem.Domain.Entities.Users;
 using Freem.Domain.Statistics.Time;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Time.Extensions;
@@ -39,7 +39,7 @@ public sealed class StatisticsPerDaysUseCase :
         if (settings is null)
             return StatisticsPerDaysResponse.CreateFailure(StatisticsPerDaysErrorCode.UserNotFound);
 
-        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset);
+        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset.Value);
         var current = request.Period.StartAt.ToUtcDateTime(time);
         // The end of the period is inclusive
         var end = request.Period.EndAt.AddDays(1).ToUtcDateTime(time);
@@ -70,7 +70,7 @@ public sealed class StatisticsPerDaysUseCase :
     }
 
     private async Task<IReadOnlyList<Record>> FindRecordsAsync(
-        UserIdentifier userId, DateTime start, 
+        UserId userId, DateTime start, 
         CancellationToken cancellationToken)
     {
         var list = new List<Record>();

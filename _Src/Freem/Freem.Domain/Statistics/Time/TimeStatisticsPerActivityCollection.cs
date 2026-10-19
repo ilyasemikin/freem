@@ -1,27 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 
 namespace Freem.Domain.Statistics.Time;
 
 public sealed class TimeStatisticsPerActivityCollection :
-    IReadOnlyDictionary<ActivityIdentifier, TimeStatisticsPerActivity>
+    IReadOnlyDictionary<ActivityId, TimeStatisticsPerActivity>
 {
-    private readonly IReadOnlyDictionary<ActivityIdentifier, TimeStatisticsPerActivity> _statistics;
+    private readonly IReadOnlyDictionary<ActivityId, TimeStatisticsPerActivity> _statistics;
     
     internal static TimeStatisticsPerActivityCollection Empty { get; } = new();
     
     public int Count => _statistics.Count;
     
-    public IEnumerable<ActivityIdentifier> Keys => _statistics.Keys;
+    public IEnumerable<ActivityId> Keys => _statistics.Keys;
     public IEnumerable<TimeStatisticsPerActivity> Values => _statistics.Values;
     
-    public TimeStatisticsPerActivity this[ActivityIdentifier key] => _statistics[key];
+    public TimeStatisticsPerActivity this[ActivityId key] => _statistics[key];
     
     private TimeStatisticsPerActivityCollection()
     {
-        _statistics = FrozenDictionary<ActivityIdentifier, TimeStatisticsPerActivity>.Empty;
+        _statistics = FrozenDictionary<ActivityId, TimeStatisticsPerActivity>.Empty;
     }
 
     public TimeStatisticsPerActivityCollection(IEnumerable<TimeStatisticsPerActivity> statistics)
@@ -29,17 +29,17 @@ public sealed class TimeStatisticsPerActivityCollection :
         _statistics = statistics.ToDictionary(x => x.Id);
     }
     
-    public bool ContainsKey(ActivityIdentifier key)
+    public bool ContainsKey(ActivityId key)
     {
         return _statistics.ContainsKey(key);
     }
 
-    public bool TryGetValue(ActivityIdentifier key, [MaybeNullWhen(false)] out TimeStatisticsPerActivity value)
+    public bool TryGetValue(ActivityId key, [MaybeNullWhen(false)] out TimeStatisticsPerActivity value)
     {
         return _statistics.TryGetValue(key, out value);
     }
 
-    public IEnumerator<KeyValuePair<ActivityIdentifier, TimeStatisticsPerActivity>> GetEnumerator()
+    public IEnumerator<KeyValuePair<ActivityId, TimeStatisticsPerActivity>> GetEnumerator()
     {
         return _statistics.GetEnumerator();
     }

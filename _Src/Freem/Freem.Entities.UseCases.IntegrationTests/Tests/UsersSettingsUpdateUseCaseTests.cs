@@ -9,7 +9,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
 {
-    private static readonly TimeSpan UpdatedUtcOffset = TimeSpan.FromHours(1);
+    private static readonly DayUtcOffset UpdatedUtcOffset = new(TimeSpan.FromHours(1));
     
     private readonly UseCaseExecutionContext _context;
     
@@ -39,7 +39,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.UsersSettings.RequiredGet(_context);
         
-        Assert.Equal<TimeSpan>(UpdatedUtcOffset, actual.DayUtcOffset);
+        Assert.Equal(UpdatedUtcOffset.Value, actual.DayUtcOffset.Value);
     }
     
     [Fact]

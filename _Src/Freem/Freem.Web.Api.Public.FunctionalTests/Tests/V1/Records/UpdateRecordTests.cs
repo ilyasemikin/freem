@@ -1,9 +1,10 @@
 ﻿using System.Net;
-using Freem.Domain.Activities.Identifiers;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Activities;
+using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
 using Freem.Time.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
@@ -47,7 +48,7 @@ public sealed class UpdateRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
-        var name = new RecordName("name");
+        var name = RecordName.Parse("name", null);
         var request = new UpdateRecordRequest
         {
             Name = new UpdateField<RecordName?>(name)
@@ -62,7 +63,7 @@ public sealed class UpdateRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateDescription()
     {
-        var description = new RecordDescription("description");
+        var description = RecordDescription.Parse("description", null);
         var request = new UpdateRecordRequest
         {
             Description = new UpdateField<RecordDescription?>(description)
@@ -78,11 +79,11 @@ public sealed class UpdateRecordTests : RecordTestBase
     public async Task Request_ShouldSuccess_WhenUpdateActivities()
     {
         var activityId = Context.Preparer.Activities.Create("name");
-        var activities = new RelatedActivitiesIdentifiersCollection(activityId);
+        var activities = new RelatedActivityIdsCollection(activityId);
 
         var request = new UpdateRecordRequest
         {
-            Activities = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>>(activities)
+            Activities = new UpdateField<IReadOnlyRelatedIdsCollection<ActivityId>>(activities)
         };
         
         var response = await Context.Client.Records.UpdateAsync(AddedRecordIds[0], request);
@@ -94,15 +95,16 @@ public sealed class UpdateRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateTags()
     {
-        var trq = new CreateTagRequest("name");
+        var tagName = TagName.Parse("name", null);
+        var trq = new CreateTagRequest(tagName);
         var trs = await Context.Client.Tags.CreateAsync(trq);
         trs.EnsureSuccess();
         
-        var tags = new RelatedTagsIdentifiersCollection([trs.Value.Id]);
+        var tags = new RelatedTagIdsCollection([trs.Value.Id]);
 
         var request = new UpdateRecordRequest
         {
-            Tags = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>>(tags)
+            Tags = new UpdateField<IReadOnlyRelatedIdsCollection<TagId>>(tags)
         };
         
         var response = await Context.Client.Records.UpdateAsync(AddedRecordIds[0], request);
@@ -126,9 +128,9 @@ public sealed class UpdateRecordTests : RecordTestBase
     public async Task Request_ShouldFail_WhenRecordNotExists()
     {
         var idString = Guid.NewGuid().ToString();
-        var id = new RecordIdentifier(idString);
+        var id = RecordId.Parse(idString, null);
         
-        var name = new RecordName("name");
+        var name = RecordName.Parse("name", null);
         var request = new UpdateRecordRequest
         {
             Name = new UpdateField<RecordName?>(name)

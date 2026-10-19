@@ -10,13 +10,13 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
 internal sealed class TriggerConstraintErrorToExceptionConverter
 {
-    private readonly EntityIdentifierFactory _identifierFactory;
+    private readonly EntityIdFactory _idFactory;
 
-    public TriggerConstraintErrorToExceptionConverter(EntityIdentifierFactory identifierFactory)
+    public TriggerConstraintErrorToExceptionConverter(EntityIdFactory idFactory)
     {
-        ArgumentNullException.ThrowIfNull(identifierFactory);
+        ArgumentNullException.ThrowIfNull(idFactory);
         
-        _identifierFactory = identifierFactory;
+        _idFactory = idFactory;
     }
 
     public Exception Convert(DatabaseContextWriteContext context, TriggerConstraintError error)
@@ -27,40 +27,40 @@ internal sealed class TriggerConstraintErrorToExceptionConverter
             case TriggerErrorCodes.RecordsTagsDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsTagsDifferentUserIds:
             {
-                var identifierValue = error.Parameters[TriggerErrorParameters.TagId].AsString();
-                var identifier = _identifierFactory.Create(EntityNames.Tag, identifierValue);
-                return new NotFoundRelatedException(context.ProcessedId, identifier);
+                var idValue = error.Parameters[TriggerErrorParameters.TagId].AsString();
+                var id = _idFactory.Create(EntityNames.Tag, idValue);
+                return new NotFoundRelatedException(context.ProcessedId, id);
             }
             case TriggerErrorCodes.ActivitiesTagsInvalidCount:
             case TriggerErrorCodes.RecordsTagsInvalidCount:
             case TriggerErrorCodes.RunningRecordsTagsInvalidCount:
             {
                 return new InvalidRelatedCountException(
-                    RelatedTagsIdentifiersCollection.MinTagsCount,
-                    RelatedTagsIdentifiersCollection.MaxTagsCount,
+                    RelatedTagIdsCollection.MinTagsCount,
+                    RelatedTagIdsCollection.MaxTagsCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.RecordsActivitiesDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds:
             {
-                var identifierValue = error.Parameters[TriggerErrorParameters.ActivityId].AsString();
-                var identifier = _identifierFactory.Create(EntityNames.Activity, identifierValue);
-                return new NotFoundRelatedException(context.ProcessedId, identifier);
+                var idValue = error.Parameters[TriggerErrorParameters.ActivityId].AsString();
+                var id = _idFactory.Create(EntityNames.Activity, idValue);
+                return new NotFoundRelatedException(context.ProcessedId, id);
             }
             case TriggerErrorCodes.RecordsActivitiesInvalidCount:
             case TriggerErrorCodes.RunningRecordsActivitiesInvalidCount:
             {
                 return new InvalidRelatedCountException(
-                    RelatedActivitiesIdentifiersCollection.MinActivitiesCount,
-                    RelatedActivitiesIdentifiersCollection.MaxActivitiesCount,
+                    RelatedActivityIdsCollection.MinActivitiesCount,
+                    RelatedActivityIdsCollection.MaxActivitiesCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.EventsRelatedEntityNotExists:
             {
                 var entityName = error.Parameters[TriggerErrorParameters.EventEntityName].AsString();
-                var identifierValue = error.Parameters[TriggerErrorParameters.EventEntityId].AsString();
-                var identifier = _identifierFactory.Create(entityName, identifierValue);
-                return new NotFoundRelatedException(context.ProcessedId, identifier);
+                var idValue = error.Parameters[TriggerErrorParameters.EventEntityId].AsString();
+                var id = _idFactory.Create(entityName, idValue);
+                return new NotFoundRelatedException(context.ProcessedId, id);
             }
             default:
                 throw new InvalidOperationException($"Unknown trigger error code \"{error.Code}\"");

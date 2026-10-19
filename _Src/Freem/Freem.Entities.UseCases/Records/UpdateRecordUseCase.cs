@@ -1,9 +1,9 @@
-﻿using Freem.Domain.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Extensions;
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Tags.Identifiers.Extensions;
+using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Update;
@@ -50,7 +50,7 @@ internal sealed class UpdateRecordUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
-        var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new RecordAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RecordNotFound);
@@ -90,9 +90,9 @@ internal sealed class UpdateRecordUseCase
 
     private static UpdateRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
     {
-        if (ex.RelatedIds.HasActivitiesIdentifiers())
+        if (ex.RelatedIds.HasActivityIds())
             return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagsIdentifiers())
+        if (ex.RelatedIds.HasTagIds())
             return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedTagsNotFound);
 
         return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedUnknownNotFound);

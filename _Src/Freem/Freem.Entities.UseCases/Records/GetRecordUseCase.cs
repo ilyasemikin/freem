@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Storage.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Get;
@@ -23,7 +23,7 @@ internal sealed class GetRecordUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var ids = new RecordAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new RecordAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         return GetRecordResponse.Create(result);
     }

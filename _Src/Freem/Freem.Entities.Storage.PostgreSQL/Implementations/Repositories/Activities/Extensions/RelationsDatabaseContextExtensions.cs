@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.Activities;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
@@ -13,9 +13,10 @@ internal static class RelationsDatabaseContextExtensions
         Activity entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<TagIdentifier, ActivityTagRelationEntity>(
+        var entityId = entity.Id.ToString();
+        await context.UpdateRelatedEntitiesAsync<TagId, ActivityTagRelationEntity>(
             entity.Tags,
-            e => e.ActivityId == entity.Id,
+            e => e.ActivityId == entityId,
             e => e.TagId,
             ids => e => ids.Contains(e.TagId),
             id => ActivityRelationFactory.CreateDatabaseActivityTagRelation(entity.Id, id),

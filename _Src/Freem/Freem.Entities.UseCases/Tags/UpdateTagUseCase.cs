@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
@@ -48,7 +48,7 @@ internal sealed class UpdateTagUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
-        var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new TagAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return UpdateTagResponse.CreateFailure(UpdateTagErrorCode.TagNotFound);

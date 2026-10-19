@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Storage.Repositories.Records;
 
@@ -9,9 +9,9 @@ public sealed class RecordByUserFilter : ILimitFilter, IOffsetFilter
     public required Limit Limit { get; init; }
     public required Offset Offset { get; init; }
     
-    public UserIdentifier UserId { get; } 
+    public UserId UserId { get; } 
     
-    public RecordByUserFilter(UserIdentifier userId)
+    public RecordByUserFilter(UserId userId)
     {
         ArgumentNullException.ThrowIfNull(userId);
 

@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.List;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
@@ -59,21 +59,21 @@ public sealed class TagsPlainSyncExecutor
             .GetResult();
     }
 
-    public void Remove(UseCaseExecutionContext context, TagIdentifier id)
+    public void Remove(UseCaseExecutionContext context, TagId id)
     {
         _executor.RemoveAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Result<Tag> Get(UseCaseExecutionContext context, TagIdentifier id)
+    public Result<Tag> Get(UseCaseExecutionContext context, TagId id)
     {
         return _executor.GetAsync(context, id)
             .GetAwaiter()
             .GetResult();
     }
 
-    public Tag RequiredGet(UseCaseExecutionContext context, TagIdentifier id)
+    public Tag RequiredGet(UseCaseExecutionContext context, TagId id)
     {
         return _executor.RequiredGetAsync(context, id)
             .GetAwaiter()

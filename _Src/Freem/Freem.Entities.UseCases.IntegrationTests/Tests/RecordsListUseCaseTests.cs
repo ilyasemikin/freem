@@ -24,7 +24,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
         var activity = filler.Activities.Create(_context);
         var records = filler.Records.CreateMany(_context, [activity.Id], RecordsCount);
         _records = records
-            .OrderBy(e => (string)e.Id)
+            .OrderBy(e => e.Id.ToString())
             .ToArray();
     }
 
@@ -42,7 +42,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
 
         var orderedRecords = response.Records
-            .OrderBy(record => (string)record.Id)
+            .OrderBy(record => record.Id.ToString())
             .ToArray();
         
         Assert.Equal(RecordsCount, (int)response.TotalCount);

@@ -5,16 +5,16 @@ namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 
 public sealed class StartRunningRecordRequest
 {
-    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
+    private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public DateTimeOffset StartAt { get; }
     
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
     
-    public RelatedActivitiesIdentifiersCollection Activities { get; }
+    public RelatedActivityIdsCollection Activities { get; }
 
-    public RelatedTagsIdentifiersCollection Tags
+    public RelatedTagIdsCollection Tags
     {
         get => _tags;
         init
@@ -25,7 +25,7 @@ public sealed class StartRunningRecordRequest
         }
     }
     
-    public StartRunningRecordRequest(DateTimeOffset startAt, RelatedActivitiesIdentifiersCollection activities)
+    public StartRunningRecordRequest(DateTimeOffset startAt, RelatedActivityIdsCollection activities)
     {
         ArgumentNullException.ThrowIfNull(activities);
         

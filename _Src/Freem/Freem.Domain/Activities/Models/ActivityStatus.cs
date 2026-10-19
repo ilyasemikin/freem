@@ -1,11 +1,13 @@
-﻿namespace Freem.Domain.Activities.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public sealed class ActivityStatus : IEquatable<ActivityStatus>
+namespace Freem.Domain.Activities.Models;
+
+public sealed class ActivityStatus : IEquatable<ActivityStatus>, IParsable<ActivityStatus>
 {
     private readonly Value _value;
 
-    public static ActivityStatus Active { get; } = Value.Active;
-    public static ActivityStatus Archived { get; } = Value.Archived;
+    public static ActivityStatus Active { get; } = new(Value.Active);
+    public static ActivityStatus Archived { get; } = new(Value.Archived);
     
     public ActivityStatus(Value value)
     {
@@ -49,14 +51,31 @@ public sealed class ActivityStatus : IEquatable<ActivityStatus>
         return !(left == right);
     }
 
-    public static implicit operator ActivityStatus(Value value)
+    public Value ToValue()
     {
-        return new ActivityStatus(value);
+        return _value;
     }
 
-    public static implicit operator Value(ActivityStatus value)
+    public static ActivityStatus Parse(string s, IFormatProvider? provider)
     {
-        return value._value;
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for ActivityStatus: {s}");
+    }
+
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out ActivityStatus? result)
+    {
+        if (!Enum.TryParse<Value>(s, out var value) || !Enum.IsDefined(value))
+        {
+            result = null;
+            return false;
+        }
+
+        result = new ActivityStatus(value);
+        return true;
     }
     
     public enum Value

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
@@ -30,7 +30,7 @@ public sealed class TagsClient : BaseClient
     }
 
     public Task<ClientResult> UpdateAsync(
-        TagIdentifier id,
+        TagId id,
         UpdateTagRequest body, 
         CancellationToken cancellationToken = default)
     {
@@ -40,14 +40,14 @@ public sealed class TagsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveAsync(TagIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult> RemoveAsync(TagId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/tags/{id}");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult<TagResponse>> GetAsync(TagIdentifier id, CancellationToken cancellationToken = default)
+    public Task<ClientResult<TagResponse>> GetAsync(TagId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/tags/{id}");
         

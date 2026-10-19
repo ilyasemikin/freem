@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models;
-using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
@@ -64,8 +64,8 @@ internal sealed class RecordsRepository : IRecordRepository
         if (_equalityComparer.Equals(entity, actualEntity))
             return;
 
-        dbEntity.Name = entity.Name;
-        dbEntity.Description = entity.Description;
+        dbEntity.Name = entity.Name?.ToString();
+        dbEntity.Description = entity.Description?.ToString();
 
         dbEntity.StartAt = entity.Period.StartAt;
         dbEntity.EndAt = entity.Period.EndAt;
@@ -77,7 +77,7 @@ internal sealed class RecordsRepository : IRecordRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(RecordIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(RecordId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
@@ -92,28 +92,31 @@ internal sealed class RecordsRepository : IRecordRepository
     }
 
     public async Task<SearchEntityResult<Record>> FindByIdAsync(
-        RecordIdentifier id,
+        RecordId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
+        var idString = id.ToString();
         return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(e => e.Id == id, RecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.Id == idString, RecordMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<SearchEntityResult<Record>> FindByMultipleIdAsync(
-        RecordAndUserIdentifiers ids,
+        RecordAndUserIds ids,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
 
+        var recordIdString = ids.RecordId.ToString();
+        var userIdString = ids.UserId.ToString();
         return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
-                e => e.Id == ids.RecordId && e.UserId == ids.UserId,
+                e => e.Id == recordIdString && e.UserId == userIdString,
                 RecordMapper.MapToDomainEntity,
                 cancellationToken);
     }
@@ -124,10 +127,11 @@ internal sealed class RecordsRepository : IRecordRepository
     {
         ArgumentNullException.ThrowIfNull(filter);
 
+        var userIdString = filter.UserId.ToString();
         return await _database.Records
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .Where(e => e.UserId == filter.UserId)
+            .Where(e => e.UserId == userIdString)
             .OrderBy(e => e.StartAt)
             .ThenBy(e => e.EndAt)
             .ThenBy(e => e.Id)
@@ -141,6 +145,8 @@ internal sealed class RecordsRepository : IRecordRepository
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
+
+        var userIdString = filter.UserId.ToString();
 
         async Task<SearchEntitiesAsyncResult<Record>> FindInnerAsync(Expression<Func<RecordEntity, bool>> predicate)
         {
@@ -158,13 +164,13 @@ internal sealed class RecordsRepository : IRecordRepository
 
         if (filter.AfterRecordId is null)
             return await FindInnerAsync(e =>
-                e.UserId == filter.UserId &&
+                e.UserId == userIdString &&
                 (filter.Period.StartAt <= e.StartAt && e.StartAt < filter.Period.EndAt ||
                  filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt));
 
-        var afterRecordId = (string)filter.AfterRecordId;
+        var afterRecordId = filter.AfterRecordId.ToString();
         return await FindInnerAsync(e =>
-            e.UserId == filter.UserId &&
+            e.UserId == userIdString &&
             (filter.Period.StartAt <= e.StartAt && e.StartAt < filter.Period.EndAt ||
              filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt) &&
             (e.StartAt > filter.Period.StartAt ||

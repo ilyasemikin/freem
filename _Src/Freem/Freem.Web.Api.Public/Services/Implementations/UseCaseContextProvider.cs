@@ -1,3 +1,4 @@
+using Freem.Domain.Users;
 using Freem.Entities.UseCases;
 using Freem.Web.Api.Public.Authentication;
 
@@ -17,9 +18,9 @@ public sealed class UseCaseContextProvider
         if (_accessor.HttpContext is null)
             return UseCaseExecutionContext.Empty;
 
-        var userId = _accessor.HttpContext.User.FindFirst(AuthenticationClaimTypes.UserId)?.Value;
+        var value = _accessor.HttpContext.User.FindFirst(AuthenticationClaimTypes.UserId)?.Value;
 
-        return !string.IsNullOrWhiteSpace(userId)
+        return UserId.TryParse(value, null, out var userId)
             ? new UseCaseExecutionContext(userId)
             : UseCaseExecutionContext.Empty;
     }

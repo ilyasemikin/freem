@@ -1,4 +1,5 @@
-﻿using Freem.Domain.Storage.Repositories.RunningRecords;
+﻿using Freem.Domain.RunningRecords;
+using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
@@ -42,7 +43,8 @@ internal sealed class RemoveRunningRecordUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
 
-        var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
+        var id = RunningRecordId.FromUserId(context.UserId);
+        var result = await _repository.FindByIdAsync(id, cancellationToken);
         if (!result.Founded)
             return RemoveRunningRecordResponse.CreateFailure(RemoveRunningRecordErrorCode.RunningRecordNotFound);
 

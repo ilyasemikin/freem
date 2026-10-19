@@ -58,11 +58,11 @@ public sealed class StartRunningRecordController : BaseController
     private UseCaseStartRunningRecordRequest Map(ApiStartRunningRecordRequest request)
     {
         var startAt = request.StartAt ?? _clock.Get();
-        return new UseCaseStartRunningRecordRequest(startAt, new RelatedActivitiesIdentifiersCollection(request.Activities))
+        return new UseCaseStartRunningRecordRequest(startAt, new RelatedActivityIdsCollection(request.Activities))
         {
             Name = request.Name,
             Description = request.Description,
-            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
+            Tags = new RelatedTagIdsCollection(request.Tags)
         };
     }
 

@@ -1,25 +1,25 @@
-﻿using Freem.Domain.Activities.Events.Arhived;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Activities.Events.Arhived;
 using Freem.Domain.Activities.Events.Created;
 using Freem.Domain.Activities.Events.Removed;
 using Freem.Domain.Activities.Events.Unarchived;
 using Freem.Domain.Activities.Events.Updated;
-using Freem.Domain.Activities.Identifiers;
 using Freem.Domain.Activities.Models;
-using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Events;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Entities.Activities;
 
 public sealed class Activity : 
-    IEntity<ActivityIdentifier>
+    IEntity<ActivityId>
 {
     private ActivityName _activityName = null!;
     private ActivityStatus _status = null!;
 
-    public ActivityIdentifier Id { get; }
-    public UserIdentifier UserId { get; }
-    public RelatedTagsIdentifiersCollection Tags { get; }
+    public ActivityId Id { get; }
+    public UserId UserId { get; }
+    public RelatedTagIdsCollection Tags { get; }
 
     public ActivityName Name
     {
@@ -44,10 +44,10 @@ public sealed class Activity :
     }
 
     public Activity(
-        ActivityIdentifier id,
-        UserIdentifier userId,
+        ActivityId id,
+        UserId userId,
         ActivityName name,
-        RelatedTagsIdentifiersCollection relatedTags,
+        RelatedTagIdsCollection relatedTags,
         ActivityStatus status)
     {
         ArgumentNullException.ThrowIfNull(relatedTags);
@@ -59,27 +59,27 @@ public sealed class Activity :
         Status = status;
     }
 
-    public ActivityCreatedEvent BuildCreatedEvent(EventIdentifier eventId)
+    public ActivityCreatedEvent BuildCreatedEvent(EventId eventId)
     {
         return new ActivityCreatedEvent(eventId, Id, UserId);
     }
 
-    public ActivityUpdatedEvent BuildUpdatedEvent(EventIdentifier eventId)
+    public ActivityUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
         return new ActivityUpdatedEvent(eventId, Id, UserId);
     }
 
-    public ActivityRemovedEvent BuildRemovedEvent(EventIdentifier eventId)
+    public ActivityRemovedEvent BuildRemovedEvent(EventId eventId)
     {
         return new ActivityRemovedEvent(eventId, Id, UserId);
     }
 
-    public ActivityArchivedEvent BuildArchivedEvent(EventIdentifier eventId)
+    public ActivityArchivedEvent BuildArchivedEvent(EventId eventId)
     {
         return new ActivityArchivedEvent(eventId, Id, UserId);
     }
 
-    public ActivityUnarchivedEvent BuildUnarchivedEvent(EventIdentifier eventId)
+    public ActivityUnarchivedEvent BuildUnarchivedEvent(EventId eventId)
     {
         return new ActivityUnarchivedEvent(eventId, Id, UserId);
     }

@@ -1,6 +1,7 @@
 ﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Tags.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
@@ -11,16 +12,17 @@ internal static class TagMapper
     {
         return new TagEntity
         {
-            Id = tag.Id,
-            Name = tag.Name,
-            UserId = tag.UserId,
+            Id = tag.Id.ToString(),
+            Name = tag.Name.ToString(),
+            UserId = tag.UserId.ToString(),
         };
     }
 
     public static Tag MapToDomainEntity(this TagEntity entity)
     {
-        var id = new TagIdentifier(entity.Id);
-        var userId = new UserIdentifier(entity.UserId);
-        return new Tag(id, userId, entity.Name);
+        var id = TagId.Parse(entity.Id, null);
+        var userId = UserId.Parse(entity.UserId, null);
+        var name = TagName.Parse(entity.Name, null);
+        return new Tag(id, userId, name);
     }
 }

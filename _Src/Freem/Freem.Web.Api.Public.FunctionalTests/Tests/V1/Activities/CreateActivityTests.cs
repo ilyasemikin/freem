@@ -17,7 +17,7 @@ public sealed class CreateActivityTests : ActivityTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var name = new ActivityName("name");
+        var name = ActivityName.Parse("name", null);
         var request = new CreateActivityRequest(name, AddedRelatedTags);
         
         var response = await Context.Client.Activities.CreateAsync(request);

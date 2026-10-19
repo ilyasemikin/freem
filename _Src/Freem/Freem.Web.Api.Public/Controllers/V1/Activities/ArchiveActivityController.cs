@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
 using Freem.UseCases.Abstractions;
@@ -51,7 +51,7 @@ public sealed class ArchiveActivityController : BaseController
 
     private static ArchiveActivityRequest Map(string activityIdString)
     {
-        var activityId = new ActivityIdentifier(activityIdString);
+        var activityId = ActivityId.Parse(activityIdString, null);
         return new ArchiveActivityRequest(activityId);
     }
 

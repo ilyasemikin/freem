@@ -1,13 +1,11 @@
-﻿using Freem.Domain.Activities.Identifiers;
-using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Events;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Activities.Events.Updated;
 
-public sealed class ActivityUpdatedEvent : EntityEvent<ActivityIdentifier, UserIdentifier>
+public sealed class ActivityUpdatedEvent : EntityEvent<ActivityId, UserId>
 {
-    public ActivityUpdatedEvent(EventIdentifier id, ActivityIdentifier entityId, UserIdentifier userId) 
+    public ActivityUpdatedEvent(EventId id, ActivityId entityId, UserId userId) 
         : base(id, entityId, userId, ActivityEventActions.Updated)
     {
     }

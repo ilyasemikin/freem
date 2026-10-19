@@ -57,8 +57,9 @@ public sealed class FindTagByNameController : BaseController
 
     private static FindTagByNameRequest Map(string tagNameString)
     {
-        var tagName = new TagName(tagNameString);
-        return new FindTagByNameRequest(tagName);
+        var tagName = TagName.Parse(tagNameString, null);
+        var searchText = tagName.ToString();
+        return new FindTagByNameRequest(searchText);
     }
 
     private static IActionResult CreateFailure(Error<FindTagByNameErrorCode> error)

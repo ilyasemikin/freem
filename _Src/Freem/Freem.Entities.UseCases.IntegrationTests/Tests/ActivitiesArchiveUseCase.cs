@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
 using Freem.Entities.UseCases.Exceptions;
@@ -10,7 +10,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly ActivityIdentifier _activityId;
+    private readonly ActivityId _activityId;
 
     public ActivitiesArchiveUseCase(TestContext context)
         : base(context)
@@ -44,7 +44,7 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenActivityDoesNotExist()
     {
-        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
+        var notExistedActivityId = ActivityId.Generate();
         var request = new ArchiveActivityRequest(notExistedActivityId);
 
         var response = await Context.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);

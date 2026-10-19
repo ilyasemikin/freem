@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
     </ItemGroup>
 

@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Remove;
 
 public sealed class RemoveActivityRequest
 {
-    public ActivityIdentifier Id { get; }
+    public ActivityId Id { get; }
     
-    public RemoveActivityRequest(ActivityIdentifier id)
+    public RemoveActivityRequest(ActivityId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

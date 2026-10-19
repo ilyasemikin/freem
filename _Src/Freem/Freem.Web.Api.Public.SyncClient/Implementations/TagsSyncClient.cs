@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
@@ -28,7 +28,7 @@ public sealed class TagsSyncClient : BaseSyncClient
         return SendForUser<CreateTagResponse>(request);
     }
 
-    public ClientResult Update(TagIdentifier id, UpdateTagRequest body)
+    public ClientResult Update(TagId id, UpdateTagRequest body)
     {
         var request = HttpRequest.Put($"api/v1/tags/{id}")
             .WithJsonBody(body, _options);
@@ -36,14 +36,14 @@ public sealed class TagsSyncClient : BaseSyncClient
         return SendForUser(request);
     }
 
-    public ClientResult Remove(TagIdentifier id)
+    public ClientResult Remove(TagId id)
     {
         var request = HttpRequest.Delete($"api/v1/tags/{id}");
         
         return SendForUser(request);
     }
 
-    public ClientResult<TagResponse> Get(TagIdentifier id)
+    public ClientResult<TagResponse> Get(TagId id)
     {
         var request = HttpRequest.Get($"api/v1/tags/{id}");
         

@@ -1,13 +1,11 @@
-﻿using Freem.Domain.Activities.Identifiers;
-using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Events;
+using Freem.Domain.Users;
 
 namespace Freem.Domain.Activities.Events.Arhived;
 
-public sealed class ActivityArchivedEvent : EntityEvent<ActivityIdentifier, UserIdentifier>
+public sealed class ActivityArchivedEvent : EntityEvent<ActivityId, UserId>
 {
-    public ActivityArchivedEvent(EventIdentifier id, ActivityIdentifier entityId, UserIdentifier userId) 
+    public ActivityArchivedEvent(EventId id, ActivityId entityId, UserId userId) 
         : base(id, entityId, userId, ActivityEventActions.Archived)
     {
     }

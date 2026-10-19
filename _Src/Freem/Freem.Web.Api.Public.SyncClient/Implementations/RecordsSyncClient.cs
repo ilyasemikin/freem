@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
@@ -30,7 +30,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         return SendForUser<CreateRecordResponse>(request);
     }
 
-    public ClientResult Update(RecordIdentifier id, UpdateRecordRequest body)
+    public ClientResult Update(RecordId id, UpdateRecordRequest body)
     {
         var request = HttpRequest.Put($"api/v1/records/{id}")
             .WithJsonBody(body, _options);
@@ -38,7 +38,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         return SendForUser(request);
     }
 
-    public ClientResult Remove(RecordIdentifier id)
+    public ClientResult Remove(RecordId id)
     {
         var request = HttpRequest.Delete($"api/v1/records/{id}");
         
@@ -83,7 +83,7 @@ public sealed class RecordsSyncClient : BaseSyncClient
         return SendForUser<RunningRecordResponse>(request);
     }
 
-    public ClientResult<RunningRecordResponse> Get(RecordIdentifier id)
+    public ClientResult<RunningRecordResponse> Get(RecordId id)
     {
         var request = HttpRequest.Get($"api/v1/records/{id}");
         

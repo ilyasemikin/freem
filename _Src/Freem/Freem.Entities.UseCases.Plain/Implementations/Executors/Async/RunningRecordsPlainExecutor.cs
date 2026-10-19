@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
@@ -38,11 +38,11 @@ public class RunningRecordsPlainExecutor
     }
 
     public async Task<RunningRecord> StartAsync(
-        UseCaseExecutionContext context, IEnumerable<ActivityIdentifier> activityIds,
+        UseCaseExecutionContext context, IEnumerable<ActivityId> activityIds,
         CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow.AddDays(-1);
-        var activities = new RelatedActivitiesIdentifiersCollection(activityIds);
+        var activities = new RelatedActivityIdsCollection(activityIds);
         
         var request = new StartRunningRecordRequest(now, activities);
         return await StartAsync(context, request, cancellationToken);

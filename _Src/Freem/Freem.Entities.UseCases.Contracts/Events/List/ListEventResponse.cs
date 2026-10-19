@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Domain;
 using Freem.Domain.Events;
-using Freem.Domain.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
@@ -15,13 +15,13 @@ public sealed class ListEventResponse : IResponse<ListEventErrorCode>
     [MemberNotNullWhen(false, nameof(Error))]
     public bool Success { get; }
     
-    public IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>>? Events { get; }
+    public IReadOnlyList<IEntityEvent<Id, UserId>>? Events { get; }
     public TotalCount? TotalCount { get; }
     
     public Error<ListEventErrorCode>? Error { get; }
     
     private ListEventResponse(
-        IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>>? events = null, 
+        IReadOnlyList<IEntityEvent<Id, UserId>>? events = null, 
         TotalCount? totalCount = null,
         Error<ListEventErrorCode>? error = null)
     {
@@ -32,7 +32,7 @@ public sealed class ListEventResponse : IResponse<ListEventErrorCode>
     }
 
     public static ListEventResponse CreateSuccess(
-        IReadOnlyList<IEntityEvent<IEntityIdentifier, UserIdentifier>> events, 
+        IReadOnlyList<IEntityEvent<Id, UserId>> events, 
         TotalCount totalCount)
     {
         ArgumentNullException.ThrowIfNull(events);

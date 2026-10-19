@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
@@ -7,17 +7,17 @@ namespace Freem.Entities.UseCases.Contracts.Records.Update;
 
 public sealed class UpdateRecordRequest
 {
-    public RecordIdentifier Id { get; }
+    public RecordId Id { get; }
     
     public UpdateField<DateTimePeriod>? Period { get; init; }
 
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
-    public UpdateField<RelatedActivitiesIdentifiersCollection>? Activities { get; init; }
-    public UpdateField<RelatedTagsIdentifiersCollection>? Tags { get; init; }
+    public UpdateField<RelatedActivityIdsCollection>? Activities { get; init; }
+    public UpdateField<RelatedTagIdsCollection>? Tags { get; init; }
 
-    public UpdateRecordRequest(RecordIdentifier id)
+    public UpdateRecordRequest(RecordId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

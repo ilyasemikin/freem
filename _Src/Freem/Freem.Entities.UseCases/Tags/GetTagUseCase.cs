@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Storage.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
@@ -23,7 +23,7 @@ internal sealed class GetTagUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new TagAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         return GetTagResponse.Create(result);
     }

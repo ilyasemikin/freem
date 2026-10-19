@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Storage.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
@@ -24,7 +24,7 @@ internal sealed class GetActivityUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var ids = new ActivityAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         return GetActivityResponse.Create(result);
     }

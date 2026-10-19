@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddEntitiesEqualityComparers()
-            .AddEntitiesIdentifiersNameConverters()
+            .AddEntityIdNameConverters()
             .AddEventsFactory()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddDatabaseContextErrorHandler(this IServiceCollection services)
     {
-        services.TryAddSingleton<DatabaseColumnToIdentifierPossibleConverter>();
+        services.TryAddSingleton<DatabaseColumnToIdPossibleConverter>();
 
         services.TryAddSingleton<DatabaseForeignKeyConstraintErrorToExceptionConverter>();
         services.TryAddSingleton<TriggerConstraintErrorToExceptionConverter>();

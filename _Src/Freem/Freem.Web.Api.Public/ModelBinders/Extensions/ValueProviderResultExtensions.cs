@@ -72,7 +72,7 @@ internal static class ValueProviderResultExtensions
         if (result.Length != 1 || result.FirstValue is null)
             return false;
 
-        if (!DatePeriod.TryParse(result.FirstValue, out var actualValue))
+        if (!DatePeriod.TryParse(result.FirstValue, null, out var actualValue))
             return false;
 
         value = actualValue;
@@ -91,7 +91,7 @@ internal static class ValueProviderResultExtensions
         if (result.Length != 1 || result.FirstValue is null)
             return false;
 
-        if (!DateTimePeriod.TryParse(result.FirstValue, out var actualValue))
+        if (!DateTimePeriod.TryParse(result.FirstValue, null, out var actualValue))
             return false;
 
         value = actualValue;

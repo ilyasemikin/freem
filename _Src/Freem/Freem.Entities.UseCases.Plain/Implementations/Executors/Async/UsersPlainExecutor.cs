@@ -1,4 +1,5 @@
-﻿using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Users;
+using Freem.Domain.Users.Models;
 using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Entities.UseCases.Plain.Exceptions;
 using Freem.UseCases.Abstractions;
@@ -16,13 +17,13 @@ public sealed class UsersPlainExecutor
         _executor = executor;
     }
 
-    public async Task<UserIdentifier> RegisterAsync(
+    public async Task<UserId> RegisterAsync(
         RegisterUserRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         
         var value = Guid.NewGuid().ToString("N");
-        var userId = new UserIdentifier(value);
+        var userId = UserId.Parse(value, null);
         var context = new UseCaseExecutionContext(userId);
         
         var response = await _executor.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(context, request, cancellationToken);
@@ -32,9 +33,10 @@ public sealed class UsersPlainExecutor
         return response.UserId;
     }
 
-    public async Task<UserIdentifier> RegisterAsync(CancellationToken cancellationToken = default)
+    public async Task<UserId> RegisterAsync(CancellationToken cancellationToken = default)
     {
-        var nickname = Guid.NewGuid().ToString();
+        var value = Guid.NewGuid().ToString();
+        var nickname = Nickname.Parse(value, null);
         
         var request = new RegisterUserRequest(nickname);
         return await RegisterAsync(request, cancellationToken);

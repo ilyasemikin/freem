@@ -1,4 +1,4 @@
-﻿using Freem.Domain.Storage.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
@@ -35,7 +35,7 @@ internal sealed class RemoveTagUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var ids = new TagAndUserIdentifiers(request.Id, context.UserId);
+        var ids = new TagAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
         if (!result.Founded)
             return RemoveTagResponse.CreateFailure(RemoveTagErrorCode.TagNotFound);

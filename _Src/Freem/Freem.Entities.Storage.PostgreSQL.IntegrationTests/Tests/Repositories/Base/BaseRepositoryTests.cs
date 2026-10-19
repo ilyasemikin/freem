@@ -1,14 +1,10 @@
-﻿using Freem.Domain.DependencyInjection;
-using Freem.Domain.Users.Identifiers;
+﻿using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensions;
-using Freem.Identifiers.Abstractions;
-using Freem.Identifiers.Abstractions.Generators;
-using Freem.Identifiers.Implementations.Generators;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,7 +20,6 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
     internal DatabaseContext Database { get; }
     internal TRepository Repository { get; }
     internal DatabaseEntitiesFactory EntitiesFactory { get; }
-    internal TypedIdentifierGenerator IdentifiersGenerator { get; }
 
     internal BaseRepositoryTests(ITestOutputHelper output)
     {
@@ -35,9 +30,7 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
             .ToStorageConfiguration(output.WriteLine);
         
         var services = new ServiceCollection();
-        services
-            .AddIdentifiersGenerators()
-            .AddPostgreSqlStorage(configuration);
+        services.AddPostgreSqlStorage(configuration);
 
         var options = new ServiceProviderOptions { ValidateOnBuild = true };
 
@@ -45,17 +38,13 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
 
         Database = provider.GetRequiredService<DatabaseContext>();
         Repository = provider.GetRequiredService<TRepository>();
-
-        var generators = provider.GetServices<IIdentifierGenerator<IIdentifier>>();
-        IdentifiersGenerator = new TypedIdentifierGenerator(generators);
         
         Database.TruncateTables();
     }
     
-    internal UserIdentifier GenerateUserIdentifier()
+    internal UserId GenerateUserId()
     {
-        var value = Guid.NewGuid().ToString("N");
-        return new UserIdentifier(value);
+        return UserId.Generate();
     }
     
     public void Dispose()

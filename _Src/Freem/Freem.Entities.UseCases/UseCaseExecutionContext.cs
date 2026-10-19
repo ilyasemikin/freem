@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.UseCases.Exceptions;
 
 namespace Freem.Entities.UseCases;
@@ -8,9 +8,9 @@ public sealed class UseCaseExecutionContext
 {
     public static UseCaseExecutionContext Empty { get; } = new();
     
-    public UserIdentifier? UserId { get; }
+    public UserId? UserId { get; }
 
-    public UseCaseExecutionContext(UserIdentifier? userId = null)
+    public UseCaseExecutionContext(UserId? userId = null)
     {
         UserId = userId;
     }

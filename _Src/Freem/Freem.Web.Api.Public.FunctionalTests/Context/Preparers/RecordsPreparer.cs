@@ -1,7 +1,7 @@
-﻿using Freem.Domain.Activities.Identifiers;
-using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Time.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
@@ -19,14 +19,14 @@ public sealed class RecordsPreparer
         _context = context;
     }
 
-    public IEnumerable<RecordIdentifier> CreateMany(
+    public IEnumerable<RecordId> CreateMany(
         IEnumerable<DateTimePeriod> periods,
-        IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier> activities,
-        IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>? tags = null)
+        IReadOnlyRelatedIdsCollection<ActivityId> activities,
+        IReadOnlyRelatedIdsCollection<TagId>? tags = null)
     {
-        tags ??= RelatedTagsIdentifiersCollection.Empty;
+        tags ??= RelatedTagIdsCollection.Empty;
         
-        var ids = new List<RecordIdentifier>();
+        var ids = new List<RecordId>();
         foreach (var period in periods)
         {
             var request = new CreateRecordRequest(period, activities, tags);
@@ -41,10 +41,10 @@ public sealed class RecordsPreparer
 
     public void StartRunning(
         DateTimeOffset? startAt, 
-        RelatedActivitiesIdentifiersCollection activities, 
-        RelatedTagsIdentifiersCollection? tags = null)
+        RelatedActivityIdsCollection activities, 
+        RelatedTagIdsCollection? tags = null)
     {
-        tags ??= RelatedTagsIdentifiersCollection.Empty;
+        tags ??= RelatedTagIdsCollection.Empty;
         
         var request = new StartRunningRecordRequest(startAt, activities, tags);
         var response = _context.SyncClient.Records.Start(request);

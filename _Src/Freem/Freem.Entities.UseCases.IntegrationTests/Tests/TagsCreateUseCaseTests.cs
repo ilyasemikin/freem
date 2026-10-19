@@ -1,4 +1,5 @@
-﻿using Freem.Entities.UseCases.Contracts.Tags.Create;
+﻿using Freem.Domain.Tags.Models;
+using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -7,7 +8,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class TagsCreateUseCaseTests : UseCaseTestBase
 {
-    private const string TagName = "tag";
+    private static readonly TagName TagName = TagName.Parse("tag", null);
     
     private readonly UseCaseExecutionContext _context;
     

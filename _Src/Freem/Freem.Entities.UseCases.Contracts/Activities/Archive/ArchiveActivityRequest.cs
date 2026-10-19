@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Archive;
 
 public sealed class ArchiveActivityRequest
 {
-    public ActivityIdentifier Id { get; }
+    public ActivityId Id { get; }
 
-    public ArchiveActivityRequest(ActivityIdentifier id)
+    public ArchiveActivityRequest(ActivityId id)
     {
         ArgumentNullException.ThrowIfNull(id);
 

@@ -77,8 +77,7 @@ builder.Services
 
 builder.Services
     .AddUseCaseContextProvider()
-    .AddIdentifiersGenerators()
-    .AddEntitiesIdentifiersNameConverters()
+    .AddEntityIdNameConverters()
     .AddEntitiesUseCases();
 
 var egoHubConfiguration = builder.Configuration.GetEgoHubIntegrationConfiguration();

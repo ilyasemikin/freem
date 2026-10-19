@@ -1,14 +1,14 @@
-﻿namespace Freem.Domain.Users.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Freem.Domain.Users.Models;
 
 public sealed class Nickname : 
-    IEquatable<Nickname>
+    IEquatable<Nickname>, IParsable<Nickname>
 {
     private readonly string _value;
 
-    public Nickname(string value)
+    private Nickname(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
-
         _value = value;
     }
 
@@ -31,6 +31,11 @@ public sealed class Nickname :
         return _value.GetHashCode();
     }
 
+    public override string ToString()
+    {
+        return _value;
+    }
+
     public static bool operator ==(Nickname left, Nickname right)
     {
         return left.Equals(right);
@@ -41,13 +46,25 @@ public sealed class Nickname :
         return !(left == right);
     }
 
-    public static implicit operator Nickname(string value)
+    public static Nickname Parse(string s, IFormatProvider? provider)
     {
-        return new Nickname(value);
+        return TryParse(s, provider, out var result)
+            ? result
+            : throw new FormatException($"Invalid value for Nickname: {s}");
     }
-    
-    public static implicit operator string(Nickname value)
+
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [NotNullWhen(true)] out Nickname? result)
     {
-        return value._value;
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            result = null;
+            return false;
+        }
+
+        result = new Nickname(s);
+        return true;
     }
 }

@@ -1,12 +1,12 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Remove;
 
 public sealed class RemoveRecordRequest
 {
-    public RecordIdentifier Id { get; }
+    public RecordId Id { get; }
 
-    public RemoveRecordRequest(RecordIdentifier id)
+    public RemoveRecordRequest(RecordId id)
     {
         ArgumentNullException.ThrowIfNull(id);
         

@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -8,28 +8,32 @@ internal static class RecordRelationFactory
 {
     public static IEnumerable<RecordActivityRelationEntity> CreateDatabaseRecordActivityRelations(this Record entity)
     {
-        return entity.Activities.Identifiers.Select(id => CreateDatabaseRecordActivityRelation(entity.Id, id));
+        return entity.Activities.Ids
+            .Select(id => id.ToString())
+            .Select(activityId => CreateDatabaseRecordActivityRelation(entity.Id, activityId));
     }
 
-    public static RecordActivityRelationEntity CreateDatabaseRecordActivityRelation(RecordIdentifier recordId, string activityIdString)
+    public static RecordActivityRelationEntity CreateDatabaseRecordActivityRelation(RecordId recordId, string activityIdString)
     {
         return new RecordActivityRelationEntity
         {
-            RecordId = recordId,
+            RecordId = recordId.ToString(),
             ActivityId = activityIdString,
         };
     }
 
     public static IEnumerable<RecordTagRelationEntity> CreateDatabaseRecordTagRelations(this Record entity)
     {
-        return entity.Tags.Identifiers.Select(id => CreateDatabaseRecordTagRelation(entity.Id, id));
+        return entity.Tags.Ids
+            .Select(id => id.ToString())
+            .Select(tagId => CreateDatabaseRecordTagRelation(entity.Id, tagId));
     }
 
-    public static RecordTagRelationEntity CreateDatabaseRecordTagRelation(RecordIdentifier recordId, string tagIdString)
+    public static RecordTagRelationEntity CreateDatabaseRecordTagRelation(RecordId recordId, string tagIdString)
     {
         return new RecordTagRelationEntity
         {
-            RecordId = recordId,
+            RecordId = recordId.ToString(),
             TagId = tagIdString
         };
     }

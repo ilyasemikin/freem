@@ -1,13 +1,12 @@
-﻿using Freem.Domain.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Extensions;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Tags.Identifiers.Extensions;
+using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Create;
-using Freem.Identifiers.Abstractions.Generators;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
@@ -16,23 +15,19 @@ namespace Freem.Entities.UseCases.Records;
 internal sealed class CreateRecordUseCase 
     : IEntitiesUseCase<CreateRecordRequest, CreateRecordResponse, CreateRecordErrorCode>
 {
-    private readonly IIdentifierGenerator<RecordIdentifier> _identifierGenerator;
     private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateRecordUseCase(
-        IIdentifierGenerator<RecordIdentifier> identifierGenerator, 
         IRecordRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
-        ArgumentNullException.ThrowIfNull(identifierGenerator);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
         
-        _identifierGenerator = identifierGenerator;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
@@ -44,7 +39,7 @@ internal sealed class CreateRecordUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var id = _identifierGenerator.Generate();
+        var id = RecordId.Generate();
         var record = new Record(id, context.UserId, request.Activities, request.Tags, request.Period)
         {
             Name = request.Name,
@@ -74,9 +69,9 @@ internal sealed class CreateRecordUseCase
 
     private static CreateRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
     {
-        if (ex.RelatedIds.HasActivitiesIdentifiers())
+        if (ex.RelatedIds.HasActivityIds())
             return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagsIdentifiers())
+        if (ex.RelatedIds.HasTagIds())
             return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedTagsNotFound);
         
         return CreateRecordResponse.CreateFailure(CreateRecordErrorCode.RelatedUnknownNotFound);

@@ -1,13 +1,13 @@
 ﻿using System.Linq.Expressions;
-using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.Entities.Tags;
 using Freem.Domain.Entities.Users;
-using Freem.Domain.Records.Identifiers;
-using Freem.Domain.Tags.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Records;
+using Freem.Domain.Tags;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,11 +39,11 @@ internal static class SearchEntitiesDatabaseContextExtensions
 
     public static async Task<ActivityEntity?> FindEntityAsync(
         this IQueryable<ActivityEntity> queryable,
-        ActivityIdentifier identifier,
+        ActivityId id,
         CancellationToken cancellationToken = default)
     {
-        var id = identifier.ToString();
-        return await queryable.FindEntityAsync(e => e.Id == id, cancellationToken);
+        var value = id.ToString();
+        return await queryable.FindEntityAsync(e => e.Id == value, cancellationToken);
     }
 
     public static async Task<RecordEntity?> FindEntityAsync(
@@ -71,11 +71,11 @@ internal static class SearchEntitiesDatabaseContextExtensions
 
     public static async Task<RecordEntity?> FindEntityAsync(
         this IQueryable<RecordEntity> queryable,
-        RecordIdentifier identifier,
+        RecordId id,
         CancellationToken cancellationToken = default)
     {
-        var id = identifier.ToString();
-        return await queryable.FindEntityAsync(e => e.Id == id, cancellationToken);
+        var value = id.ToString();
+        return await queryable.FindEntityAsync(e => e.Id == value, cancellationToken);
     }
 
     public static async Task<RunningRecordEntity?> FindEntityAsync(
@@ -99,11 +99,11 @@ internal static class SearchEntitiesDatabaseContextExtensions
     
     public static async Task<RunningRecordEntity?> FindEntityAsync(
         this IQueryable<RunningRecordEntity> queryable,
-        UserIdentifier identifier,
+        UserId id,
         CancellationToken cancellationToken = default)
     {
-        var id = identifier.ToString();
-        return await queryable.FindEntityAsync(e => e.UserId == id, cancellationToken);
+        var value = id.ToString();
+        return await queryable.FindEntityAsync(e => e.UserId == value, cancellationToken);
     }
 
     public static async Task<TagEntity?> FindEntityAsync(
@@ -128,11 +128,11 @@ internal static class SearchEntitiesDatabaseContextExtensions
     
     public static async Task<TagEntity?> FindEntityAsync(
         this IQueryable<TagEntity> queryable,
-        TagIdentifier identifier,
+        TagId id,
         CancellationToken cancellationToken = default)
     {
-        var id = identifier.ToString();
-        return await queryable.FindEntityAsync(e => e.Id == id, cancellationToken);
+        var value = id.ToString();
+        return await queryable.FindEntityAsync(e => e.Id == value, cancellationToken);
     }
     
     public static async Task<UserEntity?> FindEntityAsync(

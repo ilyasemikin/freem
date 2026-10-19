@@ -2,29 +2,28 @@
 using System.Text.Json.Serialization;
 using Freem.Domain;
 using Freem.Domain.Events;
-using Freem.Domain.Events.Identifiers;
-using Freem.Domain.Identifiers;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Events.Models;
+using Freem.Domain.Users;
 
 namespace Freem.Entities.Serialization.Json.Events;
 
-public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdentifier, UserIdentifier>>
+public sealed class EventJsonConverter : JsonConverter<IEntityEvent<Id, UserId>>
 {
     private const string EntityPropertyName = "entity";
     private const string ValuePropertyName = "value";
 
     private readonly EventsFactory _eventsFactory;
-    private readonly EntityIdentifierFactory _entityIdentifierFactory;
-    private readonly EntityIdentifierNameProvider _nameProvider;
+    private readonly EntityIdFactory _entityIdFactory;
+    private readonly EntityIdNameProvider _nameProvider;
     
     public EventJsonConverter()
     {
         _eventsFactory = EventsFactory.Instance;
-        _entityIdentifierFactory = EntityIdentifierFactory.Instance;
-        _nameProvider = EntityIdentifierNameProvider.Instance;
+        _entityIdFactory = EntityIdFactory.Instance;
+        _nameProvider = EntityIdNameProvider.Instance;
     }
     
-    public override IEntityEvent<IEntityIdentifier, UserIdentifier>? Read(
+    public override IEntityEvent<Id, UserId>? Read(
         ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var document = JsonDocument.ParseValue(ref reader);
@@ -36,13 +35,13 @@ public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdent
 
         var entity = entityElement.GetString()!;
         
-        if (!valueElement.TryGetProperty(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.Id), out var idElement) || idElement.ValueKind != JsonValueKind.String)
+        if (!valueElement.TryGetProperty(nameof(IEntityEvent<Id, UserId>.Id), out var idElement) || idElement.ValueKind != JsonValueKind.String)
             throw new JsonException();
-        if (!valueElement.TryGetProperty(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.EntityId), out var entityIdElement) || entityIdElement.ValueKind != JsonValueKind.String)
+        if (!valueElement.TryGetProperty(nameof(IEntityEvent<Id, UserId>.EntityId), out var entityIdElement) || entityIdElement.ValueKind != JsonValueKind.String)
             throw new JsonException();
-        if (!valueElement.TryGetProperty(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.UserEntityId), out var userEntityIdElement) || userEntityIdElement.ValueKind != JsonValueKind.String)
+        if (!valueElement.TryGetProperty(nameof(IEntityEvent<Id, UserId>.UserEntityId), out var userEntityIdElement) || userEntityIdElement.ValueKind != JsonValueKind.String)
             throw new JsonException();
-        if (!valueElement.TryGetProperty(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.Action), out var actionElement) || actionElement.ValueKind != JsonValueKind.String)
+        if (!valueElement.TryGetProperty(nameof(IEntityEvent<Id, UserId>.Action), out var actionElement) || actionElement.ValueKind != JsonValueKind.String)
             throw new JsonException();
         
         var idValue = idElement.GetString()!;
@@ -50,15 +49,16 @@ public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdent
         var userEntityIdValue = userEntityIdElement.GetString()!;
         var actionValue = actionElement.GetString()!;
 
-        var id = new EventIdentifier(idValue);
-        var entityId = _entityIdentifierFactory.Create(entity, entityIdValue);
-        var userId = new UserIdentifier(userEntityIdValue);
+        var id = EventId.Parse(idValue, null);
+        var entityId = _entityIdFactory.Create(entity, entityIdValue);
+        var userId = UserId.Parse(userEntityIdValue, null);
+        var action = EventAction.Parse(actionValue, null);
         
-        return _eventsFactory.Create(id, entityId, userId, actionValue);
+        return _eventsFactory.Create(id, entityId, userId, action);
     }
 
     public override void Write(
-        Utf8JsonWriter writer, IEntityEvent<IEntityIdentifier, UserIdentifier> value, JsonSerializerOptions options)
+        Utf8JsonWriter writer, IEntityEvent<Id, UserId> value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
 
@@ -67,11 +67,16 @@ public sealed class EventJsonConverter : JsonConverter<IEntityEvent<IEntityIdent
 
         writer.WritePropertyName(ValuePropertyName);
         
+        var id = value.Id.ToString();
+        var entityId = value.EntityId.ToString();
+        var userEntityId = value.UserEntityId.ToString();
+        var action = value.Action.ToString();
+
         writer.WriteStartObject();
-        writer.WriteString(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.Id), value.Id);
-        writer.WriteString(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.EntityId), value.EntityId.ToString());
-        writer.WriteString(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.UserEntityId), value.UserEntityId.ToString());
-        writer.WriteString(nameof(IEntityEvent<IEntityIdentifier, UserIdentifier>.Action), value.Action);
+        writer.WriteString(nameof(IEntityEvent<Id, UserId>.Id), id);
+        writer.WriteString(nameof(IEntityEvent<Id, UserId>.EntityId), entityId);
+        writer.WriteString(nameof(IEntityEvent<Id, UserId>.UserEntityId), userEntityId);
+        writer.WriteString(nameof(IEntityEvent<Id, UserId>.Action), action);
         writer.WriteEndObject();
         
         writer.WriteEndObject();

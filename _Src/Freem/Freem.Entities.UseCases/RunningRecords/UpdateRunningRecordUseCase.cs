@@ -1,8 +1,9 @@
-﻿using Freem.Domain.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Extensions;
 using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Tags.Identifiers.Extensions;
+using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
@@ -49,7 +50,8 @@ internal class UpdateRunningRecordUseCase
         if (!request.HasChanges())
             return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.NothingToUpdate);
         
-        var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
+        var id = RunningRecordId.FromUserId(context.UserId);
+        var result = await _repository.FindByIdAsync(id, cancellationToken);
         if (!result.Founded)
             return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RunningRecordNotFound);
         
@@ -86,9 +88,9 @@ internal class UpdateRunningRecordUseCase
 
     private static UpdateRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
     {
-        if (ex.RelatedIds.HasActivitiesIdentifiers())
+        if (ex.RelatedIds.HasActivityIds())
             return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagsIdentifiers())
+        if (ex.RelatedIds.HasTagIds())
             return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedTagsNotFound);
         
         return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedUnknownNotFound);

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using EgoHub.Api.Public.Client.Abstractions;
 using EgoHub.Api.Public.Contracts.V1.Identities;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Web.Api.Public.Authentication.EgoHub;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Auth;
@@ -45,7 +45,7 @@ public sealed class RegisterController : BaseController
             return EgoHubAuthSupport.MapError(result.Error);
 
         var userIdValue = result.Value.UserId.ToString();
-        var userId = new UserIdentifier(userIdValue);
+        var userId = UserId.Parse(userIdValue, null);
         var response = new RegisterResponse(userId);
         return Ok(response);
     }

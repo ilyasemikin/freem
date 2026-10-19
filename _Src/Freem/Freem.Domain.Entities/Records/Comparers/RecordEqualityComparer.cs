@@ -1,6 +1,6 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 
 namespace Freem.Domain.Entities.Records.Comparers;
 
@@ -22,8 +22,8 @@ public sealed class RecordEqualityComparer : IEqualityComparer<Record>
             x.Period == y.Period &&
             x.Name == y.Name &&
             x.Description == y.Description &&
-            IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals(x.Activities, y.Activities) &&
-            IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals(x.Tags, y.Tags);
+            IReadOnlyRelatedIdsCollection<ActivityId>.Equals(x.Activities, y.Activities) &&
+            IReadOnlyRelatedIdsCollection<TagId>.Equals(x.Tags, y.Tags);
     }
 
     public int GetHashCode(Record obj)

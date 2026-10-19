@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
@@ -50,7 +51,8 @@ internal sealed class StopRunningRecordUseCase
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         
-        var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
+        var id = RunningRecordId.FromUserId(context.UserId);
+        var result = await _repository.FindByIdAsync(id, cancellationToken);
         if (!result.Founded)
             return StopRunningRecordResponse.CreateFailure(StopRunningRecordErrorCode.NothingToStop);
         

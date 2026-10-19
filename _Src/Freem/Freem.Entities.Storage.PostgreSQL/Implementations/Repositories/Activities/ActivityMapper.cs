@@ -1,7 +1,8 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Activities.Models;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 using DatabaseActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
@@ -15,16 +16,16 @@ internal static class ActivityMapper
     {
         return new ActivityEntity
         {
-            Id = activity.Id,
-            Name = activity.Name,
+            Id = activity.Id.ToString(),
+            Name = activity.Name.ToString(),
             Status = MapToDatabaseEntityStatus(activity.Status),
-            UserId = activity.UserId
+            UserId = activity.UserId.ToString()
         };
     }
 
     public static DatabaseActivityStatus MapToDatabaseEntityStatus(this EntityActivityStatus status)
     {
-        return (EntityActivityStatus.Value)status switch
+        return status.ToValue() switch
         {
             EntityActivityStatus.Value.Active => DatabaseActivityStatus.Active,
             EntityActivityStatus.Value.Archived => DatabaseActivityStatus.Archived,
@@ -34,9 +35,9 @@ internal static class ActivityMapper
     
     public static Activity MapToDomainEntity(this ActivityEntity entity)
     {
-        var id = new ActivityIdentifier(entity.Id);
-        var userId = new UserIdentifier(entity.UserId);
-        var name = entity.Name;
+        var id = ActivityId.Parse(entity.Id, null);
+        var userId = UserId.Parse(entity.UserId, null);
+        var name = ActivityName.Parse(entity.Name, null);
         var tags = MapToDomainRelatedTags(entity);
         
         return new Activity(id, userId, name, tags, MapToDomainEntityStatus(entity.Status));
@@ -46,13 +47,13 @@ internal static class ActivityMapper
     {
         return status switch
         {
-            Database.Entities.Models.ActivityStatus.Active => EntityActivityStatus.Value.Active,
-            Database.Entities.Models.ActivityStatus.Archived => EntityActivityStatus.Value.Archived,
+            Database.Entities.Models.ActivityStatus.Active => EntityActivityStatus.Active,
+            Database.Entities.Models.ActivityStatus.Archived => EntityActivityStatus.Archived,
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
-    public static RelatedTagsIdentifiersCollection MapToDomainRelatedTags(this ActivityEntity entity)
+    public static RelatedTagIdsCollection MapToDomainRelatedTags(this ActivityEntity entity)
     {
         return entity.Tags.MapToRelatedTagsCollection();
     }

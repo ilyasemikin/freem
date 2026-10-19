@@ -1,7 +1,7 @@
-﻿using Freem.Domain.Activities.Identifiers;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -12,11 +12,11 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
 {
-    private const string NewName = "updated_activity";
+    private static readonly ActivityName NewName = ActivityName.Parse("updated_activity", null);
     
     private readonly UseCaseExecutionContext _context;
-    private readonly ActivityIdentifier _activityId;
-    private readonly TagIdentifier _updatedTagId;
+    private readonly ActivityId _activityId;
+    private readonly TagId _updatedTagId;
     
     public ActivitiesUpdateUseCaseTests(TestContext context) 
         : base(context)
@@ -56,7 +56,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenUpdateTags()
     {
-        var tags = new RelatedTagsIdentifiersCollection([_updatedTagId]);
+        var tags = new RelatedTagIdsCollection([_updatedTagId]);
         var request = new UpdateActivityRequest(_activityId)
         {
             Tags = tags
@@ -71,13 +71,13 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.Activities.RequiredGet(_context, _activityId);
 
-        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals);
+        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedIdsCollection<TagId>.Equals);
     }
     
     [Fact]
     public async Task ShouldFailure_WhenActivityDoesNotExist()
     {
-        var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
+        var notExistedActivityId = ActivityId.Generate();
         var request = new UpdateActivityRequest(notExistedActivityId)
         {
             Name = new UpdateField<ActivityName>(NewName)
@@ -95,8 +95,8 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
-        var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
+        var notExistedTagId = TagId.Generate();
+        var tags = new RelatedTagIdsCollection([notExistedTagId]);
         var request = new UpdateActivityRequest(_activityId)
         {
             Tags = tags
@@ -119,7 +119,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
 
-        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
+        var tags = new RelatedTagIdsCollection([tag.Id]);
         
         var request = new UpdateActivityRequest(_activityId)
         {

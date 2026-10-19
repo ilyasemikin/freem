@@ -45,7 +45,7 @@ public sealed class SimpleDistributedLockerTests : IDisposable
 
         var value = (string?)redisValue;
         Assert.NotNull(value);
-        Assert.Equal(@lock.Identifier, value);
+        Assert.Equal(@lock.Token, value);
     }
 
     [Fact]

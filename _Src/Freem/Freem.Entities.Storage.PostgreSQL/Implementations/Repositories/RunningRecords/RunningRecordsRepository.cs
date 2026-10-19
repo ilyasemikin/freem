@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
-using Freem.Domain.RunningRecords.Identifiers;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Repositories.RunningRecords;
@@ -61,8 +61,8 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         if (_equalityComparer.Equals(entity, actualEntity))
             return;
         
-        dbEntity.Name = entity.Name;
-        dbEntity.Description = entity.Description;
+        dbEntity.Name = entity.Name?.ToString();
+        dbEntity.Description = entity.Description?.ToString();
 
         dbEntity.StartAt = entity.StartAt;
 
@@ -73,11 +73,12 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(RunningRecordIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(RunningRecordId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
-        var dbEntity = await _database.RunningRecords.FindEntityAsync(id, cancellationToken);
+        var userId = id.ToUserId();
+        var dbEntity = await _database.RunningRecords.FindEntityAsync(userId, cancellationToken);
         if (dbEntity is null)
             throw new NotFoundException(id);
 
@@ -88,14 +89,15 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
     }
 
     public async Task<SearchEntityResult<RunningRecord>> FindByIdAsync(
-        RunningRecordIdentifier id,
+        RunningRecordId id,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(id);
         
+        var idString = id.ToString();
         return await _database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(e => e.UserId == id, RunningRecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(e => e.UserId == idString, RunningRecordMapper.MapToDomainEntity, cancellationToken);
     }
 }

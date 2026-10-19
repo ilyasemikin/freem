@@ -27,7 +27,7 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
         _records = records
             .OrderBy(e => e.Period.StartAt)
             .ThenBy(e => e.Period.EndAt)
-            .ThenBy(e => (string)e.Id)
+            .ThenBy(e => e.Id.ToString())
             .ToArray();
     }
 

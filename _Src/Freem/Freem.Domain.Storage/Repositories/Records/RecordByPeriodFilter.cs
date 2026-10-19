@@ -1,7 +1,7 @@
-﻿using Freem.Domain.Records.Identifiers;
+﻿using Freem.Domain.Records;
 using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
-using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users;
 using Freem.Time.Models;
 
 namespace Freem.Domain.Storage.Repositories.Records;
@@ -16,11 +16,11 @@ public sealed class RecordByPeriodFilter : ILimitFilter
         init => _limit = value ?? throw new ArgumentNullException(nameof(value));
     }
     
-    public UserIdentifier UserId { get; }
+    public UserId UserId { get; }
     public DateTimePeriod Period { get; }
-    public RecordIdentifier? AfterRecordId { get; }
+    public RecordId? AfterRecordId { get; }
 
-    public RecordByPeriodFilter(UserIdentifier userId, DateTimePeriod period, RecordIdentifier? afterRecordId = null)
+    public RecordByPeriodFilter(UserId userId, DateTimePeriod period, RecordId? afterRecordId = null)
     {
         ArgumentNullException.ThrowIfNull(userId);
         ArgumentNullException.ThrowIfNull(period);
