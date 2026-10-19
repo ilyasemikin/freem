@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Entities.Activities.Identifiers;
+using Freem.Domain.Activities.Identifiers;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Activities.Base;
 using Xunit.Abstractions;

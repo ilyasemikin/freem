@@ -1,37 +1,36 @@
-﻿using System.Reflection;
-using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Activities.Events.Arhived;
-using Freem.Entities.Activities.Events.Created;
-using Freem.Entities.Activities.Events.Removed;
-using Freem.Entities.Activities.Events.Unarchived;
-using Freem.Entities.Activities.Events.Updated;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Events.Created;
-using Freem.Entities.Records.Events.Removed;
-using Freem.Entities.Records.Events.Updated;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.RunningRecords.Events.Removed;
-using Freem.Entities.RunningRecords.Events.Started;
-using Freem.Entities.RunningRecords.Events.Stopped;
-using Freem.Entities.RunningRecords.Events.Updated;
-using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Activities.Events.Arhived;
+using Freem.Domain.Activities.Events.Created;
+using Freem.Domain.Activities.Events.Removed;
+using Freem.Domain.Activities.Events.Unarchived;
+using Freem.Domain.Activities.Events.Updated;
+using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Events;
+using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Records.Events.Created;
+using Freem.Domain.Records.Events.Removed;
+using Freem.Domain.Records.Events.Updated;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.RunningRecords.Events.Removed;
+using Freem.Domain.RunningRecords.Events.Started;
+using Freem.Domain.RunningRecords.Events.Stopped;
+using Freem.Domain.RunningRecords.Events.Updated;
+using Freem.Domain.RunningRecords.Identifiers;
+using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Tags.Events.Created;
+using Freem.Domain.Tags.Events.Removed;
+using Freem.Domain.Tags.Events.Updated;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Users.Events.Registered;
+using Freem.Domain.Users.Events.SettingsChanged;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Freem.Entities.Tags.Events.Created;
-using Freem.Entities.Tags.Events.Removed;
-using Freem.Entities.Tags.Events.Updated;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users.Events.Registered;
-using Freem.Entities.Users.Events.SettingsChanged;
-using Freem.Entities.Users.Identifiers;
 using Utilities.Collections;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories;
 
-public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepository>
+public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository>
 {
     public EventsRepositoryTests(
         ITestOutputHelper output) 
@@ -327,8 +326,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventsRepositor
             types.Add(@event.GetType());
         }
 
-        var assembly = Assembly.Load("Freem.Entities");
-        var eventTypes = assembly.ExportedTypes.Where(type => type.GetInterface("IEntityEvent`2") is not null);
+        var assembly = typeof(IEntityEvent<,>).Assembly;
+        var eventTypes = assembly.ExportedTypes.Where(type => 
+            !type.IsAbstract && type.GetInterface("IEntityEvent`2") is not null);
 
         // Act
         var result = types.UnorderedEquals(eventTypes, EqualityComparer<Type>.Default);

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Models;
+﻿using Freem.Domain.Records.Models;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Microsoft.EntityFrameworkCore;

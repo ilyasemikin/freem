@@ -1,7 +1,4 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
 using Freem.UseCases.Abstractions;
 
@@ -10,10 +7,10 @@ namespace Freem.Entities.UseCases.Records;
 internal sealed class PeriodListRecordUseCase : 
     IUseCase<UseCaseExecutionContext, PeriodListRequest, PeriodListResponse, PeriodListErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> _repository;
+    private readonly IRecordRepository _repository;
 
     public PeriodListRecordUseCase(
-        IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> repository)
+        IRecordRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -26,7 +23,7 @@ internal sealed class PeriodListRecordUseCase :
     {
         context.ThrowsIfUnauthorized();
 
-        var filter = new RecordsByPeriodFilter(context.UserId, request.Period);
+        var filter = new RecordByPeriodFilter(context.UserId, request.Period);
         
         var result = await _repository.FindAsync(filter, cancellationToken);
         var records = await result.ToArrayAsync(cancellationToken);

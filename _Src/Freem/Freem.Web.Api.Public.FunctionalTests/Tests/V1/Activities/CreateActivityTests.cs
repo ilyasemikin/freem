@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Entities.Activities.Models;
+using Freem.Domain.Activities.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.V1.Activities.Base;

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Relations.Collections;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
 using Xunit.Abstractions;
@@ -7,8 +7,8 @@ namespace Freem.Web.Api.Public.FunctionalTests.Tests.V1.Records.Running.Base;
 
 public abstract class RunningRecordTestBase : TestBase
 {
-    protected RelatedActivitiesCollection AddedRelatedActivities { get; }
-    protected RelatedTagsCollection AddedRelatedTags { get; }
+    protected RelatedActivitiesIdentifiersCollection AddedRelatedActivities { get; }
+    protected RelatedTagsIdentifiersCollection AddedRelatedTags { get; }
     
     protected RunningRecordTestBase(TestContext context, ITestOutputHelper? output = null) 
         : base(context, output)
@@ -18,7 +18,7 @@ public abstract class RunningRecordTestBase : TestBase
         var tagId = Context.Preparer.Tags.Create();
         var activityId = Context.Preparer.Activities.Create();
 
-        AddedRelatedTags = new RelatedTagsCollection([tagId]);
-        AddedRelatedActivities = new RelatedActivitiesCollection([activityId]);
+        AddedRelatedTags = new RelatedTagsIdentifiersCollection([tagId]);
+        AddedRelatedActivities = new RelatedActivitiesIdentifiersCollection([activityId]);
     }
 }

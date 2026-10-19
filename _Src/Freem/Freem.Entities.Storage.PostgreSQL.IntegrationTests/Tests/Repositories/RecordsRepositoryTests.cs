@@ -1,19 +1,23 @@
-﻿using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Filters.Models;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Users.Identifiers;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Freem.Entities.Users.Identifiers;
+using Freem.Time.Models;
 using Microsoft.EntityFrameworkCore;
+using Utilities.Collections;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories;
 
-public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsRepository>
+public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordRepository>
 {
     public RecordsRepositoryTests(
         ITestOutputHelper output)
@@ -374,6 +378,49 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.Equal(dbRecord.Id, record.Id);
     }
 
+    [Fact]
+    public async Task FindAsyncByUser_ShouldReturnRelatedIdentifiers()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithRelationsAsync();
+
+        var userId = (UserIdentifier)dbRecord.UserId;
+        var filter = new RecordByUserFilter(userId)
+        {
+            Limit = new Limit(),
+            Offset = new Offset()
+        };
+        
+        // Act
+        var result = await Repository.FindAsync(filter);
+        var records = await result.ToListAsync();
+        
+        // Assert
+        var record = Assert.Single(records);
+        AssertRelatedIdentifiers(dbRecord, record);
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldReturnRelatedIdentifiers()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithRelationsAsync();
+
+        var userId = (UserIdentifier)dbRecord.UserId;
+        var startAt = dbRecord.StartAt.AddHours(-1);
+        var endAt = dbRecord.EndAt.AddHours(1);
+        var period = new DateTimePeriod(startAt, endAt);
+        var filter = new RecordByPeriodFilter(userId, period);
+        
+        // Act
+        var result = await Repository.FindAsync(filter);
+        var records = await result.ToListAsync();
+        
+        // Assert
+        var record = Assert.Single(records);
+        AssertRelatedIdentifiers(dbRecord, record);
+    }
+
     [Theory]
     [InlineData(true, false)]
     [InlineData(false, true)]
@@ -406,5 +453,35 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordsReposit
         Assert.NotNull(result);
         Assert.False(result.Founded);
         Assert.Null(result.Entity);
+    }
+
+    private async Task<RecordEntity> AddRecordWithRelationsAsync()
+    {
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbTags = EntitiesFactory.CreateTags(2);
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        dbRecord.Tags = dbTags.ToList();
+        
+        await Database.AddRangeAsync(dbUser, dbRecord);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.AddRangeAsync(dbTags);
+        await Database.SaveChangesAsync();
+        
+        Database.ChangeTracker.Clear();
+
+        return dbRecord;
+    }
+
+    private static void AssertRelatedIdentifiers(RecordEntity expected, Domain.Entities.Records.Record actual)
+    {
+        var expectedActivityIds = expected.Activities!.Select(activity => activity.Id);
+        var actualActivityIds = actual.Activities.Identifiers.Select(id => id.ToString());
+        Assert.True(expectedActivityIds.UnorderedEquals(actualActivityIds));
+
+        var expectedTagIds = expected.Tags!.Select(tag => tag.Id);
+        var actualTagIds = actual.Tags.Identifiers.Select(id => id.ToString());
+        Assert.True(expectedTagIds.UnorderedEquals(actualTagIds));
     }
 }

@@ -1,6 +1,4 @@
-﻿using Freem.Entities.Tags.Models;
-
-namespace Freem.Entities.UseCases.Contracts.Tags.GetByName;
+﻿namespace Freem.Entities.UseCases.Contracts.Tags.GetByName;
 
 public sealed class FindTagByNameRequest
 {

@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users.Identifiers;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Users.Identifiers;
+using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 

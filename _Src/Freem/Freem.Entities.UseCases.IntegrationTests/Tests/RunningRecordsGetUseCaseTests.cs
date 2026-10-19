@@ -1,5 +1,5 @@
-﻿using Freem.Entities.RunningRecords;
-using Freem.Entities.RunningRecords.Comparers;
+﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Entities.RunningRecords.Comparers;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Users.Identifiers;
-using Freem.Entities.Users.Models;
+﻿using Freem.Domain.Users.Identifiers;
+using Freem.Domain.Users.Models;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Users;
 

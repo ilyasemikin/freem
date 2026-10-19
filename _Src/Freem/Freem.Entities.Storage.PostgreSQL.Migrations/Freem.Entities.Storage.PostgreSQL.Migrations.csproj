@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
-        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Abstractions.Identifiers;
+﻿using Freem.Domain.Identifiers;
 using Freem.Identifiers.Base;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Mocks;

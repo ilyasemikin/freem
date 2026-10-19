@@ -1,13 +1,12 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Statistics.Time;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Entities.Records;
+using Freem.Domain.Entities.Statistics.Time;
+using Freem.Domain.Entities.Users;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Freem.UseCases.Abstractions;
@@ -17,11 +16,11 @@ namespace Freem.Entities.UseCases.Statistics;
 internal sealed class StatisticsPerPeriodUseCase : 
     IEntitiesUseCase<StatisticsPerPeriodRequest, StatisticsPerPeriodResponse, StatisticsPerPeriodErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> _repository;
+    private readonly IRecordRepository _repository;
     private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
 
     public StatisticsPerPeriodUseCase(
-        IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> repository, 
+        IRecordRepository repository, 
         IUseCaseExecutor<UseCaseExecutionContext> executor)
     {
         ArgumentNullException.ThrowIfNull(repository);
@@ -51,7 +50,7 @@ internal sealed class StatisticsPerPeriodUseCase :
         var period = new DateTimePeriod(start, end);
         var records = await FindRecordsAsync(context.UserId, period, cancellationToken);
 
-        var statistics = TimeStatistics.Calculate(period, records);
+        var statistics = TimeStatisticsCalculator.Calculate(period, records);
 
         return StatisticsPerPeriodResponse.CreateSuccess(statistics);
     }
@@ -84,7 +83,7 @@ internal sealed class StatisticsPerPeriodUseCase :
             }
             
             period = new DateTimePeriod(start, end);
-            var filter = new RecordsByPeriodFilter(userId, period, recordId);
+            var filter = new RecordByPeriodFilter(userId, period, recordId);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
             var records = result.ToBlockingEnumerable(cancellationToken);

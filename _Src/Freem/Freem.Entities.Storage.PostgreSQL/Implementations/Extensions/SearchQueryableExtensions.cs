@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Freem.Entities.Storage.Abstractions.Models;
+using Freem.Domain.Storage.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;

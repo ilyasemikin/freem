@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Events;
-using Freem.Entities.Users.Identifiers;
+using Freem.Domain;
+using Freem.Domain.Events;
+using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Users.Identifiers;
 
 namespace Freem.Entities.Serialization.Json.Events;
 

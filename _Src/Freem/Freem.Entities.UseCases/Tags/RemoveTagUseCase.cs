@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Remove;
 using Freem.Storage.Abstractions.Helpers;
@@ -11,12 +11,12 @@ namespace Freem.Entities.UseCases.Tags;
 internal sealed class RemoveTagUseCase 
     : IEntitiesUseCase<RemoveTagRequest, RemoveTagResponse, RemoveTagErrorCode>
 {
-    private readonly ITagsRepository _repository;
+    private readonly ITagRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveTagUseCase(
-        ITagsRepository repository, 
+        ITagRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Entities.Activities.Identifiers;
+using Freem.Domain.Activities.Identifiers;
 using Freem.Web.Api.Public.Client.Implementations.Base;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;

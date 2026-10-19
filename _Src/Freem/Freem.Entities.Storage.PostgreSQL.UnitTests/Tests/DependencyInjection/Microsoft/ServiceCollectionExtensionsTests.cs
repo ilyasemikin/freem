@@ -1,23 +1,12 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.RunningRecords;
-using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Storage.Repositories.Activities;
+using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Microsoft.Extensions.DependencyInjection;
-using Activity = Freem.Entities.Activities.Activity;
 
 namespace Freem.Entities.Storage.PostgreSQL.UnitTests.Tests.DependencyInjection.Microsoft;
 
@@ -44,36 +33,17 @@ public sealed class ServiceCollectionExtensionsTests
     
     public static TheoryData<Type> EntityRepositoryTypes { get; } = new()
     {
-        typeof(IActivitiesRepository),
-        typeof(IWriteRepository<Activity, ActivityIdentifier>),
-        typeof(ISearchByIdRepository<Activity, ActivityIdentifier>),
-        typeof(ISearchByMultipleIdsRepository<Activity, ActivityIdentifier, ActivityAndUserIdentifiers>),
-        typeof(IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesByUserFilter>),
+        typeof(IActivityRepository),
         
-        typeof(IRecordsRepository),
-        typeof(IWriteRepository<Records.Record, RecordIdentifier>),
-        typeof(ISearchByIdRepository<Records.Record, RecordIdentifier>),
-        typeof(ISearchByMultipleIdsRepository<Records.Record, RecordIdentifier, RecordAndUserIdentifiers>),
-        typeof(IMultipleSearchByFilterRepository<Records.Record, RecordIdentifier, RecordsByUserFilter>),
+        typeof(IRecordRepository),
         
         typeof(IRunningRecordRepository),
-        typeof(IWriteRepository<RunningRecord, RunningRecordIdentifier>),
-        typeof(ISearchByIdRepository<RunningRecord, RunningRecordIdentifier>),
         
-        typeof(ITagsRepository),
-        typeof(IWriteRepository<Tag, TagIdentifier>),
-        typeof(ISearchByIdRepository<Tag, TagIdentifier>),
-        typeof(ISearchByMultipleIdsRepository<Tag, TagIdentifier, TagAndUserIdentifiers>),
-        typeof(IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsByUserFilter>),
+        typeof(ITagRepository),
         
-        typeof(IUsersRepository),
-        typeof(IWriteRepository<User, UserIdentifier>),
-        typeof(ISearchByIdRepository<User, UserIdentifier>),
+        typeof(IUserRepository),
         
-        typeof(IEventsRepository),
-        typeof(ICreateRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier>),
-        typeof(ISearchByIdRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier>),
-        typeof(IMultipleSearchByFilterRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier, EventsAfterTimeFilter>),
+        typeof(IEventRepository),
     };
 
     [Theory]

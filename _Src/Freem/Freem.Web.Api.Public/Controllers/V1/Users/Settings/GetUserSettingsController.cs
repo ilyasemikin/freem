@@ -1,6 +1,6 @@
-﻿using Freem.Entities.UseCases;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
-using Freem.Entities.Users;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;

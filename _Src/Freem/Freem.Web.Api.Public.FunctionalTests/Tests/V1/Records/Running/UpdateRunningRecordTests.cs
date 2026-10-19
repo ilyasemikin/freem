@@ -1,10 +1,8 @@
 ﻿using System.Net;
-using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Web.Api.Public.Contracts;
+using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.Contracts.Models;
@@ -78,7 +76,7 @@ public sealed class UpdateRunningRecordTests : RunningRecordTestBase
         var trs = await Context.Client.Tags.CreateAsync(trq);
         trs.EnsureSuccess();
         
-        var tags = new RelatedTagsCollection([trs.Value.Id]);
+        var tags = new RelatedTagsIdentifiersCollection([trs.Value.Id]);
         var request = new UpdateRunningRecordRequest
         {
             Tags = new UpdateField<IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>>(tags)

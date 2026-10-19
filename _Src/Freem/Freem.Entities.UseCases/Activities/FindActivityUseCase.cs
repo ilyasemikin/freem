@@ -1,9 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Filters.Models;
+﻿using Freem.Domain.Storage.Models.Filters.Models;
+using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Find;
 
@@ -12,10 +8,10 @@ namespace Freem.Entities.UseCases.Activities;
 internal sealed class FindActivityUseCase 
     : IEntitiesUseCase<FindActivityRequest, FindActivityResponse, FindActivityErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesFilter> _repository;
+    private readonly IActivityRepository _repository;
 
     public FindActivityUseCase(
-        IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesFilter> repository)
+        IActivityRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -28,7 +24,7 @@ internal sealed class FindActivityUseCase
     {
         context.ThrowsIfUnauthorized();
 
-        var filter = new ActivitiesFilter(context.UserId, request.SearchText)
+        var filter = new ActivityFilter(context.UserId, request.SearchText)
         {
             Limit = Limit.Default
         };

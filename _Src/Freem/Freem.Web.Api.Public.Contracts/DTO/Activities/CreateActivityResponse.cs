@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Activities.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Activities;
 

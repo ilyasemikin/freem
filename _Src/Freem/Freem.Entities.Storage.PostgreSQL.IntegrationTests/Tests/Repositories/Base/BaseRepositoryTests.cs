@@ -1,11 +1,11 @@
-﻿using Freem.Entities.DependencyInjection;
+﻿using Freem.Domain.DependencyInjection;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensions;
-using Freem.Entities.Users.Identifiers;
 using Freem.Identifiers.Abstractions;
 using Freem.Identifiers.Abstractions.Generators;
 using Freem.Identifiers.Implementations.Generators;

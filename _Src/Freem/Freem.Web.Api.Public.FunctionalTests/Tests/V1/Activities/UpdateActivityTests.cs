@@ -1,9 +1,7 @@
 ﻿using System.Net;
-using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities.Models;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Web.Api.Public.Contracts;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.Contracts.Models;
 using Freem.Web.Api.Public.FunctionalTests.Context;

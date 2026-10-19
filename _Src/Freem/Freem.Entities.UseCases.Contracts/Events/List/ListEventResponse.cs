@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Identifiers;
+using Freem.Domain.Events;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.UseCases.Contracts.Filter;
-using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 

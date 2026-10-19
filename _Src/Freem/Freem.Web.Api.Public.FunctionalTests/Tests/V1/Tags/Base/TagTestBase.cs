@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Tags.Identifiers;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
 using Xunit.Abstractions;

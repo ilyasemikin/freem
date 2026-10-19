@@ -1,10 +1,7 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -84,10 +81,10 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenUpdateActivities()
     {
-        var activities = new RelatedActivitiesCollection([_updatedActivityId]);
+        var activities = new RelatedActivitiesIdentifiersCollection([_updatedActivityId]);
         var request = new UpdateRunningRecordRequest
         {
-            Activities = new UpdateField<RelatedActivitiesCollection>(activities)
+            Activities = new UpdateField<RelatedActivitiesIdentifiersCollection>(activities)
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -99,16 +96,16 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.RunningRecords.RequiredGet(_context);
         
-        Assert.Equal(activities, actual.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
+        Assert.Equal(activities, actual.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
     }
 
     [Fact]
     public async Task ShouldSuccess_WhenUpdateTags()
     {
-        var tags = new RelatedTagsCollection([_updatedTagId]);
+        var tags = new RelatedTagsIdentifiersCollection([_updatedTagId]);
         var request = new UpdateRunningRecordRequest
         {
-            Tags = new UpdateField<RelatedTagsCollection>(tags)
+            Tags = new UpdateField<RelatedTagsIdentifiersCollection>(tags)
         };
         
         var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, UpdateRunningRecordResponse>(_context, request);
@@ -120,7 +117,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.RunningRecords.RequiredGet(_context);
         
-        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals);
+        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals);
     }
 
     [Fact]
@@ -147,7 +144,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
         var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
-        var activities = new RelatedActivitiesCollection([notExistedActivityId]);
+        var activities = new RelatedActivitiesIdentifiersCollection([notExistedActivityId]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -171,7 +168,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var activity = executor.Activities.Create(anotherContext);
         
-        var activities = new RelatedActivitiesCollection([activity]);
+        var activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -191,7 +188,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
         var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsCollection([notExistedTagId]);
+        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -215,7 +212,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         
-        var tags = new RelatedTagsCollection([tag]);
+        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
 
         var request = new UpdateRunningRecordRequest
         {
@@ -250,7 +247,7 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRunningRecordRequest
         {
-            Tags = new RelatedTagsCollection()
+            Tags = new RelatedTagsIdentifiersCollection()
         };
 
         var exception = await Record.ExceptionAsync(async () => await Context

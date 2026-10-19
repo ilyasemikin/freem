@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Freem.Entities.Records.Identifiers;
+using Freem.Domain.Records.Identifiers;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;

@@ -1,14 +1,15 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.DependencyInjection;
+﻿using Freem.Domain.DependencyInjection;
+using Freem.Domain.Entities.DependencyInjection;
+using Freem.Domain.Storage.Repositories.Activities;
+using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
-using Freem.Entities.Storage.PostgreSQL.Database.Errors.Abstractions;
-using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Factories;
-using Freem.Entities.Storage.PostgreSQL.Database.Models;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
@@ -19,7 +20,6 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Storage.EFCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,25 +94,13 @@ public static class ServiceCollectionExtensions
     
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.TryAddRepository<UsersRepository>();
-        services.TryAddRepository<TagsRepository>();
-        services.TryAddRepository<RecordsRepository>();
-        services.TryAddRepository<RunningRecordsRepository>();
-        services.TryAddRepository<ActivitiesRepository>();
-        services.TryAddRepository<EventsRepository>();
+        services.TryAddTransient<IUserRepository, UsersRepository>();
+        services.TryAddTransient<ITagRepository, TagsRepository>();
+        services.TryAddTransient<IRecordRepository, RecordsRepository>();
+        services.TryAddTransient<IRunningRecordRepository, RunningRecordsRepository>();
+        services.TryAddTransient<IActivityRepository, ActivitiesRepository>();
+        services.TryAddTransient<IEventRepository, EventsRepository>();
         
         return services;
-    }
-
-    private static void TryAddRepository<TRepository>(this IServiceCollection services)
-        where TRepository : class
-    {
-        services.TryAddTransient<TRepository>();
-
-        var interfaces = typeof(TRepository).GetInterfaces();
-        foreach (var @interface in interfaces)
-        {
-            services.TryAddTransient(@interface, provider => provider.GetRequiredService<TRepository>());
-        }
     }
 }

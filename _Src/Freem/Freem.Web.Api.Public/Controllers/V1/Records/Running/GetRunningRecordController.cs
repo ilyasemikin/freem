@@ -1,4 +1,4 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 using Freem.UseCases.Abstractions;

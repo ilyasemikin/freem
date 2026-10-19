@@ -1,7 +1,7 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 

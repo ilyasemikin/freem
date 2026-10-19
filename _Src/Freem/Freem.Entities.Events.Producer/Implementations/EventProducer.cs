@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
+﻿using Freem.Domain.Events;
+using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Events.Producer.Abstractions;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Users.Identifiers;
 using Freem.Identifiers.Abstractions.Generators;
 
 namespace Freem.Entities.Events.Producer.Implementations;
@@ -11,14 +11,14 @@ namespace Freem.Entities.Events.Producer.Implementations;
 public sealed class EventProducer
 {
     private readonly IIdentifierGenerator<EventIdentifier> _identifierGenerator;
-    private readonly IEventsRepository _repository;
+    private readonly IEventRepository _repository;
     private readonly IEventPublisher _publisher;
     
     public delegate IEntityEvent<IEntityIdentifier, UserIdentifier> EventFactory(EventIdentifier eventId);
 
     public EventProducer(
         IIdentifierGenerator<EventIdentifier> identifierGenerator, 
-        IEventsRepository repository, 
+        IEventRepository repository, 
         IEventPublisher publisher)
     {
         ArgumentNullException.ThrowIfNull(identifierGenerator);

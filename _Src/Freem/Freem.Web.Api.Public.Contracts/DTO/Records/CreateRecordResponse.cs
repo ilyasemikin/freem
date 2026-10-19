@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Identifiers;
+﻿using Freem.Domain.Records.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Records;
 

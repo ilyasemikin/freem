@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Locking.Abstractions;

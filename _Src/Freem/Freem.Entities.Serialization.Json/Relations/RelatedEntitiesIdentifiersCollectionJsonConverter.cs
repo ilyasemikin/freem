@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Relations.Collections.Base;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Relations.Collections.Base;
 
 namespace Freem.Entities.Serialization.Json.Relations;
 

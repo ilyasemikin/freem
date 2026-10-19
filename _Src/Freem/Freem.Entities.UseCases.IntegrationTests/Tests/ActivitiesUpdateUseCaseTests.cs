@@ -1,9 +1,7 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.Entities.UseCases.Exceptions;
@@ -58,7 +56,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess_WhenUpdateTags()
     {
-        var tags = new RelatedTagsCollection([_updatedTagId]);
+        var tags = new RelatedTagsIdentifiersCollection([_updatedTagId]);
         var request = new UpdateActivityRequest(_activityId)
         {
             Tags = tags
@@ -73,7 +71,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = executor.Activities.RequiredGet(_context, _activityId);
 
-        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesCollection<Tag, TagIdentifier>.Equals);
+        Assert.Equal(tags, actual.Tags, IReadOnlyRelatedEntitiesIdentifiersCollection<TagIdentifier>.Equals);
     }
     
     [Fact]
@@ -98,7 +96,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
         var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsCollection([notExistedTagId]);
+        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
         var request = new UpdateActivityRequest(_activityId)
         {
             Tags = tags
@@ -121,7 +119,7 @@ public sealed class ActivitiesUpdateUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
 
-        var tags = new RelatedTagsCollection([tag]);
+        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
         
         var request = new UpdateActivityRequest(_activityId)
         {

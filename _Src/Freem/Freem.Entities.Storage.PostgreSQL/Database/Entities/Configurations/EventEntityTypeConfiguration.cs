@@ -1,14 +1,10 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Events;
-using Freem.Entities.Records;
-using Freem.Entities.Records.Events;
-using Freem.Entities.RunningRecords;
-using Freem.Entities.RunningRecords.Events;
+﻿using Freem.Domain;
+using Freem.Domain.Activities.Events;
+using Freem.Domain.Records.Events;
+using Freem.Domain.RunningRecords.Events;
+using Freem.Domain.Tags.Events;
+using Freem.Domain.Users.Events;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Events;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,11 +17,11 @@ internal sealed class EventEntityTypeConfiguration : IEntityTypeConfiguration<Ev
         builder.ToTable(EntitiesNames.Events.Table, table =>
             table.HasCheckConstraint(
                 EntitiesNames.Events.Constraints.EntityNameCheck,
-                $"{EntitiesNames.Events.Properties.EntityName} = '{Activity.EntityName}' and ({BuildActionCheckRawSql(ActivityEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{Record.EntityName}' and ({BuildActionCheckRawSql(RecordEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{RunningRecord.EntityName}' and ({BuildActionCheckRawSql(RunningRecordEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{Tag.EntityName}' and ({BuildActionCheckRawSql(TagEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{User.EntityName}' and ({BuildActionCheckRawSql(UserEventActions.All)})"));
+                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Activity}' and ({BuildActionCheckRawSql(ActivityEventActions.All)}) or " +
+                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Record}' and ({BuildActionCheckRawSql(RecordEventActions.All)}) or " +
+                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.RunningRecord}' and ({BuildActionCheckRawSql(RunningRecordEventActions.All)}) or " +
+                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Tag}' and ({BuildActionCheckRawSql(TagEventActions.All)}) or " +
+                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.User}' and ({BuildActionCheckRawSql(UserEventActions.All)})"));
 
         builder
             .Property(e => e.Id)

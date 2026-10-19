@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Tags;
+using Freem.Domain.Entities.Tags;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.UseCases.Abstractions;

@@ -1,18 +1,18 @@
-﻿using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories;
 
-public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagsRepository>
+public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
 {
     public TagsRepositoryTests(
         ITestOutputHelper output) 

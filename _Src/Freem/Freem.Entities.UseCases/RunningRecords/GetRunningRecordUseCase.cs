@@ -1,6 +1,4 @@
-﻿using Freem.Entities.RunningRecords;
-using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
+﻿using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 
@@ -9,9 +7,9 @@ namespace Freem.Entities.UseCases.RunningRecords;
 internal class GetRunningRecordUseCase 
     : IEntitiesUseCase<GetRunningRecordRequest, GetRunningRecordResponse, GetRunningRecordErrorCode>
 {
-    private readonly ISearchByIdRepository<RunningRecord, RunningRecordIdentifier> _repository;
+    private readonly IRunningRecordRepository _repository;
 
-    public GetRunningRecordUseCase(ISearchByIdRepository<RunningRecord, RunningRecordIdentifier> repository)
+    public GetRunningRecordUseCase(IRunningRecordRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         

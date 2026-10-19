@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
+using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.Serialization.Json.Activities.Identifiers;
 using Freem.Entities.Serialization.Json.Activities.Models;
 using Freem.Entities.Serialization.Json.Events;
@@ -16,8 +16,6 @@ using Freem.Entities.Serialization.Json.Tags.Identifiers;
 using Freem.Entities.Serialization.Json.Tags.Models;
 using Freem.Entities.Serialization.Json.Users.Identifiers;
 using Freem.Entities.Serialization.Json.Users.Models;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 using Freem.Time.Serialization.Json;
 
 namespace Freem.Entities.Serialization.Json;
@@ -79,7 +77,5 @@ public static class EntitiesJsonSerialization
         yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<ActivityIdentifier>();
         yield return new RelatedEntitiesIdentifiersCollectionJsonConverter<TagIdentifier>();
 
-        yield return new RelatedEntitiesCollectionJsonConverter<Activity, ActivityIdentifier>();
-        yield return new RelatedEntitiesCollectionJsonConverter<Tag, TagIdentifier>();
     }
 }

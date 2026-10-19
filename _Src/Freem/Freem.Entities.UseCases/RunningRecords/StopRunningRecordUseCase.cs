@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.RunningRecords;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;

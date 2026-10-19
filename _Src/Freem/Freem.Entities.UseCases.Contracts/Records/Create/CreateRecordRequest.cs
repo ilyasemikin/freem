@@ -1,21 +1,21 @@
-﻿using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Create;
 
 public sealed class CreateRecordRequest
 {
-    private readonly RelatedTagsCollection _tags = RelatedTagsCollection.Empty;
+    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
     
     public DateTimePeriod Period { get; }
 
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
     
-    public RelatedActivitiesCollection Activities { get; }
+    public RelatedActivitiesIdentifiersCollection Activities { get; }
 
-    public RelatedTagsCollection Tags
+    public RelatedTagsIdentifiersCollection Tags
     {
         get => _tags;
         init
@@ -26,7 +26,7 @@ public sealed class CreateRecordRequest
         }
     } 
     
-    public CreateRecordRequest(DateTimePeriod period, RelatedActivitiesCollection activities)
+    public CreateRecordRequest(DateTimePeriod period, RelatedActivitiesIdentifiersCollection activities)
     {
         ArgumentNullException.ThrowIfNull(period);
         ArgumentNullException.ThrowIfNull(activities);

@@ -1,8 +1,8 @@
-﻿using Freem.Entities.RunningRecords;
-using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.RunningRecords.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;

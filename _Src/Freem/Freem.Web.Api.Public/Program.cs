@@ -7,7 +7,7 @@ using EgoHub.Api.Public.Client.Implementations;
 using EgoHub.Authentication.AspNetCore;
 using EgoHub.Authentication.AspNetCore.DependencyInjection;
 using EgoHub.Domain.Services;
-using Freem.Entities.DependencyInjection;
+using Freem.Domain.DependencyInjection;
 using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Entities.Serialization.Json;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;

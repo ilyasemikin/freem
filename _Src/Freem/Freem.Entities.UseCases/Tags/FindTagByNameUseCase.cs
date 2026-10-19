@@ -1,8 +1,4 @@
-﻿using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.GetByName;
 
@@ -11,9 +7,9 @@ namespace Freem.Entities.UseCases.Tags;
 internal sealed class FindTagByNameUseCase
     : IEntitiesUseCase<FindTagByNameRequest, FindTagByNameResponse, FindTagByNameErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsFilter> _repository;
+    private readonly ITagRepository _repository;
 
-    public FindTagByNameUseCase(ITagsRepository repository)
+    public FindTagByNameUseCase(ITagRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -26,7 +22,7 @@ internal sealed class FindTagByNameUseCase
     {
         context.ThrowsIfUnauthorized();
 
-        var filter = new TagsFilter(context.UserId, request.SearchText);
+        var filter = new TagFilter(context.UserId, request.SearchText);
         
         var result = await _repository.FindAsync(filter, cancellationToken);
         var tags = await result.ToArrayAsync(cancellationToken);

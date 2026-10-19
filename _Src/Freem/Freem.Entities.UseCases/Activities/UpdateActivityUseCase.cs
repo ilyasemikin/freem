@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Activities;
+﻿using Freem.Domain.Entities.Activities;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Activities;
+using Freem.Domain.Tags.Identifiers.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.Locking.Abstractions;
@@ -17,13 +17,13 @@ internal sealed class UpdateActivityUseCase
     : IEntitiesUseCase<UpdateActivityRequest, UpdateActivityResponse, UpdateActivityErrorCode>
 {
     private readonly IDistributedLocker _locker;
-    private readonly IActivitiesRepository _repository;
+    private readonly IActivityRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateActivityUseCase(
         IDistributedLocker locker,
-        IActivitiesRepository repository, 
+        IActivityRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

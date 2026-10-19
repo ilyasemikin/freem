@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Activities;
+using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.List;
 using Freem.Entities.UseCases.Contracts.Filter;

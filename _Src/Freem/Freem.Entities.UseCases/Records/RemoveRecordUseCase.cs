@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Remove;
 using Freem.Locking.Abstractions;
@@ -14,13 +14,13 @@ internal sealed class RemoveRecordUseCase
     : IEntitiesUseCase<RemoveRecordRequest, RemoveRecordResponse, RemoveRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
-    private readonly IRecordsRepository _repository;
+    private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RemoveRecordUseCase(
         IDistributedLocker locker,
-        IRecordsRepository repository, 
+        IRecordRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

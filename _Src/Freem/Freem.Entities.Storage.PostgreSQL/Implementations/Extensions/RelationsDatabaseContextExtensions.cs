@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using Freem.Entities.Abstractions;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Abstractions.Relations;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Collections;
@@ -10,21 +9,20 @@ namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 
 internal static class RelationsDatabaseContextExtensions
 {
-    public static async Task UpdateRelatedEntitiesAsync<TRelatedEntity, TRelatedEntityIdentifier, TDatabaseRelation>(
+    public static async Task UpdateRelatedEntitiesAsync<TRelatedEntityIdentifier, TDatabaseRelation>(
         this DatabaseContext context,
-        IEntityRelation<TRelatedEntity, TRelatedEntityIdentifier> entity,
+        IReadOnlyRelatedEntitiesIdentifiersCollection<TRelatedEntityIdentifier> relatedIdentifiers,
         Expression<Func<TDatabaseRelation, bool>> whereExpression,
         Expression<Func<TDatabaseRelation, string>> idSelectorExpression,
         Func<IEnumerable<string>, Expression<Func<TDatabaseRelation, bool>>> removeFilterFactory,
         Func<string, TDatabaseRelation> databaseRelationEntityFactory,
         CancellationToken cancellationToken = default)
-            where TRelatedEntity : IEntity<TRelatedEntityIdentifier>
             where TRelatedEntityIdentifier : IEntityIdentifier
             where TDatabaseRelation : class
     {
         var existedIds = context.FindRelatedIds(whereExpression, idSelectorExpression);
 
-        var ids = entity.RelatedEntities.Identifiers.Select(id => id.ToString()!);
+        var ids = relatedIdentifiers.Identifiers.Select(id => id.ToString()!);
         var (idsToRemove, idsToAdd) = existedIds.ExceptMutual(ids);
         
         var dbRelationEntities = idsToAdd.Select(databaseRelationEntityFactory);

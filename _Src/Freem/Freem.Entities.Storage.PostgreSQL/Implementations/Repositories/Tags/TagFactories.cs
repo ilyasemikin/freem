@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Freem.Entities.Storage.Abstractions.Models.Sorting;
+using Freem.Domain.Storage.Models.Sorting;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;

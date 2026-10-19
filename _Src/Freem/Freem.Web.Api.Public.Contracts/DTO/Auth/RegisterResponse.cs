@@ -1,4 +1,4 @@
-using Freem.Entities.Users.Identifiers;
+using Freem.Domain.Users.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Auth;
 

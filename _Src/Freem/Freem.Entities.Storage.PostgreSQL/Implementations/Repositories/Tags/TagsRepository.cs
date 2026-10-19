@@ -1,21 +1,19 @@
-﻿using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Tags.Models;
 using Freem.Sorting.Extensions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 
-internal sealed class TagsRepository : ITagsRepository
+internal sealed class TagsRepository : ITagRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
@@ -101,7 +99,7 @@ internal sealed class TagsRepository : ITagsRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
-        TagsByUserFilter filter,
+        TagByUserFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
@@ -114,7 +112,7 @@ internal sealed class TagsRepository : ITagsRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
-        TagsFilter filter,
+        TagFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);

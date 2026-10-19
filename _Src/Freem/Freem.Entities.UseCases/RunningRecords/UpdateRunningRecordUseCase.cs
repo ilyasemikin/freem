@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Identifiers.Extensions;
+using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.RunningRecords;
+using Freem.Domain.Tags.Identifiers.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.RunningRecords;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Locking.Abstractions;

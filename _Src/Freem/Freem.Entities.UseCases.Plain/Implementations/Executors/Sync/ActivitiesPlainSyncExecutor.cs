@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Entities.UseCases.Contracts.Activities.List;
 using Freem.Entities.UseCases.Contracts.Activities.Update;

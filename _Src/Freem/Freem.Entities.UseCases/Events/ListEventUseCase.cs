@@ -1,21 +1,16 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Storage.Repositories.Events;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Events.List;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.Events;
 
 internal sealed class ListEventUseCase 
     : IEntitiesUseCase<ListEventRequest, ListEventResponse, ListEventErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier, EventsAfterTimeFilter> _repository;
+    private readonly IEventRepository _repository;
 
     public ListEventUseCase(
-        IMultipleSearchByFilterRepository<IEntityEvent<IEntityIdentifier, UserIdentifier>, EventIdentifier, EventsAfterTimeFilter> repository)
+        IEventRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -28,7 +23,7 @@ internal sealed class ListEventUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = new EventsAfterTimeFilter(context.UserId, request.After)
+        var filter = new EventAfterTimeFilter(context.UserId, request.After)
         {
             Limit = (int)request.Limit
         };

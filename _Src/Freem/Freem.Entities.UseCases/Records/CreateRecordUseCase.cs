@@ -1,10 +1,10 @@
-﻿using Freem.Entities.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Identifiers.Extensions;
+using Freem.Domain.Entities.Records;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Tags.Identifiers.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Identifiers.Abstractions.Generators;
@@ -17,13 +17,13 @@ internal sealed class CreateRecordUseCase
     : IEntitiesUseCase<CreateRecordRequest, CreateRecordResponse, CreateRecordErrorCode>
 {
     private readonly IIdentifierGenerator<RecordIdentifier> _identifierGenerator;
-    private readonly ICreateRepository<Record, RecordIdentifier> _repository;
+    private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateRecordUseCase(
         IIdentifierGenerator<RecordIdentifier> identifierGenerator, 
-        ICreateRepository<Record, RecordIdentifier> repository, 
+        IRecordRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

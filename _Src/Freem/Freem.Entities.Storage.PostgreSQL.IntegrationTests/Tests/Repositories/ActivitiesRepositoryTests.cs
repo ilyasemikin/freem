@@ -1,19 +1,19 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Activities;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Freem.Entities.Users.Identifiers;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories;
 
-public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivitiesRepository>
+public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRepository>
 {
     public ActivitiesRepositoryTests(
         ITestOutputHelper output) 

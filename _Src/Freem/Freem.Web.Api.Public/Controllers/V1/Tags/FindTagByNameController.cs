@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Models;
+using Freem.Domain.Tags.Models;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Tags.GetByName;
 using Freem.UseCases.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
-using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;

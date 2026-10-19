@@ -1,7 +1,4 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.List;
 
@@ -10,10 +7,10 @@ namespace Freem.Entities.UseCases.Records;
 internal sealed class ListRecordUseCase 
     : IEntitiesUseCase<ListRecordRequest, ListRecordResponse, ListRecordErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter> _repository;
+    private readonly IRecordRepository _repository;
 
     public ListRecordUseCase(
-        IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByUserFilter> repository)
+        IRecordRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -26,7 +23,7 @@ internal sealed class ListRecordUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = new RecordsByUserFilter(context.UserId)
+        var filter = new RecordByUserFilter(context.UserId)
         {
             Limit = (int)request.Limit,
             Offset = (int)request.Offset

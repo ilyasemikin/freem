@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
@@ -14,8 +14,8 @@ public abstract class RecordTestBase : TestBase
     protected IReadOnlyList<DateTimePeriod> AddedPeriods { get; }
     protected IReadOnlyList<RecordIdentifier> AddedRecordIds { get; }
     
-    protected RelatedActivitiesCollection AddedRelatedActivities { get; }
-    protected RelatedTagsCollection AddedRelatedTags { get; }
+    protected RelatedActivitiesIdentifiersCollection AddedRelatedActivities { get; }
+    protected RelatedTagsIdentifiersCollection AddedRelatedTags { get; }
     
     protected RecordTestBase(TestContext context, ITestOutputHelper? output = null) 
         : base(context, output)
@@ -25,8 +25,8 @@ public abstract class RecordTestBase : TestBase
         var tagId = Context.Preparer.Tags.Create();
         var activityId = Context.Preparer.Activities.Create();
         
-        AddedRelatedTags = new RelatedTagsCollection([tagId]);
-        AddedRelatedActivities = new RelatedActivitiesCollection([activityId]);
+        AddedRelatedTags = new RelatedTagsIdentifiersCollection([tagId]);
+        AddedRelatedActivities = new RelatedActivitiesIdentifiersCollection([activityId]);
 
         var periods = new DateTimePeriod[RecordsCount];
 

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Comparers;
+﻿using Freem.Domain.Entities.Records.Comparers;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -12,7 +12,7 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
     private const int RecordsCount = 10;
     
     private readonly UseCaseExecutionContext _context;
-    private readonly IReadOnlyList<Entities.Records.Record> _records;
+    private readonly IReadOnlyList<Domain.Entities.Records.Record> _records;
     
     public PeriodListRecordUseCaseTests(TestContext context) 
         : base(context)

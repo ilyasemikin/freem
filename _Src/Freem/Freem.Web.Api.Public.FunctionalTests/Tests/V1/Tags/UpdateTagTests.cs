@@ -1,6 +1,5 @@
 ﻿using System.Net;
-using Freem.Entities.Tags.Models;
-using Freem.Web.Api.Public.Contracts;
+using Freem.Domain.Tags.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.Contracts.Models;
 using Freem.Web.Api.Public.FunctionalTests.Context;

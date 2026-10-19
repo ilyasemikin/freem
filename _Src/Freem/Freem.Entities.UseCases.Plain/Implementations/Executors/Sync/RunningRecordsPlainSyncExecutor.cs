@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.RunningRecords;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;

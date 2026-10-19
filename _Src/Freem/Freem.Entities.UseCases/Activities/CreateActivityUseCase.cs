@@ -1,10 +1,10 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Entities.Activities;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.Activities;
+using Freem.Domain.Tags.Identifiers.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.Identifiers.Abstractions.Generators;
@@ -19,13 +19,13 @@ internal sealed class CreateActivityUseCase :
     private const ActivityStatus.Value DefaultActivityStatus = ActivityStatus.Value.Active;
 
     private readonly IIdentifierGenerator<ActivityIdentifier> _identifierGenerator;
-    private readonly ICreateRepository<Activity, ActivityIdentifier> _repository;
+    private readonly IActivityRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateActivityUseCase(
         IIdentifierGenerator<ActivityIdentifier> identifierGenerator, 
-        ICreateRepository<Activity, ActivityIdentifier> repository, 
+        IActivityRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

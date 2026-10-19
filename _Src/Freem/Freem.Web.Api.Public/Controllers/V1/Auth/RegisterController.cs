@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using EgoHub.Api.Public.Client.Abstractions;
 using EgoHub.Api.Public.Contracts.V1.Identities;
-using Freem.Entities.Users.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Web.Api.Public.Authentication.EgoHub;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Auth;

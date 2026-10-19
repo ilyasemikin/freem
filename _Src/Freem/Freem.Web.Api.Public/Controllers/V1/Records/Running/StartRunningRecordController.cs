@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.UseCases.Abstractions;
@@ -58,11 +58,11 @@ public sealed class StartRunningRecordController : BaseController
     private UseCaseStartRunningRecordRequest Map(ApiStartRunningRecordRequest request)
     {
         var startAt = request.StartAt ?? _clock.Get();
-        return new UseCaseStartRunningRecordRequest(startAt, new RelatedActivitiesCollection(request.Activities))
+        return new UseCaseStartRunningRecordRequest(startAt, new RelatedActivitiesIdentifiersCollection(request.Activities))
         {
             Name = request.Name,
             Description = request.Description,
-            Tags = new RelatedTagsCollection(request.Tags)
+            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
         };
     }
 

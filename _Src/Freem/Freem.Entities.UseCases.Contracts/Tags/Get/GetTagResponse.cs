@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Tags;
+using Freem.Domain.Entities.Tags;
+using Freem.Domain.Storage.Models;
 using Freem.UseCases.Contracts.Abstractions;
 using Freem.UseCases.Contracts.Abstractions.Errors;
 

@@ -1,19 +1,17 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Events;
+using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Repositories.Events;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database;
-using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 
-internal sealed class EventsRepository : IEventsRepository
+internal sealed class EventsRepository : IEventRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
@@ -61,7 +59,7 @@ internal sealed class EventsRepository : IEventsRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<IEntityEvent<IEntityIdentifier, UserIdentifier>>> FindAsync(
-        EventsAfterTimeFilter filter, 
+        EventAfterTimeFilter filter, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);

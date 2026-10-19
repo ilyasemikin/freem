@@ -1,4 +1,4 @@
-﻿using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

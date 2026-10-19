@@ -1,7 +1,4 @@
-﻿using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.List;
 
@@ -10,9 +7,9 @@ namespace Freem.Entities.UseCases.Tags;
 internal sealed class ListTagUseCase 
     : IEntitiesUseCase<ListTagRequest, ListTagResponse, ListTagErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsByUserFilter> _repository;
+    private readonly ITagRepository _repository;
 
-    public ListTagUseCase(IMultipleSearchByFilterRepository<Tag, TagIdentifier, TagsByUserFilter> repository)
+    public ListTagUseCase(ITagRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -25,7 +22,7 @@ internal sealed class ListTagUseCase
     {
         context.ThrowsIfUnauthorized();
         
-        var filter = new TagsByUserFilter(context.UserId)
+        var filter = new TagByUserFilter(context.UserId)
         {
             Limit = (int)request.Limit,
             Offset = (int)request.Offset

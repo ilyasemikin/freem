@@ -1,11 +1,9 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords.Extensions;
 
@@ -16,8 +14,8 @@ internal static class RelationsDatabaseContextExtensions
         RunningRecord entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<Activity, ActivityIdentifier, RunningRecordActivityRelationEntity>(
-            entity,
+        await context.UpdateRelatedEntitiesAsync<ActivityIdentifier, RunningRecordActivityRelationEntity>(
+            entity.Activities,
             e => e.RunningRecordUserId == entity.Id,
             e => e.ActivityId,
             ids => e => ids.Contains(e.ActivityId) && e.RunningRecordUserId == entity.UserId,
@@ -30,8 +28,8 @@ internal static class RelationsDatabaseContextExtensions
         RunningRecord entity,
         CancellationToken cancellationToken = default)
     {
-        await context.UpdateRelatedEntitiesAsync<Tag, TagIdentifier, RunningRecordTagRelationEntity>(
-            entity,
+        await context.UpdateRelatedEntitiesAsync<TagIdentifier, RunningRecordTagRelationEntity>(
+            entity.Tags,
             e => e.RunningRecordUserId == entity.Id,
             e => e.TagId,
             ids => e => ids.Contains(e.TagId) && e.RunningRecordUserId == entity.UserId,

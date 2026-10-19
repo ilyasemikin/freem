@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Activities;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Entities.Activities;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Activities.Create;
 using Freem.UseCases.Abstractions;
@@ -57,7 +57,7 @@ public sealed class CreateActivityController : BaseController
     {
         return new UseCaseCreateActivityRequest(request.Name)
         {
-            Tags = new RelatedTagsCollection(request.Tags)
+            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
         };
     }
 

@@ -1,12 +1,11 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Statistics.Time;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Entities.Records;
+using Freem.Domain.Entities.Statistics.Time;
+using Freem.Domain.Entities.Users;
+using Freem.Domain.Statistics.Time;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Freem.UseCases.Abstractions;
@@ -16,11 +15,11 @@ namespace Freem.Entities.UseCases.Statistics;
 public sealed class StatisticsPerDaysUseCase : 
     IUseCase<UseCaseExecutionContext, StatisticsPerDaysRequest, StatisticsPerDaysResponse, StatisticsPerDaysErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> _repository;
+    private readonly IRecordRepository _repository;
     private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
 
     public StatisticsPerDaysUseCase(
-        IMultipleSearchByFilterRepository<Record, RecordIdentifier, RecordsByPeriodFilter> repository, 
+        IRecordRepository repository, 
         IUseCaseExecutor<UseCaseExecutionContext> executor)
     {
         ArgumentNullException.ThrowIfNull(repository);
@@ -54,7 +53,7 @@ public sealed class StatisticsPerDaysUseCase :
             var period = new DateTimePeriod(current, next);
 
             var day = current.ToDateOnly();
-            statisticsPerDays[day] = TimeStatistics.Calculate(period, records);
+            statisticsPerDays[day] = TimeStatisticsCalculator.Calculate(period, records);
             
             current = next;
         }
@@ -86,7 +85,7 @@ public sealed class StatisticsPerDaysUseCase :
 
             var end = start.AddDays(1);
             var period = new DateTimePeriod(start, end);
-            var filter = new RecordsByPeriodFilter(userId, period);
+            var filter = new RecordByPeriodFilter(userId, period);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
             var records = result.ToBlockingEnumerable(cancellationToken);

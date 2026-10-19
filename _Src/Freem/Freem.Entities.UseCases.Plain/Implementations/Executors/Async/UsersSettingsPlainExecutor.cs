@@ -1,7 +1,7 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 using Freem.Entities.UseCases.Plain.Exceptions;
-using Freem.Entities.Users;
 using Freem.Results;
 using Freem.UseCases.Abstractions;
 

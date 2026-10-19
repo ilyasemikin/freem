@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
@@ -74,7 +74,7 @@ public sealed class RecordsActivitiesConstraintTriggerTests : ConstraintTriggerT
 
         var user = factory.User;
         var record = factory.CreateRecord();
-        var activities = factory.CreateActivities(RelatedActivitiesCollection.MaxActivitiesCount + 1);
+        var activities = factory.CreateActivities(RelatedActivitiesIdentifiersCollection.MaxActivitiesCount + 1);
 
         record.Activities = new List<ActivityEntity>() { activities[0] };
 

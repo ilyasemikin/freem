@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;
+﻿using Freem.Domain.Storage.Models.Filters.Abstractions;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 

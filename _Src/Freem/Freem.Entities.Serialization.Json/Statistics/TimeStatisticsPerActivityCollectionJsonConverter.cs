@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Statistics.Time;
+using Freem.Domain.Statistics.Time;
 
 namespace Freem.Entities.Serialization.Json.Statistics;
 

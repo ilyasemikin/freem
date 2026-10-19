@@ -1,14 +1,10 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.RunningRecords;
+﻿using Freem.Domain;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Constants.Collections.Builders;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Constants.Injection;
 using Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Constants;
-using Freem.Entities.Tags;
-using Freem.Entities.Users;
-using Activity = Freem.Entities.Activities.Activity;
 
 namespace Freem.Entities.Storage.PostgreSQL.Migrations.Scripts.Factories;
 
@@ -41,17 +37,17 @@ internal static class ScriptExtractorFactory
             .WithConstant(ConstantNames.EventsRelatedEntityNotExists, TriggerErrorCodes.EventsRelatedEntityNotExists);
         
         builder
-            .WithConstant(ConstantNames.EventActivityEntityName, Activity.EntityName)
-            .WithConstant(ConstantNames.EventRecordEntityName, Record.EntityName)
-            .WithConstant(ConstantNames.EventRunningRecordEntityName, RunningRecord.EntityName)
-            .WithConstant(ConstantNames.EventTagEntityName, Tag.EntityName)
-            .WithConstant(ConstantNames.EventUserEntityName, User.EntityName);
+            .WithConstant(ConstantNames.EventActivityEntityName, EntityNames.Activity)
+            .WithConstant(ConstantNames.EventRecordEntityName, EntityNames.Record)
+            .WithConstant(ConstantNames.EventRunningRecordEntityName, EntityNames.RunningRecord)
+            .WithConstant(ConstantNames.EventTagEntityName, EntityNames.Tag)
+            .WithConstant(ConstantNames.EventUserEntityName, EntityNames.User);
         
         builder
-            .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsCollection.MinTagsCount.ToString())
-            .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsCollection.MaxTagsCount.ToString())
-            .WithConstant(ConstantNames.MinRelatedActivitiesCount, RelatedActivitiesCollection.MinActivitiesCount.ToString())
-            .WithConstant(ConstantNames.MaxRelatedActivitiesCount, RelatedActivitiesCollection.MaxActivitiesCount.ToString());
+            .WithConstant(ConstantNames.MinRelatedTagsCount, RelatedTagsIdentifiersCollection.MinTagsCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedTagsCount, RelatedTagsIdentifiersCollection.MaxTagsCount.ToString())
+            .WithConstant(ConstantNames.MinRelatedActivitiesCount, RelatedActivitiesIdentifiersCollection.MinActivitiesCount.ToString())
+            .WithConstant(ConstantNames.MaxRelatedActivitiesCount, RelatedActivitiesIdentifiersCollection.MaxActivitiesCount.ToString());
 
         builder
             .WithConstant(ConstantNames.ActivityIdTriggerErrorParameterName, TriggerErrorParameters.ActivityId)

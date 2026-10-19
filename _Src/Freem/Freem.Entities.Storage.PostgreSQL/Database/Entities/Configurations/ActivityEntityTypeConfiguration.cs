@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Activities.Models;
+﻿using Freem.Domain.Activities.Models;
 using Freem.Entities.Storage.PostgreSQL.Database.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;

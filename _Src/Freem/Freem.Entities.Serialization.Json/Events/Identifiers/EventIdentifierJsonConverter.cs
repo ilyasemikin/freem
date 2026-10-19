@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Abstractions.Events.Identifiers;
+using Freem.Domain.Events.Identifiers;
 
 namespace Freem.Entities.Serialization.Json.Events.Identifiers;
 

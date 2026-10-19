@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
@@ -57,11 +57,11 @@ public sealed class UpdateRunningRecordController : BaseController
     private static UseCaseUpdateRunningRecordRequest Map(ApiUpdateRunningRecordRequest request)
     {
         var activities = request.Activities is not null
-            ? new UpdateField<RelatedActivitiesCollection>(new RelatedActivitiesCollection(request.Activities.Value))
+            ? new UpdateField<RelatedActivitiesIdentifiersCollection>(new RelatedActivitiesIdentifiersCollection(request.Activities.Value))
             : null;
         
         var tags = request.Tags is not null
-            ? new UpdateField<RelatedTagsCollection>(new RelatedTagsCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
             : null;
         
         return new UseCaseUpdateRunningRecordRequest()

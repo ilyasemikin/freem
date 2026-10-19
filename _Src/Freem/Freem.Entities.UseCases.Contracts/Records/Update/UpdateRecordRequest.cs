@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Update;
@@ -14,8 +14,8 @@ public sealed class UpdateRecordRequest
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
-    public UpdateField<RelatedActivitiesCollection>? Activities { get; init; }
-    public UpdateField<RelatedTagsCollection>? Tags { get; init; }
+    public UpdateField<RelatedActivitiesIdentifiersCollection>? Activities { get; init; }
+    public UpdateField<RelatedTagsIdentifiersCollection>? Tags { get; init; }
 
     public UpdateRecordRequest(RecordIdentifier id)
     {

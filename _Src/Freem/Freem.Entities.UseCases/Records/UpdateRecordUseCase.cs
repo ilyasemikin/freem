@@ -1,10 +1,10 @@
-﻿using Freem.Entities.Activities.Identifiers.Extensions;
+﻿using Freem.Domain.Activities.Identifiers.Extensions;
+using Freem.Domain.Entities.Records;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
+using Freem.Domain.Tags.Identifiers.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Records;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Tags.Identifiers.Extensions;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Update;
 using Freem.Locking.Abstractions;
@@ -18,13 +18,13 @@ internal sealed class UpdateRecordUseCase
     : IEntitiesUseCase<UpdateRecordRequest, UpdateRecordResponse, UpdateRecordErrorCode>
 {
     private readonly IDistributedLocker _locker;
-    private readonly IRecordsRepository _repository;
+    private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateRecordUseCase(
         IDistributedLocker locker,
-        IRecordsRepository repository, 
+        IRecordRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

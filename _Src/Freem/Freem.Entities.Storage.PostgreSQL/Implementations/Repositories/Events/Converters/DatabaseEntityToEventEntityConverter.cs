@@ -1,9 +1,9 @@
-﻿using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Events.Identifiers;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Events;
+﻿using Freem.Domain;
+using Freem.Domain.Events;
+using Freem.Domain.Events.Identifiers;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
 

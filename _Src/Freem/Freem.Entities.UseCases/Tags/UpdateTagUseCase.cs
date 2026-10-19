@@ -1,8 +1,8 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
-using Freem.Entities.Tags;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
 using Freem.Locking.Abstractions;
@@ -16,13 +16,13 @@ internal sealed class UpdateTagUseCase
     : IEntitiesUseCase<UpdateTagRequest, UpdateTagResponse, UpdateTagErrorCode>
 {
     private readonly IDistributedLocker _locker;
-    private readonly ITagsRepository _repository;
+    private readonly ITagRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateTagUseCase(
         IDistributedLocker locker,
-        ITagsRepository repository, 
+        ITagRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

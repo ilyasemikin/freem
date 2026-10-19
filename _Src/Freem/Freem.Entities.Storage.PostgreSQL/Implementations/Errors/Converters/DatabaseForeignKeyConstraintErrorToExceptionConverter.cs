@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+using Freem.Domain.Storage.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 

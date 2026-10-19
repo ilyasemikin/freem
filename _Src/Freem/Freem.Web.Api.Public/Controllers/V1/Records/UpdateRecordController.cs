@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Records.Update;
@@ -61,11 +61,11 @@ public sealed class UpdateRecordController : BaseController
         var recordId = new RecordIdentifier(recordIdString);
 
         var activities = request.Activities is not null
-            ? new UpdateField<RelatedActivitiesCollection>(new RelatedActivitiesCollection(request.Activities.Value))
+            ? new UpdateField<RelatedActivitiesIdentifiersCollection>(new RelatedActivitiesIdentifiersCollection(request.Activities.Value))
             : null;
         
         var tags = request.Tags?.Value != null
-            ? new UpdateField<RelatedTagsCollection>(new RelatedTagsCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
             : null;
         
         return new UseCaseUpdateRecordRequest(recordId)

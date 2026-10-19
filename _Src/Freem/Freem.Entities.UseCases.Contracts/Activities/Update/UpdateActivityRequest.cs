@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Update;
 
@@ -10,7 +10,7 @@ public sealed class UpdateActivityRequest
     
     public UpdateField<ActivityName>? Name { get; init; }
     
-    public UpdateField<RelatedTagsCollection>? Tags { get; init; }
+    public UpdateField<RelatedTagsIdentifiersCollection>? Tags { get; init; }
 
     public UpdateActivityRequest(ActivityIdentifier id)
     {

@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
-using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+using Freem.Domain.Entities.Records;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
@@ -17,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 
-internal sealed class RecordsRepository : IRecordsRepository
+internal sealed class RecordsRepository : IRecordRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
@@ -120,13 +119,14 @@ internal sealed class RecordsRepository : IRecordsRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<Record>> FindAsync(
-        RecordsByUserFilter filter,
+        RecordByUserFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
 
         return await _database.Records
             .Include(e => e.Activities)
+            .Include(e => e.Tags)
             .Where(e => e.UserId == filter.UserId)
             .OrderBy(e => e.StartAt)
             .ThenBy(e => e.EndAt)
@@ -137,7 +137,7 @@ internal sealed class RecordsRepository : IRecordsRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<Record>> FindAsync(
-        RecordsByPeriodFilter filter,
+        RecordByPeriodFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
@@ -146,6 +146,7 @@ internal sealed class RecordsRepository : IRecordsRepository
         {
             return await _database.Records
                 .Include(e => e.Activities)
+                .Include(e => e.Tags)
                 .Where(predicate)
                 .OrderBy(e => e.StartAt)
                 .ThenBy(e => e.EndAt)

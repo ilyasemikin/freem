@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Tags.Identifiers;
+using Freem.Domain.Tags.Identifiers;
 
 namespace Freem.Entities.Serialization.Json.Tags.Identifiers;
 

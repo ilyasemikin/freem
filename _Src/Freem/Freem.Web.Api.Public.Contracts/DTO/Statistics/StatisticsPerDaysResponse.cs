@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Statistics.Time;
+﻿using Freem.Domain.Statistics.Time;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Statistics;
 

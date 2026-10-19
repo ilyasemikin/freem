@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Domain.Storage.Repositories.Users;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
-using Freem.Entities.Users;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 using Freem.UseCases.Abstractions;
@@ -11,12 +11,12 @@ namespace Freem.Entities.UseCases.Users.Settings;
 internal sealed class UpdateUserSettingsUseCase :
     IUseCase<UseCaseExecutionContext, UpdateUserSettingsRequest, UpdateUserSettingsResponse, UpdateUserSettingsErrorCode>
 {
-    private readonly IUsersRepository _repository;
+    private readonly IUserRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateUserSettingsUseCase(
-        IUsersRepository repository, 
+        IUserRepository repository, 
         EventProducer eventProducer,
         StorageTransactionRunner transactionRunner)
     {

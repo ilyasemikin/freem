@@ -1,16 +1,14 @@
-﻿using Freem.Entities.Storage.Abstractions.Base.Search;
+﻿using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Get;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.UseCases.Users;
 
 internal sealed class GetUserUseCase : IEntitiesUseCase<GetUserRequest, GetUserResponse, GetUserErrorCode>
 {
-    private readonly ISearchByIdRepository<User, UserIdentifier> _repository;
+    private readonly IUserRepository _repository;
 
-    public GetUserUseCase(ISearchByIdRepository<User, UserIdentifier> repository)
+    public GetUserUseCase(IUserRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
 

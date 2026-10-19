@@ -1,7 +1,6 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities.Models;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Activities;
 
@@ -16,6 +15,6 @@ public sealed class CreateActivityRequest
         ArgumentNullException.ThrowIfNull(name);
         
         Name = name;
-        Tags = tags ?? RelatedTagsCollection.Empty;
+        Tags = tags ?? RelatedTagsIdentifiersCollection.Empty;
     }
 }

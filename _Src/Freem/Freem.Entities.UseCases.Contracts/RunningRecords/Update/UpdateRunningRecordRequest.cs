@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 
@@ -8,8 +8,8 @@ public sealed class UpdateRunningRecordRequest
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
-    public UpdateField<RelatedActivitiesCollection>? Activities { get; init; }
-    public UpdateField<RelatedTagsCollection>? Tags { get; init; }
+    public UpdateField<RelatedActivitiesIdentifiersCollection>? Activities { get; init; }
+    public UpdateField<RelatedTagsIdentifiersCollection>? Tags { get; init; }
 
     public bool HasChanges()
     {

@@ -1,7 +1,5 @@
-﻿using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 
@@ -10,9 +8,9 @@ namespace Freem.Entities.UseCases.Tags;
 internal sealed class GetTagUseCase 
     : IEntitiesUseCase<GetTagRequest, GetTagResponse, GetTagErrorCode>
 {
-    private readonly ISearchByMultipleIdsRepository<Tag, TagIdentifier, TagAndUserIdentifiers> _repository;
+    private readonly ITagRepository _repository;
 
-    public GetTagUseCase(ISearchByMultipleIdsRepository<Tag, TagIdentifier, TagAndUserIdentifiers> repository)
+    public GetTagUseCase(ITagRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         

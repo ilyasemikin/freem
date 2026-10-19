@@ -13,7 +13,7 @@ statistics, events. The project was dormant from 2025-06 and is being revived; t
 
 Commits follow [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type(scope): description`.
 Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`. Scope: the affected project name (`Freem.Web.Api.Public`,
-`Freem.Entities`, `Freem.Web`, ...), or `Freem` for cross-cutting changes. Description: lowercase, imperative,
+`Freem.Domain`, `Freem.Web`, ...), or `Freem` for cross-cutting changes. Description: lowercase, imperative,
 concise, no trailing period. History before the revival does not follow this convention.
 
 Do not add `Co-Authored-By` or any other authorship trailers, nor a "Generated with Claude Code" footer, to
@@ -83,9 +83,10 @@ Layers (names differ from StashIt):
 
 ```
 Freem.Web.Api.Public                       # ASP.NET Core API (+ .Client, .SyncClient, .FunctionalTests)
-Freem.Entities                             # domain entities per area: Activities, Records, RunningRecords, Tags, Users, Statistics, Events
+Freem.Domain                               # ids, value objects, events, statistics data (StashIt `Domain`)
+Freem.Domain.Entities                      # aggregates and comparers; aggregates reference each other by Id only
 Freem.Entities.UseCases(.Contracts/.Plain) # use cases and their DTOs
-Freem.Entities.Storage.Abstractions        # repository interfaces and filters
+Freem.Domain.Storage                       # one repository interface per aggregate + its filters
 Freem.Entities.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
 Freem.Entities.Events.Producer             # event production (NullEventPublisher)
 Freem.Locking.*                            # locking (Redis)

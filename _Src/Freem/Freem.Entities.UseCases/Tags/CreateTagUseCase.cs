@@ -1,8 +1,8 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.Tags;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Identifiers.Abstractions.Generators;
@@ -15,13 +15,13 @@ internal sealed class CreateTagUseCase
     : IEntitiesUseCase<CreateTagRequest, CreateTagResponse, CreateTagErrorCode>
 {
     private readonly IIdentifierGenerator<TagIdentifier> _identifierGenerator;
-    private readonly ICreateRepository<Tag, TagIdentifier> _repository;
+    private readonly ITagRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public CreateTagUseCase(
         IIdentifierGenerator<TagIdentifier> identifierGenerator, 
-        ICreateRepository<Tag, TagIdentifier> repository, 
+        ITagRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

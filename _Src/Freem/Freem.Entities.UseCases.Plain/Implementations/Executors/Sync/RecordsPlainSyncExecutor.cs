@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.Records;
+using Freem.Domain.Records.Identifiers;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Entities.UseCases.Contracts.Records.List;
 using Freem.Entities.UseCases.Contracts.Records.Update;

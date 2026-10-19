@@ -1,6 +1,6 @@
-﻿using Freem.Entities.RunningRecords.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.RunningRecords.Identifiers;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;

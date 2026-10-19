@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
@@ -63,7 +63,7 @@ public class UpdateActivityController : BaseController
         var activityId = new ActivityIdentifier(activityIdString);
 
         var tags = request.Tags is not null
-            ? new UpdateField<RelatedTagsCollection>(new RelatedTagsCollection(request.Tags.Value))
+            ? new UpdateField<RelatedTagsIdentifiersCollection>(new RelatedTagsIdentifiersCollection(request.Tags.Value))
             : null;
 
         return new UseCaseUpdateActivityRequest(activityId)

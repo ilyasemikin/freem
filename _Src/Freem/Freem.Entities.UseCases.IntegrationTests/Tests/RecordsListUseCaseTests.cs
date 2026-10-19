@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Comparers;
+﻿using Freem.Domain.Entities.Records.Comparers;
 using Freem.Entities.UseCases.Contracts.Records.List;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -11,7 +11,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
     private const int RecordsCount = 10;
     
     private readonly UseCaseExecutionContext _context;
-    private readonly IReadOnlyList<Entities.Records.Record> _records;
+    private readonly IReadOnlyList<Domain.Entities.Records.Record> _records;
     
     public RecordsListUseCaseTests(TestContext context) 
         : base(context)

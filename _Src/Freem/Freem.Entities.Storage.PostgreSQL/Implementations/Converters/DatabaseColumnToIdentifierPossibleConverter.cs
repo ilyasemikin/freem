@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Identifiers;
+using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Records.Identifiers;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Models;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Users.Identifiers;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Converters;
 

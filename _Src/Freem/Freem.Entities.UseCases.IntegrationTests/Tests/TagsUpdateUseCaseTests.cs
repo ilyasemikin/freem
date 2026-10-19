@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
-using Freem.Entities.Tags.Models;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Tags.Identifiers;
+using Freem.Domain.Tags.Models;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
 using Freem.Entities.UseCases.Exceptions;

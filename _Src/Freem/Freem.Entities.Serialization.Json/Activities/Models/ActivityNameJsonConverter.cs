@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Activities.Models;
+using Freem.Domain.Activities.Models;
 
 namespace Freem.Entities.Serialization.Json.Activities.Models;
 

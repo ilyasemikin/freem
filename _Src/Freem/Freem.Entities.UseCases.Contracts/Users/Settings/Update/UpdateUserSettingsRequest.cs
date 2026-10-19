@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Entities.Users.Models;
+using Freem.Domain.Users.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 

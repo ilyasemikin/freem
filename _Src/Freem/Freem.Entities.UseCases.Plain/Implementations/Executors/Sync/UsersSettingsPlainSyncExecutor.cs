@@ -1,6 +1,6 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 using Freem.Entities.UseCases.Plain.Implementations.Executors.Async;
-using Freem.Entities.Users;
 using Freem.Results;
 using Freem.UseCases.Abstractions;
 

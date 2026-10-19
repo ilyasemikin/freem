@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Users.Identifiers;
+using Freem.Domain.Users.Identifiers;
 
 namespace Freem.Entities.Serialization.Json.Users.Identifiers;
 

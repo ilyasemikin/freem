@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Records.Comparers;
-using Freem.Entities.Records.Identifiers;
+﻿using Freem.Domain.Entities.Records.Comparers;
+using Freem.Domain.Records.Identifiers;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -10,7 +10,7 @@ namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 public sealed class RecordsGetUseCase : UseCaseTestBase
 {
     private readonly UseCaseExecutionContext _context;
-    private readonly Entities.Records.Record _record;
+    private readonly Domain.Entities.Records.Record _record;
     
     public RecordsGetUseCase(TestContext context) 
         : base(context)

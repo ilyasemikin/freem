@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Relations.Collections;
 using Freem.Web.Api.Public.FunctionalTests.Context;
 using Freem.Web.Api.Public.FunctionalTests.Tests.Base;
 using Xunit.Abstractions;
@@ -12,7 +12,7 @@ public abstract class ActivityTestBase : TestBase
     
     protected IReadOnlyList<ActivityIdentifier> AddedActivityIds { get; }
     
-    protected RelatedTagsCollection AddedRelatedTags { get; }
+    protected RelatedTagsIdentifiersCollection AddedRelatedTags { get; }
     
     protected ActivityTestBase(TestContext context, ITestOutputHelper output) 
         : base(context, output)
@@ -20,7 +20,7 @@ public abstract class ActivityTestBase : TestBase
         Context.Preparer.Users.Register();
 
         var tagId = Context.Preparer.Tags.Create();
-        AddedRelatedTags = new RelatedTagsCollection([tagId]);
+        AddedRelatedTags = new RelatedTagsIdentifiersCollection([tagId]);
         
         AddedActivityIds = Context.Preparer.Activities
             .CreateMany(ActivitiesCount)

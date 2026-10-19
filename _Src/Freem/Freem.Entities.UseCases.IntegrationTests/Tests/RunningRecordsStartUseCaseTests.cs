@@ -1,8 +1,6 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
@@ -15,7 +13,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     private readonly UseCaseExecutionContext _context;
 
     private readonly DateTimeOffset _startAt;
-    private readonly RelatedActivitiesCollection _activities;
+    private readonly RelatedActivitiesIdentifiersCollection _activities;
     
     public RunningRecordsStartUseCaseTests(TestContext context) 
         : base(context)
@@ -28,7 +26,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var activity = filler.Activities.Create(_context);
 
         _startAt = Context.GetCurrentDateTime();
-        _activities = new RelatedActivitiesCollection([activity.Id]);
+        _activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
     }
 
     [Fact]
@@ -44,7 +42,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
         
         Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
+        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
     }
 
     [Fact]
@@ -63,14 +61,14 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         Assert.Null(response.Error);
         
         Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesCollection<Activity, ActivityIdentifier>.Equals);
+        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedEntitiesIdentifiersCollection<ActivityIdentifier>.Equals);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
         var notExistedActivityId = Context.CreateIdentifier<ActivityIdentifier>();
-        var activities = new RelatedActivitiesCollection([notExistedActivityId]);
+        var activities = new RelatedActivitiesIdentifiersCollection([notExistedActivityId]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
@@ -92,7 +90,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var activity = executor.Activities.Create(anotherContext);
         
-        var activities = new RelatedActivitiesCollection([activity]);
+        var activities = new RelatedActivitiesIdentifiersCollection([activity.Id]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
@@ -110,7 +108,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     public async Task ShouldFailure_WhenTagsDoesNotExist()
     {
         var notExistedTagId = Context.CreateIdentifier<TagIdentifier>();
-        var tags = new RelatedTagsCollection([notExistedTagId]);
+        var tags = new RelatedTagsIdentifiersCollection([notExistedTagId]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
         {
@@ -135,7 +133,7 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         var anotherContext = new UseCaseExecutionContext(anotherUserId);
         var tag = executor.Tags.Create(anotherContext);
         
-        var tags = new RelatedTagsCollection([tag]);
+        var tags = new RelatedTagsIdentifiersCollection([tag.Id]);
 
         var request = new StartRunningRecordRequest(_startAt, _activities)
         {

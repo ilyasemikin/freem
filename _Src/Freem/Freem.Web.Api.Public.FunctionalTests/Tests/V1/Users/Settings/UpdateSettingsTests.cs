@@ -1,6 +1,5 @@
 ﻿using System.Net;
-using Freem.Entities.Users.Models;
-using Freem.Web.Api.Public.Contracts;
+using Freem.Domain.Users.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
 using Freem.Web.Api.Public.Contracts.Models;
 using Freem.Web.Api.Public.FunctionalTests.Context;

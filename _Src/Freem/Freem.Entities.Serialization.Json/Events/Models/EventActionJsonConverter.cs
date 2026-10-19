@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Abstractions.Events.Models;
+using Freem.Domain.Events.Models;
 
 namespace Freem.Entities.Serialization.Json.Events.Models;
 

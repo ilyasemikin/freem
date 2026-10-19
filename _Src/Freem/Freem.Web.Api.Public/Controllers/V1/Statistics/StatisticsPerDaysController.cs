@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Statistics.Time;
+using Freem.Domain.Statistics.Time;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.UseCases.Abstractions;

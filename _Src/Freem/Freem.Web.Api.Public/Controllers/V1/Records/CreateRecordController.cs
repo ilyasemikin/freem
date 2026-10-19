@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Records;
-using Freem.Entities.Relations.Collections;
+using Freem.Domain.Entities.Records;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.UseCases.Abstractions;
@@ -55,11 +55,11 @@ public sealed class CreateRecordController : BaseController
 
     private static UseCaseCreateRecordRequest Map(ApiCreateRecordRequest request)
     {
-        return new UseCaseCreateRecordRequest(request.Period, new RelatedActivitiesCollection(request.Activities))
+        return new UseCaseCreateRecordRequest(request.Period, new RelatedActivitiesIdentifiersCollection(request.Activities))
         {
             Name = request.Name,
             Description = request.Description,
-            Tags = new RelatedTagsCollection(request.Tags)
+            Tags = new RelatedTagsIdentifiersCollection(request.Tags)
         };
     }
 

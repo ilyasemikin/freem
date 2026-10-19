@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using Freem.Entities.Tags;
-using Freem.Entities.Tags.Identifiers;
+using Freem.Domain.Entities.Tags;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Contracts.Tags.List;

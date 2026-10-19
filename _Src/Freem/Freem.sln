@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Entities", "Freem.Entities\Freem.Entities.csproj", "{711DAC13-481C-4177-A804-2116BE38BD35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freem.Domain.Entities", "Freem.Domain.Entities\Freem.Domain.Entities.csproj", "{711DAC13-481C-4177-A804-2116BE38BD35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.Abstractions", "Freem.Entities.Storage.Abstractions\Freem.Entities.Storage.Abstractions.csproj", "{6172CB41-6391-4844-9D3A-C604361B18B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Domain.Storage", "Freem.Domain.Storage\Freem.Domain.Storage.csproj", "{6172CB41-6391-4844-9D3A-C604361B18B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Storage.Abstractions", "Freem.Storage.Abstractions\Freem.Storage.Abstractions.csproj", "{777C49E2-9AE2-4C9B-B12A-421602360E3E}"
 EndProject
@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Storage.EFCore", "Fre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.IntegrationTests", "Freem.Entities.Storage.PostgreSQL.IntegrationTests\Freem.Entities.Storage.PostgreSQL.IntegrationTests.csproj", "{8893DD9E-D0D5-4872-90C0-E247A53D64A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Abstractions", "Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj", "{8EF3F0AF-DE3E-4605-A247-B696FE383F61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Domain", "Freem.Domain\Freem.Domain.csproj", "{8EF3F0AF-DE3E-4605-A247-B696FE383F61}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.UnitTests", "Freem.Entities.Storage.PostgreSQL.UnitTests\Freem.Entities.Storage.PostgreSQL.UnitTests.csproj", "{0955D20A-CA9A-41FE-9ADA-4E8B2DC8E822}"
 EndProject
@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UseCases", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests", "Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests\Freem.Entities.Storage.PostgreSQL.Migrations.UnitTests.csproj", "{5ADF4E9B-1C60-4203-8A42-6038ABD7168A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Entities.UnitTests", "Freem.Entities.UnitTests\Freem.Entities.UnitTests.csproj", "{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Domain.UnitTests", "Freem.Domain.UnitTests\Freem.Domain.UnitTests.csproj", "{ADD35AF3-AF14-43E4-B63B-0F6C2ADD5229}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freem.Identifiers", "Freem.Identifiers\Freem.Identifiers.csproj", "{A406CE01-DDBE-413C-9737-E065CF3B5974}"
 EndProject

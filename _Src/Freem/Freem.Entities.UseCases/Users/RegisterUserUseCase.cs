@@ -1,10 +1,9 @@
-﻿using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Base.Write;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Repositories.Users;
+using Freem.Entities.Events.Producer.Implementations;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Users.Register;
-using Freem.Entities.Users;
-using Freem.Entities.Users.Identifiers;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 
@@ -13,12 +12,12 @@ namespace Freem.Entities.UseCases.Users;
 internal sealed class RegisterUserUseCase 
     : IEntitiesUseCase<RegisterUserRequest, RegisterUserResponse, RegisterUserErrorCode>
 {
-    private readonly ICreateRepository<User, UserIdentifier> _repository;
+    private readonly IUserRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public RegisterUserUseCase(
-        ICreateRepository<User, UserIdentifier> repository, 
+        IUserRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

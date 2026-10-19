@@ -1,15 +1,15 @@
-﻿using Freem.Entities.Activities.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Activities.Models;
+using Freem.Domain.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Create;
 
 public sealed class CreateActivityRequest
 {
-    private readonly RelatedTagsCollection _tags = RelatedTagsCollection.Empty;
+    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
     
     public ActivityName Name { get; }
 
-    public RelatedTagsCollection Tags
+    public RelatedTagsIdentifiersCollection Tags
     {
         get => _tags;
         init

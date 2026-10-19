@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Records.Identifiers;
+﻿using Freem.Domain.Records.Identifiers;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Remove;
 

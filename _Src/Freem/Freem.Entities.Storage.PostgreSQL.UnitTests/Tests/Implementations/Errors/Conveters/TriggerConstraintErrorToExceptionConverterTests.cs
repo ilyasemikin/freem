@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Freem.Domain;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;

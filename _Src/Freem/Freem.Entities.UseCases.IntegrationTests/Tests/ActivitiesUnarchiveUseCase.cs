@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Activities.Models;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Activities.Models;
 using Freem.Entities.UseCases.Contracts.Activities.Unarchive;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

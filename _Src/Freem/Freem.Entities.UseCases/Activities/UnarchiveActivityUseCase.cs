@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Activities.Models;
+﻿using Freem.Domain.Activities.Models;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Unarchive;
 using Freem.Locking.Abstractions;
@@ -15,13 +15,13 @@ internal sealed class UnarchiveActivityUseCase
     : IEntitiesUseCase<UnarchiveActivityRequest, UnarchiveActivityResponse, UnarchiveActivityErrorCode>
 {
     private readonly IDistributedLocker _locker;
-    private readonly IActivitiesRepository _repository;
+    private readonly IActivityRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UnarchiveActivityUseCase(
         IDistributedLocker locker,
-        IActivitiesRepository repository, 
+        IActivityRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {

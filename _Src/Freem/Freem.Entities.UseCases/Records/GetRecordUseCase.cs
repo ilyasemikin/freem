@@ -1,7 +1,5 @@
-﻿using Freem.Entities.Records;
-using Freem.Entities.Records.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Records;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Records.Get;
 
@@ -10,9 +8,9 @@ namespace Freem.Entities.UseCases.Records;
 internal sealed class GetRecordUseCase 
     : IEntitiesUseCase<GetRecordRequest, GetRecordResponse, GetRecordErrorCode>
 {
-    private readonly ISearchByMultipleIdsRepository<Record, RecordIdentifier, RecordAndUserIdentifiers> _repository;
+    private readonly IRecordRepository _repository;
 
-    public GetRecordUseCase(ISearchByMultipleIdsRepository<Record, RecordIdentifier, RecordAndUserIdentifiers> repository)
+    public GetRecordUseCase(IRecordRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         

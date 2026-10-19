@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Records.Identifiers;
+using Freem.Domain.Records.Identifiers;
 
 namespace Freem.Entities.Serialization.Json.Records.Identifiers;
 

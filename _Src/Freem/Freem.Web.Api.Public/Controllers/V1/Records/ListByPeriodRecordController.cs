@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.Records;
+using Freem.Domain.Entities.Records;
 using Freem.Entities.UseCases;
 using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;

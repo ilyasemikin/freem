@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Freem.Entities.Abstractions.Events;
-using Freem.Entities.Abstractions.Identifiers;
-using Freem.Entities.Users.Identifiers;
+using Freem.Domain.Events;
+using Freem.Domain.Identifiers;
+using Freem.Domain.Users.Identifiers;
 using Freem.Web.Api.Public.Client;
 using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Events;

@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Users.Models;
+﻿using Freem.Domain.Users.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Users.Register;
 

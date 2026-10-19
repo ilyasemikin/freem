@@ -1,12 +1,11 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.Activities;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Users.Identifiers;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities;
-using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
-using Freem.Entities.Tags;
-using Freem.Entities.Users.Identifiers;
+using Freem.Entities.Storage.PostgreSQL.Implementations.Mappers;
 using DatabaseActivityStatus = Freem.Entities.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
-using EntityActivityStatus = Freem.Entities.Activities.Models.ActivityStatus;
+using EntityActivityStatus = Freem.Domain.Activities.Models.ActivityStatus;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 
@@ -53,12 +52,8 @@ internal static class ActivityMapper
         };
     }
 
-    public static RelatedTagsCollection MapToDomainRelatedTags(this ActivityEntity entity)
+    public static RelatedTagsIdentifiersCollection MapToDomainRelatedTags(this ActivityEntity entity)
     {
-        var tags = Enumerable.Empty<Tag>();
-        if (entity.Tags is not null)
-            tags = entity.Tags.Select(TagMapper.MapToDomainEntity);
-
-        return new RelatedTagsCollection(tags);
+        return entity.Tags.MapToRelatedTagsCollection();
     }
 }

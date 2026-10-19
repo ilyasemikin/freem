@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters.Abstractions;
+﻿using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;

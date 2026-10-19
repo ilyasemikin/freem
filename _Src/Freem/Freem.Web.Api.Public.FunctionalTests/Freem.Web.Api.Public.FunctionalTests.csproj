@@ -21,9 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.Entities.Abstractions\Freem.Entities.Abstractions.csproj" />
+        <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj" />
-        <ProjectReference Include="..\Freem.Entities\Freem.Entities.csproj" />
         <ProjectReference Include="..\Freem.Identifiers\Freem.Identifiers.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
         <ProjectReference Include="..\Freem.Web.Api.Public.Client\Freem.Web.Api.Public.Client.csproj" />

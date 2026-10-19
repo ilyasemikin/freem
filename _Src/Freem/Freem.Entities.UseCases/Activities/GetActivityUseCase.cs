@@ -1,7 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
+﻿using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
 
@@ -10,10 +8,10 @@ namespace Freem.Entities.UseCases.Activities;
 internal sealed class GetActivityUseCase 
     : IEntitiesUseCase<GetActivityRequest, GetActivityResponse, GetActivityErrorCode>
 {
-    private readonly ISearchByMultipleIdsRepository<Activity, ActivityIdentifier, ActivityAndUserIdentifiers> _repository;
+    private readonly IActivityRepository _repository;
 
     public GetActivityUseCase(
-        ISearchByMultipleIdsRepository<Activity, ActivityIdentifier, ActivityAndUserIdentifiers> repository)
+        IActivityRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         

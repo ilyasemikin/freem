@@ -1,7 +1,4 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Base.Search;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
+﻿using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.UseCases.Abstractions;
 using Freem.Entities.UseCases.Contracts.Activities.List;
 
@@ -10,10 +7,10 @@ namespace Freem.Entities.UseCases.Activities;
 internal sealed class ListActivityUseCase 
     : IEntitiesUseCase<ListActivityRequest, ListActivityResponse, ListActivityErrorCode>
 {
-    private readonly IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesByUserFilter> _repository;
+    private readonly IActivityRepository _repository;
 
     public ListActivityUseCase(
-        IMultipleSearchByFilterRepository<Activity, ActivityIdentifier, ActivitiesByUserFilter> repository)
+        IActivityRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
         
@@ -26,7 +23,7 @@ internal sealed class ListActivityUseCase
     {
         context.ThrowsIfUnauthorized();
 
-        var filter = new ActivitiesByUserFilter(context.UserId)
+        var filter = new ActivityByUserFilter(context.UserId)
         {
             Offset = (int)request.Offset,
             Limit = (int)request.Limit

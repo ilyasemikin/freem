@@ -1,4 +1,4 @@
-﻿using Freem.Entities.DependencyInjection;
+﻿using Freem.Domain.DependencyInjection;
 using Freem.Entities.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;

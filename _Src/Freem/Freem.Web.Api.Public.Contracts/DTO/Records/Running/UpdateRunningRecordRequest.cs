@@ -1,7 +1,7 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Records.Models;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Web.Api.Public.Contracts.Models;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Records.Running;

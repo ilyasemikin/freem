@@ -1,11 +1,10 @@
-﻿using Freem.Entities.Abstractions.Relations.Collection.Exceptions;
-using Freem.Entities.Activities;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.Storage.Abstractions.Exceptions;
+﻿using Freem.Domain;
+using Freem.Domain.Relations.Collections;
+using Freem.Domain.Relations.Collections.Exceptions;
+using Freem.Domain.Storage.Exceptions;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations.Extensions;
-using Freem.Entities.Tags;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 
@@ -29,7 +28,7 @@ internal sealed class TriggerConstraintErrorToExceptionConverter
             case TriggerErrorCodes.RunningRecordsTagsDifferentUserIds:
             {
                 var identifierValue = error.Parameters[TriggerErrorParameters.TagId].AsString();
-                var identifier = _identifierFactory.Create(Tag.EntityName, identifierValue);
+                var identifier = _identifierFactory.Create(EntityNames.Tag, identifierValue);
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             case TriggerErrorCodes.ActivitiesTagsInvalidCount:
@@ -37,23 +36,23 @@ internal sealed class TriggerConstraintErrorToExceptionConverter
             case TriggerErrorCodes.RunningRecordsTagsInvalidCount:
             {
                 return new InvalidRelatedCountException(
-                    RelatedTagsCollection.MinTagsCount,
-                    RelatedTagsCollection.MaxTagsCount,
+                    RelatedTagsIdentifiersCollection.MinTagsCount,
+                    RelatedTagsIdentifiersCollection.MaxTagsCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.RecordsActivitiesDifferentUserIds:
             case TriggerErrorCodes.RunningRecordsActivitiesDifferentUserIds:
             {
                 var identifierValue = error.Parameters[TriggerErrorParameters.ActivityId].AsString();
-                var identifier = _identifierFactory.Create(Activity.EntityName, identifierValue);
+                var identifier = _identifierFactory.Create(EntityNames.Activity, identifierValue);
                 return new NotFoundRelatedException(context.ProcessedId, identifier);
             }
             case TriggerErrorCodes.RecordsActivitiesInvalidCount:
             case TriggerErrorCodes.RunningRecordsActivitiesInvalidCount:
             {
                 return new InvalidRelatedCountException(
-                    RelatedActivitiesCollection.MinActivitiesCount,
-                    RelatedActivitiesCollection.MaxActivitiesCount,
+                    RelatedActivitiesIdentifiersCollection.MinActivitiesCount,
+                    RelatedActivitiesIdentifiersCollection.MaxActivitiesCount,
                     error.Parameters[TriggerErrorParameters.ActualCount].AsInt());
             }
             case TriggerErrorCodes.EventsRelatedEntityNotExists:

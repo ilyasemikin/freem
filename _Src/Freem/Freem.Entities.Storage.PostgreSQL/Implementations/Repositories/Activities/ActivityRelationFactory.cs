@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database.Entities.Relations;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;

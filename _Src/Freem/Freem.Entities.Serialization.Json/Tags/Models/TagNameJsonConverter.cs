@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Freem.Entities.Tags.Models;
+using Freem.Domain.Tags.Models;
 
 namespace Freem.Entities.Serialization.Json.Tags.Models;
 

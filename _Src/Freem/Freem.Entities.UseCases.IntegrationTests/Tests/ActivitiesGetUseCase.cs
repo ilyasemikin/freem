@@ -1,5 +1,5 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Comparers;
+﻿using Freem.Domain.Entities.Activities;
+using Freem.Domain.Entities.Activities.Comparers;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Tags;
-using Freem.Entities.Tags.Comparers;
-using Freem.Entities.Tags.Identifiers;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Entities.Tags.Comparers;
+using Freem.Domain.Tags.Identifiers;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
 using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;

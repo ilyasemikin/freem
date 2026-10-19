@@ -1,6 +1,6 @@
-﻿using Freem.Entities.UseCases.Contracts.Users.Register;
+﻿using Freem.Domain.Users.Identifiers;
+using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Entities.UseCases.Plain.Exceptions;
-using Freem.Entities.Users.Identifiers;
 using Freem.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Plain.Implementations.Executors.Async;

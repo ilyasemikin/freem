@@ -1,10 +1,9 @@
-﻿using Freem.Entities.Activities;
-using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Storage.Abstractions.Exceptions;
-using Freem.Entities.Storage.Abstractions.Models;
-using Freem.Entities.Storage.Abstractions.Models.Filters;
-using Freem.Entities.Storage.Abstractions.Models.Identifiers;
-using Freem.Entities.Storage.Abstractions.Repositories;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.Activities;
+using Freem.Domain.Storage.Exceptions;
+using Freem.Domain.Storage.Models;
+using Freem.Domain.Storage.Models.Identifiers;
+using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
@@ -16,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 
-internal sealed class ActivitiesRepository : IActivitiesRepository
+internal sealed class ActivitiesRepository : IActivityRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
@@ -111,7 +110,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
     }
 
     public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(
-        ActivitiesByUserFilter filter, 
+        ActivityByUserFilter filter, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
@@ -124,7 +123,7 @@ internal sealed class ActivitiesRepository : IActivitiesRepository
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(ActivitiesFilter filter, CancellationToken cancellationToken = default)
+    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(ActivityFilter filter, CancellationToken cancellationToken = default)
     {
         return await _database.Activities
             .Include(e => e.Tags)

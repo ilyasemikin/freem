@@ -1,4 +1,4 @@
-﻿using Freem.Entities.Users.Models;
+﻿using Freem.Domain.Users.Models;
 using Freem.Web.Api.Public.Contracts.Models;
 
 namespace Freem.Web.Api.Public.Contracts.DTO.Users.Settings;

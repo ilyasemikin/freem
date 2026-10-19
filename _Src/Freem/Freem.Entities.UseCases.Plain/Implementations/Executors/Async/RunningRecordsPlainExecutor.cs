@@ -1,6 +1,6 @@
-﻿using Freem.Entities.Activities.Identifiers;
-using Freem.Entities.Relations.Collections;
-using Freem.Entities.RunningRecords;
+﻿using Freem.Domain.Activities.Identifiers;
+using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Relations.Collections;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Get;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
@@ -42,7 +42,7 @@ public class RunningRecordsPlainExecutor
         CancellationToken cancellationToken = default)
     {
         var now = DateTimeOffset.UtcNow.AddDays(-1);
-        var activities = new RelatedActivitiesCollection(activityIds);
+        var activities = new RelatedActivitiesIdentifiersCollection(activityIds);
         
         var request = new StartRunningRecordRequest(now, activities);
         return await StartAsync(context, request, cancellationToken);

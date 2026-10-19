@@ -1,20 +1,20 @@
-﻿using Freem.Entities.Records.Models;
-using Freem.Entities.Relations.Collections;
+﻿using Freem.Domain.Records.Models;
+using Freem.Domain.Relations.Collections;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 
 public sealed class StartRunningRecordRequest
 {
-    private readonly RelatedTagsCollection _tags = RelatedTagsCollection.Empty;
+    private readonly RelatedTagsIdentifiersCollection _tags = RelatedTagsIdentifiersCollection.Empty;
     
     public DateTimeOffset StartAt { get; }
     
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
     
-    public RelatedActivitiesCollection Activities { get; }
+    public RelatedActivitiesIdentifiersCollection Activities { get; }
 
-    public RelatedTagsCollection Tags
+    public RelatedTagsIdentifiersCollection Tags
     {
         get => _tags;
         init
@@ -25,7 +25,7 @@ public sealed class StartRunningRecordRequest
         }
     }
     
-    public StartRunningRecordRequest(DateTimeOffset startAt, RelatedActivitiesCollection activities)
+    public StartRunningRecordRequest(DateTimeOffset startAt, RelatedActivitiesIdentifiersCollection activities)
     {
         ArgumentNullException.ThrowIfNull(activities);
         
