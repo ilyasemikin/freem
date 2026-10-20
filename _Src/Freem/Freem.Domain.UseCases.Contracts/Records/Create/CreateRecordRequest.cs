@@ -12,7 +12,7 @@ public sealed class CreateRecordRequest : IRequest
 
     private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
-    public DateTimePeriod Period { get; }
+    public IReadOnlyList<NewRecordPeriod> Periods { get; }
 
     public RecordName? Name { get; init; }
     public RecordDescription? Description { get; init; }
@@ -31,11 +31,16 @@ public sealed class CreateRecordRequest : IRequest
     } 
     
     public CreateRecordRequest(DateTimePeriod period, RelatedActivityIdsCollection activities)
+        : this([new NewRecordPeriod(period)], activities)
     {
-        ArgumentNullException.ThrowIfNull(period);
+    }
+
+    public CreateRecordRequest(IReadOnlyList<NewRecordPeriod> periods, RelatedActivityIdsCollection activities)
+    {
+        ArgumentNullException.ThrowIfNull(periods);
         ArgumentNullException.ThrowIfNull(activities);
         
-        Period = period;
+        Periods = periods;
         Activities = activities;
     }
 }

@@ -70,6 +70,28 @@ public sealed class RecordPeriodsCollectionTests
     }
 
     [Fact]
+    public void TryCreate_ShouldSuccess_AndSort_WhenPeriodsAreValid()
+    {
+        var later = CreatePeriod(60, 90);
+        var earlier = CreatePeriod(0, 30);
+
+        var success = RecordPeriodsCollection.TryCreate([later, earlier], out var collection);
+
+        Assert.True(success);
+        Assert.Equal([earlier, later], collection);
+    }
+
+    [Fact]
+    public void TryCreate_ShouldFailure_WhenEmptyOrOverlapping()
+    {
+        Assert.False(RecordPeriodsCollection.TryCreate([], out var empty));
+        Assert.Null(empty);
+
+        Assert.False(RecordPeriodsCollection.TryCreate([CreatePeriod(0, 30), CreatePeriod(10, 40)], out var overlapping));
+        Assert.Null(overlapping);
+    }
+
+    [Fact]
     public void TryAdd_ShouldFailure_WhenOverlaps()
     {
         var collection = new RecordPeriodsCollection(CreatePeriod(0, 30));

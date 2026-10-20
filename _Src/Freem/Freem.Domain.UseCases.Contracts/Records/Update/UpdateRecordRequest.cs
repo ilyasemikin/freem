@@ -1,7 +1,6 @@
 ﻿using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Time.Models;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -13,8 +12,6 @@ public sealed class UpdateRecordRequest : IRequest
 
     public RecordId Id { get; }
     
-    public UpdateField<DateTimePeriod>? Period { get; init; }
-
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     
@@ -31,7 +28,6 @@ public sealed class UpdateRecordRequest : IRequest
     public bool HasChanges()
     {
         return 
-            Period is not null ||
             Name is not null ||
             Description is not null ||
             Activities is not null ||

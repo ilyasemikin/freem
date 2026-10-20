@@ -61,12 +61,13 @@ internal sealed class StopRunningRecordUseCase
         if (record.StartAt > request.EndAt)
             return DomainErrorCatalog.Factories.CreatePeriodIsInvalid($"EndAt must be greater than \"{record.StartAt:O}\".");
         
-        var createRecordRequest = BuildCreateRecordRequest(record, request.EndAt);
+        var period = new DateTimePeriod(record.StartAt, request.EndAt);
+        var createRecordRequest = BuildCreateRecordRequest(record, period);
 
         return await _transactionRunner.RunAsync(async () =>
         {
-            // Период короче секунды после округления пустой: записи не создаём, запущенная запись просто останавливается
-            if (createRecordRequest.Period.Duration > TimeSpan.Zero)
+            // Период нулевой длины (начало и конец совпали с точностью до миллисекунды): записи не создаём, запущенная запись просто останавливается
+            if (period.Duration > TimeSpan.Zero)
             {
                 var createResult = await _mediator.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(context, createRecordRequest, cancellationToken);
                 if (!createResult.Success)
@@ -81,11 +82,12 @@ internal sealed class StopRunningRecordUseCase
         }, cancellationToken);
     }
     
-    private static CreateRecordRequest BuildCreateRecordRequest(RunningRecord record, DateTimeOffset endAt)
+    private static CreateRecordRequest BuildCreateRecordRequest(RunningRecord record, DateTimePeriod period)
     {
-        var period = new DateTimePeriod(record.StartAt, endAt);
+        var recordPeriod = new NewRecordPeriod(period);
+        var periods = new[] { recordPeriod };
 
-        return new CreateRecordRequest(period, record.Activities)
+        return new CreateRecordRequest(periods, record.Activities)
         {
             Name = record.Name,
             Description = record.Description,

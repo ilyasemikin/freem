@@ -32,12 +32,15 @@ public static class RequestTypes
 
     public static class Records
     {
+        public static readonly RequestType AddPeriod = RequestType.Parse("api.records.add-period", null);
         public static readonly RequestType Create = RequestType.Parse("api.records.create", null);
         public static readonly RequestType Get = RequestType.Parse("api.records.get", null);
         public static readonly RequestType List = RequestType.Parse("api.records.list", null);
         public static readonly RequestType ListByPeriod = RequestType.Parse("api.records.list-by-period", null);
         public static readonly RequestType Remove = RequestType.Parse("api.records.remove", null);
+        public static readonly RequestType RemovePeriod = RequestType.Parse("api.records.remove-period", null);
         public static readonly RequestType Update = RequestType.Parse("api.records.update", null);
+        public static readonly RequestType UpdatePeriod = RequestType.Parse("api.records.update-period", null);
     }
 
     public static class RunningRecords

@@ -60,6 +60,8 @@ public static class EntitiesJsonSerialization
         yield return new ParsableJsonConverter<RecordId>();
         yield return new ParsableJsonConverter<RecordDescription>();
         yield return new ParsableJsonConverter<RecordName>();
+        yield return new ParsableJsonConverter<RecordPeriodId>();
+        yield return new ParsableJsonConverter<RecordPeriodDescription>();
 
         yield return new ParsableJsonConverter<RunningRecordId>();
 

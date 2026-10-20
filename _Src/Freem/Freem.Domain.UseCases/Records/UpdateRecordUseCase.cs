@@ -1,6 +1,5 @@
 ﻿using Freem.Domain;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Records;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.UseCases.Events;
@@ -48,9 +47,6 @@ internal sealed class UpdateRecordUseCase
         if (!request.HasChanges())
             return DomainErrorCatalog.Factories.CreateNothingToDo();
         
-        if (request.Period is not null && request.Period.Value.Duration <= TimeSpan.Zero)
-            return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("Period must have positive duration.");
-
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new RecordAndUserIds(request.Id, context.UserId);
@@ -59,13 +55,6 @@ internal sealed class UpdateRecordUseCase
             return result.Error;
         
         var record = result.Value;
-        if (request.Period is not null)
-        {
-            var periodId = RecordPeriodId.Generate();
-            var recordPeriod = new RecordPeriod(periodId, request.Period);
-            var periods = new RecordPeriodsCollection(recordPeriod);
-            record.Periods.Update(periods);
-        }
         if (request.Name is not null)
             record.Name = request.Name;
         if (request.Description is not null)

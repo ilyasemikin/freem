@@ -1,3 +1,4 @@
+using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
 using Freem.Domain.UseCases.Contracts.Records.List;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
 using ApiCreateRecordResponse = Freem.Api.Public.Contracts.DTO.Records.CreateRecordResponse;
+using ApiAddRecordPeriodResponse = Freem.Api.Public.Contracts.DTO.Records.AddRecordPeriodResponse;
 using RecordResponse = Freem.Api.Public.Contracts.DTO.Records.RecordResponse;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
@@ -21,6 +23,18 @@ internal static class RecordResponseMapper
             return result.Error.MapError();
 
         var response = new ApiCreateRecordResponse(result.Value.Record.Id);
+        return new CreatedResult
+        {
+            Value = response
+        };
+    }
+
+    public static IActionResult Map(this Result<AddRecordPeriodResponse, Error> result)
+    {
+        if (!result.Success)
+            return result.Error.MapError();
+
+        var response = new ApiAddRecordPeriodResponse(result.Value.Id);
         return new CreatedResult
         {
             Value = response

@@ -3,7 +3,6 @@ using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Time.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Records;
 
@@ -18,8 +17,8 @@ public sealed class RecordResponse
     /// <summary>Record description, if set.</summary>
     public RecordDescription? Description { get; init; }
     
-    /// <summary>Start and end of the record.</summary>
-    public DateTimePeriod Period { get; }
+    /// <summary>Periods of the record in ascending order of start.</summary>
+    public IReadOnlyList<RecordPeriodResponse> Periods { get; }
     
     /// <summary>Ids of the activities the time was spent on.</summary>
     public IReadOnlyRelatedIdsCollection<ActivityId> Activities { get; }
@@ -28,16 +27,16 @@ public sealed class RecordResponse
 
     public RecordResponse(
         RecordId id,
-        DateTimePeriod period,
+        IReadOnlyList<RecordPeriodResponse> periods,
         IReadOnlyRelatedIdsCollection<ActivityId> activities,
         IReadOnlyRelatedIdsCollection<TagId>? tags = null)
     {
         ArgumentNullException.ThrowIfNull(id);
-        ArgumentNullException.ThrowIfNull(period);
+        ArgumentNullException.ThrowIfNull(periods);
         ArgumentNullException.ThrowIfNull(activities);
         
         Id = id;
-        Period = period;
+        Periods = periods;
         Activities = activities;
         Tags = tags ?? RelatedTagIdsCollection.Empty;
     }

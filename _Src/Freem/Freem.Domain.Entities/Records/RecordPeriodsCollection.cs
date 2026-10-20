@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Freem.Domain.Records;
 
 namespace Freem.Domain.Entities.Records;
@@ -29,6 +30,21 @@ public sealed class RecordPeriodsCollection : IReadOnlyList<RecordPeriod>, IEqua
     public RecordPeriodsCollection(params RecordPeriod[] periods)
         : this((IEnumerable<RecordPeriod>)periods)
     {
+    }
+
+    public static bool TryCreate(IEnumerable<RecordPeriod> periods, [NotNullWhen(true)] out RecordPeriodsCollection? collection)
+    {
+        ArgumentNullException.ThrowIfNull(periods);
+
+        var items = periods.ToList();
+        if (!SortAndValidate(items))
+        {
+            collection = null;
+            return false;
+        }
+
+        collection = new RecordPeriodsCollection(items);
+        return true;
     }
 
     public bool Contains(RecordPeriodId id)

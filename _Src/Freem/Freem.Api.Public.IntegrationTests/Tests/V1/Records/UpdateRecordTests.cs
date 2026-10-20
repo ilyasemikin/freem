@@ -24,29 +24,6 @@ public sealed class UpdateRecordTests : RecordTestBase
     }
 
     [Fact]
-    public async Task Request_ShouldSuccess_WhenUpdatePeriod()
-    {
-        var startAt = DateTimeOffset.UnixEpoch.AddYears(55);
-        var period = new DateTimePeriod(startAt, startAt.AddHours(2));
-        var request = new UpdateRecordRequest
-        {
-            Period = new UpdateField<DateTimePeriod>(period)
-        };
-
-        var response = await Context.Client.Records.UpdateAsync(AddedRecordIds[0], request);
-        
-        Assert.NotNull(response);
-        response.ShouldSuccess();
-
-        var actual = await Context.Client.Records.GetAsync(AddedRecordIds[0]);
-        
-        Assert.NotNull(actual);
-        Assert.NotNull(actual.Value);
-        Assert.Equal(period.StartAt, actual.Value.Period.StartAt);
-        Assert.Equal(period.EndAt, actual.Value.Period.EndAt);
-    }
-
-    [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
         var name = RecordName.Parse("name", null);

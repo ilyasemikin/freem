@@ -2,7 +2,6 @@
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Time.Models;
 using Freem.Api.Public.Contracts.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Records;
@@ -10,9 +9,6 @@ namespace Freem.Api.Public.Contracts.DTO.Records;
 /// <summary>Request body for updating a record. Fields that are omitted stay unchanged.</summary>
 public sealed class UpdateRecordRequest
 {
-    /// <summary>New start and end of the record.</summary>
-    public UpdateField<DateTimePeriod>? Period { get; init; }
-
     /// <summary>New record name; a null value clears it.</summary>
     public UpdateField<RecordName?>? Name { get; init; }
     /// <summary>New record description; a null value clears it.</summary>
@@ -27,7 +23,6 @@ public sealed class UpdateRecordRequest
     public bool HasChanges()
     {
         return
-            Period is not null ||
             Name is not null ||
             Description is not null ||
             Activities is not null ||

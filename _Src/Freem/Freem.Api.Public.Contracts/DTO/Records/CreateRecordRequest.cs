@@ -2,15 +2,14 @@
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Time.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Records;
 
 /// <summary>Request body for creating a finished record.</summary>
 public sealed class CreateRecordRequest
 {
-    /// <summary>Start and end of the record.</summary>
-    public DateTimePeriod Period { get; }
+    /// <summary>Periods of the record: at least one, they must not overlap.</summary>
+    public IReadOnlyList<RecordPeriodRequest> Periods { get; }
     
     /// <summary>Optional record name.</summary>
     public RecordName? Name { get; init; }
@@ -23,14 +22,14 @@ public sealed class CreateRecordRequest
     public IReadOnlyRelatedIdsCollection<TagId> Tags { get; }
 
     public CreateRecordRequest(
-        DateTimePeriod period, 
+        IReadOnlyList<RecordPeriodRequest> periods, 
         IReadOnlyRelatedIdsCollection<ActivityId> activities,
         IReadOnlyRelatedIdsCollection<TagId>? tags = null)
     {
-        ArgumentNullException.ThrowIfNull(period);
+        ArgumentNullException.ThrowIfNull(periods);
         ArgumentNullException.ThrowIfNull(activities);
         
-        Period = period;
+        Periods = periods;
         Activities = activities;
         Tags = tags ?? RelatedTagIdsCollection.Empty;
     }

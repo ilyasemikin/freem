@@ -89,6 +89,10 @@ public static class ServiceCollectionExtensions
         services.AddHandler<ApiRemoveRecordRequest, ApiRemoveRecordRequestHandler>();
         services.AddHandler<ApiUpdateRecordRequest, ApiUpdateRecordRequestHandler>();
 
+        services.AddHandler<ApiAddRecordPeriodRequest, ApiAddRecordPeriodRequestHandler>();
+        services.AddHandler<ApiUpdateRecordPeriodRequest, ApiUpdateRecordPeriodRequestHandler>();
+        services.AddHandler<ApiRemoveRecordPeriodRequest, ApiRemoveRecordPeriodRequestHandler>();
+
         return services;
     }
 

@@ -65,6 +65,55 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
     }
 
     [Fact]
+    public async Task ShouldSuccess_WhenSeveralPeriods()
+    {
+        var description = RecordPeriodDescription.Parse("second", null);
+        var periods = new[]
+        {
+            new NewRecordPeriod(_period),
+            new NewRecordPeriod(new DateTimePeriod(_period.EndAt.AddHours(1), _period.EndAt.AddHours(2))) { Description = description }
+        };
+        var request = new CreateRecordRequest(periods, _activities);
+
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
+
+        Assert.True(response.Success);
+
+        using var executor = Context.CreateExecutor();
+        var actual = await executor.Records.RequiredGetAsync(_context, response.Value.Record.Id);
+        Assert.Equal(2, actual.Periods.Count);
+        Assert.Equal(_period, actual.Periods[0].Period);
+        Assert.Equal(description, actual.Periods[1].Description);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenPeriodsOverlap()
+    {
+        var periods = new[]
+        {
+            new NewRecordPeriod(_period),
+            new NewRecordPeriod(new DateTimePeriod(_period.EndAt.AddMinutes(-1), _period.EndAt.AddHours(1)))
+        };
+        var request = new CreateRecordRequest(periods, _activities);
+
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
+
+        Assert.False(response.Success);
+        Assert.Equal(DomainErrorCatalog.Types.PeriodIsInvalid, response.Error.Type);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenNoPeriods()
+    {
+        var request = new CreateRecordRequest([], _activities);
+
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
+
+        Assert.False(response.Success);
+        Assert.Equal(DomainErrorCatalog.Types.PeriodIsInvalid, response.Error.Type);
+    }
+
+    [Fact]
     public async Task ShouldFailure_WhenPeriodHasZeroDuration()
     {
         var period = new DateTimePeriod(_period.StartAt, _period.StartAt);

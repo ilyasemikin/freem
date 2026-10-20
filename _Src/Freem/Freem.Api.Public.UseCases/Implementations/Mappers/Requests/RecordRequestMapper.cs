@@ -1,12 +1,15 @@
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.UseCases.Contracts;
 using Freem.Domain.UseCases.Contracts.Filter;
+using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
 using Freem.Domain.UseCases.Contracts.Records.List;
 using Freem.Domain.UseCases.Contracts.Records.PeriodList;
 using Freem.Domain.UseCases.Contracts.Records.Remove;
+using Freem.Domain.UseCases.Contracts.Records.RemovePeriod;
 using Freem.Domain.UseCases.Contracts.Records.Update;
+using Freem.Domain.UseCases.Contracts.Records.UpdatePeriod;
 using Freem.Api.Public.UseCases.Contracts.Records;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Requests;
@@ -18,7 +21,10 @@ internal static class RecordRequestMapper
         var body = request.Body;
         var activities = new RelatedActivityIdsCollection(body.Activities);
         var tags = new RelatedTagIdsCollection(body.Tags);
-        return new CreateRecordRequest(body.Period, activities)
+        var periods = body.Periods
+            .Select(p => new NewRecordPeriod(p.Period) { Description = p.Description })
+            .ToArray();
+        return new CreateRecordRequest(periods, activities)
         {
             Name = body.Name,
             Description = body.Description,
@@ -49,6 +55,30 @@ internal static class RecordRequestMapper
         return new RemoveRecordRequest(request.Id);
     }
 
+    public static AddRecordPeriodRequest Map(this ApiAddRecordPeriodRequest request)
+    {
+        var body = request.Body;
+        return new AddRecordPeriodRequest(request.RecordId, body.Period)
+        {
+            Description = body.Description
+        };
+    }
+
+    public static UpdateRecordPeriodRequest Map(this ApiUpdateRecordPeriodRequest request)
+    {
+        var body = request.Body;
+        return new UpdateRecordPeriodRequest(request.RecordId, request.PeriodId)
+        {
+            Period = body.Period?.Map(),
+            Description = body.Description?.Map()
+        };
+    }
+
+    public static RemoveRecordPeriodRequest Map(this ApiRemoveRecordPeriodRequest request)
+    {
+        return new RemoveRecordPeriodRequest(request.RecordId, request.PeriodId);
+    }
+
     public static UpdateRecordRequest Map(this ApiUpdateRecordRequest request)
     {
         var body = request.Body;
@@ -69,7 +99,6 @@ internal static class RecordRequestMapper
 
         return new UpdateRecordRequest(request.Id)
         {
-            Period = body.Period?.Map(),
             Name = body.Name?.Map(),
             Description = body.Description?.Map(),
             Activities = activities,

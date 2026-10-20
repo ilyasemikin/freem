@@ -16,6 +16,7 @@ public sealed class EntityIdNameProvider
         {
             ActivityId => EntityNames.Activity,
             RecordId => EntityNames.Record,
+            RecordPeriodId => EntityNames.RecordPeriod,
             RunningRecordId => EntityNames.RunningRecord,
             TagId => EntityNames.Tag,
             UserId => EntityNames.User,

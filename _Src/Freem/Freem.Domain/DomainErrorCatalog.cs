@@ -38,6 +38,7 @@ public static class DomainErrorCatalog
         public const string EventId = $"{Scope}:event_id";
         public const string EventType = $"{Scope}:event_type";
         public const string RecordId = $"{Scope}:record_id";
+        public const string RecordPeriodId = $"{Scope}:record_period_id";
         public const string RunningRecordId = $"{Scope}:running_record_id";
         public const string TagId = $"{Scope}:tag_id";
         public const string UserId = $"{Scope}:user_id";
@@ -52,6 +53,7 @@ public static class DomainErrorCatalog
                 Activities.ActivityId => ActivityId,
                 Events.EventId => EventId,
                 Records.RecordId => RecordId,
+                Records.RecordPeriodId => RecordPeriodId,
                 RunningRecords.RunningRecordId => RunningRecordId,
                 Tags.TagId => TagId,
                 Users.UserId => UserId,

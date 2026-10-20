@@ -48,6 +48,39 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
+    public Task<Result<AddRecordPeriodResponse, IClientError>> AddPeriodAsync(
+        RecordId recordId,
+        RecordPeriodRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Post($"api/v1/records/{recordId}/periods")
+            .WithJsonBody(body, _options);
+
+        return SendForUserAsync<AddRecordPeriodResponse>(request, cancellationToken);
+    }
+
+    public Task<Result<IClientError>> UpdatePeriodAsync(
+        RecordId recordId,
+        RecordPeriodId periodId,
+        UpdateRecordPeriodRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Put($"api/v1/records/{recordId}/periods/{periodId}")
+            .WithJsonBody(body, _options);
+
+        return SendForUserAsync(request, cancellationToken);
+    }
+
+    public Task<Result<IClientError>> RemovePeriodAsync(
+        RecordId recordId,
+        RecordPeriodId periodId,
+        CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Delete($"api/v1/records/{recordId}/periods/{periodId}");
+
+        return SendForUserAsync(request, cancellationToken);
+    }
+
     public Task<Result<IClientError>> StartAsync(StartRunningRecordRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records/running/start")

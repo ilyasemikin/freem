@@ -6,8 +6,6 @@ public sealed class UpdateField<TValue>
 
     public UpdateField(TValue value)
     {
-        ArgumentNullException.ThrowIfNull(value);
-        
         Value = value;
     }
 

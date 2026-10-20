@@ -23,8 +23,8 @@ public sealed class RecordsController : BaseController
     {
     }
 
-    /// <summary>Creates a finished record for an explicit period.</summary>
-    /// <param name="body">Period, activities, and optional name, description and tags.</param>
+    /// <summary>Creates a finished record with one or more periods.</summary>
+    /// <param name="body">Periods, activities, and optional name, description and tags.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The id of the created record.</returns>
     [HttpPost]
@@ -60,7 +60,7 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiListRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
-    /// <summary>Returns records whose start or end falls within the period (start inclusive, end exclusive), up to the limit.</summary>
+    /// <summary>Returns records having at least one period that overlaps the given period (touching the boundary does not count), up to the limit.</summary>
     /// <param name="query">Period and the maximum number of records.</param>
     /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -132,5 +132,72 @@ public sealed class RecordsController : BaseController
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiUpdateRecordRequest(recordId, body);
         return await Mediator.ExecuteAsync<ApiUpdateRecordRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Adds a period to a record.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="body">Start and end of the period and an optional description.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The id of the added period.</returns>
+    /// <remarks>The period must have a positive duration and must not overlap other periods of the record; otherwise 422 is returned.</remarks>
+    [HttpPost("{recordId:required}/periods")]
+    [ProducesResponseType<AddRecordPeriodResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddPeriodAsync(
+        [Required] [FromRoute] RecordId recordId,
+        [Required] [FromBody] RecordPeriodRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiAddRecordPeriodRequest(recordId, body);
+        return await Mediator.ExecuteAsync<ApiAddRecordPeriodRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Partially updates a period of a record: only the fields present in the body are changed.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="periodId">Period id.</param>
+    /// <param name="body">Fields to change.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>The period must have a positive duration and must not overlap other periods of the record; otherwise 422 is returned.</remarks>
+    [HttpPut("{recordId:required}/periods/{periodId:required}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdatePeriodAsync(
+        [Required] [FromRoute] RecordId recordId,
+        [Required] [FromRoute] RecordPeriodId periodId,
+        [Required] [FromBody] UpdateRecordPeriodRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiUpdateRecordPeriodRequest(recordId, periodId, body);
+        return await Mediator.ExecuteAsync<ApiUpdateRecordPeriodRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Removes a period from a record.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="periodId">Period id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>The only period of a record cannot be removed (422); remove the record instead.</remarks>
+    [HttpDelete("{recordId:required}/periods/{periodId:required}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemovePeriodAsync(
+        [Required] [FromRoute] RecordId recordId,
+        [Required] [FromRoute] RecordPeriodId periodId,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiRemoveRecordPeriodRequest(recordId, periodId);
+        return await Mediator.ExecuteAsync<ApiRemoveRecordPeriodRequest, IActionResult>(context, request, cancellationToken);
     }
 }

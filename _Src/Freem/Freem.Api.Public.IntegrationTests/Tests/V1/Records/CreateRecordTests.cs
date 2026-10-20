@@ -1,4 +1,6 @@
-﻿using Freem.Time.Models;
+﻿using System.Net;
+using Freem.Domain.Records.Models;
+using Freem.Time.Models;
 using Freem.Api.Public.Contracts.DTO.Records;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
@@ -21,12 +23,64 @@ public sealed class CreateRecordTests : RecordTestBase
         var endAt = startAt + TimeSpan.FromHours(1);
         var period = new DateTimePeriod(startAt, endAt);
         
-        var request = new CreateRecordRequest(period, AddedRelatedActivities, AddedRelatedTags);
+        var request = new CreateRecordRequest([new RecordPeriodRequest(period)], AddedRelatedActivities, AddedRelatedTags);
         
         var response = await Context.Client.Records.CreateAsync(request);
         
         Assert.NotNull(response);
         response.ShouldSuccess();
         Assert.NotNull(response.Value);
+    }
+
+    [Fact]
+    public async Task Request_ShouldSuccess_WhenSeveralPeriods()
+    {
+        var startAt = DateTimeOffset.UtcNow - TimeSpan.FromHours(5);
+        var description = RecordPeriodDescription.Parse("second", null);
+        var periods = new[]
+        {
+            new RecordPeriodRequest(new DateTimePeriod(startAt, startAt.AddHours(1))),
+            new RecordPeriodRequest(new DateTimePeriod(startAt.AddHours(2), startAt.AddHours(3))) { Description = description }
+        };
+        var request = new CreateRecordRequest(periods, AddedRelatedActivities, AddedRelatedTags);
+
+        var response = await Context.Client.Records.CreateAsync(request);
+
+        Assert.NotNull(response);
+        response.ShouldSuccess();
+
+        var created = response.Unwrap();
+        var actual = (await Context.Client.Records.GetAsync(created.Id)).Unwrap();
+        Assert.Equal(2, actual.Periods.Count);
+        Assert.Equal(periods[1].Period, actual.Periods[1].Period);
+        Assert.Equal(description, actual.Periods[1].Description);
+    }
+
+    [Fact]
+    public async Task Request_ShouldFail_WhenNoPeriods()
+    {
+        var request = new CreateRecordRequest([], AddedRelatedActivities, AddedRelatedTags);
+
+        var response = await Context.Client.Records.CreateAsync(request);
+
+        Assert.NotNull(response);
+        response.ShouldHaveStatusCode(HttpStatusCode.UnprocessableContent);
+    }
+
+    [Fact]
+    public async Task Request_ShouldFail_WhenPeriodsOverlap()
+    {
+        var startAt = DateTimeOffset.UtcNow - TimeSpan.FromHours(5);
+        var periods = new[]
+        {
+            new RecordPeriodRequest(new DateTimePeriod(startAt, startAt.AddHours(2))),
+            new RecordPeriodRequest(new DateTimePeriod(startAt.AddHours(1), startAt.AddHours(3)))
+        };
+        var request = new CreateRecordRequest(periods, AddedRelatedActivities, AddedRelatedTags);
+
+        var response = await Context.Client.Records.CreateAsync(request);
+
+        Assert.NotNull(response);
+        response.ShouldHaveStatusCode(HttpStatusCode.UnprocessableContent);
     }
 }

@@ -30,7 +30,8 @@ public sealed class RecordsPreparer
         var ids = new List<RecordId>();
         foreach (var period in periods)
         {
-            var request = new CreateRecordRequest(period, activities, tags);
+            var periodRequest = new RecordPeriodRequest(period);
+            var request = new CreateRecordRequest([periodRequest], activities, tags);
             var response = await _context.Client.Records.CreateAsync(request);
 
             ids.Add(response.Unwrap().Id);

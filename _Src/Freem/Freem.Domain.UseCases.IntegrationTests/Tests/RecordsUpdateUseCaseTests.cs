@@ -50,31 +50,6 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     }
 
     [Fact]
-    public async Task ShouldSuccess_WhenUpdatePeriod()
-    {
-        var startAt = DateTimeOffset.UnixEpoch.AddYears(55);
-        var endAt = startAt.AddHours(2);
-        var period = new DateTimePeriod(startAt, endAt);
-        var request = new UpdateRecordRequest(_recordId)
-        {
-            Period = new UpdateField<DateTimePeriod>(period)
-        };
-        
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
-        
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.Null(response.Error);
-
-        using var executor = Context.CreateExecutor();
-        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
-        
-        var actualPeriod = Assert.Single(actual.Periods);
-        Assert.Equal(startAt, actualPeriod.Period.StartAt);
-        Assert.Equal(endAt, actualPeriod.Period.EndAt);
-    }
-
-    [Fact]
     public async Task ShouldSuccess_WhenUpdateName()
     {
         var request = new UpdateRecordRequest(_recordId)

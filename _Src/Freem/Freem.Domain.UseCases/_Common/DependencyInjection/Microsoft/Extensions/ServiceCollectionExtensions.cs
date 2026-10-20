@@ -10,12 +10,15 @@ using Freem.Domain.UseCases.Contracts.Activities.Unarchive;
 using Freem.Domain.UseCases.Contracts.Activities.Update;
 using Freem.Domain.UseCases.Contracts.Events.Get;
 using Freem.Domain.UseCases.Contracts.Events.List;
+using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
 using Freem.Domain.UseCases.Contracts.Records.List;
 using Freem.Domain.UseCases.Contracts.Records.PeriodList;
 using Freem.Domain.UseCases.Contracts.Records.Remove;
+using Freem.Domain.UseCases.Contracts.Records.RemovePeriod;
 using Freem.Domain.UseCases.Contracts.Records.Update;
+using Freem.Domain.UseCases.Contracts.Records.UpdatePeriod;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Get;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Start;
@@ -103,6 +106,10 @@ public static class ServiceCollectionExtensions
         services.AddHandler<CreateRecordRequest, Result<CreateRecordResponse, Error>, CreateRecordUseCase>();
         services.AddHandler<UpdateRecordRequest, Result<Error>, UpdateRecordUseCase>();
         services.AddHandler<RemoveRecordRequest, Result<Error>, RemoveRecordUseCase>();
+
+        services.AddHandler<AddRecordPeriodRequest, Result<AddRecordPeriodResponse, Error>, AddRecordPeriodUseCase>();
+        services.AddHandler<UpdateRecordPeriodRequest, Result<Error>, UpdateRecordPeriodUseCase>();
+        services.AddHandler<RemoveRecordPeriodRequest, Result<Error>, RemoveRecordPeriodUseCase>();
 
         services.AddHandler<GetRecordRequest, Result<GetRecordResponse, Error>, GetRecordUseCase>();
         services.AddHandler<ListRecordRequest, Result<ListRecordResponse, Error>, ListRecordUseCase>();
