@@ -833,6 +833,6 @@ $RECYCLE.BIN/
 
 # Integration tests configurations
 Freem/Freem.Locking.Redis.IntegrationTests/configuration.json
-Freem/Freem.Entities.UseCases.IntegrationTests/configuration.json
+Freem/Freem.Domain.UseCases.IntegrationTests/configuration.json
 
 *.DotSettings

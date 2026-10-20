@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+        <PackageReference Include="Utilities.Collections" Version="0.1.0"/>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj"/>
+        <ProjectReference Include="..\Freem.Storage.Transactions.EFCore\Freem.Storage.Transactions.EFCore.csproj" />
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Freem.Domain.Storage.PostgreSQL.Migrations"/>
+        <InternalsVisibleTo Include="Freem.Domain.Storage.PostgreSQL.UnitTests"/>
+        <InternalsVisibleTo Include="Freem.Domain.Storage.PostgreSQL.IntegrationTests"/>
+        <InternalsVisibleTo Include="Freem.Domain.UseCases.IntegrationTests"/>
+        <InternalsVisibleTo Include="Freem.Api.Public.IntegrationTests"/>
+    </ItemGroup>
+
+</Project>

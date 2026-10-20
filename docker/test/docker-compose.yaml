@@ -28,7 +28,7 @@ services:
   postgres-migration:
     build:
       context: ../../_Src/Freem
-      dockerfile: ./Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile
+      dockerfile: ./Freem.Domain.Storage.PostgreSQL.Migrations/Dockerfile
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: "freem_storage_test freem_usecases_test freem_api_test"

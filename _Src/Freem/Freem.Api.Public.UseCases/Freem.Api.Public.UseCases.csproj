@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.UseCases\Freem.Domain.UseCases.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.UseCases.Contracts\Freem.Domain.UseCases.Contracts.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
+        <ProjectReference Include="..\Freem.Api.Public.Contracts\Freem.Api.Public.Contracts.csproj"/>
+        <ProjectReference Include="..\Freem.Api.Public.UseCases.Contracts\Freem.Api.Public.UseCases.Contracts.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EgoHub.Api.Public.Client" Version="0.0.10"/>
+        <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Http.Errors" Version="0.0.2"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+        <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
+    </ItemGroup>
+
+</Project>

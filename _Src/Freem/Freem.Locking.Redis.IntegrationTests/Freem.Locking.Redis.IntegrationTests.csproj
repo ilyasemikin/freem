@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Freem.Locking.Abstractions\Freem.Locking.Abstractions.csproj"/>
+        <ProjectReference Include="..\Freem.Locking\Freem.Locking.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
     </ItemGroup>
 

@@ -12,7 +12,7 @@ statistics, events. The project was dormant from 2025-06 and is being revived; t
 ## Git Commits
 
 Commits follow [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/): `type(scope): description`.
-Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`. Scope: the affected project name (`Freem.Web.Api.Public`,
+Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`. Scope: the affected project name (`Freem.Api.Public`,
 `Freem.Domain`, `Freem.Web`, ...), or `Freem` for cross-cutting changes. Description: lowercase, imperative,
 concise, no trailing period. History before the revival does not follow this convention.
 
@@ -64,7 +64,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 - EgoHub is started manually by the user and may be down; ask the user to start it.
 - Kill only processes you started yourself, by PID, never by name grep.
 - Docker environments live in `docker/{develop,service,test}` (PostgreSQL 18, Redis, `postgres-migration` container
-  built from `Freem.Entities.Storage.PostgreSQL.Migrations/Dockerfile`; `service` adds API, web and manual
+  built from `Freem.Domain.Storage.PostgreSQL.Migrations/Dockerfile`; `service` adds API, web and manual
   `postgres-backup`/`postgres-restore`). `.env` is created from `.env.example` by the user. Ports: `develop` Postgres
   10150, Redis 10151; `service` API 10170, web 10171; local `dotnet run` API 10190, `npm run dev` 10191 (strict).
   Images need `.nupkg` files in `_Src/Freem/packages/`.
@@ -79,19 +79,20 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 All code lives in `_Src/Freem/` (solution `Freem.sln`, ~29 projects, `net10.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
-Layers (names differ from StashIt):
+Layers (names follow StashIt, without the `Core` segment):
 
 ```
-Freem.Web.Api.Public                       # ASP.NET Core API: thin controllers over the API mediator (+ .Client, .IntegrationTests)
-Freem.Web.Api.Public.UseCases(.Contracts)  # API-level handlers: DTO <-> domain mapping, Error -> HTTP code + ErrorResponse
+Freem.Api.Public                           # ASP.NET Core API: thin controllers over the API mediator (+ .Client, .IntegrationTests)
+Freem.Api.Public.UseCases(.Contracts)      # API-level handlers: DTO <-> domain mapping, Error -> HTTP code + ErrorResponse
 Freem.Domain                               # ids, value objects, events, statistics data, DomainErrorCatalog (StashIt `Domain`)
 Freem.Domain.Entities                      # aggregates and comparers; aggregates reference each other by Id only
-Freem.Entities.UseCases(.Contracts)        # use cases (Utilities.UseCases handlers, Result<…, Error>) and their DTOs
+Freem.Domain.UseCases(.Contracts)          # use cases (Utilities.UseCases handlers, Result<…, Error>) and their DTOs
 Freem.Domain.Storage                       # one repository interface per aggregate + its filters
-Freem.Entities.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
-Freem.Entities.Events.Producer             # event production (NullEventPublisher)
-Freem.Locking.*                            # locking (Redis)
-Freem.*                                    # small shared libraries (Time, Storage, Locking, ...)
+Freem.Domain.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
+Freem.Domain.Events.Producer               # event production (NullEventPublisher)
+Freem.Locking(.Redis)                      # locking abstractions + Redis implementation
+Freem.Storage.Transactions(.EFCore)        # storage transactions + EF Core implementation
+Freem.*                                    # small shared libraries (Time, Sorting, ...)
 ```
 
 Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`) come from a local NuGet feed:
@@ -103,7 +104,7 @@ There is no own authentication: the API validates EgoHub access tokens (`EgoHub.
 takes the Freem user id from the token `sub` claim (`UseCaseContextProvider`). EgoHub is an external service configured
 by `EgoHubIntegration:Url/Token` (service token `<KeyId>:<Value>`); the web client signs in through the Freem API
 (`api/v1/auth/{register,login,refresh,logout}`, refresh token in an HttpOnly cookie), which proxies to EgoHub. A Freem
-user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `Freem.Web.Api.Public.IntegrationTests` need a
+user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `Freem.Api.Public.IntegrationTests` need a
 running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid token in the local test config.
 
 ## Commands
@@ -112,9 +113,9 @@ running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid
 cd _Src/Freem
 dotnet build Freem.sln
 dotnet test Freem.sln          # unit tests only are self-contained
-dotnet run --project Freem.Web.Api.Public/
+dotnet run --project Freem.Api.Public/
 cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
-docker build -f Freem.Web.Api.Public/Dockerfile .   # run from _Src/Freem
+docker build -f Freem.Api.Public/Dockerfile .   # run from _Src/Freem
 ```
 
 `.IntegrationTests` projects (PostgreSQL, Redis, UseCases, API) keep a committed

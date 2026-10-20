@@ -1,4 +1,4 @@
-﻿using Freem.Locking.Abstractions.Exceptions;
+﻿using Freem.Locking.Exceptions;
 using Freem.Locking.Redis.DependencyInjection.Microsoft;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Locking.Redis.Implementations.Simple;
