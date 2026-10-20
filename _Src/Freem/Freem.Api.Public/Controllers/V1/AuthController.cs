@@ -12,6 +12,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>Sign-in flow. Proxies to the EgoHub identity service; the refresh token lives in an HTTP-only cookie. Anonymous.</summary>
 [ApiController]
 [AllowAnonymous]
 [Route("api/v1/auth")]
@@ -28,9 +29,11 @@ public sealed class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>Creates an identity in EgoHub. It does not create a Freem user (see <c>POST api/v1/user/register</c>) and does not start a session.</summary>
+    /// <param name="body">Username and password.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPost("register")]
     [Consumes(MediaTypeNames.Application.Json)]
-    [EndpointSummary("Register a password identity in EgoHub (does not start a session)")]
     [ProducesResponseType<RegisterResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
@@ -44,9 +47,12 @@ public sealed class AuthController : ControllerBase
         return await _mediator.ExecuteAsync<ApiRegisterRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Authenticates the user and starts a session.</summary>
+    /// <param name="body">Username and password.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The access token and its expiration time; the refresh token is set as an HTTP-only cookie.</returns>
     [HttpPost("login")]
     [Consumes(MediaTypeNames.Application.Json)]
-    [EndpointSummary("Log in and start a session; the refresh token is stored in an HTTP-only cookie")]
     [ProducesResponseType<SessionResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status502BadGateway)]
@@ -59,8 +65,8 @@ public sealed class AuthController : ControllerBase
         return await _mediator.ExecuteAsync<ApiLoginRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Issues a new access token and rotates the refresh token cookie.</summary>
     [HttpPost("refresh")]
-    [EndpointSummary("Rotate the session using the refresh token from the cookie")]
     [ProducesResponseType<SessionResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status502BadGateway)]
@@ -71,8 +77,8 @@ public sealed class AuthController : ControllerBase
         return await _mediator.ExecuteAsync<ApiRefreshRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Ends the session and revokes its refresh token.</summary>
     [HttpPost("logout")]
-    [EndpointSummary("Revoke the session identified by the refresh token cookie")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> LogoutAsync(CancellationToken cancellationToken = default)
     {

@@ -8,6 +8,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.Infrastructure;
 
+/// <summary>Service metadata. Anonymous.</summary>
 [AllowAnonymous]
 [Route("_meta")]
 [Tags(ControllerTags.Infrastructure)]
@@ -23,6 +24,7 @@ public sealed class MetaController : BaseController
         _buildInfo = buildInfo;
     }
 
+    /// <summary>Returns the running build version and the commit hash it was built from, if known.</summary>
     [HttpGet("version")]
     [ProducesResponseType<VersionResponse>(StatusCodes.Status200OK)]
     public IActionResult GetVersion()

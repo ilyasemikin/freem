@@ -13,6 +13,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>Read access to the user's event log: what changed and when.</summary>
 [Route("api/v1/events")]
 [Tags(ControllerTags.Events)]
 public sealed class EventsController : BaseController
@@ -22,8 +23,11 @@ public sealed class EventsController : BaseController
     {
     }
 
+    /// <summary>Returns a page of events, optionally filtered by entity and time range.</summary>
+    /// <param name="query">Paging and filters.</param>
+    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpGet]
-    [EndpointSummary("List events")]
     [ProducesResponseType<IReadOnlyList<EventResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -38,8 +42,10 @@ public sealed class EventsController : BaseController
         return await Mediator.ExecuteAsync<ApiListEventRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns a single event.</summary>
+    /// <param name="eventId">Event id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpGet("{eventId:required}")]
-    [EndpointSummary("Get event by id")]
     [ProducesResponseType<EventResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]

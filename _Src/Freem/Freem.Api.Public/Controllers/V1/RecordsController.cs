@@ -13,6 +13,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>Manages finished records: completed time intervals spent on activities.</summary>
 [Route("api/v1/records")]
 [Tags(ControllerTags.Records)]
 public sealed class RecordsController : BaseController
@@ -22,8 +23,11 @@ public sealed class RecordsController : BaseController
     {
     }
 
+    /// <summary>Creates a finished record for an explicit period.</summary>
+    /// <param name="body">Period, activities, and optional name, description and tags.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The id of the created record.</returns>
     [HttpPost]
-    [EndpointSummary("Create record")]
     [ProducesResponseType<CreateRecordResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
@@ -37,8 +41,11 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiCreateRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns a page of the user's records.</summary>
+    /// <param name="query">Paging: offset and limit.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
     [HttpGet]
-    [EndpointSummary("List all records")]
     [ProducesResponseType<IReadOnlyList<RecordResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -53,8 +60,11 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiListRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns records whose start or end falls within the period (start inclusive, end exclusive), up to the limit.</summary>
+    /// <param name="query">Period and the maximum number of records.</param>
+    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpGet("by-period")]
-    [EndpointSummary("List records by period")]
     [ProducesResponseType<IReadOnlyList<RecordResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -69,8 +79,10 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiListRecordByPeriodRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns a single record.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpGet("{recordId:required}")]
-    [EndpointSummary("Get record by id")]
     [ProducesResponseType<RecordResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -84,8 +96,10 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiGetRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Permanently removes a record.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpDelete("{recordId:required}")]
-    [EndpointSummary("Remove record by id")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -99,8 +113,11 @@ public sealed class RecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiRemoveRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Partially updates a record: only the fields present in the body are changed.</summary>
+    /// <param name="recordId">Record id.</param>
+    /// <param name="body">Fields to change.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPut("{recordId:required}")]
-    [EndpointSummary("Update record by id")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]

@@ -10,6 +10,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>Manages the user's running record: the activity that is being tracked right now. A user has at most one.</summary>
 [Route("api/v1/records/running")]
 [Tags(ControllerTags.RunningRecords)]
 public sealed class RunningRecordsController : BaseController
@@ -19,8 +20,8 @@ public sealed class RunningRecordsController : BaseController
     {
     }
 
+    /// <summary>Returns the running record.</summary>
     [HttpGet]
-    [EndpointSummary("Get running record")]
     [ProducesResponseType<RunningRecordResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -32,8 +33,8 @@ public sealed class RunningRecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiGetRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Discards the running record without saving it as a finished record.</summary>
     [HttpDelete]
-    [EndpointSummary("Remove running record")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
@@ -45,8 +46,10 @@ public sealed class RunningRecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiRemoveRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Partially updates the running record: only the fields present in the body are changed.</summary>
+    /// <param name="body">Fields to change.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPut]
-    [EndpointSummary("Update running record")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
@@ -62,8 +65,11 @@ public sealed class RunningRecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiUpdateRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Starts tracking an activity.</summary>
+    /// <remarks>If a running record already exists, it is stopped at the new start time and stored as a finished record.</remarks>
+    /// <param name="body">Optional start time (defaults to now), activities and optional name, description and tags.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPost("start")]
-    [EndpointSummary("Start running record")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
@@ -77,8 +83,10 @@ public sealed class RunningRecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiStartRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Stops the running record and stores it as a finished record. Responds with 404 if there is no running record.</summary>
+    /// <param name="body">Optional end time (defaults to now). It must not be earlier than the start time.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPost("stop")]
-    [EndpointSummary("Stop running record if exists")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]

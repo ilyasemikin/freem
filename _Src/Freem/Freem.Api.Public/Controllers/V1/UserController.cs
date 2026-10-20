@@ -12,6 +12,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>The current user's profile and settings.</summary>
 [Route("api/v1/user")]
 public sealed class UserController : BaseController
 {
@@ -20,9 +21,9 @@ public sealed class UserController : BaseController
     {
     }
 
+    /// <summary>Returns the profile of the current user.</summary>
     [HttpGet("me")]
     [Tags(ControllerTags.User, ControllerTags.Settings)]
-    [EndpointSummary("Get information about me")]
     [ProducesResponseType<MeResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -33,9 +34,11 @@ public sealed class UserController : BaseController
         return await Mediator.ExecuteAsync<ApiGetUserRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Creates the Freem user for an already existing EgoHub identity. The user id is taken from the access token.</summary>
+    /// <param name="body">Nickname.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPost("register")]
     [Tags(ControllerTags.User)]
-    [EndpointSummary("Register user")]
     [ProducesResponseType<RegisterUserResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
@@ -49,9 +52,9 @@ public sealed class UserController : BaseController
         return await Mediator.ExecuteAsync<ApiRegisterUserRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns the settings of the current user.</summary>
     [HttpGet("settings")]
     [Tags(ControllerTags.User, ControllerTags.Settings)]
-    [EndpointSummary("Get user settings")]
     [ProducesResponseType<UserSettingsResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -62,9 +65,11 @@ public sealed class UserController : BaseController
         return await Mediator.ExecuteAsync<ApiGetUserSettingsRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Partially updates the settings: only the fields present in the body are changed.</summary>
+    /// <param name="body">Fields to change.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     [HttpPut("settings")]
     [Tags(ControllerTags.User, ControllerTags.Settings)]
-    [EndpointSummary("Update user settings")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]

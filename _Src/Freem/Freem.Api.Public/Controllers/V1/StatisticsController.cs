@@ -10,6 +10,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
+/// <summary>Aggregated time statistics over the user's records.</summary>
 [Route("api/v1/statistics")]
 [Tags(ControllerTags.Statistics)]
 public sealed class StatisticsController : BaseController
@@ -19,8 +20,11 @@ public sealed class StatisticsController : BaseController
     {
     }
 
+    /// <summary>Returns statistics for every day of the period.</summary>
+    /// <param name="query">Period of days.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>Day boundaries follow the user's day UTC offset setting. The end of the period is inclusive.</remarks>
     [HttpGet("per-days")]
-    [EndpointSummary("Get summary activity statistics by days")]
     [ProducesResponseType<StatisticsPerDaysResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
@@ -33,8 +37,11 @@ public sealed class StatisticsController : BaseController
         return await Mediator.ExecuteAsync<ApiStatisticsPerDaysRequest, IActionResult>(context, request, cancellationToken);
     }
 
+    /// <summary>Returns statistics summed over a single day, month or year.</summary>
+    /// <param name="query">The day, month or year to aggregate.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>Day boundaries follow the user's day UTC offset setting.</remarks>
     [HttpGet("per-period")]
-    [EndpointSummary("Get summary activity statistics by period")]
     [ProducesResponseType<StatisticsPerPeriodResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
