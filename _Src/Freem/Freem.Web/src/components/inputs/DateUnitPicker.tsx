@@ -10,7 +10,7 @@ export interface IDateUnitPickerProps {
 export function DateUnitPicker(props: IDateUnitPickerProps) {
   const {unit, onChange} = props;
 
-  function disabled(buttonUnit: DateUnit) {
+  function active(buttonUnit: DateUnit) {
     return buttonUnit === unit;
   }
 
@@ -21,10 +21,10 @@ export function DateUnitPicker(props: IDateUnitPickerProps) {
   }
 
   return (
-      <div className="p-button-group">
-        <Button disabled={disabled(DateUnit.Day)} onClick={() => change(DateUnit.Day)} size="small">Day</Button>
-        <Button disabled={disabled(DateUnit.Month)} onClick={() => change(DateUnit.Month)} size="small">Month</Button>
-        <Button disabled={disabled(DateUnit.Year)} onClick={() => change(DateUnit.Year)} size="small">Year</Button>
+      <div className="segmented">
+        {[[DateUnit.Day, "Day"], [DateUnit.Month, "Month"], [DateUnit.Year, "Year"]].map(([value, label]) =>
+            <Button key={label} text={!active(value as DateUnit)} aria-pressed={active(value as DateUnit)}
+                    onClick={() => change(value as DateUnit)} size="small">{label}</Button>)}
       </div>
   );
 }

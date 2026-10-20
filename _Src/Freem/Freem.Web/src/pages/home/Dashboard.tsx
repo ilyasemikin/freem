@@ -5,7 +5,7 @@ import {useState} from "react";
 import {TagsDashboard} from "../tags/TagsDashboard.tsx";
 import {StatisticsDashboard} from "../statistics/StatisticsDashboard.tsx";
 import {Button} from "primereact/button";
-import {useAuth} from "../../authorization/context/useAuth.ts";
+import {AppHeader} from "../../components/AppHeader.tsx";
 
 enum Tab {
   Tags,
@@ -15,10 +15,21 @@ enum Tab {
 
 export function Dashboard() {
   const [tab, setTab] = useState<Tab>(Tab.Records);
-  const {logout} = useAuth();
+  const [recordsVersion, setRecordsVersion] = useState(0);
 
-  function disabled(buttonTab: Tab) {
+  function recordsChanged() {
+    setRecordsVersion(value => value + 1);
+  }
+
+  function active(buttonTab: Tab) {
     return buttonTab === tab;
+  }
+
+  function tabButton(buttonTab: Tab, label: string) {
+    return (
+        <Button text={!active(buttonTab)} size="small" aria-pressed={active(buttonTab)}
+                onClick={() => setTab(buttonTab)}>{label}</Button>
+    );
   }
 
   function renderRight() {
@@ -26,31 +37,30 @@ export function Dashboard() {
       case Tab.Tags:
         return <TagsDashboard/>;
       case Tab.Records:
-        return <RecordsDashboard/>;
+        return <RecordsDashboard version={recordsVersion}/>;
       case Tab.Statistics:
-        return <StatisticsDashboard/>;
+        return <StatisticsDashboard version={recordsVersion}/>;
     }
   }
 
   function renderRightFooter() {
     return (
-        <div className="p-button-group">
-          <Button disabled={disabled(Tab.Tags)} size="small" onClick={() => setTab(Tab.Tags)}>Tags</Button>
-          <Button disabled={disabled(Tab.Records)} size="small" onClick={() => setTab(Tab.Records)}>Records</Button>
-          <Button disabled={disabled(Tab.Statistics)} size="small" onClick={() => setTab(Tab.Statistics)}>Statistics</Button>
-          <Button size="small" severity="secondary" onClick={logout}>Log out</Button>
+        <div className="segmented">
+          {tabButton(Tab.Tags, "Tags")}
+          {tabButton(Tab.Records, "Records")}
+          {tabButton(Tab.Statistics, "Statistics")}
         </div>
     );
   }
 
   return (
       <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
-        <div style={{display: "flex", flexDirection: "row", flex: "1", overflow: "hidden"}}>
-          <DashboardPanel style={{display: "flex", flex: "1"}}>
-            <ActivitiesDashboard/>
+        <AppHeader/>
+        <div className="dashboard">
+          <DashboardPanel>
+            <ActivitiesDashboard onRecordsChanged={recordsChanged}/>
           </DashboardPanel>
           <DashboardPanel
-              style={{display: "flex", flex: "1"}}
               children={renderRight()}
               footer={(renderRightFooter())}/>
         </div>

@@ -10,7 +10,7 @@ export function StatisticsPerActivityList(props: IStatisticsPerActivityListProps
 
   return (
       <>
-        {entities.length === 0 && <span>Nothing</span>}
+        {entities.length === 0 && <div className="empty">No data for this period</div>}
         {entities.map(entity =>
             <StatisticsPerActivityPanel
                 key={entity.activity.id}

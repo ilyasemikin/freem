@@ -97,12 +97,12 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
 
   return (
       <>
-        <div style={{display: "flex", flexDirection: "row"}}>
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
           <CustomButton onClick={() => changeByDiff(-1)}>
             <span style={{userSelect: "none"}} className="pi pi-chevron-left"/>
           </CustomButton>
           <span
-              style={{width: "10ch", margin: "0 15px", textAlign: "center", cursor: "pointer"}}
+              className="numeric" style={{width: "10ch", margin: "0 8px", textAlign: "center", cursor: "pointer", fontWeight: 500}}
               onClick={toggle}>
             {current()}
           </span>

@@ -39,7 +39,7 @@ export function TagPanel(props: ITagPanelProps) {
 
   return (
       <ItemPanel>
-        <span>{tag.name}</span>
+        <span className="item-title">{tag.name}</span>
         <div>
           <CustomButton onClick={openEdit}>
             <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>

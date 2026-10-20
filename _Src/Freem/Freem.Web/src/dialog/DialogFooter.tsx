@@ -13,7 +13,7 @@ export function DialogFooter(props: IDialogFooterProps) {
   const text = actionText || "Action";
 
   return (
-      <div style={{display: "flex", justifyContent: "space-between", gap: "3px"}}>
+      <div style={{display: "flex", justifyContent: "space-between", gap: "8px", marginTop: "12px"}}>
         <Button
             style={{flex: 1}}
             size="small"
@@ -23,7 +23,8 @@ export function DialogFooter(props: IDialogFooterProps) {
         <Button
             style={{flex: 1}}
             size="small"
-            severity="danger"
+            severity="secondary"
+            outlined
             label="Cancel"
             onClick={onCancel}/>
       </div>

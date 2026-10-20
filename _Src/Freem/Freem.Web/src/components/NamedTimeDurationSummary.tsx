@@ -10,8 +10,8 @@ export function NamedTimeDurationSummary(props: INamedTimeDurationSummaryProps) 
 
   return (
       <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-        <span>{name}</span>
-        <span>{duration.toString()}</span>
+        <span className="muted" style={{fontSize: "13px"}}>{name}</span>
+        <span className="numeric" style={{fontSize: "1.25rem", fontWeight: 600}}>{duration.toString()}</span>
       </div>
   )
 }

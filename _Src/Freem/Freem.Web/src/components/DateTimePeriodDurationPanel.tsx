@@ -10,7 +10,7 @@ export function DateTimePeriodDurationPanel(props: IDateTimePeriodDurationPanelP
 
   const duration = period?.getDurationFormatted() || "00:00:00";
   return (
-      <span style={{marginRight: "10px", width: "13ch", textAlign: align || "center"}}>
+      <span className="numeric" style={{marginRight: "10px", width: "9ch", textAlign: align || "center"}}>
         {duration}
       </span>
   );

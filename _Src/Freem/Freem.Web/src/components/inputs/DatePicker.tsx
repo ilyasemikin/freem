@@ -27,11 +27,12 @@ export function DatePicker(props: IDatePickerProps) {
   }
 
   return (
-      <div style={{...style, marginBottom: "3px"}}>
+      <div style={{...style, marginBottom: "8px"}}>
         <Calendar
             placeholder={placeholder}
             value={value}
             showTime={showTime}
+            dateFormat="dd/mm/yy"
             showSeconds
             hourFormat="24"
             minDate={minValue}

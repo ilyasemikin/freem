@@ -48,7 +48,7 @@ export function TagsPicker(props: ITagsPickerProps) {
   return (
       <>
         <AutoComplete
-            style={{display: "block", width: "100%", marginBottom: "3px"}}
+            style={{display: "block", width: "100%", marginBottom: "8px"}}
             placeholder="Tags"
             disabled={loading}
             value={tags}

@@ -5,7 +5,7 @@ import {ListRecordByPeriodRequest} from "../../clients/models/records/ListRecord
 import {Loading} from "../../components/Loading.tsx";
 import {ValidationError} from "../../components/ValidationError.tsx";
 import {useDialog} from "../../dialog/context/useDialog.ts";
-import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {RecordAddModal} from "./RecordAddModal.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
 import {CreateRecordRequest} from "../../clients/models/records/CreateRecordRequest.ts";
@@ -17,7 +17,13 @@ import {DatePeriod} from "../../data/DatePeriod.ts";
 import {Divider} from "../../components/Divider.tsx";
 import {RecordListGrouped} from "./RecordListGrouped.tsx";
 
-export function RecordsDashboard() {
+export interface IRecordsDashboardProps {
+  version?: number;
+}
+
+export function RecordsDashboard(props: IRecordsDashboardProps) {
+  const {version} = props;
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState(false);
@@ -56,7 +62,7 @@ export function RecordsDashboard() {
     return () => {
       current = false;
     };
-  }, [update, period, cache.records]);
+  }, [update, version, period, cache.records]);
 
   function openAdd() {
     openDialog({
@@ -94,22 +100,23 @@ export function RecordsDashboard() {
   }
 
   if (loading) {
-    return <Loading/>;
+    return (
+        <>
+          <PanelHeader title="Records" onAdd={openAdd}/>
+          <Loading/>
+        </>
+    );
   }
 
   const group = period.getDurationInDays() > 1;
 
   return (
       <div style={{display: "flex", flexDirection: "column", flex: "1"}}>
+        <PanelHeader title="Records" onAdd={openAdd}/>
         <DatePeriodPicker onChange={changePeriod}/>
-        <div style={{display: "flex", justifyContent: "end"}}>
-          <CustomButton onClick={openAdd}>
-            <span className="pi pi-plus"/>
-          </CustomButton>
-        </div>
         <Divider/>
         <ValidationError error={error}/>
-        {records?.length === 0 && <span>No records</span>}
+        {records?.length === 0 && <div className="empty">No records for this period</div>}
         {records &&
             <RecordListGrouped
                 groupRecords={group}

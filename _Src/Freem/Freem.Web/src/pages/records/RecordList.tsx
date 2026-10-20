@@ -5,7 +5,6 @@ import {UpdateField} from "../../clients/models/UpdateField.ts";
 import {UpdateRecordRequest} from "../../clients/models/records/UpdateRecordRequest.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
-import {Divider} from "../../components/Divider.tsx";
 
 export interface IRecordListProps {
   date?: string;
@@ -54,11 +53,7 @@ export function RecordList(props: IRecordListProps) {
   return (
       <>
         {records.length > 0 && date &&
-            <div>
-                <Divider/>
-                <span style={{color: "darkgrey", marginLeft: "10px"}}>{date}</span>
-                <Divider/>
-            </div>}
+            <div className="group-title numeric">{date}</div>}
         {records.map(record =>
             <RecordPanel
                 key={record.id}

@@ -48,7 +48,7 @@ export function ActivitiesPicker(props: IActivitiesPickerProps) {
   return (
       <>
         <AutoComplete
-            style={{display: "block", width: "100%", marginBottom: "3px"}}
+            style={{display: "block", width: "100%", marginBottom: "8px"}}
             placeholder="Activities"
             disabled={loading}
             value={activities}

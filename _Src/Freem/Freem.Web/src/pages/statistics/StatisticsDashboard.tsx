@@ -5,6 +5,7 @@ import {DatePeriod} from "../../data/DatePeriod.ts";
 import {DateHelper} from "../../helpers/DateHelper.ts";
 import {DateUnit} from "../../data/DateUnit.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
+import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {Loading} from "../../components/Loading.tsx";
 import {ValidationError} from "../../components/ValidationError.tsx";
 import {StatisticsPerActivityList} from "./StatisticsPerActivityList.tsx";
@@ -13,7 +14,13 @@ import {DatePeriodHelper} from "../../helpers/DatePeriodHelper.ts";
 import {StatisticsPerPeriodEntity} from "../../entities/StatisticsPerPeriodEntity.ts";
 import {StatisticsPerActivityChart} from "./StatisticsPerActivityChart.tsx";
 
-export function StatisticsDashboard() {
+export interface IStatisticsDashboardProps {
+  version?: number;
+}
+
+export function StatisticsDashboard(props: IStatisticsDashboardProps) {
+  const {version} = props;
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
 
@@ -50,7 +57,7 @@ export function StatisticsDashboard() {
     return () => {
       current = false;
     };
-  }, [unit, period, cache.statistics]);
+  }, [unit, version, period, cache.statistics]);
 
   function changePeriod(unit: DateUnit, value: DatePeriod) {
     setUnit(unit);
@@ -58,15 +65,21 @@ export function StatisticsDashboard() {
   }
 
   if (loading) {
-    return (<Loading/>)
+    return (
+        <>
+          <PanelHeader title="Statistics"/>
+          <Loading/>
+        </>
+    );
   }
 
   return (
       <div style={{display: "flex", flexDirection: "column", flex: "1"}}>
+        <PanelHeader title="Statistics"/>
         <DatePeriodPicker onChange={changePeriod}/>
         <Divider/>
         <ValidationError error={error}/>
-        {(!entity || entity.perActivities.length === 0) && <span>Nothing</span>}
+        {(!entity || entity.perActivities.length === 0) && <div className="empty">No data for this period</div>}
         {entity && entity.perActivities.length > 0 &&
             <>
                 <StatisticsPerActivityChart total={entity.recordedTime} entities={entity.perActivities}/>

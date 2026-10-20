@@ -39,7 +39,7 @@ export function ActivityPanel(props: IActivityPanelProps) {
 
   return (
       <ItemPanel>
-        <span>{activity.name}</span>
+        <span className="item-title">{activity.name}</span>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <CustomButton onClick={start}>
             <span style={{fontSize: "25px"}} className="pi pi-play-circle"/>

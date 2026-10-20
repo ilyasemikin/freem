@@ -10,6 +10,6 @@ export function ActivitiesListPanel(props: IActivitiesListPanelProps) {
   const name = activities?.map(activity => activity.name).join(', ') || "Unknown";
 
   return (
-      <span>{name}</span>
+      <span className="item-title">{name}</span>
   );
 }

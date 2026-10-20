@@ -76,9 +76,9 @@ export function RunningRecordPanel(props: IRunningRecordPanelProps) {
   const period = new DateTimePeriod(record.startAt, now);
 
   return (
-      <ItemPanel>
+      <ItemPanel running>
         <ActivitiesListPanel activities={record.activities}/>
-        <div style={{display: "flex", justifyContent: "space-between", alignItems: "right"}}>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <DateTimePeriodDurationPanel period={period} align="right"/>
           <CustomButton onClick={stop}>
             <span style={{fontSize: "25px"}} className="pi pi-stop-circle"/>

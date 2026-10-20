@@ -3,7 +3,7 @@ import {TagEntity} from "../../entities/TagEntity.ts";
 import {ListTagRequest} from "../../clients/models/tags/ListTagRequest.ts";
 import {Loading} from "../../components/Loading.tsx";
 import {ValidationError} from "../../components/ValidationError.tsx";
-import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {TagAddModal} from "./TagAddModal.tsx";
 import {ITagEditorData} from "./TagEditor.tsx";
 import {CreateTagRequest} from "../../clients/models/tags/CreateTagRequest.ts";
@@ -13,7 +13,6 @@ import {UpdateField} from "../../clients/models/UpdateField.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
-import {Divider} from "../../components/Divider.tsx";
 
 export function TagsDashboard() {
   const [loading, setLoading] = useState(true);
@@ -90,21 +89,27 @@ export function TagsDashboard() {
   }
 
   if (loading) {
-    return (<Loading/>);
+    return (
+        <>
+          <PanelHeader title="Tags"/>
+          <Loading/>
+        </>
+    );
   }
 
   if (error !== undefined) {
-    return <ValidationError error={error}/>;
+    return (
+        <>
+          <PanelHeader title="Tags"/>
+          <ValidationError error={error}/>
+        </>
+    );
   }
 
   return (
       <>
-        <div style={{display: "flex", justifyContent: "end", margin: "0 15px 15px 0"}}>
-          <CustomButton onClick={openAdd}>
-            <span className="pi pi-plus"/>
-          </CustomButton>
-        </div>
-        <Divider/>
+        <PanelHeader title="Tags" onAdd={openAdd}/>
+        {tags?.length === 0 && <div className="empty">No tags yet</div>}
         {tags && tags.map(tag =>
             <TagPanel
                 key={tag.id}

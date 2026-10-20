@@ -2,23 +2,15 @@
 
 export interface IItemPanelProps {
   children?: ReactNode;
+  running?: boolean;
 }
 
 export function ItemPanel(props: IItemPanelProps) {
-  const {children} = props;
+  const {children, running} = props;
+
+  const className = running ? "item item-row item--running" : "item item-row";
 
   return (
-      <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            padding: "15px 10px",
-            border: "solid 1px lightgray",
-            borderRadius: "7px",
-            marginBottom: "5px"
-          }}
-          children={children}/>
+      <div className={className} children={children}/>
   );
 }

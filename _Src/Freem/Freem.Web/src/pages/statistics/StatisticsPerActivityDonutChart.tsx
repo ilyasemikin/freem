@@ -1,5 +1,6 @@
 ﻿import {StatisticsPerActivityEntity} from "../../entities/StatisticsPerActivityEntity.ts";
 import {ReactNode, useState} from "react";
+import {ActivityColor} from "../../helpers/ActivityColor.ts";
 
 export interface IStatisticsPerActivityDonutChartProps {
   activities?: StatisticsPerActivityEntity[];
@@ -22,7 +23,7 @@ class Sector {
   public constructor(entity: StatisticsPerActivityEntity, angle: number) {
     this.entity = entity;
     this.angle = angle;
-    this.color = "#000000";
+    this.color = ActivityColor.fromId(entity.activity.id);
   }
 }
 
@@ -145,7 +146,7 @@ export function StatisticsPerActivityDonutChart(props: IStatisticsPerActivityDon
 
     return (
         <path
-            style={{transition: "all 0.15s ease-in-out", cursor: "pointer"}}
+            style={{transition: "all 0.15s ease-in-out", cursor: "pointer", opacity: selected === null || selected === index ? 1 : 0.45}}
             key={index}
             d={data}
             fill={color}
@@ -182,7 +183,7 @@ export function StatisticsPerActivityDonutChart(props: IStatisticsPerActivityDon
 
   return (
       <>
-        <svg width={svgSize} height={svgSize}>
+        <svg width={svgSize} height={svgSize} style={{display: "block", margin: "8px auto"}}>
           {paths}
           <foreignObject x={contentStart} y={contentStart} width={contentSize} height={contentSize}>
             <div style={{

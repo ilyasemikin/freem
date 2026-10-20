@@ -36,7 +36,7 @@ export function InputText(props: IInputTextProps) {
       : false;
 
   return (
-      <div style={{marginBottom: "3px"}} className="pc-input">
+      <div style={{marginBottom: "8px"}} className="pc-input">
         <PrimeInputText
             style={{...style, display: "block", width: "100%"}}
 						type={type}

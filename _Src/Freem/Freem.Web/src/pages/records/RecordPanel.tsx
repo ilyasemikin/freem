@@ -38,10 +38,10 @@ export function RecordPanel(props: IRecordPanelProps) {
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between"}}>
             <ActivitiesListPanel activities={record.activities}/>
-            <span style={{fontSize: "13px", color: "darkslategray"}}>{record.name}</span>
+            <span className="item-subtitle">{record.name}</span>
           </div>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-            <span style={{fontSize: "13px", color: "gray", marginRight: "10px"}}>
+            <span className="numeric muted" style={{fontSize: "13px", marginRight: "10px"}}>
               {start} - {end}
             </span>
             <DateTimePeriodDurationPanel period={record.period}/>

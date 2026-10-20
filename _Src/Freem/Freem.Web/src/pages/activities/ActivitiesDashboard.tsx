@@ -15,14 +15,19 @@ import {ActivityAddModal} from "./ActivityAddModal.tsx";
 import {CreateActivityRequest} from "../../clients/models/activities/CreateActivityRequest.ts";
 import {IRunningRecordEditorData} from "./RunningRecordEditor.tsx";
 import {UpdateRunningRecordRequest} from "../../clients/models/records/running/UpdateRunningRecordRequest.ts";
-import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {RunningRecordResponse} from "../../clients/models/records/running/RunningRecordResponse.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
-import {Divider} from "../../components/Divider.tsx";
 
-export function ActivitiesDashboard() {
+export interface IActivitiesDashboardProps {
+  onRecordsChanged?: () => void;
+}
+
+export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
+  const {onRecordsChanged} = props;
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState(false);
@@ -170,6 +175,7 @@ export function ActivitiesDashboard() {
 
     if (response.ok || response.status === 404) {
       setRunning(undefined);
+      onRecordsChanged?.();
     }
   }
 
@@ -182,28 +188,34 @@ export function ActivitiesDashboard() {
   }
 
   if (loading) {
-    return (<Loading/>);
+    return (
+        <>
+          <PanelHeader title="Activities"/>
+          <Loading/>
+        </>
+    );
   }
 
   if (error !== undefined) {
-    return <ValidationError error={error}/>;
+    return (
+        <>
+          <PanelHeader title="Activities"/>
+          <ValidationError error={error}/>
+        </>
+    );
   }
 
   const showed = activities === undefined ? [] : activities.filter(activity => !running?.activities?.find(value => value.id === activity.id));
   return (
       <div style={{display: "flex", flexDirection: "column", flex: "1"}}>
-        <div style={{display: "flex", justifyContent: "end", margin: "5px 15px 5px 0"}}>
-          <CustomButton onClick={openAdd}>
-            <span className="pi pi-plus"/>
-          </CustomButton>
-        </div>
-        <Divider/>
+        <PanelHeader title="Activities" onAdd={openAdd}/>
         {running &&
             <RunningRecordPanel
                 record={running}
                 onStop={stopRunningRecord}
                 onUpdate={updateRunningRecord}
                 onDelete={deleteRunningRecord}/>}
+        {!running && showed.length === 0 && <div className="empty">No activities yet. Add the first one with +</div>}
         {showed.map(activity =>
             <ActivityPanel
                 key={activity.id}

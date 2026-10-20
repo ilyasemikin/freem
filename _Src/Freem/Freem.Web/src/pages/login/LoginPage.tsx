@@ -67,9 +67,9 @@ export function LoginPage() {
 
   return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>
-        <form onSubmit={submit}
-              style={{display: "flex", flexDirection: "column", gap: "0.75rem", width: "20rem"}}>
-          <h2 style={{margin: 0}}>{title()}</h2>
+        <form onSubmit={submit} className="login-card">
+          <h1 style={{margin: 0, fontSize: "1.6rem", color: "var(--accent)"}}>Freem</h1>
+          <h2 className="muted" style={{margin: 0, fontSize: "1rem", fontWeight: 500}}>{title()}</h2>
 
           {!unregistered && renderCredentials()}
           {(unregistered || mode === "register") && renderNickname()}

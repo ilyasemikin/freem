@@ -7,10 +7,7 @@ export function ValidationError(props: IValidationErrorProps) {
 
   return (
       <>
-        {error !== undefined &&
-            <span style={{textAlign: "left", margin: "1px 0 3px 0", fontSize: "13px", color: "red"}}>
-              {error}
-            </span>}
+        {error !== undefined && <span className="error-text">{error}</span>}
       </>
   );
 }

@@ -26,7 +26,7 @@ export function DialogProvider(props: IDialogProviderProps) {
       <DialogContext.Provider value={{openDialog, closeDialog}}>
         <>
           <Dialog
-              style={{width: "500px"}}
+              style={{width: "500px", maxWidth: "95vw"}}
               visible={visible}
               onHide={closeDialog}
               content={<DialogWindow children={content}/>}>
