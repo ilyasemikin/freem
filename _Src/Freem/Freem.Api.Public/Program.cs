@@ -13,6 +13,7 @@ using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Authentication.EgoHub;
+using Freem.Api.Public.Build;
 using Freem.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Configuration.Extensions;
 using Freem.Api.Public.Contracts;
@@ -69,6 +70,8 @@ builder.Services.AddCors(options =>
         }
     });
 });
+
+builder.Services.AddSingleton(BuildInfo.FromEntryAssembly());
 
 builder.Services
     .AddUtcTruncatedToSecondsClock()

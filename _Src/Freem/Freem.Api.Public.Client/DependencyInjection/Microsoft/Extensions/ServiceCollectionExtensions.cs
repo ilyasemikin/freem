@@ -44,6 +44,9 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<UsersClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<AuthClient>(provider, jso));
         
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<HealthClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<MetaClient>(provider, jso));
+
         services.TryAddSingleton<CompositeClient>();
 
         return services;

@@ -49,6 +49,8 @@ services:
     build:
       context: ../../_Src/Freem
       dockerfile: ./Freem.Api.Public/Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-}
     environment:
       Api__Ports__0: 8080
       Api__CorsOrigins__0: ${WEB_PUBLIC_URL}
@@ -67,6 +69,12 @@ services:
         condition: service_healthy
     networks:
       - freem_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/_health/liveness"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
     restart: "always"
 
   web:
@@ -77,9 +85,16 @@ services:
     ports:
       - ${WEB_PORT}:80
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - freem_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     restart: "always"
 
   postgres-backup:

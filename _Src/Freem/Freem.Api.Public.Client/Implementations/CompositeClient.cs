@@ -11,6 +11,9 @@ public sealed class CompositeClient
     
     public UsersClient Users { get; }
     public AuthClient Auth { get; }
+
+    public HealthClient Health { get; }
+    public MetaClient Meta { get; }
     
     public CompositeClient(
         ActivitiesClient activities, 
@@ -19,7 +22,9 @@ public sealed class CompositeClient
         EventsClient events, 
         StatisticsClient statistics, 
         UsersClient users,
-        AuthClient auth)
+        AuthClient auth,
+        HealthClient health,
+        MetaClient meta)
     {
         ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(records);
@@ -28,6 +33,8 @@ public sealed class CompositeClient
         ArgumentNullException.ThrowIfNull(statistics);
         ArgumentNullException.ThrowIfNull(users);
         ArgumentNullException.ThrowIfNull(auth);
+        ArgumentNullException.ThrowIfNull(health);
+        ArgumentNullException.ThrowIfNull(meta);
         
         Activities = activities;
         Records = records;
@@ -36,5 +43,7 @@ public sealed class CompositeClient
         Statistics = statistics;
         Users = users;
         Auth = auth;
+        Health = health;
+        Meta = meta;
     }
 }
