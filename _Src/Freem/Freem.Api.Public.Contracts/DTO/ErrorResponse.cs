@@ -2,8 +2,10 @@
 
 namespace Freem.Api.Public.Contracts.DTO;
 
+/// <summary>Body of every error response.</summary>
 public sealed class ErrorResponse
 {
+    /// <summary>Machine-readable error with its code and details.</summary>
     public Error Error { get; }
     
     public ErrorResponse(Error error)

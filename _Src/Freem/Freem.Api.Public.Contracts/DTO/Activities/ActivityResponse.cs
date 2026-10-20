@@ -5,12 +5,17 @@ using Freem.Domain.Tags;
 
 namespace Freem.Api.Public.Contracts.DTO.Activities;
 
+/// <summary>An activity.</summary>
 public sealed class ActivityResponse
 {
+    /// <summary>Activity id.</summary>
     public ActivityId Id { get; }
+    /// <summary>Activity name.</summary>
     public ActivityName Name { get; }
+    /// <summary>Whether the activity is active or archived.</summary>
     public ActivityStatus Status { get; }
     
+    /// <summary>Ids of the tags attached to the activity.</summary>
     public IReadOnlyRelatedIdsCollection<TagId> Tags { get; }
 
     public ActivityResponse(

@@ -7,16 +7,23 @@ using Freem.Api.Public.Contracts.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Records;
 
+/// <summary>Request body for updating a record. Fields that are omitted stay unchanged.</summary>
 public sealed class UpdateRecordRequest
 {
+    /// <summary>New start and end of the record.</summary>
     public UpdateField<DateTimePeriod>? Period { get; init; }
 
+    /// <summary>New record name; a null value clears it.</summary>
     public UpdateField<RecordName?>? Name { get; init; }
+    /// <summary>New record description; a null value clears it.</summary>
     public UpdateField<RecordDescription?>? Description { get; init; }
     
+    /// <summary>New full set of activity ids; replaces the current one.</summary>
     public UpdateField<IReadOnlyRelatedIdsCollection<ActivityId>>? Activities { get; init; }
+    /// <summary>New full set of tag ids; replaces the current one.</summary>
     public UpdateField<IReadOnlyRelatedIdsCollection<TagId>>? Tags { get; init; }
 
+    /// <summary>Whether at least one field is set.</summary>
     public bool HasChanges()
     {
         return

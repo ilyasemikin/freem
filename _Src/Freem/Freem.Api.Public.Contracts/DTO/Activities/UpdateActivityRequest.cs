@@ -5,11 +5,15 @@ using Freem.Api.Public.Contracts.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Activities;
 
+/// <summary>Request body for updating an activity. Fields that are omitted stay unchanged.</summary>
 public sealed class UpdateActivityRequest
 {
+    /// <summary>New activity name.</summary>
     public UpdateField<ActivityName>? Name { get; init; }
+    /// <summary>New full set of tag ids; replaces the current one.</summary>
     public UpdateField<IReadOnlyRelatedIdsCollection<TagId>>? Tags { get; init; }
 
+    /// <summary>Whether at least one field is set.</summary>
     public bool HasChanges()
     {
         return 
