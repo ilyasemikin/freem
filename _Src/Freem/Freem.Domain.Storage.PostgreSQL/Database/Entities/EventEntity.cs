@@ -1,18 +1,12 @@
-﻿using Freem.Domain.Storage.PostgreSQL.Database.Entities.Abstractions;
+﻿namespace Freem.Domain.Storage.PostgreSQL.Database.Entities;
 
-namespace Freem.Domain.Storage.PostgreSQL.Database.Entities;
-
-internal sealed class EventEntity : IAuditableEntity
+internal sealed class EventEntity
 {
     public required string Id { get; init; }
     public required string UserId { get; init; }
-    public required string EntityName { get; init; }
-    public required string EntityId { get; init; }
-    
-    public required string Action { get; init; }
-    
-    public string? AdditionalData { get; init; }
-    
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public required string EventType { get; init; }
+    public required string EntityType { get; init; }
+    public required string EntityRef { get; init; }
+    public required DateTimeOffset OccurredAt { get; init; }
+    public required string Payload { get; init; }
 }

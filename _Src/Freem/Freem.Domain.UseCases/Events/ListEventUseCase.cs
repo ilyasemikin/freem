@@ -7,16 +7,15 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Domain.UseCases.Events;
 
-internal sealed class ListEventUseCase 
+internal sealed class ListEventUseCase
     : IRequestHandler<HandlerContext, ListEventRequest, Result<ListEventResponse, Error>>
 {
     private readonly IEventRepository _repository;
 
-    public ListEventUseCase(
-        IEventRepository repository)
+    public ListEventUseCase(IEventRepository repository)
     {
         ArgumentNullException.ThrowIfNull(repository);
-        
+
         _repository = repository;
     }
 
@@ -24,9 +23,14 @@ internal sealed class ListEventUseCase
         HandlerContext context, ListEventRequest request,
         CancellationToken cancellationToken = default)
     {
-        var filter = new EventAfterTimeFilter(context.UserId, request.After)
+        var filter = new EventByUserFilter(context.UserId)
         {
-            Limit = (int)request.Limit
+            Limit = (int)request.Limit,
+            Offset = (int)request.Offset,
+            EntityType = request.EntityType,
+            EntityRef = request.EntityRef,
+            From = request.From,
+            To = request.To
         };
 
         var result = await _repository.FindAsync(filter, cancellationToken);

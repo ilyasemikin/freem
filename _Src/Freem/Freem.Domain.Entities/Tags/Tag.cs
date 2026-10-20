@@ -1,8 +1,6 @@
 ﻿using Freem.Domain.Events;
 using Freem.Domain.Tags;
-using Freem.Domain.Tags.Events.Created;
-using Freem.Domain.Tags.Events.Removed;
-using Freem.Domain.Tags.Events.Updated;
+using Freem.Domain.Tags.Events;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
 
@@ -39,16 +37,27 @@ public sealed class Tag :
 
     public TagCreatedEvent BuildCreatedEvent(EventId eventId)
     {
-        return new TagCreatedEvent(eventId, Id, UserId);
+        return new TagCreatedEvent(eventId)
+        {
+            TagId = Id,
+            Name = Name
+        };
     }
 
     public TagUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
-        return new TagUpdatedEvent(eventId, Id, UserId);
+        return new TagUpdatedEvent(eventId)
+        {
+            TagId = Id,
+            Name = Name
+        };
     }
 
     public TagRemovedEvent BuildRemovedEvent(EventId eventId)
     {
-        return new TagRemovedEvent(eventId, Id, UserId);
+        return new TagRemovedEvent(eventId)
+        {
+            TagId = Id
+        };
     }
 }

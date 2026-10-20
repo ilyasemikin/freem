@@ -125,8 +125,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
             .Include(e => e.Tags)
             .Where(e => e.UserId == userIdString)
             .OrderBy(filter.Sorting, ActivityFactories.CreateSortSelector)
-            .SliceByLimitAndOffsetFilter(filter)
-            .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<Result<AsyncBatch<Activity>, Error>> FindAsync(ActivityFilter filter, CancellationToken cancellationToken = default)
@@ -135,7 +134,6 @@ internal sealed class ActivitiesRepository : IActivityRepository
         return await _database.Activities
             .Include(e => e.Tags)
             .Where(e => e.UserId == userIdString && e.Name.Contains(filter.SearchText))
-            .SliceByLimitFilter(filter)
-            .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 }

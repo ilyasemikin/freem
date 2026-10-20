@@ -1,5 +1,4 @@
-﻿using Freem.Domain.Events;
-using Microsoft.Extensions.DependencyInjection;
+﻿﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Freem.Domain.DependencyInjection;
@@ -10,13 +9,6 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton(EntityIdFactory.Instance);
         services.TryAddSingleton(EntityIdNameProvider.Instance);
-        
-        return services;
-    }
-
-    public static IServiceCollection AddEventsFactory(this IServiceCollection services)
-    {
-        services.TryAddSingleton(EventsFactory.Instance);
         
         return services;
     }

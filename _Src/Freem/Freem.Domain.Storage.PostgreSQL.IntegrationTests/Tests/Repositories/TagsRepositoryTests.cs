@@ -250,4 +250,33 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         Assert.False(result.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
+
+    [Fact]
+    public async Task FindAsync_ShouldReturnTotalCountOfAllTags_WhenLimitIsLessThanCount()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbTags = EntitiesFactory.CreateTags(3);
+
+        await Database.AddAsync(dbUser);
+        await Database.AddRangeAsync(dbTags);
+        await Database.SaveChangesAsync();
+
+        var userId = UserId.Parse(dbUser.Id, null);
+        var filter = new TagByUserFilter(userId)
+        {
+            Limit = 1,
+            Offset = 1
+        };
+
+        // Act
+        var result = await Repository.FindAsync(filter);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Equal(3, result.Value.Count);
+
+        var tags = await result.Value.ToArrayAsync();
+        Assert.Single(tags);
+    }
 }

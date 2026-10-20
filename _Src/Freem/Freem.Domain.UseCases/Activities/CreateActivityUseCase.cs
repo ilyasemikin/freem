@@ -2,7 +2,7 @@
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Activities.Create;
 using Freem.Storage.Transactions.Helpers;
@@ -58,7 +58,7 @@ internal sealed class CreateActivityUseCase :
             if (!result.Success)
                 return result;
 
-            return await _eventProducer.PublishAsync(activity.BuildCreatedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(activity.UserId, activity.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

@@ -22,6 +22,7 @@ public static class DomainErrorCatalog
         public static readonly ErrorType PeriodIsInvalid = ErrorType.Create(Scope, "period_is_invalid");
         public static readonly ErrorType InvalidRequest = ErrorType.Create(Scope, "invalid_request");
         public static readonly ErrorType FailedDependency = ErrorType.Create(Scope, "failed_dependency");
+        public static readonly ErrorType EventDeserializationFailed = ErrorType.Create(Scope, "event:deserialization_failed");
 
         public static readonly ErrorType AuthenticationRejected = ErrorType.Create(Scope, "auth:rejected");
         public static readonly ErrorType UserNotRegistered = ErrorType.Create(Scope, "user:not_registered");
@@ -35,6 +36,7 @@ public static class DomainErrorCatalog
     {
         public const string ActivityId = $"{Scope}:activity_id";
         public const string EventId = $"{Scope}:event_id";
+        public const string EventType = $"{Scope}:event_type";
         public const string RecordId = $"{Scope}:record_id";
         public const string RunningRecordId = $"{Scope}:running_record_id";
         public const string TagId = $"{Scope}:tag_id";
@@ -89,6 +91,14 @@ public static class DomainErrorCatalog
                 .WithType(Types.EntityAlreadyExists)
                 .WithMessage($"Entity \"{name}\" with id = [{id}] already exists")
                 .WithProperty(property, id);
+        }
+
+        public static Error CreateEventDeserializationFailed(string eventType, string reason)
+        {
+            return new Error.Builder()
+                .WithType(Types.EventDeserializationFailed)
+                .WithMessage($"Failed to deserialize event \"{eventType}\": {reason}")
+                .WithProperty(Properties.EventType, eventType);
         }
 
         public static Error CreateNothingToDo(ErrorMessage? message = null)

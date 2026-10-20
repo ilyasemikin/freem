@@ -1,4 +1,5 @@
-﻿using Freem.Domain.UseCases.Context;
+using Freem.Domain.Events;
+using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Events.List;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
@@ -26,7 +27,7 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
     }
 
     [Fact]
-    public async Task ShouldSuccess_WhenAfterNull()
+    public async Task ShouldReturnUserRegisteredEvent_WhenUserIsRegistered()
     {
         var request = new ListEventRequest();
 
@@ -34,29 +35,44 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
 
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Value.Events);
-        Assert.Null(response.Error);
         
-        Assert.NotEmpty(response.Value.Events);
+        var @event = Assert.Single(response.Value.Events);
+        Assert.Equal(EventTypes.Users.Registered, @event.Type);
+        Assert.Equal(_context.UserId, @event.UserId);
+        Assert.Equal(new EntityRef(EntityType.User, _context.UserId.ToString()), @event.EntityRef);
     }
 
     [Fact]
-    public async Task ShouldSuccess_WhenAfterNotNull()
+    public async Task ShouldReturnTagCreatedEvent_WhenFilteredByEntityType()
     {
-        var now = DateTime.UtcNow;
-        var request = new ListEventRequest()
+        using var filler = Context.CreateExecutor();
+        var tag = await filler.Tags.CreateAsync(_context);
+        
+        var request = new ListEventRequest
         {
-            After = now
+            EntityType = EntityType.Tag
+        };
+
+        var response = await Context.ExecuteAsync<ListEventRequest, Result<ListEventResponse, Error>>(_context, request);
+
+        Assert.True(response.Success);
+        
+        var @event = Assert.Single(response.Value.Events);
+        Assert.Equal(EventTypes.Tags.Created, @event.Type);
+        Assert.Equal(new EntityRef(EntityType.Tag, tag.Id.ToString()), @event.EntityRef);
+    }
+
+    [Fact]
+    public async Task ShouldReturnEmpty_WhenPeriodStartsInFuture()
+    {
+        var request = new ListEventRequest
+        {
+            From = DateTimeOffset.UtcNow.AddDays(1)
         };
         
         var response = await Context.ExecuteAsync<ListEventRequest, Result<ListEventResponse, Error>>(_context, request);
         
-        Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Value.Events);
-        Assert.Null(response.Error);
-        
         Assert.Empty(response.Value.Events);
     }
-    
 }

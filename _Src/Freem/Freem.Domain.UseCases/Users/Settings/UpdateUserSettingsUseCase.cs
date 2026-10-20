@@ -1,7 +1,7 @@
 ﻿using Freem.Domain;
 using Freem.Domain.Entities.Users;
 using Freem.Domain.Storage.Repositories.Users;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Update;
 using Freem.Storage.Transactions.Helpers;
@@ -62,7 +62,7 @@ internal sealed class UpdateUserSettingsUseCase :
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(user.BuildSettingsChangedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(user.Id, user.BuildSettingsChangedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

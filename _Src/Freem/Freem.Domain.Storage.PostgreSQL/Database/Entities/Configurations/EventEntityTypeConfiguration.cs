@@ -1,9 +1,4 @@
 ﻿using Freem.Domain;
-using Freem.Domain.Activities.Events;
-using Freem.Domain.Records.Events;
-using Freem.Domain.RunningRecords.Events;
-using Freem.Domain.Tags.Events;
-using Freem.Domain.Users.Events;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,12 +11,8 @@ internal sealed class EventEntityTypeConfiguration : IEntityTypeConfiguration<Ev
     {
         builder.ToTable(EntitiesNames.Events.Table, table =>
             table.HasCheckConstraint(
-                EntitiesNames.Events.Constraints.EntityNameCheck,
-                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Activity}' and ({BuildActionCheckRawSql(ActivityEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Record}' and ({BuildActionCheckRawSql(RecordEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.RunningRecord}' and ({BuildActionCheckRawSql(RunningRecordEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.Tag}' and ({BuildActionCheckRawSql(TagEventActions.All)}) or " +
-                $"{EntitiesNames.Events.Properties.EntityName} = '{EntityNames.User}' and ({BuildActionCheckRawSql(UserEventActions.All)})"));
+                EntitiesNames.Events.Constraints.EntityTypeCheck,
+                BuildEntityTypeCheckRawSql()));
 
         builder
             .Property(e => e.Id)
@@ -36,43 +27,57 @@ internal sealed class EventEntityTypeConfiguration : IEntityTypeConfiguration<Ev
             .IsRequired();
 
         builder
-            .Property(e => e.EntityName)
-            .HasColumnName(EntitiesNames.Events.Properties.EntityName)
-            .IsRequired();
-
-        builder
-            .Property(e => e.EntityId)
-            .HasColumnName(EntitiesNames.Events.Properties.EntityId)
-            .IsRequired();
-
-        builder
-            .Property(e => e.Action)
-            .HasColumnName(EntitiesNames.Events.Properties.Action)
-            .IsRequired();
-
-        builder
-            .Property(e => e.AdditionalData)
-            .HasColumnName(EntitiesNames.Events.Properties.AdditionalData)
-            .HasColumnType("jsonb");
-
-        builder
-            .Property(e => e.CreatedAt)
-            .HasColumnName(EntitiesNames.Events.Properties.CreatedAt)
+            .Property(e => e.OccurredAt)
+            .HasColumnName(EntitiesNames.Events.Properties.OccurredAt)
             .HasColumnOrder(2)
             .IsRequired();
 
         builder
-            .Property(e => e.UpdatedAt)
-            .HasColumnName(EntitiesNames.Events.Properties.UpdatedAt);
-        
+            .Property(e => e.EventType)
+            .HasColumnName(EntitiesNames.Events.Properties.EventType)
+            .IsRequired();
+
+        builder
+            .Property(e => e.EntityType)
+            .HasColumnName(EntitiesNames.Events.Properties.EntityType)
+            .IsRequired();
+
+        builder
+            .Property(e => e.EntityRef)
+            .HasColumnName(EntitiesNames.Events.Properties.EntityRef)
+            .IsRequired();
+
+        builder
+            .Property(e => e.Payload)
+            .HasColumnName(EntitiesNames.Events.Properties.Payload)
+            .HasColumnType("jsonb")
+            .IsRequired();
+
         builder
             .HasKey(e => e.Id)
             .HasName(EntitiesNames.Events.Constraints.PrimaryKey);
+
+        builder
+            .HasIndex(e => new { e.UserId, e.OccurredAt })
+            .HasDatabaseName(EntitiesNames.Events.Constraints.UserIdOccurredAtIndex);
+
+        builder
+            .HasIndex(e => new { e.UserId, e.EntityType, e.EntityRef })
+            .HasDatabaseName(EntitiesNames.Events.Constraints.UserIdEntityIndex);
     }
 
-    private static string BuildActionCheckRawSql(IEnumerable<string> values)
+    private static string BuildEntityTypeCheckRawSql()
     {
-        values = values.Select(value => $"{EntitiesNames.Events.Properties.Action} = '{value}'");
-        return string.Join(" or ", values);
+        var names = new[]
+        {
+            EntityNames.Activity,
+            EntityNames.Record,
+            EntityNames.RunningRecord,
+            EntityNames.Tag,
+            EntityNames.User
+        };
+
+        var conditions = names.Select(name => $"{EntitiesNames.Events.Properties.EntityType} = '{name}'");
+        return string.Join(" or ", conditions);
     }
 }

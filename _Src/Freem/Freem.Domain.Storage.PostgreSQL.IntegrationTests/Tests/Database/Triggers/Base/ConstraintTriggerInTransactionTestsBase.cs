@@ -10,13 +10,14 @@ namespace Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Database.Trigge
 [Collection("Sequential")]
 public abstract class ConstraintTriggerInTransactionTestsBase : IDisposable
 {
+    private readonly DatabaseContextHandle _handle;
     private readonly IDbContextTransaction _transaction;
 
-    internal DatabaseContext Context { get; }
+    internal DatabaseContext Context => _handle.Context;
 
     protected ConstraintTriggerInTransactionTestsBase(ITestOutputHelper output)
     {
-        Context = DatabaseContextFactory.Create(output.WriteLine);
+        _handle = DatabaseContextFactory.Create(output.WriteLine);
         Context.TruncateTables();
         
         _transaction = Context.Database.BeginTransaction();
@@ -28,7 +29,7 @@ public abstract class ConstraintTriggerInTransactionTestsBase : IDisposable
         _transaction.Dispose();
 
         Context.TruncateTables();
-        Context.Dispose();
+        _handle.Dispose();
         
         GC.SuppressFinalize(this);
     }

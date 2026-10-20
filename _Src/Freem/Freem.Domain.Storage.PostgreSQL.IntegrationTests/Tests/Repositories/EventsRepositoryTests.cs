@@ -1,29 +1,23 @@
-﻿using Freem.Domain.Activities;
-using Freem.Domain.Activities.Events.Arhived;
-using Freem.Domain.Activities.Events.Created;
-using Freem.Domain.Activities.Events.Removed;
-using Freem.Domain.Activities.Events.Unarchived;
-using Freem.Domain.Activities.Events.Updated;
+using Freem.Domain.Activities;
+using Freem.Domain.Activities.Events;
+using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
 using Freem.Domain.Records;
-using Freem.Domain.Records.Events.Created;
-using Freem.Domain.Records.Events.Removed;
-using Freem.Domain.Records.Events.Updated;
+using Freem.Domain.Records.Events;
+using Freem.Domain.Records.Models;
 using Freem.Domain.RunningRecords;
-using Freem.Domain.RunningRecords.Events.Removed;
-using Freem.Domain.RunningRecords.Events.Started;
-using Freem.Domain.RunningRecords.Events.Stopped;
-using Freem.Domain.RunningRecords.Events.Updated;
+using Freem.Domain.RunningRecords.Events;
 using Freem.Domain.Storage.Repositories.Events;
-using Freem.Domain.Tags;
-using Freem.Domain.Tags.Events.Created;
-using Freem.Domain.Tags.Events.Removed;
-using Freem.Domain.Tags.Events.Updated;
-using Freem.Domain.Users;
-using Freem.Domain.Users.Events.Registered;
-using Freem.Domain.Users.Events.SettingsChanged;
+using Freem.Domain.Storage.Serialization;
+using Freem.Domain.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Utilities.Collections;
+using Freem.Domain.Tags;
+using Freem.Domain.Tags.Events;
+using Freem.Domain.Tags.Models;
+using Freem.Domain.Users;
+using Freem.Domain.Users.Events;
+using Freem.Domain.Users.Models;
+using Freem.Time.Models;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,314 +25,229 @@ namespace Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Repositories;
 
 public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository>
 {
-    public EventsRepositoryTests(
-        ITestOutputHelper output) 
+    private static readonly DateTimeOffset OccurredAt = new(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+
+    public EventsRepositoryTests(ITestOutputHelper output)
         : base(output)
     {
     }
 
-    public delegate IEntityEvent<ActivityId, UserId> ActivityEventGenerator(
-        EventId id,
-        ActivityId activityId, 
-        UserId userId);
+    public delegate EntityEvent EventGenerator(EventId id, string entityId, IReadOnlyList<ActivityId> activityIds, IReadOnlyList<TagId> tagIds);
 
-    public delegate IEntityEvent<RecordId, UserId> RecordEventGenerator(
-        EventId id,
-        RecordId recordId,
-        UserId userId);
-
-    public delegate IEntityEvent<RunningRecordId, UserId> RunningRecordEventGenerator(
-        EventId id,
-        RunningRecordId runningRecordId);
-
-    public delegate IEntityEvent<TagId, UserId> TagEventGenerator(
-        EventId id,
-        TagId tagId,
-        UserId userId);
-    
-    public delegate IEntityEvent<UserId, UserId> UserEventGenerator(
-        EventId id,
-        UserId userId);
-    
-    public static TheoryData<ActivityEventGenerator> ValidActivityEntitiesCases =>
-        new()
+    public static TheoryData<EntityType, EventGenerator> ValidEventsCases
+    {
+        get
         {
-            (id, entityId, userId) => new ActivityCreatedEvent(id, entityId, userId),
-            (id, entityId, userId) => new ActivityUpdatedEvent(id, entityId, userId),
-            (id, entityId, userId) => new ActivityRemovedEvent(id, entityId, userId),
-            (id, entityId, userId) => new ActivityArchivedEvent(id, entityId, userId),
-            (id, entityId, userId) => new ActivityUnarchivedEvent(id, entityId, userId),
-        };
+            var activityName = ActivityName.Parse("activity", null);
+            var recordName = RecordName.Parse("record", null);
+            var tagName = TagName.Parse("tag", null);
+            var nickname = Nickname.Parse("nickname", null);
+            var offset = new DayUtcOffset(TimeSpan.FromHours(3));
+            var period = new DateTimePeriod(OccurredAt, TimeSpan.FromHours(1));
+
+            return new TheoryData<EntityType, EventGenerator>
+            {
+                { EntityType.Activity, (id, e, _, tags) => new ActivityCreatedEvent(id) { ActivityId = ActivityId.Parse(e, null), Name = activityName, Status = ActivityStatus.Active, TagIds = tags } },
+                { EntityType.Activity, (id, e, _, tags) => new ActivityUpdatedEvent(id) { ActivityId = ActivityId.Parse(e, null), Name = activityName, Status = ActivityStatus.Active, TagIds = tags } },
+                { EntityType.Activity, (id, e, _, _) => new ActivityRemovedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
+                { EntityType.Activity, (id, e, _, _) => new ActivityArchivedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
+                { EntityType.Activity, (id, e, _, _) => new ActivityUnarchivedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
+                { EntityType.Record, (id, e, activities, tags) => new RecordCreatedEvent(id) { RecordId = RecordId.Parse(e, null), Name = recordName, Period = period, ActivityIds = activities, TagIds = tags } },
+                { EntityType.Record, (id, e, activities, tags) => new RecordUpdatedEvent(id) { RecordId = RecordId.Parse(e, null), Period = period, ActivityIds = activities, TagIds = tags } },
+                { EntityType.Record, (id, e, _, _) => new RecordRemovedEvent(id) { RecordId = RecordId.Parse(e, null) } },
+                { EntityType.RunningRecord, (id, e, activities, tags) => new RunningRecordStartedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null), StartAt = OccurredAt, ActivityIds = activities, TagIds = tags } },
+                { EntityType.RunningRecord, (id, e, activities, tags) => new RunningRecordUpdatedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null), StartAt = OccurredAt, ActivityIds = activities, TagIds = tags } },
+                { EntityType.RunningRecord, (id, e, _, _) => new RunningRecordStoppedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null) } },
+                { EntityType.RunningRecord, (id, e, _, _) => new RunningRecordRemovedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null) } },
+                { EntityType.Tag, (id, e, _, _) => new TagCreatedEvent(id) { TagId = TagId.Parse(e, null), Name = tagName } },
+                { EntityType.Tag, (id, e, _, _) => new TagUpdatedEvent(id) { TagId = TagId.Parse(e, null), Name = tagName } },
+                { EntityType.Tag, (id, e, _, _) => new TagRemovedEvent(id) { TagId = TagId.Parse(e, null) } },
+                { EntityType.User, (id, e, _, _) => new UserRegisteredEvent(id) { UserId = UserId.Parse(e, null), Nickname = nickname } },
+                { EntityType.User, (id, e, _, _) => new UserSettingsChangedEvent(id) { UserId = UserId.Parse(e, null), DayUtcOffset = offset } },
+            };
+        }
+    }
 
     [Theory]
-    [MemberData(nameof(ValidActivityEntitiesCases))]
-    public async Task CreateAsync_ShouldSuccess_WhenPassActivityEvent(ActivityEventGenerator factory)
+    [MemberData(nameof(ValidEventsCases))]
+    public async Task CreateAsync_ShouldSuccess_WhenPassEvent(EntityType entityType, EventGenerator factory)
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
         var dbActivity = EntitiesFactory.CreateActivity();
-
-        await Database.AddRangeAsync(dbUser, dbActivity);
-        await Database.SaveChangesAsync();
-
-        var id = EventId.Generate();
-        var userId = UserId.Parse(dbUser.Id, null);
-        var entityId = ActivityId.Parse(dbActivity.Id, null);
-        
-        var @event = factory(id, entityId, userId);
-        var eventType = @event.GetType();
-        
-        // Act
-        var writeResult = await Repository.CreateAsync(@event);
-
-        var result = await Repository.FindByIdAsync(id);
-        
-        // Assert
-        Assert.True(writeResult.Success);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Value);
-        
-        Assert.Equal(eventType, result.Value.GetType());
-        Assert.Equal(id, result.Value.Id);
-        Assert.Equal(entityId, result.Value.EntityId);
-        Assert.Equal(userId, result.Value.UserEntityId);
-    }
-
-    public static TheoryData<RecordEventGenerator> ValidRecordEntitiesCases =>
-        new()
-        {
-            (id, entityId, userId) => new RecordCreatedEvent(id, entityId, userId),
-            (id, entityId, userId) => new RecordUpdatedEvent(id, entityId, userId),
-            (id, entityId, userId) => new RecordRemovedEvent(id, entityId, userId),
-        };
-    
-    [Theory]
-    [MemberData(nameof(ValidRecordEntitiesCases))]
-    public async Task CreateAsync_ShouldSuccess_WhenPassRecordEvent(RecordEventGenerator factory)
-    {
-        // Arrange
-        var dbUser = EntitiesFactory.User;
-        var dbActivities = EntitiesFactory.CreateActivities(2);
-        var dbRecord = EntitiesFactory.CreateRecord();
-        
-        dbRecord.Activities = dbActivities.ToList();
-        
-        await Database.AddRangeAsync(dbUser, dbRecord);
-        await Database.Activities.AddRangeAsync(dbActivities);
-        await Database.SaveChangesAsync();
-        
-        var id = EventId.Generate();
-        var userId = UserId.Parse(dbUser.Id, null);
-        var entityId = RecordId.Parse(dbRecord.Id, null);
-        
-        var @event = factory(id, entityId, userId);
-        var eventType = @event.GetType();
-        
-        // Act
-        var writeResult = await Repository.CreateAsync(@event);
-        
-        var result = await Repository.FindByIdAsync(id);
-        
-        // Assert
-        Assert.True(writeResult.Success);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Value);
-        
-        Assert.Equal(eventType, result.Value.GetType());
-        Assert.Equal(id, result.Value.Id);
-        Assert.Equal(entityId, result.Value.EntityId);
-        Assert.Equal(userId, result.Value.UserEntityId);
-    }
-
-    public static TheoryData<RunningRecordEventGenerator> ValidRunningRecordEventsCases =>
-        new()
-        {
-            (id, recordId) => new RunningRecordStartedEvent(id, recordId),
-            (id, recordId) => new RunningRecordStoppedEvent(id, recordId),
-            (id, recordId) => new RunningRecordUpdatedEvent(id, recordId),
-            (id, recordId) => new RunningRecordRemovedEvent(id, recordId),
-        };
-
-    [Theory]
-    [MemberData(nameof(ValidRunningRecordEventsCases))]
-    public async Task CreateAsync_ShouldSuccess_WhenPassRunningRecordEvent(RunningRecordEventGenerator factory)
-    {
-        // Arrange
-        var dbUser = EntitiesFactory.User;
-        var dbActivities = EntitiesFactory.CreateActivities(2);
-        var dbRecord = EntitiesFactory.CreateRunningRecord();
-        
-        dbRecord.Activities = dbActivities.ToList();
-        
-        await Database.AddRangeAsync(dbUser, dbRecord);
-        await Database.Activities.AddRangeAsync(dbActivities);
-        await Database.SaveChangesAsync();
-        
-        var id = EventId.Generate();
-        var entityId = RunningRecordId.Parse(dbRecord.UserId, null);
-
-        var @event = factory(id, entityId);
-        var eventType = @event.GetType();
-        
-        // Act
-        var writeResult = await Repository.CreateAsync(@event);
-        
-        var result = await Repository.FindByIdAsync(id);
-        
-        // Assert
-        Assert.True(writeResult.Success);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Value);
-        
-        Assert.Equal(eventType, result.Value.GetType());
-        Assert.Equal(id, result.Value.Id);
-        var expectedUserId = entityId.ToUserId();
-        Assert.Equal(entityId, result.Value.EntityId);
-        Assert.Equal(expectedUserId, result.Value.UserEntityId);
-    }
-
-    public static TheoryData<TagEventGenerator> ValidTagEventsCase =>
-        new()
-        {
-            (id, tagId, userId) => new TagCreatedEvent(id, tagId, userId),
-            (id, tagId, userId) => new TagUpdatedEvent(id, tagId, userId),
-            (id, tagId, userId) => new TagRemovedEvent(id, tagId, userId),
-        };
-
-    [Theory]
-    [MemberData(nameof(ValidTagEventsCase))]
-    public async Task CreateAsync_ShouldSuccess_WhenPassTagEvent(TagEventGenerator factory)
-    {
-        // Arrange
-        var dbUser = EntitiesFactory.User;
         var dbTag = EntitiesFactory.CreateTag();
-        
-        await Database.AddRangeAsync(dbUser, dbTag);
-        await Database.SaveChangesAsync();
-        
-        var id = EventId.Generate();
-        var entityId = TagId.Parse(dbTag.Id, null);
-        var userId = UserId.Parse(dbUser.Id, null);
-        
-        var @event = factory(id, entityId, userId);
-        var eventType = @event.GetType();
-        
-        // Act
-        var writeResult = await Repository.CreateAsync(@event);
-        
-        var result = await Repository.FindByIdAsync(id);
-        
-        // Assert
-        Assert.True(writeResult.Success);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Value);
-        
-        Assert.Equal(eventType, result.Value.GetType());
-        Assert.Equal(id, result.Value.Id);
-        Assert.Equal(entityId, result.Value.EntityId);
-        Assert.Equal(userId, result.Value.UserEntityId);
-    }
+        var dbRecord = EntitiesFactory.CreateRecord();
+        var dbRunningRecord = EntitiesFactory.CreateRunningRecord();
 
-    public static TheoryData<UserEventGenerator> ValidUserEventsCase =>
-        new()
+        dbRecord.Activities = [dbActivity];
+        dbRunningRecord.Activities = [dbActivity];
+
+        await Database.AddRangeAsync(dbUser, dbActivity, dbTag);
+        await Database.AddRangeAsync(dbRecord, dbRunningRecord);
+        await Database.SaveChangesAsync();
+
+        var entityId = entityType switch
         {
-            (id, userId) => new UserRegisteredEvent(id, userId),
-            (id, userId) => new UserSettingsChanged(id, userId),
+            EntityType.Activity => dbActivity.Id,
+            EntityType.Record => dbRecord.Id,
+            EntityType.RunningRecord => dbRunningRecord.UserId,
+            EntityType.Tag => dbTag.Id,
+            EntityType.User => dbUser.Id,
+            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
         };
 
-    [Theory]
-    [MemberData(nameof(ValidUserEventsCase))]
-    public async Task CreateAsync_ShouldSuccess_WhenPassUserEvent(UserEventGenerator factory)
-    {
-        // Arrange
-        var dbUser = EntitiesFactory.User;
-        
-        await Database.Users.AddAsync(dbUser);
-        await Database.SaveChangesAsync();
-        
-        var id = EventId.Generate();
         var userId = UserId.Parse(dbUser.Id, null);
-        
-        var @event = factory(id, userId);
-        var eventType = @event.GetType();
-        
-        // Act
-        var writeResult = await Repository.CreateAsync(@event);
+        var activityIds = new[] { ActivityId.Parse(dbActivity.Id, null) };
+        var tagIds = new[] { TagId.Parse(dbTag.Id, null) };
 
+        var id = EventId.Generate();
+        var @event = factory(id, entityId, activityIds, tagIds);
+        var envelope = new EventEnvelope(userId, OccurredAt, @event);
+
+        // Act
+        var writeResult = await Repository.CreateAsync(envelope);
         var result = await Repository.FindByIdAsync(id);
-        
+
         // Assert
         Assert.True(writeResult.Success);
         Assert.True(result.Success);
-        Assert.NotNull(result.Value);
-        
-        Assert.Equal(eventType, result.Value.GetType());
-        Assert.Equal(id, result.Value.Id);
-        Assert.Equal(userId, result.Value.EntityId);
-        Assert.Equal(userId, result.Value.UserEntityId);
+
+        var stored = result.Value;
+        Assert.Equal(id, stored.Id);
+        Assert.Equal(@event.Type, stored.Type);
+        Assert.Equal(userId, stored.UserId);
+        Assert.Equal(OccurredAt, stored.OccurredAt);
+        Assert.Equal(@event.EntityRef, stored.EntityRef);
+
+        var deserialized = EventPayloadSerializer.Deserialize(stored);
+        Assert.True(deserialized.Success);
+        Assert.Equal(@event.GetType(), deserialized.Value.Event.GetType());
+
+        var expectedPayload = EventPayloadSerializer.Serialize(@event).ToReadOnlyDictionary();
+        Assert.Equal(expectedPayload, stored.Payload.ToReadOnlyDictionary());
     }
 
     [Fact]
-    public void Events_ShouldAllProcessed()
+    public async Task FindByIdAsync_ShouldReturnNotFound_WhenEventNotExists()
+    {
+        var id = EventId.Generate();
+
+        var result = await Repository.FindByIdAsync(id);
+
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldReturnUserEventsSortedByOccurredAtDescending()
     {
         // Arrange
-        var types = new List<Type>();
-        
-        var id = EventId.Generate();
-        var userId = GenerateUserId();
+        var firstFactory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+        var secondFactory = DatabaseEntitiesFactory.CreateSecondUserEntitiesFactory();
+        var firstTag = firstFactory.CreateTag();
+        var secondTag = secondFactory.CreateTag();
 
-        var activityId = ActivityId.Generate();
-        foreach (var @case in ValidActivityEntitiesCases)
-        {
-            var generator = @case;
-            var @event = generator(id, activityId, userId);
-            
-            types.Add(@event.GetType());
-        }
-        
-        var recordId = RecordId.Generate();
-        foreach (var @case in ValidRecordEntitiesCases)
-        {
-            var generator = @case;
-            var @event = generator(id, recordId, userId);
-            
-            types.Add(@event.GetType());
-        }
+        await Database.AddRangeAsync(firstFactory.User, secondFactory.User, firstTag, secondTag);
+        await Database.SaveChangesAsync();
 
-        var runningRecordId = RunningRecordId.FromUserId(userId);
-        foreach (var @case in ValidRunningRecordEventsCases)
-        {
-            var generator = @case;
-            var @event = generator(id, runningRecordId);
-            
-            types.Add(@event.GetType());
-        }
-        
-        var tagId = TagId.Generate();
-        foreach (var @case in ValidTagEventsCase)
-        {
-            var generator = @case;
-            var @event = generator(id, tagId, userId);
-            
-            types.Add(@event.GetType());
-        }
+        var firstUserId = UserId.Parse(firstFactory.User.Id, null);
+        var secondUserId = UserId.Parse(secondFactory.User.Id, null);
 
-        foreach (var @case in ValidUserEventsCase)
-        {
-            var generator = @case;
-            var @event = generator(id, userId);
-            
-            types.Add(@event.GetType());
-        }
+        var older = await CreateTagEventAsync(firstUserId, firstTag.Id, OccurredAt);
+        var newer = await CreateTagEventAsync(firstUserId, firstTag.Id, OccurredAt.AddHours(1));
+        await CreateTagEventAsync(secondUserId, secondTag.Id, OccurredAt.AddHours(2));
 
-        var assembly = typeof(IEntityEvent<,>).Assembly;
-        var eventTypes = assembly.ExportedTypes.Where(type => 
-            !type.IsAbstract && type.GetInterface("IEntityEvent`2") is not null);
+        var filter = new EventByUserFilter(firstUserId) { Limit = 100, Offset = 0 };
 
         // Act
-        var result = types.UnorderedEquals(eventTypes, EqualityComparer<Type>.Default);
-        
+        var result = await Repository.FindAsync(filter);
+
         // Assert
-        Assert.True(result);
+        Assert.True(result.Success);
+        var events = await result.Value.ToArrayAsync();
+        Assert.Equal(2, result.Value.Count);
+        Assert.Equal([newer, older], events.Select(e => e.Id));
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldFilterByEntityTypeEntityRefAndPeriod()
+    {
+        // Arrange
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+        var firstTag = factory.CreateTag();
+        var secondTag = factory.CreateTag();
+
+        await Database.AddRangeAsync(factory.User, firstTag, secondTag);
+        await Database.SaveChangesAsync();
+
+        var userId = UserId.Parse(factory.User.Id, null);
+
+        var first = await CreateTagEventAsync(userId, firstTag.Id, OccurredAt);
+        await CreateTagEventAsync(userId, secondTag.Id, OccurredAt.AddHours(1));
+        var last = await CreateTagEventAsync(userId, firstTag.Id, OccurredAt.AddHours(2));
+
+        // Act
+        var byEntityType = await Repository.FindAsync(new EventByUserFilter(userId)
+        {
+            Limit = 100, Offset = 0, EntityType = EntityType.Activity
+        });
+        var byEntityRef = await Repository.FindAsync(new EventByUserFilter(userId)
+        {
+            Limit = 100, Offset = 0, EntityType = EntityType.Tag, EntityRef = firstTag.Id
+        });
+        var byPeriod = await Repository.FindAsync(new EventByUserFilter(userId)
+        {
+            Limit = 100, Offset = 0, From = OccurredAt.AddMinutes(30), To = OccurredAt.AddHours(2)
+        });
+
+        // Assert
+        Assert.Equal(0, byEntityType.Value.Count);
+
+        var byEntityRefEvents = await byEntityRef.Value.ToArrayAsync();
+        Assert.Equal([last, first], byEntityRefEvents.Select(e => e.Id));
+
+        Assert.Equal(2, byPeriod.Value.Count);
+    }
+
+    [Fact]
+    public async Task FindAsync_ShouldApplyLimitAndOffset_AndReturnTotalCount()
+    {
+        // Arrange
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+        var tag = factory.CreateTag();
+
+        await Database.AddRangeAsync(factory.User, tag);
+        await Database.SaveChangesAsync();
+
+        var userId = UserId.Parse(factory.User.Id, null);
+
+        await CreateTagEventAsync(userId, tag.Id, OccurredAt);
+        var middle = await CreateTagEventAsync(userId, tag.Id, OccurredAt.AddHours(1));
+        await CreateTagEventAsync(userId, tag.Id, OccurredAt.AddHours(2));
+
+        // Act
+        var result = await Repository.FindAsync(new EventByUserFilter(userId) { Limit = 1, Offset = 1 });
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Equal(3, result.Value.Count);
+        var events = await result.Value.ToArrayAsync();
+        Assert.Equal([middle], events.Select(e => e.Id));
+    }
+
+    private async Task<EventId> CreateTagEventAsync(UserId userId, string tagId, DateTimeOffset occurredAt)
+    {
+        var id = EventId.Generate();
+        var @event = new TagUpdatedEvent(id)
+        {
+            TagId = TagId.Parse(tagId, null),
+            Name = TagName.Parse("tag", null)
+        };
+
+        var envelope = new EventEnvelope(userId, occurredAt, @event);
+        var result = await Repository.CreateAsync(envelope);
+        Assert.True(result.Success);
+
+        return id;
     }
 }

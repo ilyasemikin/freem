@@ -1,8 +1,6 @@
 ﻿using Freem.Domain.Events;
 using Freem.Domain.Records;
-using Freem.Domain.Records.Events.Created;
-using Freem.Domain.Records.Events.Removed;
-using Freem.Domain.Records.Events.Updated;
+using Freem.Domain.Records.Events;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users;
@@ -45,16 +43,39 @@ public sealed class Record :
 
     public RecordCreatedEvent BuildCreatedEvent(EventId eventId)
     {
-        return new RecordCreatedEvent(eventId, Id, UserId);
+        var activityIds = Activities.Ids.ToArray();
+        var tagIds = Tags.Ids.ToArray();
+        return new RecordCreatedEvent(eventId)
+        {
+            RecordId = Id,
+            Name = Name,
+            Description = Description,
+            Period = Period,
+            ActivityIds = activityIds,
+            TagIds = tagIds
+        };
     }
 
     public RecordUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
-        return new RecordUpdatedEvent(eventId, Id, UserId);
+        var activityIds = Activities.Ids.ToArray();
+        var tagIds = Tags.Ids.ToArray();
+        return new RecordUpdatedEvent(eventId)
+        {
+            RecordId = Id,
+            Name = Name,
+            Description = Description,
+            Period = Period,
+            ActivityIds = activityIds,
+            TagIds = tagIds
+        };
     }
 
     public RecordRemovedEvent BuildRemovedEvent(EventId eventId)
     {
-        return new RecordRemovedEvent(eventId, Id, UserId);
+        return new RecordRemovedEvent(eventId)
+        {
+            RecordId = Id
+        };
     }
 }

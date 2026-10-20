@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Freem.Domain;
-using Freem.Domain.Events;
-using Freem.Domain.Users;
+using EventId = Freem.Domain.Events.EventId;
 using Freem.Api.Public.Constants;
 using Freem.Api.Public.Contracts;
 using Freem.Api.Public.Contracts.DTO;
@@ -26,7 +24,7 @@ public sealed class EventsController : BaseController
 
     [HttpGet]
     [EndpointSummary("List events")]
-    [ProducesResponseType<IReadOnlyList<IEntityEvent<Id, UserId>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IReadOnlyList<EventResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
@@ -38,5 +36,20 @@ public sealed class EventsController : BaseController
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiListEventRequest(query);
         return await Mediator.ExecuteAsync<ApiListEventRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    [HttpGet("{eventId:required}")]
+    [EndpointSummary("Get event by id")]
+    [ProducesResponseType<EventResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
+        [Required] [FromRoute] EventId eventId,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiGetEventRequest(eventId);
+        return await Mediator.ExecuteAsync<ApiGetEventRequest, IActionResult>(context, request, cancellationToken);
     }
 }

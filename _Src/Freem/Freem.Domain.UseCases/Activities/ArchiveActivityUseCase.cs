@@ -3,7 +3,7 @@ using Freem.Domain.Activities.Models;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Activities.Archive;
 using Freem.Locking;
@@ -69,7 +69,7 @@ internal class ArchiveActivityUseCase :
             if (!result.Success)
                 return result;
 
-            return await _eventProducer.PublishAsync(activity.BuildArchivedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(activity.UserId, activity.BuildArchivedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

@@ -35,6 +35,23 @@ internal static class QueryableExtensions
         return new AsyncBatch<TEntity>(entities, totalCount);
     }
 
+    public static async Task<AsyncBatch<TEntity>> CountAndMapAsync<TDatabaseEntity, TEntity, TFilter>(
+        this IQueryable<TDatabaseEntity> queryable,
+        TFilter filter,
+        Func<TDatabaseEntity, TEntity> mapper,
+        CancellationToken cancellationToken = default)
+        where TFilter : ILimitFilter, IOffsetFilter
+    {
+        var totalCount = await queryable.CountAsync(cancellationToken);
+
+        var enumerable = queryable
+            .SliceByLimitAndOffsetFilter(filter)
+            .AsAsyncEnumerable();
+        var entities = MapAsync(enumerable, mapper);
+
+        return new AsyncBatch<TEntity>(entities, totalCount);
+    }
+
     private static async IAsyncEnumerable<TEntity> MapAsync<TDatabaseEntity, TEntity>(
         IAsyncEnumerable<TDatabaseEntity> enumerable,
         Func<TDatabaseEntity, TEntity> mapper)

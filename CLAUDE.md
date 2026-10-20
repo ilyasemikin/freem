@@ -76,7 +76,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 
 ## Repository Layout
 
-All code lives in `_Src/Freem/` (solution `Freem.sln`, ~29 projects, `net10.0`, nullable enabled). Frontend is
+All code lives in `_Src/Freem/` (solution `Freem.sln`, ~28 projects, `net10.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
 Layers (names follow StashIt, without the `Core` segment):
@@ -89,7 +89,6 @@ Freem.Domain.Entities                      # aggregates and comparers; aggregate
 Freem.Domain.UseCases(.Contracts)          # use cases (Utilities.UseCases handlers, Result<…, Error>) and their DTOs
 Freem.Domain.Storage                       # one repository interface per aggregate + its filters
 Freem.Domain.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
-Freem.Domain.Events.Producer               # event production (NullEventPublisher)
 Freem.Locking(.Redis)                      # locking abstractions + Redis implementation
 Freem.Storage.Transactions(.EFCore)        # storage transactions + EF Core implementation
 Freem.*                                    # small shared libraries (Time, Sorting, ...)

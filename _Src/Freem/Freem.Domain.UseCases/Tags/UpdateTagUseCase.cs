@@ -2,7 +2,7 @@
 using Freem.Domain.Entities.Tags;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Tags.Update;
 using Freem.Locking;
@@ -69,7 +69,7 @@ internal sealed class UpdateTagUseCase
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(tag.BuildUpdatedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(tag.UserId, tag.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

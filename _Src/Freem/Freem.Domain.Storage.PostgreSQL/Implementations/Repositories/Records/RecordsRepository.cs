@@ -137,9 +137,8 @@ internal sealed class RecordsRepository : IRecordRepository
             .OrderBy(e => e.StartAt)
             .ThenBy(e => e.EndAt)
             .ThenBy(e => e.Id)
-            .SliceByLimitAndOffsetFilter(filter)
             .AsNoTracking()
-            .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<Result<AsyncBatch<Record>, Error>> FindAsync(
@@ -159,9 +158,8 @@ internal sealed class RecordsRepository : IRecordRepository
                 .OrderBy(e => e.StartAt)
                 .ThenBy(e => e.EndAt)
                 .ThenBy(e => e.Id)
-                .SliceByLimitFilter(filter)
                 .AsNoTracking()
-                .CountAndMapAsync(RecordMapper.MapToDomainEntity, cancellationToken);
+                .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
         }
 
         if (filter.AfterRecordId is null)

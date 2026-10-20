@@ -1,7 +1,7 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Storage.Transactions.Helpers;
@@ -59,7 +59,7 @@ internal sealed class CreateRecordUseCase
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(record.BuildCreatedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(record.UserId, record.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

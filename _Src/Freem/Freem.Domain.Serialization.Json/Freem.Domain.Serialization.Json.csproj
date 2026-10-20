@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Utilities.Naming" Version="0.1.0" />
       <PackageReference Include="Utilities.Serialization.Json" Version="0.0.1" />
     </ItemGroup>
 

@@ -1,7 +1,5 @@
-﻿using System.Text.Json;
-using Freem.Domain;
+using System.Text.Json;
 using Freem.Domain.Events;
-using Freem.Domain.Users;
 using Freem.Api.Public.Client.Implementations.Base;
 using Freem.Api.Public.Contracts.DTO.Events;
 using Utilities.Http;
@@ -17,22 +15,45 @@ public sealed class EventsClient : BaseClient
     {
     }
 
-    public Task<Result<IReadOnlyList<IEntityEvent<Id, UserId>>, IClientError>> ListAsync(
+    public Task<Result<EventResponse, IClientError>> GetAsync(
+        EventId id,
+        CancellationToken cancellationToken = default)
+    {
+        var request = HttpRequest.Get($"api/v1/events/{id}");
+
+        return SendForUserAsync<EventResponse>(request, cancellationToken);
+    }
+
+    public Task<Result<IReadOnlyList<EventResponse>, IClientError>> ListAsync(
         ListEventRequest query, 
         CancellationToken cancellationToken = default)
     {
-        var limit = query.Limit.ToString();
         var request = HttpRequest.Get("api/v1/events")
-            .WithQueryParameter(nameof(query.Limit), limit);
+            .WithQueryParameter(nameof(query.Offset), query.Offset.ToString())
+            .WithQueryParameter(nameof(query.Limit), query.Limit.ToString());
 
-        if (query.After is not null)
+        if (query.EntityType is not null)
         {
-            var after = query.After.Value.ToString("O");
-            request = request.WithQueryParameter(nameof(query.After), after);
+            var name = query.EntityType.Value.ToString();
+            var entityType = JsonNamingPolicy.SnakeCaseLower.ConvertName(name);
+            request = request.WithQueryParameter(nameof(query.EntityType), entityType);
         }
 
-        return SendForUserAsync<IReadOnlyList<IEntityEvent<Id, UserId>>>(
-            request, 
-            cancellationToken);
+        if (query.EntityRef is not null)
+            request = request.WithQueryParameter(nameof(query.EntityRef), query.EntityRef);
+
+        if (query.From is not null)
+        {
+            var from = query.From.Value.ToString("O");
+            request = request.WithQueryParameter(nameof(query.From), from);
+        }
+
+        if (query.To is not null)
+        {
+            var to = query.To.Value.ToString("O");
+            request = request.WithQueryParameter(nameof(query.To), to);
+        }
+
+        return SendForUserAsync<IReadOnlyList<EventResponse>>(request, cancellationToken);
     }
 }

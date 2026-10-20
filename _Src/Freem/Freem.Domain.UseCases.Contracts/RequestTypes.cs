@@ -18,6 +18,7 @@ public static class RequestTypes
 
     public static class Events
     {
+        public static readonly RequestType Get = RequestType.Parse("events.get", null);
         public static readonly RequestType List = RequestType.Parse("events.list", null);
     }
 

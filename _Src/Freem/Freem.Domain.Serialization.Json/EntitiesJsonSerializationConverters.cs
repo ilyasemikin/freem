@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
-using Freem.Domain.Events.Models;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.RunningRecords;
@@ -54,8 +53,9 @@ public static class EntitiesJsonSerialization
         yield return new ParsableJsonConverter<ActivityStatus>();
 
         yield return new ParsableJsonConverter<EventId>();
-        yield return new ParsableJsonConverter<EventAction>();
-        yield return new EventJsonConverter();
+        yield return new ParsableJsonConverter<EventType>();
+        yield return new JsonStringEnumConverter<EntityType>(JsonNamingPolicy.SnakeCaseLower);
+        yield return new EventPayloadJsonConverter();
 
         yield return new ParsableJsonConverter<RecordId>();
         yield return new ParsableJsonConverter<RecordDescription>();

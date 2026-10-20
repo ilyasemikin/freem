@@ -1,4 +1,5 @@
-﻿using Freem.Domain.UseCases.Contracts.Filter;
+using Freem.Domain.Events;
+using Freem.Domain.UseCases.Contracts.Filter;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -9,16 +10,22 @@ public sealed class ListEventRequest : IRequest
     public RequestType Type => RequestTypes.Events.List;
 
     public Limit Limit { get; }
-    
-    public DateTimeOffset? After { get; init; }
+    public Offset Offset { get; }
+
+    public EntityType? EntityType { get; init; }
+    public string? EntityRef { get; init; }
+
+    public DateTimeOffset? From { get; init; }
+    public DateTimeOffset? To { get; init; }
 
     public ListEventRequest()
-        : this(Limit.DefaultValue)
+        : this(Limit.DefaultValue, Offset.DefaultValue)
     {
     }
-    
-    public ListEventRequest(Limit limit)
+
+    public ListEventRequest(Limit limit, Offset offset)
     {
         Limit = limit;
+        Offset = offset;
     }
 }

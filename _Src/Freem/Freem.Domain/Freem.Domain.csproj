@@ -14,6 +14,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
         <PackageReference Include="Utilities.Errors" Version="0.0.1" />
+        <PackageReference Include="Utilities.Naming" Version="0.1.0" />
     </ItemGroup>
 
 </Project>

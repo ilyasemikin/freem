@@ -8,7 +8,6 @@ using EgoHub.Authentication.AspNetCore;
 using EgoHub.Authentication.AspNetCore.DependencyInjection;
 using EgoHub.Domain.Services;
 using Freem.Domain.DependencyInjection;
-using Freem.Domain.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Domain.Serialization.Json;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.DependencyInjection.Microsoft.Extensions;
@@ -78,8 +77,7 @@ builder.Services
 
 builder.Services
     .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration())
-    .AddSimpleRedisDistributedLocks(builder.Configuration.GetRedisLockingConfiguration())
-    .AddNullEventPublishing();
+    .AddSimpleRedisDistributedLocks(builder.Configuration.GetRedisLockingConfiguration());
 
 builder.Services
     .AddEntityIdNameConverters()

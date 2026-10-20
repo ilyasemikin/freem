@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Locking;
@@ -57,7 +57,7 @@ internal sealed class RemoveRunningRecordUseCase
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(eventId => record.BuildRemovedEvent(eventId), cancellationToken);
+            return await _eventProducer.PublishAsync(record.UserId, eventId => record.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
 }

@@ -9,6 +9,7 @@ public class EmbeddedResourcesTests
     [InlineData(RecreateDbTriggersMigration.EntitiesTriggersScriptFileName)]
     [InlineData(RecreateDbTriggersMigration.ExceptionFunctionsScriptFileName)]
     [InlineData(EventsDbConstraintMigration.EventsTriggersScriptFileName)]
+    [InlineData(RecreateEvents.EventsTriggersScriptFileName)]
     public void EmbeddedResources_ShouldContain(string name)
     {
         var assembly = Assembly.Load("Freem.Domain.Storage.PostgreSQL.Migrations");

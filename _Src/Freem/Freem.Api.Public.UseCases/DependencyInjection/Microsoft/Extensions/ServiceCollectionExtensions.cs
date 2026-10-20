@@ -1,4 +1,4 @@
-using Freem.Api.Public.UseCases.Context;
+﻿using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Activities;
 using Freem.Api.Public.UseCases.Contracts.Auth;
 using Freem.Api.Public.UseCases.Contracts.Events;
@@ -74,6 +74,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddEventsUseCases(this IServiceCollection services)
     {
+        services.AddHandler<ApiGetEventRequest, ApiGetEventRequestHandler>();
         services.AddHandler<ApiListEventRequest, ApiListEventRequestHandler>();
 
         return services;

@@ -9,8 +9,8 @@ public static class TriggerErrorParameters
     public const string TagId = "tag_id";
     public const string UserId = "user_id";
 
-    public const string EventEntityName = EntitiesNames.Events.Properties.EntityName;
-    public const string EventEntityId = EntitiesNames.Events.Properties.EntityId;
+    public const string EventEntityName = EntitiesNames.Events.Properties.EntityType;
+    public const string EventEntityId = EntitiesNames.Events.Properties.EntityRef;
     
     public const string ActualCount = "actual_count";
 }

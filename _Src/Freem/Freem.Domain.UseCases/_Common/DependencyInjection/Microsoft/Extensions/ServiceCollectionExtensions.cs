@@ -8,6 +8,7 @@ using Freem.Domain.UseCases.Contracts.Activities.List;
 using Freem.Domain.UseCases.Contracts.Activities.Remove;
 using Freem.Domain.UseCases.Contracts.Activities.Unarchive;
 using Freem.Domain.UseCases.Contracts.Activities.Update;
+using Freem.Domain.UseCases.Contracts.Events.Get;
 using Freem.Domain.UseCases.Contracts.Events.List;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
@@ -53,6 +54,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddEntitiesUseCases(this IServiceCollection services)
     {
         services.AddRequestMediator<HandlerContext>();
+        services.TryAddTransient<EventProducer>();
 
         services
             .AddActivitiesUseCases()
@@ -123,6 +125,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddEventsUseCases(this IServiceCollection services)
     {
+        services.AddHandler<GetEventRequest, Result<GetEventResponse, Error>, GetEventUseCase>();
         services.AddHandler<ListEventRequest, Result<ListEventResponse, Error>, ListEventUseCase>();
 
         return services;

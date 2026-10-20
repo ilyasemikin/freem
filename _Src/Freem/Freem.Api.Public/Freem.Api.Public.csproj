@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
-        <ProjectReference Include="..\Freem.Domain.Events.Producer\Freem.Domain.Events.Producer.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Serialization.Json\Freem.Domain.Serialization.Json.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage.PostgreSQL\Freem.Domain.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Domain.UseCases\Freem.Domain.UseCases.csproj"/>

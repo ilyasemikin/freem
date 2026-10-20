@@ -78,33 +78,30 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("Action")
+                    b.Property<string>("EntityRef")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("action");
+                        .HasColumnName("entity_ref");
 
-                    b.Property<string>("AdditionalData")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("additional_data");
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("entity_type");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("event_type");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
+                        .HasColumnName("occurred_at")
                         .HasColumnOrder(2);
 
-                    b.Property<string>("EntityId")
+                    b.Property<string>("Payload")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("entity_id");
-
-                    b.Property<string>("EntityName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("entity_name");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -115,9 +112,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.HasKey("Id")
                         .HasName("events_pk");
 
+                    b.HasIndex("UserId", "OccurredAt")
+                        .HasDatabaseName("events_user_id_occurred_at_idx");
+
+                    b.HasIndex("UserId", "EntityType", "EntityRef")
+                        .HasDatabaseName("events_user_id_entity_type_entity_ref_idx");
+
                     b.ToTable("events", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("events_entity_name_check", "entity_name = 'activity' and (action = 'created' or action = 'updated' or action = 'removed' or action = 'archived' or action = 'unarchived') or entity_name = 'record' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'running_record' and (action = 'started' or action = 'stopped' or action = 'updated' or action = 'removed') or entity_name = 'tag' and (action = 'created' or action = 'updated' or action = 'removed') or entity_name = 'user' and (action = 'registered' or action = 'settings_changed')");
+                            t.HasCheckConstraint("events_entity_type_check", "entity_type = 'activity' or entity_type = 'record' or entity_type = 'running_record' or entity_type = 'tag' or entity_type = 'user'");
                         });
                 });
 

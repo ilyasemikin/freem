@@ -147,18 +147,19 @@ internal static class EntitiesNames
         {
             public const string Id = "id";
             public const string UserId = "user_id";
-            public const string EntityName = "entity_name";
-            public const string EntityId = "entity_id";
-            public const string Action = "action";
-            public const string AdditionalData = "additional_data";
-            public const string CreatedAt = "created_at";
-            public const string UpdatedAt = "updated_at";
+            public const string EventType = "event_type";
+            public const string EntityType = "entity_type";
+            public const string EntityRef = "entity_ref";
+            public const string OccurredAt = "occurred_at";
+            public const string Payload = "payload";
         }
 
         public static class Constraints
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
-            public const string EntityNameCheck = $"{Table}_{Properties.EntityName}_{NamingConvention.CheckSuffix}";
+            public const string EntityTypeCheck = $"{Table}_{Properties.EntityType}_{NamingConvention.CheckSuffix}";
+            public const string UserIdOccurredAtIndex = $"{Table}_{Properties.UserId}_{Properties.OccurredAt}_{NamingConvention.IndexSuffix}";
+            public const string UserIdEntityIndex = $"{Table}_{Properties.UserId}_{Properties.EntityType}_{Properties.EntityRef}_{NamingConvention.IndexSuffix}";
         }
     }
 }

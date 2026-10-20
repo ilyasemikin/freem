@@ -9,18 +9,20 @@ namespace Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Database.Trigge
 [Collection("Sequential")]
 public abstract class ConstraintTriggerTestsBase : IDisposable
 {
-    internal DatabaseContext Context { get; }
+    private readonly DatabaseContextHandle _handle;
+
+    internal DatabaseContext Context => _handle.Context;
 
     protected ConstraintTriggerTestsBase(ITestOutputHelper output)
     {
-        Context = DatabaseContextFactory.Create(output.WriteLine);
+        _handle = DatabaseContextFactory.Create(output.WriteLine);
         Context.TruncateTables();
     }
 
     public void Dispose()
     {
         Context.TruncateTables();
-        Context.Dispose();
+        _handle.Dispose();
         
         GC.SuppressFinalize(this);
     }

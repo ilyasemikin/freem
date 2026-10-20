@@ -2,10 +2,7 @@
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.RunningRecords;
-using Freem.Domain.RunningRecords.Events.Removed;
-using Freem.Domain.RunningRecords.Events.Started;
-using Freem.Domain.RunningRecords.Events.Stopped;
-using Freem.Domain.RunningRecords.Events.Updated;
+using Freem.Domain.RunningRecords.Events;
 using Freem.Domain.Users;
 using Freem.Time;
 
@@ -43,21 +40,47 @@ public class RunningRecord :
 
     public RunningRecordStartedEvent BuildStartedEvent(EventId eventId)
     {
-        return new RunningRecordStartedEvent(eventId, Id);
+        var activityIds = Activities.Ids.ToArray();
+        var tagIds = Tags.Ids.ToArray();
+        return new RunningRecordStartedEvent(eventId)
+        {
+            RunningRecordId = Id,
+            Name = Name,
+            Description = Description,
+            StartAt = StartAt,
+            ActivityIds = activityIds,
+            TagIds = tagIds
+        };
     }
 
     public RunningRecordStoppedEvent BuildStoppedEvent(EventId eventId)
     {
-        return new RunningRecordStoppedEvent(eventId, Id);
+        return new RunningRecordStoppedEvent(eventId)
+        {
+            RunningRecordId = Id
+        };
     }
 
     public RunningRecordUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
-        return new RunningRecordUpdatedEvent(eventId, Id);
+        var activityIds = Activities.Ids.ToArray();
+        var tagIds = Tags.Ids.ToArray();
+        return new RunningRecordUpdatedEvent(eventId)
+        {
+            RunningRecordId = Id,
+            Name = Name,
+            Description = Description,
+            StartAt = StartAt,
+            ActivityIds = activityIds,
+            TagIds = tagIds
+        };
     }
 
     public RunningRecordRemovedEvent BuildRemovedEvent(EventId eventId)
     {
-        return new RunningRecordRemovedEvent(eventId, Id);
+        return new RunningRecordRemovedEvent(eventId)
+        {
+            RunningRecordId = Id
+        };
     }
 }

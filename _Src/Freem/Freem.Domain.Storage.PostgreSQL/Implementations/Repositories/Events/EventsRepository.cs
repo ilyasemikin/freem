@@ -1,11 +1,11 @@
-﻿using Freem.Domain;
+using Freem.Domain.Entities.Events;
 using Freem.Domain.Events;
-using Freem.Domain.Storage.Repositories.Events;
-using Freem.Domain.Users;
 using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
+using Freem.Domain.Storage.Repositories.Events;
+using Microsoft.EntityFrameworkCore;
 using Utilities.Errors;
 using Utilities.Primitives;
 
@@ -15,20 +15,20 @@ internal sealed class EventsRepository : IEventRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly EventEntityToDatabaseEntityConverter _dbConverter;
-    private readonly DatabaseEntityToEventEntityConverter _entityConverter;
+    private readonly EventEnvelopeToDatabaseEntityConverter _dbConverter;
+    private readonly DatabaseEntityToEventConverter _entityConverter;
 
     public EventsRepository(
-        DatabaseContext database, 
+        DatabaseContext database,
         DatabaseContextWriteExceptionHandler exceptionHandler,
-        EventEntityToDatabaseEntityConverter dbConverter, 
-        DatabaseEntityToEventEntityConverter entityConverter)
+        EventEnvelopeToDatabaseEntityConverter dbConverter,
+        DatabaseEntityToEventConverter entityConverter)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
         ArgumentNullException.ThrowIfNull(dbConverter);
         ArgumentNullException.ThrowIfNull(entityConverter);
-        
+
         _database = database;
         _exceptionHandler = exceptionHandler;
         _dbConverter = dbConverter;
@@ -36,21 +36,21 @@ internal sealed class EventsRepository : IEventRepository
     }
 
     public async Task<Result<Error>> CreateAsync(
-        IEntityEvent<Id, UserId> entity, 
-        CancellationToken cancellationToken = default) 
+        EventEnvelope envelope,
+        CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(entity);
-        
-        var dbEntity = _dbConverter.Convert(entity);
-        
+        ArgumentNullException.ThrowIfNull(envelope);
+
+        var dbEntity = _dbConverter.Convert(envelope);
+
         await _database.Events.AddAsync(dbEntity, cancellationToken);
 
-        var context = new DatabaseContextWriteContext(entity.Id);
+        var context = new DatabaseContextWriteContext(envelope.Event.Id);
         return await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
     }
-    
-    public async Task<Result<IEntityEvent<Id, UserId>, Error>> FindByIdAsync(
-        EventId id, 
+
+    public async Task<Result<Event, Error>> FindByIdAsync(
+        EventId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
@@ -59,16 +59,26 @@ internal sealed class EventsRepository : IEventRepository
         return await _database.Events.FindAsync(id, e => e.Id == idString, _entityConverter.Convert, cancellationToken);
     }
 
-    public async Task<Result<AsyncBatch<IEntityEvent<Id, UserId>>, Error>> FindAsync(
-        EventAfterTimeFilter filter, 
+    public async Task<Result<AsyncBatch<Event>, Error>> FindAsync(
+        EventByUserFilter filter,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(filter);
 
+        var userIdString = filter.UserId.ToString();
+        var entityTypeName = filter.EntityType is null
+            ? null
+            : EntityTypeNames.ToName(filter.EntityType.Value);
+
         return await _database.Events
-            .Where(e => filter.After == null || e.CreatedAt > filter.After)
-            .OrderBy(e => e.CreatedAt)
-            .SliceByLimitFilter(filter)
-            .CountAndMapAsync(_entityConverter.Convert, cancellationToken);
+            .Where(e => e.UserId == userIdString)
+            .Where(e => entityTypeName == null || e.EntityType == entityTypeName)
+            .Where(e => filter.EntityRef == null || e.EntityRef == filter.EntityRef)
+            .Where(e => filter.From == null || e.OccurredAt >= filter.From)
+            .Where(e => filter.To == null || e.OccurredAt <= filter.To)
+            .OrderByDescending(e => e.OccurredAt)
+            .ThenByDescending(e => e.Id)
+            .AsNoTracking()
+            .CountAndMapAsync(filter, _entityConverter.Convert, cancellationToken);
     }
 }

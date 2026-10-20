@@ -113,8 +113,7 @@ internal sealed class TagsRepository : ITagRepository
         return await _database.Tags
             .Where(e => e.UserId == userIdString)
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
-            .SliceByLimitAndOffsetFilter(filter)
-            .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, TagMapper.MapToDomainEntity, cancellationToken);
     }
 
     public async Task<Result<AsyncBatch<Tag>, Error>> FindAsync(
@@ -127,7 +126,6 @@ internal sealed class TagsRepository : ITagRepository
         return await _database.Tags
             .Where(e => e.UserId == userIdString && e.Name.Contains(filter.SearchText))
             .OrderBy(filter.Sorting, TagFactories.CreateSortSelector)
-            .SliceByLimitFilter(filter)
-            .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
+            .CountAndMapAsync(filter, TagMapper.MapToDomainEntity, cancellationToken);
     }
 }

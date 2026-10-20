@@ -17,6 +17,8 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
 {
     private const string DefaultEntitiesUserId = "userId";
     
+    private readonly ServiceProvider _provider;
+
     internal DatabaseContext Database { get; }
     internal TRepository Repository { get; }
     internal DatabaseEntitiesFactory EntitiesFactory { get; }
@@ -34,7 +36,8 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
 
         var options = new ServiceProviderOptions { ValidateOnBuild = true };
 
-        var provider = services.BuildServiceProvider(options);
+        _provider = services.BuildServiceProvider(options);
+        var provider = _provider;
 
         Database = provider.GetRequiredService<DatabaseContext>();
         Repository = provider.GetRequiredService<TRepository>();
@@ -52,6 +55,7 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
         Database.TruncateTables();
         
         Database.Dispose();
+        _provider.Dispose();
         
         GC.SuppressFinalize(this);
     }

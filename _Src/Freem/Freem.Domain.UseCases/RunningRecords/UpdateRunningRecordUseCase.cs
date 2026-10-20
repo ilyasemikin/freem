@@ -2,7 +2,7 @@
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Update;
 using Freem.Locking;
@@ -75,7 +75,7 @@ internal class UpdateRunningRecordUseCase
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(record.UserId, record.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
     }
 }

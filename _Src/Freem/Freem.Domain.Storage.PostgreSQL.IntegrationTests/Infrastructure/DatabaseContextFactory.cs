@@ -1,5 +1,4 @@
-﻿using Freem.Domain.Storage.PostgreSQL.Database;
-using Freem.Domain.Storage.PostgreSQL.DependencyInjection;
+﻿using Freem.Domain.Storage.PostgreSQL.DependencyInjection;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +6,7 @@ namespace Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure;
 
 internal static class DatabaseContextFactory
 {
-    public static DatabaseContext Create(Action<string>? logger = null)
+    public static DatabaseContextHandle Create(Action<string>? logger = null)
     {
         var configuration = TestsConfiguration.Read();
         var connectionString = configuration.ConnectionString;
@@ -25,6 +24,6 @@ internal static class DatabaseContextFactory
         services.AddPostgreSqlStorage(storageConfiguration);
 
         var provider = services.BuildServiceProvider();
-        return provider.GetRequiredService<DatabaseContext>();
+        return new DatabaseContextHandle(provider);
     }
 }

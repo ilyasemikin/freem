@@ -2,7 +2,7 @@
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
@@ -73,7 +73,7 @@ internal sealed class StopRunningRecordUseCase
             if (!deleteResult.Success)
                 return deleteResult;
 
-            return await _eventProducer.PublishAsync(eventId => record.BuildStoppedEvent(eventId), cancellationToken);
+            return await _eventProducer.PublishAsync(record.UserId, eventId => record.BuildStoppedEvent(eventId), cancellationToken);
         }, cancellationToken);
     }
     

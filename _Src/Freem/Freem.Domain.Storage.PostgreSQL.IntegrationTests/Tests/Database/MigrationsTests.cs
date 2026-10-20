@@ -5,19 +5,26 @@ using Xunit;
 
 namespace Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Database;
 
-public sealed class MigrationsTests
+public sealed class MigrationsTests : IDisposable
 {
-    private readonly DatabaseContext _context;
+    private readonly DatabaseContextHandle _handle;
+
+    private DatabaseContext Context => _handle.Context;
 
     public MigrationsTests()
     {
-        _context = DatabaseContextFactory.Create();
+        _handle = DatabaseContextFactory.Create();
+    }
+
+    public void Dispose()
+    {
+        _handle.Dispose();
     }
 
     [Fact]
     public void Migrations_ShouldCreateNew_WhenModelsChanged()
     {
-        var hasChanges = _context.Database.HasPendingModelChanges();
+        var hasChanges = Context.Database.HasPendingModelChanges();
 
         Assert.False(hasChanges);
     }
@@ -25,7 +32,7 @@ public sealed class MigrationsTests
     [Fact]
     public void Migrations_ShouldAllApplied()
     {
-        var hasPending = _context.Database
+        var hasPending = Context.Database
             .GetPendingMigrations()
             .Any();
 

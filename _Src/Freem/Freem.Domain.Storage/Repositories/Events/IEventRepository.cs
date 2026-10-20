@@ -1,5 +1,5 @@
-﻿using Freem.Domain.Events;
-using Freem.Domain.Users;
+using Freem.Domain.Entities.Events;
+using Freem.Domain.Events;
 using Utilities.Errors;
 using Utilities.Primitives;
 
@@ -8,14 +8,14 @@ namespace Freem.Domain.Storage.Repositories.Events;
 public interface IEventRepository
 {
     Task<Result<Error>> CreateAsync(
-        IEntityEvent<Id, UserId> entity,
+        EventEnvelope envelope,
         CancellationToken cancellationToken = default);
 
-    Task<Result<IEntityEvent<Id, UserId>, Error>> FindByIdAsync(
+    Task<Result<Event, Error>> FindByIdAsync(
         EventId id,
         CancellationToken cancellationToken = default);
 
-    Task<Result<AsyncBatch<IEntityEvent<Id, UserId>>, Error>> FindAsync(
-        EventAfterTimeFilter filter,
+    Task<Result<AsyncBatch<Event>, Error>> FindAsync(
+        EventByUserFilter filter,
         CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,6 @@
 ﻿using Freem.Domain.Events;
 using Freem.Domain.Users;
-using Freem.Domain.Users.Events.Registered;
-using Freem.Domain.Users.Events.SettingsChanged;
+using Freem.Domain.Users.Events;
 using Freem.Domain.Users.Models;
 
 namespace Freem.Domain.Entities.Users;
@@ -25,11 +24,19 @@ public sealed class User :
 
     public UserRegisteredEvent BuildRegisteredEvent(EventId eventId)
     {
-        return new UserRegisteredEvent(eventId, Id);
+        return new UserRegisteredEvent(eventId)
+        {
+            UserId = Id,
+            Nickname = Nickname
+        };
     }
 
-    public UserSettingsChanged BuildSettingsChangedEvent(EventId eventId)
+    public UserSettingsChangedEvent BuildSettingsChangedEvent(EventId eventId)
     {
-        return new UserSettingsChanged(eventId, Id);
+        return new UserSettingsChangedEvent(eventId)
+        {
+            UserId = Id,
+            DayUtcOffset = Settings.DayUtcOffset
+        };
     }
 }

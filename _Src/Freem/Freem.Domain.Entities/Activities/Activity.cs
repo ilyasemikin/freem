@@ -1,9 +1,5 @@
 ﻿using Freem.Domain.Activities;
-using Freem.Domain.Activities.Events.Arhived;
-using Freem.Domain.Activities.Events.Created;
-using Freem.Domain.Activities.Events.Removed;
-using Freem.Domain.Activities.Events.Unarchived;
-using Freem.Domain.Activities.Events.Updated;
+using Freem.Domain.Activities.Events;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
 using Freem.Domain.Relations.Collections;
@@ -61,26 +57,49 @@ public sealed class Activity :
 
     public ActivityCreatedEvent BuildCreatedEvent(EventId eventId)
     {
-        return new ActivityCreatedEvent(eventId, Id, UserId);
+        var tagIds = Tags.Ids.ToArray();
+        return new ActivityCreatedEvent(eventId)
+        {
+            ActivityId = Id,
+            Name = Name,
+            Status = Status,
+            TagIds = tagIds
+        };
     }
 
     public ActivityUpdatedEvent BuildUpdatedEvent(EventId eventId)
     {
-        return new ActivityUpdatedEvent(eventId, Id, UserId);
+        var tagIds = Tags.Ids.ToArray();
+        return new ActivityUpdatedEvent(eventId)
+        {
+            ActivityId = Id,
+            Name = Name,
+            Status = Status,
+            TagIds = tagIds
+        };
     }
 
     public ActivityRemovedEvent BuildRemovedEvent(EventId eventId)
     {
-        return new ActivityRemovedEvent(eventId, Id, UserId);
+        return new ActivityRemovedEvent(eventId)
+        {
+            ActivityId = Id
+        };
     }
 
     public ActivityArchivedEvent BuildArchivedEvent(EventId eventId)
     {
-        return new ActivityArchivedEvent(eventId, Id, UserId);
+        return new ActivityArchivedEvent(eventId)
+        {
+            ActivityId = Id
+        };
     }
 
     public ActivityUnarchivedEvent BuildUnarchivedEvent(EventId eventId)
     {
-        return new ActivityUnarchivedEvent(eventId, Id, UserId);
+        return new ActivityUnarchivedEvent(eventId)
+        {
+            ActivityId = Id
+        };
     }
 }

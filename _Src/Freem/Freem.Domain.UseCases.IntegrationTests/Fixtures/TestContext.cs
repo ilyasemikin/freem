@@ -1,5 +1,4 @@
 ﻿using Freem.Domain.DependencyInjection;
-using Freem.Domain.Events.Producer.DependencyInjection.Microsoft;
 using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection;
@@ -77,7 +76,6 @@ public sealed class TestContext
             .AddEntityIdNameConverters()
             .AddSingleton<IDistributedLocker, EmptyDistributedLocker>()
             .AddPostgreSqlStorage(storageConfiguration)
-            .AddNullEventPublishing()
             .AddEntitiesUseCases()
             .AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
         

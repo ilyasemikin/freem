@@ -24,6 +24,7 @@ using Freem.Storage.Transactions.EFCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Npgsql;
 using ActivityStatusDb = Freem.Domain.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
 
 namespace Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
@@ -37,7 +38,6 @@ public static class ServiceCollectionExtensions
         return services
             .AddEntitiesEqualityComparers()
             .AddEntityIdNameConverters()
-            .AddEventsFactory()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
@@ -48,10 +48,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDatabaseContext(
         this IServiceCollection services, StorageConfiguration configuration)
     {
-        var ds = NpgsqlDataSourceFactory.Create(configuration);
+        services.TryAddSingleton(_ => NpgsqlDataSourceFactory.Create(configuration));
         
-        return services.AddDbContext<DatabaseContext>(builder =>
+        return services.AddDbContext<DatabaseContext>((provider, builder) =>
         {
+            var ds = provider.GetRequiredService<NpgsqlDataSource>();
+            
             builder
                 .UseNpgsql(ds, options =>
                 {
@@ -86,8 +88,8 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddEventsConverters(this IServiceCollection services)
     {
-        services.TryAddSingleton<EventEntityToDatabaseEntityConverter>();
-        services.TryAddSingleton<DatabaseEntityToEventEntityConverter>();
+        services.TryAddSingleton<EventEnvelopeToDatabaseEntityConverter>();
+        services.TryAddSingleton<DatabaseEntityToEventConverter>();
         
         return services;
     }

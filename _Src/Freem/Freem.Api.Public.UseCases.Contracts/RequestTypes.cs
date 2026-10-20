@@ -1,4 +1,4 @@
-using Utilities.UseCases.Models;
+﻿using Utilities.UseCases.Models;
 
 namespace Freem.Api.Public.UseCases.Contracts;
 
@@ -26,6 +26,7 @@ public static class RequestTypes
 
     public static class Events
     {
+        public static readonly RequestType Get = RequestType.Parse("api.events.get", null);
         public static readonly RequestType List = RequestType.Parse("api.events.list", null);
     }
 

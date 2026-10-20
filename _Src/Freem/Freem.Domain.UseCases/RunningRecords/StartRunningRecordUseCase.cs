@@ -1,7 +1,7 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Events.Producer.Implementations;
+using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Start;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
@@ -83,7 +83,7 @@ internal sealed class StartRunningRecordUseCase
             if (!repositoryResult.Success)
                 return repositoryResult;
 
-            return await _eventProducer.PublishAsync(record.BuildStartedEvent, cancellationToken);
+            return await _eventProducer.PublishAsync(record.UserId, record.BuildStartedEvent, cancellationToken);
         }, cancellationToken);
     }
 }
