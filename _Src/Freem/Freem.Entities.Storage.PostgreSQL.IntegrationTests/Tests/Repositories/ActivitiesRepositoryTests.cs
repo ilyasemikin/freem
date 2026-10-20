@@ -1,11 +1,12 @@
-﻿using Freem.Domain.Activities;
-using Freem.Domain.Storage.Exceptions;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -38,16 +39,18 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         // Act
         var activity = dbActivity.MapToDomainEntity();
         
-        await Repository.CreateAsync(activity);
+        var writeResult = await Repository.CreateAsync(activity);
 
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbActivityActual = await Database.Activities.FindEntityAsync(activity.Id);
 
         Assert.Equal(dbActivity, dbActivityActual);
     }
 
     [Fact]
-    public async Task CreateAsync_ShouldThrowException_WhenRelatedTagNotExist()
+    public async Task CreateAsync_ShouldReturnError_WhenRelatedTagNotExist()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -61,14 +64,11 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         // Act
         var activity = dbActivity.MapToDomainEntity();
 
-        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(activity));
+        var result = await Repository.CreateAsync(activity);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(activity.Tags.Ids.First(), concreteException.RelatedIds[0]);
+        Assert.False(result.Success);
+        ErrorAssert.RelatedEntitiesNotFound(result.Error, activity.Tags.Ids.First());
     }
     
     [Fact]
@@ -93,9 +93,11 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
 
         var activity = dbUpdatedActivity.MapToDomainEntity();
 
-        await Repository.UpdateAsync(activity);
+        var writeResult = await Repository.UpdateAsync(activity);
 
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbActivityActual = await Database.Activities.FindEntityAsync(activity.Id);
 
         Assert.NotEqual(dbActivity, dbActivityActual);
@@ -115,9 +117,11 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         var activity = dbActivity.MapToDomainEntity();
         
         // Act
-        await Repository.UpdateAsync(activity);
+        var writeResult = await Repository.UpdateAsync(activity);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var activityId = activity.Id.ToString();
         var dbActualActivity = await Database.Activities.FirstOrDefaultAsync(e => e.Id == activityId);
 
@@ -126,7 +130,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldThrowException_WhenEntityIsNotExists()
+    public async Task UpdateAsync_ShouldReturnError_WhenEntityIsNotExists()
     {
         // Arrange
         var dbActivity = EntitiesFactory.CreateActivity();
@@ -134,13 +138,11 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         // Act
         var activity = dbActivity.MapToDomainEntity();
         
-        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(activity));
+        var result = await Repository.UpdateAsync(activity);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(activity.Id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, activity.Id);
     }
 
     [Fact]
@@ -161,28 +163,28 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         // Act
         var activity = dbActivity.MapToDomainEntity();
         
-        await Repository.DeleteAsync(activity.Id);
+        var writeResult = await Repository.DeleteAsync(activity.Id);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbActivityActual = await Database.Activities.FindEntityAsync(activity.Id);
         
         Assert.Null(dbActivityActual);
     }
 
     [Fact]
-    public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
+    public async Task RemoveAsync_ShouldReturnError_WhenEntityIsNotExists()
     {
         // Arrange
         var id = ActivityId.Generate();
         
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
+        var result = await Repository.DeleteAsync(id);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, id);
     }
 
     [Fact]
@@ -205,10 +207,10 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
 
-        var activity = result.Entity;
+        var activity = result.Value;
 
         var actualId = activity.Id.ToString();
         Assert.Equal(dbActivity.Id, actualId);
@@ -224,8 +226,8 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 
     [Fact]
@@ -248,10 +250,10 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        var activity = result.Entity;
+        var activity = result.Value;
         
         var actualId = activity.Id.ToString();
         Assert.Equal(dbActivity.Id, actualId);
@@ -284,7 +286,7 @@ public sealed class ActivitiesRepositoryTests : BaseRepositoryTests<IActivityRep
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 }

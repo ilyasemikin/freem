@@ -1,11 +1,15 @@
 ﻿using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Update;
 
-public sealed class UpdateActivityRequest
+public sealed class UpdateActivityRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Activities.Update;
+
     public ActivityId Id { get; }
     
     public UpdateField<ActivityName>? Name { get; init; }

@@ -1,11 +1,15 @@
 ﻿using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Create;
 
-public sealed class CreateRecordRequest
+public sealed class CreateRecordRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Records.Create;
+
     private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public DateTimePeriod Period { get; }

@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Records;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.List;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
 internal sealed class ListRecordUseCase 
-    : IEntitiesUseCase<ListRecordRequest, ListRecordResponse, ListRecordErrorCode>
+    : IRequestHandler<HandlerContext, ListRecordRequest, Result<ListRecordResponse, Error>>
 {
     private readonly IRecordRepository _repository;
 
@@ -17,12 +20,10 @@ internal sealed class ListRecordUseCase
         _repository = repository;
     }
 
-    public async Task<ListRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, ListRecordRequest request,
+    public async Task<Result<ListRecordResponse, Error>> HandleAsync(
+        HandlerContext context, ListRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var filter = new RecordByUserFilter(context.UserId)
         {
             Limit = (int)request.Limit,
@@ -30,7 +31,10 @@ internal sealed class ListRecordUseCase
         };
         
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var records = await result.ToArrayAsync(cancellationToken);
-        return ListRecordResponse.CreateSuccess(records, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var records = await result.Value.ToArrayAsync(cancellationToken);
+        return new ListRecordResponse(records, result.Value.Count);
     }
 }

@@ -1,12 +1,14 @@
-﻿using Freem.Domain.Entities.Users;
-using Freem.Entities.UseCases;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Users;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Get;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Users;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users;
 
@@ -18,30 +20,32 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users;
 public sealed class MeController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public MeController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
     [EndpointSummary("Get information about me")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = GetUserRequest.Instance;
 
-        var response = await _executor.ExecuteAsync<GetUserRequest, GetUserResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<GetUserRequest, Result<GetUserResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.User)
+            ? CreateSuccess(response.Value.User)
             : CreateFailure(response.Error);
     }
     
@@ -51,12 +55,11 @@ public sealed class MeController : BaseController
         return new OkObjectResult(response);
     }
 
-    private static IActionResult CreateFailure(Error<GetUserErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            GetUserErrorCode.UserNotFound => new UnauthorizedResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new UnauthorizedResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

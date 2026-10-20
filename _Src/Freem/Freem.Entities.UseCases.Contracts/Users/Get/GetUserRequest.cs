@@ -1,6 +1,11 @@
-﻿namespace Freem.Entities.UseCases.Contracts.Users.Get;
+﻿using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
-public sealed class GetUserRequest
+namespace Freem.Entities.UseCases.Contracts.Users.Get;
+
+public sealed class GetUserRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Users.Get;
+
     public static GetUserRequest Instance { get; } = new();
 }

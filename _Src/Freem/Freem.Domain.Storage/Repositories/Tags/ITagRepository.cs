@@ -1,23 +1,26 @@
 ﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Tags;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Domain.Storage.Repositories.Tags;
 
 public interface ITagRepository
 {
-    Task CreateAsync(Tag entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Tag entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(TagId id, CancellationToken cancellationToken = default);
+    Task<Result<Error>> CreateAsync(Tag entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> UpdateAsync(Tag entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> DeleteAsync(TagId id, CancellationToken cancellationToken = default);
 
-    Task<SearchEntityResult<Tag>> FindByIdAsync(TagId id, CancellationToken cancellationToken = default);
-    Task<SearchEntityResult<Tag>> FindByMultipleIdAsync(
+    Task<Result<Tag, Error>> FindByIdAsync(TagId id, CancellationToken cancellationToken = default);
+    Task<Result<Tag, Error>> FindByMultipleIdAsync(
         TagAndUserIds ids,
         CancellationToken cancellationToken = default);
 
-    Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
+    Task<Result<AsyncBatch<Tag>, Error>> FindAsync(
         TagByUserFilter filter,
         CancellationToken cancellationToken = default);
-    Task<SearchEntitiesAsyncResult<Tag>> FindAsync(TagFilter filter, CancellationToken cancellationToken = default);
+    Task<Result<AsyncBatch<Tag>, Error>> FindAsync(
+        TagFilter filter,
+        CancellationToken cancellationToken = default);
 }

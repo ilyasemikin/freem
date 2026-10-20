@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Entities.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Activities.Create;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiCreateActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.CreateActivityRequest;
 using ApiCreateActivityResponse = Freem.Web.Api.Public.Contracts.DTO.Activities.CreateActivityResponse;
 using UseCaseCreateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Create.CreateActivityRequest;
@@ -24,17 +25,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public sealed class CreateActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public CreateActivityController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -43,13 +44,15 @@ public sealed class CreateActivityController : BaseController
         [Required] [FromBody] ApiCreateActivityRequest body, 
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(body);
         
-        var response = await _executor.ExecuteAsync<UseCaseCreateActivityRequest, UseCaseCreateActivityResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseCreateActivityRequest, Result<UseCaseCreateActivityResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.Activity)
+            ? CreateSuccess(response.Value.Activity)
             : CreateFailure(response.Error);
     }
 
@@ -70,12 +73,11 @@ public sealed class CreateActivityController : BaseController
         };
     }
 
-    private static IActionResult CreateFailure(Error<CreateActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            CreateActivityErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.RelatedEntitiesNotFound)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Tags;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.List;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 
 internal sealed class ListTagUseCase 
-    : IEntitiesUseCase<ListTagRequest, ListTagResponse, ListTagErrorCode>
+    : IRequestHandler<HandlerContext, ListTagRequest, Result<ListTagResponse, Error>>
 {
     private readonly ITagRepository _repository;
 
@@ -16,12 +19,10 @@ internal sealed class ListTagUseCase
         _repository = repository;
     }
 
-    public async Task<ListTagResponse> ExecuteAsync(
-        UseCaseExecutionContext context, ListTagRequest request,
+    public async Task<Result<ListTagResponse, Error>> HandleAsync(
+        HandlerContext context, ListTagRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var filter = new TagByUserFilter(context.UserId)
         {
             Limit = (int)request.Limit,
@@ -29,7 +30,10 @@ internal sealed class ListTagUseCase
         };
             
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var tags = await result.ToArrayAsync(cancellationToken);
-        return ListTagResponse.CreateSuccess(tags, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var tags = await result.Value.ToArrayAsync(cancellationToken);
+        return new ListTagResponse(tags, result.Value.Count);
     }
 }

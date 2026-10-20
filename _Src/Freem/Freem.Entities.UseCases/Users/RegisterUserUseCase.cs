@@ -1,16 +1,18 @@
 ﻿using Freem.Domain.Entities.Users;
-using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users;
 
 internal sealed class RegisterUserUseCase 
-    : IEntitiesUseCase<RegisterUserRequest, RegisterUserResponse, RegisterUserErrorCode>
+    : IRequestHandler<HandlerContext, RegisterUserRequest, Result<RegisterUserResponse, Error>>
 {
     private readonly IUserRepository _repository;
     private readonly EventProducer _eventProducer;
@@ -30,33 +32,29 @@ internal sealed class RegisterUserUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<RegisterUserResponse> ExecuteAsync(
-        UseCaseExecutionContext context, RegisterUserRequest request,
+    public async Task<Result<RegisterUserResponse, Error>> HandleAsync(
+        HandlerContext context, RegisterUserRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var id = context.UserId;
         var user = new User(id, request.Nickname);
 
-        try
-        {
-            await RunTransactionAsync(user, cancellationToken);
-        }
-        catch (DuplicateKeyStorageException ex)
-        {
-            return RegisterUserResponse.CreateAlreadyRegisteredFailure(ex.Message);
-        }
+        var writeResult = await RunTransactionAsync(user, cancellationToken);
+        if (!writeResult.Success)
+            return writeResult.Error;
 
-        return RegisterUserResponse.CreateSuccess(id);
+        return new RegisterUserResponse(id);
     }
 
-    private async Task RunTransactionAsync(User user, CancellationToken cancellationToken = default)
+    private async Task<Result<Error>> RunTransactionAsync(User user, CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.CreateAsync(user, cancellationToken);
-            await _eventProducer.PublishAsync(user.BuildRegisteredEvent, cancellationToken);
+            var repositoryResult = await _repository.CreateAsync(user, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
+
+            return await _eventProducer.PublishAsync(user.BuildRegisteredEvent, cancellationToken);
         }, cancellationToken);
     }
 }

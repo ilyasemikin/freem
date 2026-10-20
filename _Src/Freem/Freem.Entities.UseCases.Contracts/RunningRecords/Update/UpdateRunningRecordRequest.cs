@@ -1,10 +1,14 @@
 ﻿using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 
-public sealed class UpdateRunningRecordRequest
+public sealed class UpdateRunningRecordRequest : IRequest
 {
+    public RequestType Type => RequestTypes.RunningRecords.Update;
+
     public UpdateField<RecordName?>? Name { get; init; }
     public UpdateField<RecordDescription?>? Description { get; init; }
     

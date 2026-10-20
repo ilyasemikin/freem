@@ -1,11 +1,14 @@
-﻿using Freem.Domain.Entities.Tags;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Tags;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Entities.UseCases.Contracts.Tags.Update;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -13,17 +16,22 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
 {
     private static readonly TagName UpdatedName = TagName.Parse("name", null);
     
-    private readonly UseCaseExecutionContext _context;
-    private readonly Tag _tag;
+    private HandlerContext _context = null!;
+    private Tag _tag = null!;
     
-    public TagsUpdateUseCaseTests(TestContext context) : base(context)
+    public TagsUpdateUseCaseTests(TestContext context)
+        : base(context)
+    {
+    }
+
+    public override async Task InitializeAsync()
     {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var tag = filler.Tags.Create(_context);
+        var tag = await filler.Tags.CreateAsync(_context);
         _tag = tag;
     }
 
@@ -35,14 +43,14 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
             Name = UpdatedName
         };
 
-        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Tags.RequiredGet(_context, _tag.Id);
+        var actual = await executor.Tags.RequiredGetAsync(_context, _tag.Id);
 
         Assert.Equal(UpdatedName, actual.Name);
     }
@@ -52,20 +60,20 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     {
         using var executor = Context.CreateExecutor();
         var anotherRequest = new CreateTagRequest(UpdatedName);
-        executor.Tags.Create(_context, anotherRequest);
+        await executor.Tags.CreateAsync(_context, anotherRequest);
         
         var request = new UpdateTagRequest(_tag.Id)
         {
             Name = UpdatedName
         };
         
-        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(UpdateTagErrorCode.TagNameAlreadyExists, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.TagNameAlreadyExists, response.Error.Type);
     }
     
     [Fact]
@@ -77,13 +85,13 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
             Name = UpdatedName
         };
         
-        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(UpdateTagErrorCode.TagNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
 
     [Fact]
@@ -91,26 +99,13 @@ public sealed class TagsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateTagRequest(_tag.Id);
         
-        var response = await Context.ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateTagErrorCode.NothingToUpdate, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.NothingToDo, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new UpdateTagRequest(_tag.Id)
-        {
-            Name = UpdatedName
-        };
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<UpdateTagRequest, UpdateTagResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

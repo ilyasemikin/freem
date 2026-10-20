@@ -1,8 +1,9 @@
-﻿using Freem.Domain.Entities.RunningRecords;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.Create;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Locking.Abstractions;
@@ -10,68 +11,70 @@ using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
 using Freem.Time.Models;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal sealed class StopRunningRecordUseCase 
-    : IEntitiesUseCase<StopRunningRecordRequest, StopRunningRecordResponse, StopRunningRecordErrorCode>
+    : IRequestHandler<HandlerContext, StopRunningRecordRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StopRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor, 
+        IRequestMediator<HandlerContext> mediator, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
-        _executor = executor;
+        _mediator = mediator;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<StopRunningRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, StopRunningRecordRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, StopRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         
         var id = RunningRecordId.FromUserId(context.UserId);
         var result = await _repository.FindByIdAsync(id, cancellationToken);
-        if (!result.Founded)
-            return StopRunningRecordResponse.CreateFailure(StopRunningRecordErrorCode.NothingToStop);
+        if (!result.Success)
+            return result.Error;
         
-        var record = result.Entity;
+        var record = result.Value;
         if (record.StartAt > request.EndAt)
-            return StopRunningRecordResponse.CreateFailure(
-                StopRunningRecordErrorCode.EndAtToEarly, 
-                $"EndAt must be greater than \"{record.StartAt:O}\".");
+            return DomainErrorCatalog.Factories.CreatePeriodIsInvalid($"EndAt must be greater than \"{record.StartAt:O}\".");
         
         var createRecordRequest = BuildCreateRecordRequest(record, request.EndAt);
 
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _executor.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(context, createRecordRequest, cancellationToken);
-            await _repository.DeleteAsync(record.Id, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => record.BuildStoppedEvent(eventId), cancellationToken);
+            var createResult = await _mediator.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(context, createRecordRequest, cancellationToken);
+            if (!createResult.Success)
+                return createResult.Error;
+
+            var deleteResult = await _repository.DeleteAsync(record.Id, cancellationToken);
+            if (!deleteResult.Success)
+                return deleteResult;
+
+            return await _eventProducer.PublishAsync(eventId => record.BuildStoppedEvent(eventId), cancellationToken);
         }, cancellationToken);
-        
-        return StopRunningRecordResponse.CreateSuccess();
     }
     
     private static CreateRecordRequest BuildCreateRecordRequest(RunningRecord record, DateTimeOffset endAt)

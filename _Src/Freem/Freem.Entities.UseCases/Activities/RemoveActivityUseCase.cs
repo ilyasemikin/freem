@@ -1,17 +1,21 @@
-﻿using Freem.Domain.Storage.Models.Ids;
+﻿using Freem.Domain.Entities.Activities;
+using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Remove;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal sealed class RemoveActivityUseCase 
-    : IEntitiesUseCase<RemoveActivityRequest, RemoveActivityResponse, RemoveActivityErrorCode>
+    : IRequestHandler<HandlerContext, RemoveActivityRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivityRepository _repository;
@@ -35,27 +39,31 @@ internal sealed class RemoveActivityUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<RemoveActivityResponse> ExecuteAsync(
-        UseCaseExecutionContext context, RemoveActivityRequest request, 
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, RemoveActivityRequest request, 
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         await using var @lock = await _locker.LockAsync(Lock.Prefix+ request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        if (!result.Founded)
-            return RemoveActivityResponse.CreateFailure(RemoveActivityErrorCode.ActivityNotFound);
+        if (!result.Success)
+            return result.Error;
 
-        var activity = result.Entity;
+        var activity = result.Value;
 
-        await _transactionRunner.RunAsync(async () =>
+        return await RunTransactionAsync(activity, cancellationToken);
+    }
+
+    private async Task<Result<Error>> RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
+    {
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.DeleteAsync(activity.Id, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => activity.BuildRemovedEvent(eventId), cancellationToken);
+            var result = await _repository.DeleteAsync(activity.Id, cancellationToken);
+            if (!result.Success)
+                return result;
+
+            return await _eventProducer.PublishAsync(eventId => activity.BuildRemovedEvent(eventId), cancellationToken);
         }, cancellationToken);
-        
-        return RemoveActivityResponse.CreateSuccess();
     }
 }

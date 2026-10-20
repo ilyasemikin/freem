@@ -1,7 +1,12 @@
-﻿namespace Freem.Entities.UseCases.Contracts.Activities.Find;
+﻿using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
-public sealed class FindActivityRequest
+namespace Freem.Entities.UseCases.Contracts.Activities.Find;
+
+public sealed class FindActivityRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Activities.Find;
+
     public string SearchText { get; }
     
     public FindActivityRequest(string searchText)

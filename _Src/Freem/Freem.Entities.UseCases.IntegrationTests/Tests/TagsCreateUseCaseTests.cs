@@ -1,8 +1,11 @@
-﻿using Freem.Domain.Tags.Models;
+﻿using Freem.Domain;
+using Freem.Domain.Tags.Models;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -10,15 +13,19 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
 {
     private static readonly TagName TagName = TagName.Parse("tag", null);
     
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
     
     public TagsCreateUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
     }
 
     [Fact]
@@ -26,14 +33,14 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     {
         var request = new CreateTagRequest(TagName);
 
-        var response = await Context.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateTagRequest, Result<CreateTagResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Tag);
+        Assert.NotNull(response.Value.Tag);
         Assert.Null(response.Error);
         
-        Assert.Equal(TagName, response.Tag.Name);
+        Assert.Equal(TagName, response.Value.Tag.Name);
     }
 
     [Fact]
@@ -41,28 +48,18 @@ public sealed class TagsCreateUseCaseTests : UseCaseTestBase
     {
         using var executor = Context.CreateExecutor();
         var anotherRequest = new CreateTagRequest(TagName);
-        executor.Tags.Create(_context, anotherRequest);
+        await executor.Tags.CreateAsync(_context, anotherRequest);
         
         var request = new CreateTagRequest(TagName);
 
-        var response = await Context.ExecuteAsync<CreateTagRequest, CreateTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateTagRequest, Result<CreateTagResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Tag);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(CreateTagErrorCode.TagNameAlreadyExists, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.TagNameAlreadyExists, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new CreateTagRequest(TagName);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<CreateTagRequest, CreateTagResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

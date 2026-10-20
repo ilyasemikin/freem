@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Statistics.Time;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Contracts.DTO.Statistics.Periods;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiStatisticsPerPeriodRequest = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerPeriodRequest;
 using ApiStatisticsPerPeriodResponse = Freem.Web.Api.Public.Contracts.DTO.Statistics.StatisticsPerPeriodResponse;
 using UseCaseStatisticsPerPeriodRequest = Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.StatisticsPerPeriodRequest;
@@ -23,17 +24,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Statistics;
 public sealed class StatisticsPerPeriodController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
     
     public StatisticsPerPeriodController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
     
     [HttpGet]
@@ -42,13 +43,15 @@ public sealed class StatisticsPerPeriodController : BaseController
         [Required] [FromQuery] ApiStatisticsPerPeriodRequest query,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(query);
         
-        var response = await _executor.ExecuteAsync<UseCaseStatisticsPerPeriodRequest, UseCaseStatisticsPerPeriodResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseStatisticsPerPeriodRequest, Result<UseCaseStatisticsPerPeriodResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.Statistics)
+            ? CreateSuccess(response.Value.Statistics)
             : CreateFailure(response.Error);
     }
 
@@ -71,12 +74,11 @@ public sealed class StatisticsPerPeriodController : BaseController
         return new OkObjectResult(response);
     }
     
-    private static IActionResult CreateFailure(Error<StatisticsPerPeriodErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            StatisticsPerPeriodErrorCode.UserNotFound => new UnauthorizedResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new UnauthorizedResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

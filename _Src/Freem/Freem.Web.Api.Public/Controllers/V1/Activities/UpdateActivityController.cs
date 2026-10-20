@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts;
-using Freem.Entities.UseCases.Contracts.Activities.Update;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiUpdateActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.UpdateActivityRequest;
 using UseCaseUpdateActivityRequest = Freem.Entities.UseCases.Contracts.Activities.Update.UpdateActivityRequest;
 
@@ -26,17 +27,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public class UpdateActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public UpdateActivityController(
         UseCaseContextProvider contextProvider,
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
 
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPut]
@@ -46,11 +47,13 @@ public class UpdateActivityController : BaseController
         [Required] [FromBody] ApiUpdateActivityRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(activityId, body);
 
         var response =
-            await _executor.ExecuteAsync<UseCaseUpdateActivityRequest, UpdateActivityResponse>(context, request,
+            await _mediator.ExecuteAsync<UseCaseUpdateActivityRequest, Result<Error>>(context, request,
                 cancellationToken);
 
         return response.Success
@@ -73,14 +76,15 @@ public class UpdateActivityController : BaseController
         };
     }
 
-    private static IActionResult CreateFailure(Error<UpdateActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            UpdateActivityErrorCode.ActivityNotFound => new NotFoundResult(),
-            UpdateActivityErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
-            UpdateActivityErrorCode.NothingToUpdate => new BadRequestResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+        if (error.Type == DomainErrorCatalog.Types.RelatedEntitiesNotFound)
+            return new UnprocessableEntityResult();
+        if (error.Type == DomainErrorCatalog.Types.NothingToDo)
+            return new BadRequestResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

@@ -1,6 +1,5 @@
-﻿using Freem.Domain.Entities.Users;
-using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Users;
 using Freem.Domain.Storage.Repositories.Users;
 using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database;
@@ -9,6 +8,8 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Users;
 
@@ -32,7 +33,7 @@ internal sealed class UsersRepository : IUserRepository
         _equalityComparer = equalityComparer;
     }
 
-    public async Task CreateAsync(User entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> CreateAsync(User entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         
@@ -41,10 +42,10 @@ internal sealed class UsersRepository : IUserRepository
         await _database.Users.AddAsync(dbEntity, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task UpdateAsync(User entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> UpdateAsync(User entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -52,19 +53,19 @@ internal sealed class UsersRepository : IUserRepository
             .Include(e => e.Settings)
             .FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            throw new NotFoundException(entity.Id);
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
         if (_equalityComparer.Equals(entity, actualEntity))
-            return;
+            return Result<Error>.CreateSuccess();
 
         dbEntity.Settings = entity.Settings.MapToDatabaseEntity(entity.Id);
         
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(UserId id, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> DeleteAsync(UserId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
@@ -72,9 +73,11 @@ internal sealed class UsersRepository : IUserRepository
         await _database.Users
             .Where(e => e.Id == idString)
             .ExecuteDeleteAsync(cancellationToken);
+
+        return Result<Error>.CreateSuccess();
     }
 
-    public async Task<SearchEntityResult<User>> FindByIdAsync(
+    public async Task<Result<User, Error>> FindByIdAsync(
         UserId id,
         CancellationToken cancellationToken = default)
     {
@@ -83,6 +86,6 @@ internal sealed class UsersRepository : IUserRepository
         var idString = id.ToString();
         return await _database.Users
             .Include(e => e.Settings)
-            .FindAsync(e => e.Id == idString, UserMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(id, e => e.Id == idString, UserMapper.MapToDomainEntity, cancellationToken);
     }
 }

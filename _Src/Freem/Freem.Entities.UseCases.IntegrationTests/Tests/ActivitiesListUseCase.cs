@@ -1,9 +1,11 @@
 ﻿using Freem.Domain.Entities.Activities;
 using Freem.Domain.Entities.Activities.Comparers;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.List;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -11,18 +13,22 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
 {
     private const int ActivitiesCount = 10;
 
-    private readonly UseCaseExecutionContext _context;
-    private readonly IReadOnlyList<Activity> _activities;
+    private HandlerContext _context = null!;
+    private IReadOnlyList<Activity> _activities = null!;
     
     public ActivitiesListUseCase(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
 
-        var activities = filler.Activities.CreateMany(_context, ActivitiesCount);
+        var activities = await filler.Activities.CreateManyAsync(_context, ActivitiesCount);
         _activities = activities
             .OrderBy(e => e.Name.ToString())
             .ToArray();
@@ -33,30 +39,20 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
     {
         var request = new ListActivityRequest();
         
-        var response = await Context.ExecuteAsync<ListActivityRequest, ListActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListActivityRequest, Result<ListActivityResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Activities);
-        Assert.NotNull(response.TotalCount);
+        Assert.NotNull(response.Value.Activities);
+        Assert.NotNull(response.Value.TotalCount);
         Assert.Null(response.Error);
         
-        var orderedActivities = response.Activities
+        var orderedActivities = response.Value.Activities
             .OrderBy(activity => activity.Name.ToString())
             .ToArray();
         
-        Assert.Equal(ActivitiesCount, (int)response.TotalCount);
+        Assert.Equal(ActivitiesCount, (int)response.Value.TotalCount);
         Assert.Equal(_activities, orderedActivities, new ActivityEqualityComparer());
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new ListActivityRequest();
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<ListActivityRequest, ListActivityResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

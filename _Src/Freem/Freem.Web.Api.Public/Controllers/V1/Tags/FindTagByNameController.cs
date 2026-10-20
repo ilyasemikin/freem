@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Tags.Models;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.GetByName;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 
@@ -20,17 +21,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 public sealed class FindTagByNameController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public FindTagByNameController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
@@ -39,15 +40,17 @@ public sealed class FindTagByNameController : BaseController
         [Required] [FromRoute] string tagName,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(tagName);
 
-        var response = await _executor.ExecuteAsync<FindTagByNameRequest, FindTagByNameResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<FindTagByNameRequest, Result<FindTagByNameResponse, Error>>(context, request, cancellationToken);
 
         if (!response.Success)
             return CreateFailure(response.Error);
 
-        var tag = response.Tags.FirstOrDefault();
+        var tag = response.Value.Tags.FirstOrDefault();
         if (tag is null)
             return new NotFoundResult();
 
@@ -62,11 +65,8 @@ public sealed class FindTagByNameController : BaseController
         return new FindTagByNameRequest(searchText);
     }
 
-    private static IActionResult CreateFailure(Error<FindTagByNameErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

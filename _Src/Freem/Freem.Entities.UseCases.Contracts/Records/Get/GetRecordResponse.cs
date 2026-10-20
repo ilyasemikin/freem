@@ -1,44 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.Records;
-using Freem.Domain.Storage.Models;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+﻿using Freem.Domain.Entities.Records;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Get;
 
-public sealed class GetRecordResponse : IResponse<GetRecordErrorCode>
+public sealed class GetRecordResponse
 {
-    [MemberNotNullWhen(true, nameof(Record))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public Record? Record { get; }
-    public Error<GetRecordErrorCode>? Error { get; }
-    
-    private GetRecordResponse(Record? record = null, Error<GetRecordErrorCode>? error = null)
-    {
-        Success = record is not null;
-        Record = record;
-        Error = error;
-    }
+    public Record Record { get; }
 
-    public static GetRecordResponse CreateSuccess(Record record)
+    public GetRecordResponse(Record record)
     {
         ArgumentNullException.ThrowIfNull(record);
-        
-        return new GetRecordResponse(record);
-    }
 
-    public static GetRecordResponse CreateFailure(GetRecordErrorCode code)
-    {
-        var error = new Error<GetRecordErrorCode>(code);
-        return new GetRecordResponse(error: error);
-    }
-
-    public static GetRecordResponse Create(SearchEntityResult<Record> result)
-    {
-        return result.Founded
-            ? CreateSuccess(result.Entity)
-            : CreateFailure(GetRecordErrorCode.RecordNotFound);
+        Record = record;
     }
 }

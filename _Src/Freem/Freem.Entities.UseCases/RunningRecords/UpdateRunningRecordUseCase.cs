@@ -1,21 +1,22 @@
-﻿using Freem.Domain.Activities.Extensions;
+﻿using Freem.Domain;
 using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
-using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal class UpdateRunningRecordUseCase 
-    : IEntitiesUseCase<UpdateRunningRecordRequest, UpdateRunningRecordResponse, UpdateRunningRecordErrorCode>
+    : IRequestHandler<HandlerContext, UpdateRunningRecordRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
@@ -39,23 +40,21 @@ internal class UpdateRunningRecordUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<UpdateRunningRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, UpdateRunningRecordRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, UpdateRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
 
         if (!request.HasChanges())
-            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.NothingToUpdate);
+            return DomainErrorCatalog.Factories.CreateNothingToDo();
         
         var id = RunningRecordId.FromUserId(context.UserId);
         var result = await _repository.FindByIdAsync(id, cancellationToken);
-        if (!result.Founded)
-            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RunningRecordNotFound);
+        if (!result.Success)
+            return result.Error;
         
-        var record = result.Entity;
+        var record = result.Value;
         if (request.Name is not null)
             record.Name = request.Name;
         if (request.Description is not null)
@@ -65,34 +64,18 @@ internal class UpdateRunningRecordUseCase
         if (request.Tags is not null)
             record.Tags.Update(request.Tags);
 
-        try
-        {
-            await RunTransactionAsync(record, cancellationToken);
-        }
-        catch (NotFoundRelatedException ex)
-        {
-            return ProcessNotFoundRelatedException(ex);
-        }
-
-        return UpdateRunningRecordResponse.CreateSuccess();
+        return await RunTransactionAsync(record, cancellationToken);
     }
     
-    private async Task RunTransactionAsync(RunningRecord record, CancellationToken cancellationToken = default)
+    private async Task<Result<Error>> RunTransactionAsync(RunningRecord record, CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.UpdateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
-        }, cancellationToken);
-    }
+            var repositoryResult = await _repository.UpdateAsync(record, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
 
-    private static UpdateRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
-    {
-        if (ex.RelatedIds.HasActivityIds())
-            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagIds())
-            return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedTagsNotFound);
-        
-        return UpdateRunningRecordResponse.CreateFailure(UpdateRunningRecordErrorCode.RelatedUnknownNotFound);
+            return await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
+        }, cancellationToken);
     }
 }

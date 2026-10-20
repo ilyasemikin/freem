@@ -4,16 +4,17 @@ using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection;
 using Freem.Entities.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure;
 using Freem.Entities.UseCases.IntegrationTests.Infrastructure.Locking;
 using Freem.Locking.Abstractions;
-using Freem.UseCases.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Utilities.Clock.Abstractions;
 using Utilities.Clock.DependencyInjection.Microsoft;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Fixtures;
 
@@ -28,9 +29,9 @@ public sealed class TestContext
         _services = BuildServiceProvider(_configuration);
     }
 
-    public UseCasePlainExecutor CreateExecutor()
+    public UseCaseExecutors CreateExecutor()
     {
-        return UseCasePlainExecutor.Create(_services);
+        return UseCaseExecutors.Create(_services);
     }
     
     public DateTimeOffset GetCurrentDateTime()
@@ -41,26 +42,15 @@ public sealed class TestContext
         return clock.Get();
     }
 
-    public Task<TResponse> ExecuteAsync<TRequest, TResponse>(TRequest request)
-        where TRequest : notnull
+    public async Task<TResponse> ExecuteAsync<TRequest, TResponse>(HandlerContext context, TRequest request)
+        where TRequest : IRequest
     {
-        var scope = _services.CreateScope();
+        using var scope = _services.CreateScope();
         var provider = scope.ServiceProvider;
         
-        var executor = provider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>();
+        var mediator = provider.GetRequiredService<IRequestMediator<HandlerContext>>();
 
-        return executor.ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext.Empty, request);
-    }
-    
-    public Task<TResponse> ExecuteAsync<TRequest, TResponse>(UseCaseExecutionContext context, TRequest request)
-        where TRequest : notnull
-    {
-        var scope = _services.CreateScope();
-        var provider = scope.ServiceProvider;
-        
-        var executor = provider.GetRequiredService<IUseCaseExecutor<UseCaseExecutionContext>>();
-
-        return executor.ExecuteAsync<TRequest, TResponse>(context, request);
+        return await mediator.ExecuteAsync<TRequest, TResponse>(context, request);
     }
 
     public void CleanDatabases()

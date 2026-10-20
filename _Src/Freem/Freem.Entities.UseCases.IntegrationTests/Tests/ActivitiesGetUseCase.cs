@@ -1,26 +1,32 @@
 ﻿using Freem.Domain.Entities.Activities;
 using Freem.Domain.Entities.Activities.Comparers;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesGetUseCase : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly Activity _activity;
+    private HandlerContext _context = null!;
+    private Activity _activity = null!;
     
     public ActivitiesGetUseCase(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
+        var activity = await filler.Activities.CreateAsync(_context);
         _activity = activity;
     }
 
@@ -29,23 +35,13 @@ public sealed class ActivitiesGetUseCase : UseCaseTestBase
     {
         var request = new GetActivityRequest(_activity.Id);
 
-        var response = await Context.ExecuteAsync<GetActivityRequest, GetActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetActivityRequest, Result<GetActivityResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Activity);
+        Assert.NotNull(response.Value.Activity);
         
-        Assert.Equal(_activity, response.Activity, new ActivityEqualityComparer());
+        Assert.Equal(_activity, response.Value.Activity, new ActivityEqualityComparer());
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new GetActivityRequest(_activity.Id);
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<GetActivityRequest, GetActivityResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

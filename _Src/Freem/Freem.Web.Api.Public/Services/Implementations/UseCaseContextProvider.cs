@@ -1,5 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using Freem.Domain.Users;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Authentication;
 
 namespace Freem.Web.Api.Public.Services.Implementations;
@@ -13,15 +14,17 @@ public sealed class UseCaseContextProvider
         _accessor = accessor;
     }
 
-    public UseCaseExecutionContext Get()
+    public bool TryGet([NotNullWhen(true)] out HandlerContext? context)
     {
+        context = null;
         if (_accessor.HttpContext is null)
-            return UseCaseExecutionContext.Empty;
+            return false;
 
         var value = _accessor.HttpContext.User.FindFirst(AuthenticationClaimTypes.UserId)?.Value;
+        if (!UserId.TryParse(value, null, out var userId))
+            return false;
 
-        return UserId.TryParse(value, null, out var userId)
-            ? new UseCaseExecutionContext(userId)
-            : UseCaseExecutionContext.Empty;
+        context = new HandlerContext(userId);
+        return true;
     }
 }

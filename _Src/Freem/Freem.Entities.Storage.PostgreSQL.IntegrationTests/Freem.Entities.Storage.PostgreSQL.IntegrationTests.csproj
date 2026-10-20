@@ -13,6 +13,8 @@
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.1"/>
         <PackageReference Include="Utilities.Collections" Version="0.1.0"/>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>

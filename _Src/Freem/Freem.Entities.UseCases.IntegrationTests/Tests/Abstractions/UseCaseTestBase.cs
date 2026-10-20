@@ -3,7 +3,7 @@
 namespace Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 
 [Collection("Sequential")]
-public abstract class UseCaseTestBase : IDisposable
+public abstract class UseCaseTestBase : IAsyncLifetime, IDisposable
 {
     protected TestContext Context { get; }
 
@@ -14,6 +14,16 @@ public abstract class UseCaseTestBase : IDisposable
         Context = context;
         
         Context.CleanDatabases();
+    }
+
+    public virtual Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 
     public void Dispose()

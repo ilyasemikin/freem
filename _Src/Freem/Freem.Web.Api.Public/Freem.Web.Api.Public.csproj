@@ -17,9 +17,6 @@
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
-        <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj"/>
-        <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj"/>
-        <ProjectReference Include="..\Freem.UseCases\Freem.UseCases.csproj"/>
         <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj"/>
     </ItemGroup>
 
@@ -38,6 +35,9 @@
       <PackageReference Include="EgoHub.Api.Public.Client" Version="0.0.10"/>
       <PackageReference Include="EgoHub.Authentication.AspNetCore" Version="0.0.1"/>
       <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
+      <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+      <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+      <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
     </ItemGroup>
 
 </Project>

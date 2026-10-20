@@ -75,9 +75,9 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton<DatabaseColumnToIdPossibleConverter>();
 
-        services.TryAddSingleton<DatabaseForeignKeyConstraintErrorToExceptionConverter>();
-        services.TryAddSingleton<TriggerConstraintErrorToExceptionConverter>();
-        services.TryAddSingleton<DuplicateKeyErrorToExceptionConverter>();
+        services.TryAddSingleton<DatabaseForeignKeyConstraintErrorToErrorConverter>();
+        services.TryAddSingleton<TriggerConstraintErrorToErrorConverter>();
+        services.TryAddSingleton<DuplicateKeyErrorToErrorConverter>();
         
         services.TryAddSingleton<DatabaseContextWriteExceptionHandler>();
         

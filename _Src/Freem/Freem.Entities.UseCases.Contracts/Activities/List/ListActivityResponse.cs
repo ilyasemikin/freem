@@ -1,40 +1,19 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.Activities;
+﻿using Freem.Domain.Entities.Activities;
 using Freem.Entities.UseCases.Contracts.Filter;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.List;
 
-public sealed class ListActivityResponse : IResponse<ListActivityErrorCode>
+public sealed class ListActivityResponse
 {
-    [MemberNotNullWhen(true, nameof(Activities))]
-    [MemberNotNullWhen(true, nameof(TotalCount))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public IReadOnlyList<Activity>? Activities { get; }
-    public TotalCount? TotalCount { get; }
-    
-    public Error<ListActivityErrorCode>? Error { get; }
+    public IReadOnlyList<Activity> Activities { get; }
+    public TotalCount TotalCount { get; }
 
-    private ListActivityResponse(
-        IReadOnlyList<Activity>? activities = null, 
-        TotalCount? totalCount = null,
-        Error<ListActivityErrorCode>? error = null)
-    {
-        Success = activities is not null;
-        
-        Activities = activities;
-        TotalCount = totalCount;
-        Error = error;
-    }
-
-    public static ListActivityResponse CreateSuccess(IReadOnlyList<Activity> activities, TotalCount totalCount)
+    public ListActivityResponse(IReadOnlyList<Activity> activities, TotalCount totalCount)
     {
         ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(totalCount);
-        
-        return new ListActivityResponse(activities, totalCount);
+
+        Activities = activities;
+        TotalCount = totalCount;
     }
 }

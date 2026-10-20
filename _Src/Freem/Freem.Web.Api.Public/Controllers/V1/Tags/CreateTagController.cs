@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Entities.Tags;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Tags.Create;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiCreateTagRequest = Freem.Web.Api.Public.Contracts.DTO.Tags.CreateTagRequest;
 using ApiCreateTagResponse = Freem.Web.Api.Public.Contracts.DTO.Tags.CreateTagResponse;
 using UseCaseCreateTagRequest = Freem.Entities.UseCases.Contracts.Tags.Create.CreateTagRequest;
@@ -23,17 +24,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 public sealed class CreateTagController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public CreateTagController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -42,13 +43,15 @@ public sealed class CreateTagController : BaseController
         [Required] [FromBody] ApiCreateTagRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(body);
 
-        var response = await _executor.ExecuteAsync<UseCaseCreateTagRequest, UseCaseCreateTagResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseCreateTagRequest, Result<UseCaseCreateTagResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.Tag)
+            ? CreateSuccess(response.Value.Tag)
             : CreateFailure(response.Error);
     }
 
@@ -66,12 +69,11 @@ public sealed class CreateTagController : BaseController
         };
     }
 
-    private static IActionResult CreateFailure(Error<CreateTagErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            CreateTagErrorCode.TagNameAlreadyExists => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.TagNameAlreadyExists)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

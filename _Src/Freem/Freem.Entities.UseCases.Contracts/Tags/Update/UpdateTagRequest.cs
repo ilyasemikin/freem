@@ -1,10 +1,14 @@
 ﻿using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Update;
 
-public sealed class UpdateTagRequest
+public sealed class UpdateTagRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Tags.Update;
+
     public TagId Id { get; }
     
     public UpdateField<TagName>? Name { get; init; }

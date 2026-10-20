@@ -2,15 +2,16 @@
 using Freem.Domain;
 using Freem.Domain.Events;
 using Freem.Domain.Users;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.UseCases.Contracts.Filter;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiListEventRequest = Freem.Web.Api.Public.Contracts.DTO.Events.ListEventRequest;
 using UseCaseListEventRequest = Freem.Entities.UseCases.Contracts.Events.List.ListEventRequest;
 
@@ -23,17 +24,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Events;
 public sealed class ListEventController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public ListEventController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
@@ -42,13 +43,15 @@ public sealed class ListEventController : BaseController
         [Required] [FromQuery] ApiListEventRequest query,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(query);
 
-        var response = await _executor.ExecuteAsync<UseCaseListEventRequest, ListEventResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseListEventRequest, Result<ListEventResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(Response, response.Events, response.TotalCount)
+            ? CreateSuccess(Response, response.Value.Events, response.Value.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -70,11 +73,8 @@ public sealed class ListEventController : BaseController
         return new OkObjectResult(events);
     }
 
-    private static IActionResult CreateFailure(Error<ListEventErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

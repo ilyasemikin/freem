@@ -11,5 +11,10 @@
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1" />
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3" />
+    </ItemGroup>
     
 </Project>

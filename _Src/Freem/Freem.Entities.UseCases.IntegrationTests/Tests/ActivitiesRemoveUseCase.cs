@@ -1,25 +1,32 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Remove;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly ActivityId _activityId;
+    private HandlerContext _context = null!;
+    private ActivityId _activityId = null!;
     
     public ActivitiesRemoveUseCase(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
+        var activity = await filler.Activities.CreateAsync(_context);
         _activityId = activity.Id;
     }
 
@@ -28,7 +35,7 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
     {
         var request = new RemoveActivityRequest(_activityId);
 
-        var response = await Context.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveActivityRequest, Result<Error>>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -41,23 +48,13 @@ public sealed class ActivitiesRemoveUseCase : UseCaseTestBase
         var notExistedActivityId = ActivityId.Generate();
         var request = new RemoveActivityRequest(notExistedActivityId);
         
-        var response = await Context.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveActivityRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(RemoveActivityErrorCode.ActivityNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new RemoveActivityRequest(_activityId);
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

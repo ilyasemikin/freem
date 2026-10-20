@@ -1,12 +1,15 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.Create;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time.Models;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -15,20 +18,24 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
     private static readonly RecordName RecordName = RecordName.Parse("name", null);
     private static readonly RecordDescription RecordDescription = RecordDescription.Parse("description", null);
     
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
 
-    private readonly DateTimePeriod _period;
-    private readonly RelatedActivityIdsCollection _activities;
+    private DateTimePeriod _period = null!;
+    private RelatedActivityIdsCollection _activities = null!;
     
     public RecordsCreateUseCase(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
+        var activity = await filler.Activities.CreateAsync(_context);
         
         var now = DateTime.UtcNow;
         _period = new DateTimePeriod(now.AddHours(-4), now);
@@ -44,17 +51,17 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
             Description = RecordDescription,
         };
         
-        var response = await Context.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Record);
+        Assert.NotNull(response.Value.Record);
         Assert.Null(response.Error);
         
-        Assert.Equal(_context.UserId, response.Record.UserId);
-        Assert.Equal(RecordName, response.Record.Name);
-        Assert.Equal(RecordDescription, response.Record.Description);
-        Assert.Equal(_activities, response.Record.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
+        Assert.Equal(_context.UserId, response.Value.Record.UserId);
+        Assert.Equal(RecordName, response.Value.Record.Name);
+        Assert.Equal(RecordDescription, response.Value.Record.Description);
+        Assert.Equal(_activities, response.Value.Record.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
 
     [Fact]
@@ -65,36 +72,36 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
 
         var request = new CreateRecordRequest(_period, activities);
         
-        var response = await Context.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Record);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(CreateRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenActivitiesBelongToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var activity = executor.Activities.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var activity = await executor.Activities.CreateAsync(anotherContext);
         
         var activities = new RelatedActivityIdsCollection([activity.Id]);
 
         var request = new CreateRecordRequest(_period, activities);
         
-        var response = await Context.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Record);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(CreateRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
@@ -108,23 +115,23 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Record);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(CreateRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var tag = executor.Tags.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var tag = await executor.Tags.CreateAsync(anotherContext);
         
         var tags = new RelatedTagIdsCollection([tag.Id]);
 
@@ -133,24 +140,14 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Record);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(CreateRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new CreateRecordRequest(_period, _activities);
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<CreateRecordRequest, CreateRecordResponse>(UseCaseExecutionContext.Empty, request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

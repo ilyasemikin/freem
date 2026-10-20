@@ -1,9 +1,13 @@
 ﻿using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Statistics.PerPeriod;
 
-public sealed class StatisticsPerPeriodRequest
+public sealed class StatisticsPerPeriodRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Statistics.PerPeriod;
+
     public IStatisticsPeriod Period { get; }
 
     public StatisticsPerPeriodRequest(IStatisticsPeriod period)

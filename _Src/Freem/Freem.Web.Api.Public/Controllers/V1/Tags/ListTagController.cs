@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Entities.Tags;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Entities.UseCases.Contracts.Tags.List;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Tags;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiListTagRequest = Freem.Web.Api.Public.Contracts.DTO.Tags.ListTagRequest;
 using UseCaseListTagRequest = Freem.Entities.UseCases.Contracts.Tags.List.ListTagRequest;
 
@@ -26,17 +27,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 public sealed class ListTagController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public ListTagController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
@@ -45,13 +46,15 @@ public sealed class ListTagController : BaseController
         [Required] [FromQuery] ApiListTagRequest query,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(query);
 
-        var response = await _executor.ExecuteAsync<UseCaseListTagRequest, ListTagResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseListTagRequest, Result<ListTagResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(Response, response.Tags, response.TotalCount)
+            ? CreateSuccess(Response, response.Value.Tags, response.Value.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -78,11 +81,8 @@ public sealed class ListTagController : BaseController
         }
     }
 
-    private static IActionResult CreateFailure(Error<ListTagErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

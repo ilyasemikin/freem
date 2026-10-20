@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Users;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Settings;
 
 internal sealed class GetUserSettingsUseCase : 
-    IUseCase<UseCaseExecutionContext, GetUserSettingsRequest, GetUserSettingsResponse, GetUserSettingsErrorCode>
+    IRequestHandler<HandlerContext, GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>
 {
     private readonly IUserRepository _repository;
 
@@ -16,17 +19,15 @@ internal sealed class GetUserSettingsUseCase :
         _repository = repository;
     }
 
-    public async Task<GetUserSettingsResponse> ExecuteAsync(
-        UseCaseExecutionContext context, GetUserSettingsRequest request,
+    public async Task<Result<GetUserSettingsResponse, Error>> HandleAsync(
+        HandlerContext context, GetUserSettingsRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
-        if (!result.Founded)
-            return GetUserSettingsResponse.CreateFailure(GetUserSettingsErrorCode.UserNotFound);
+        if (!result.Success)
+            return result.Error;
         
-        var user = result.Entity;
-        return GetUserSettingsResponse.CreateSuccess(user.Settings);
+        var user = result.Value;
+        return new GetUserSettingsResponse(user.Settings);
     }
 }

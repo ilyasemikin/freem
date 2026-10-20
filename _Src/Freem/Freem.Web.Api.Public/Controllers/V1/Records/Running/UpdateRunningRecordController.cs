@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Relations.Collections;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts;
-using Freem.Entities.UseCases.Contracts.RunningRecords.Update;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiUpdateRunningRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.Running.UpdateRunningRecordRequest;
 using UseCaseUpdateRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Update.UpdateRunningRecordRequest;
 
@@ -25,17 +26,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 public sealed class UpdateRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public UpdateRunningRecordController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPut]
@@ -44,10 +45,12 @@ public sealed class UpdateRunningRecordController : BaseController
         [Required] [FromBody] ApiUpdateRunningRecordRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(body);
 
-        var response = await _executor.ExecuteAsync<UseCaseUpdateRunningRecordRequest, UpdateRunningRecordResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseUpdateRunningRecordRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
@@ -73,15 +76,15 @@ public sealed class UpdateRunningRecordController : BaseController
         };
     }
 
-    private static IActionResult CreateFailure(Error<UpdateRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            UpdateRunningRecordErrorCode.RunningRecordNotFound => new NotFoundResult(),
-            UpdateRunningRecordErrorCode.NothingToUpdate => new BadRequestResult(),
-            UpdateRunningRecordErrorCode.RelatedActivitiesNotFound => new UnprocessableEntityResult(),
-            UpdateRunningRecordErrorCode.RelatedTagsNotFound => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+        if (error.Type == DomainErrorCatalog.Types.NothingToDo)
+            return new BadRequestResult();
+        if (error.Type == DomainErrorCatalog.Types.RelatedEntitiesNotFound)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

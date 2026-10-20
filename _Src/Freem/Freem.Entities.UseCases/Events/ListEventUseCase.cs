@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Events;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Events.List;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Events;
 
 internal sealed class ListEventUseCase 
-    : IEntitiesUseCase<ListEventRequest, ListEventResponse, ListEventErrorCode>
+    : IRequestHandler<HandlerContext, ListEventRequest, Result<ListEventResponse, Error>>
 {
     private readonly IEventRepository _repository;
 
@@ -17,19 +20,20 @@ internal sealed class ListEventUseCase
         _repository = repository;
     }
 
-    public async Task<ListEventResponse> ExecuteAsync(
-        UseCaseExecutionContext context, ListEventRequest request,
+    public async Task<Result<ListEventResponse, Error>> HandleAsync(
+        HandlerContext context, ListEventRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var filter = new EventAfterTimeFilter(context.UserId, request.After)
         {
             Limit = (int)request.Limit
         };
 
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var events = await result.ToArrayAsync(cancellationToken);
-        return ListEventResponse.CreateSuccess(events, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var events = await result.Value.ToArrayAsync(cancellationToken);
+        return new ListEventResponse(events, result.Value.Count);
     }
 }

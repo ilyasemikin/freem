@@ -1,9 +1,13 @@
 ﻿using Freem.Domain.Tags.Models;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Create;
 
-public sealed class CreateTagRequest
+public sealed class CreateTagRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Tags.Create;
+
     public TagName Name { get; }
 
     public CreateTagRequest(TagName name)

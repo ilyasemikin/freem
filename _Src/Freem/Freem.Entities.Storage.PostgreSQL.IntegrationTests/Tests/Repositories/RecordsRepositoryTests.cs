@@ -1,5 +1,5 @@
-﻿using Freem.Domain.Records;
-using Freem.Domain.Storage.Exceptions;
+﻿using Freem.Domain;
+using Freem.Domain.Records;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
@@ -8,6 +8,7 @@ using Freem.Entities.Storage.PostgreSQL.Database.Entities;
 using Freem.Entities.Storage.PostgreSQL.Database.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Time.Models;
 using Microsoft.EntityFrameworkCore;
@@ -45,9 +46,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         var record = dbRecord.MapToDomainEntity();
         
-        await Repository.CreateAsync(record);
+        var writeResult = await Repository.CreateAsync(record);
 
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.Equal(dbRecord, dbRecordActual);
@@ -69,9 +72,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         var record = dbRecord.MapToDomainEntity();
         
         // Act
-        await Repository.UpdateAsync(record);
+        var writeResult = await Repository.UpdateAsync(record);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.NotNull(dbRecordActual);
@@ -79,7 +84,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
     }
 
     [Fact]
-    public async Task CreateAsync_ShouldThrowException_WhenRelatedActivityNotExists()
+    public async Task CreateAsync_ShouldReturnError_WhenRelatedActivityNotExists()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -93,18 +98,15 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         // Act
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var result = await Repository.CreateAsync(record);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Ids.First(), concreteException.RelatedIds[0]);
+        Assert.False(result.Success);
+        ErrorAssert.RelatedEntitiesNotFound(result.Error, record.Activities.Ids.First());
     }
 
     [Fact]
-    public async Task CreateAsync_ShouldThrowException_WhenRelatedTagNotExists()
+    public async Task CreateAsync_ShouldReturnError_WhenRelatedTagNotExists()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -120,14 +122,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         // Act
         var record = dbRecord.MapToDomainEntity();
 
-        var exception = await Record.ExceptionAsync(() => Repository.CreateAsync(record));
+        var result = await Repository.CreateAsync(record);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Tags.Ids.First(), concreteException.RelatedIds[0]);
+        Assert.False(result.Success);
+        ErrorAssert.RelatedEntitiesNotFound(result.Error, record.Tags.Ids.First());
     }
 
     [Fact]
@@ -163,9 +162,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
 
         var record = dbUpdatedRecord.MapToDomainEntity();
         
-        await Repository.UpdateAsync(record);
+        var writeResult = await Repository.UpdateAsync(record);
 
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.NotEqual(dbRecord, dbRecordActual);
@@ -173,7 +174,7 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
     }
     
     [Fact]
-    public async Task UpdateAsync_ShouldThrowException_WhenEntityNotExists()
+    public async Task UpdateAsync_ShouldReturnError_WhenEntityNotExists()
     {
         // Arrange
         var dbRecord = EntitiesFactory.CreateRecord();
@@ -182,17 +183,15 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         // Act
         var record = dbRecord.MapToDomainEntity();
 
-        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var result = await Repository.UpdateAsync(record);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(record.Id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, record.Id);
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldThrowException_WhenRelatedActivityNotExists()
+    public async Task UpdateAsync_ShouldReturnError_WhenRelatedActivityNotExists()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -214,18 +213,15 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var result = await Repository.UpdateAsync(record);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Activities.Ids.Last(), concreteException.RelatedIds[0]);
+        Assert.False(result.Success);
+        ErrorAssert.RelatedEntitiesNotFound(result.Error, record.Activities.Ids.Last());
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldThrowException_WhenRelatedTagNotExists()
+    public async Task UpdateAsync_ShouldReturnError_WhenRelatedTagNotExists()
     {
         // Arrange
         var dbUser = EntitiesFactory.User;
@@ -247,14 +243,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
 
         var record = dbRecord.MapToDomainEntity();
         
-        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(record));
+        var result = await Repository.UpdateAsync(record);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundRelatedException>(exception);
-        Assert.Single(concreteException.RelatedIds);
-        Assert.Equal(record.Tags.Ids.First(), concreteException.RelatedIds[0]);
+        Assert.False(result.Success);
+        ErrorAssert.RelatedEntitiesNotFound(result.Error, record.Tags.Ids.First());
     }
     
     [Fact]
@@ -278,28 +271,28 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         // Act
         var record = dbRecord.MapToDomainEntity();
 
-        await Repository.DeleteAsync(record.Id);
+        var writeResult = await Repository.DeleteAsync(record.Id);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.Null(dbRecordActual);
     }
 
     [Fact]
-    public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
+    public async Task RemoveAsync_ShouldReturnError_WhenEntityIsNotExists()
     {
         // Arrange
         var id = RecordId.Generate();
         
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
+        var result = await Repository.DeleteAsync(id);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, id);
     }
 
     [Fact]
@@ -325,10 +318,10 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
 
-        var record = result.Entity;
+        var record = result.Value;
         
         var actualId = record.Id.ToString();
         Assert.Equal(dbRecord.Id, actualId);
@@ -344,8 +337,8 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 
     [Fact]
@@ -371,10 +364,10 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        var record = result.Entity;
+        var record = result.Value;
         
         var actualId = record.Id.ToString();
         Assert.Equal(dbRecord.Id, actualId);
@@ -395,9 +388,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Act
         var result = await Repository.FindAsync(filter);
-        var records = await result.ToListAsync();
         
         // Assert
+        Assert.True(result.Success);
+
+        var records = await result.Value.ToListAsync();
         var record = Assert.Single(records);
         AssertRelatedIds(dbRecord, record);
     }
@@ -416,9 +411,11 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Act
         var result = await Repository.FindAsync(filter);
-        var records = await result.ToListAsync();
         
         // Assert
+        Assert.True(result.Success);
+
+        var records = await result.Value.ToListAsync();
         var record = Assert.Single(records);
         AssertRelatedIds(dbRecord, record);
     }
@@ -453,8 +450,8 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 
     private async Task<RecordEntity> AddRecordWithRelationsAsync()

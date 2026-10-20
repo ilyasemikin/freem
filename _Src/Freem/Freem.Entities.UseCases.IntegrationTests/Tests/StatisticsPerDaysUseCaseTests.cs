@@ -1,8 +1,10 @@
-﻿using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
-using Freem.Entities.UseCases.Exceptions;
+﻿using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time.Models;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -10,22 +12,24 @@ public sealed class StatisticsPerDaysUseCaseTests : UseCaseTestBase
 {
     private const int RecordsCount = 10;
 
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
     
     public StatisticsPerDaysUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
 
-        var activities = filler.Activities
-            .CreateMany(_context, 2)
-            .ToArray();
+        var activities = await filler.Activities.CreateManyAsync(_context, 2);
 
-        filler.Records.CreateMany(_context, [activities[0].Id], RecordsCount);
-        filler.Records.CreateMany(_context, [activities[1].Id], RecordsCount);
+        await filler.Records.CreateManyAsync(_context, [activities[0].Id], RecordsCount);
+        await filler.Records.CreateManyAsync(_context, [activities[1].Id], RecordsCount);
     }
 
     [Fact]
@@ -36,30 +40,18 @@ public sealed class StatisticsPerDaysUseCaseTests : UseCaseTestBase
         var period = new DatePeriod(day, day);
 
         var request = new StatisticsPerDaysRequest(period);
-        var response = await Context.ExecuteAsync<StatisticsPerDaysRequest, StatisticsPerDaysResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Statistics);
+        Assert.NotNull(response.Value.Statistics);
         Assert.Null(response.Error);
         
-        Assert.Single(response.Statistics);
+        Assert.Single(response.Value.Statistics);
         
-        var (date, statistics) = response.Statistics.Single();
+        var (date, statistics) = response.Value.Statistics.Single();
         Assert.Equal(now.AddDays(-1), date);
         Assert.Equal(2, statistics.PerActivities.Count);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var now = DateOnly.FromDateTime(DateTime.Now);
-        var period = new DatePeriod(now, now.AddDays(1));
-        var request = new StatisticsPerDaysRequest(period);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<StatisticsPerDaysRequest, StatisticsPerDaysResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

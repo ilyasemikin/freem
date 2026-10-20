@@ -16,6 +16,9 @@
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
         <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+        <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,14 +30,10 @@
         <ProjectReference Include="..\Freem.Entities.Events.Producer\Freem.Entities.Events.Producer.csproj" />
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj" />
-        <ProjectReference Include="..\Freem.Entities.UseCases.Plain\Freem.Entities.UseCases.Plain.csproj" />
         <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Abstractions\Freem.Locking.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.Results\Freem.Results.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
-        <ProjectReference Include="..\Freem.UseCases.Abstractions\Freem.UseCases.Abstractions.csproj" />
-        <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj" />
     </ItemGroup>
 
     <Target Name="CopyConfiguration" BeforeTargets="BeforeBuild">

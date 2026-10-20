@@ -5,19 +5,21 @@ using Freem.Entities.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Converters;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 
 internal sealed class DatabaseContextWriteExceptionHandler
 {
-    private readonly DatabaseForeignKeyConstraintErrorToExceptionConverter _foreignKeyConstraintConverter;
-    private readonly TriggerConstraintErrorToExceptionConverter _triggerConstraintConverter;
-    private readonly DuplicateKeyErrorToExceptionConverter _duplicateKeyConverter;
+    private readonly DatabaseForeignKeyConstraintErrorToErrorConverter _foreignKeyConstraintConverter;
+    private readonly TriggerConstraintErrorToErrorConverter _triggerConstraintConverter;
+    private readonly DuplicateKeyErrorToErrorConverter _duplicateKeyConverter;
 
     public DatabaseContextWriteExceptionHandler(
-        DatabaseForeignKeyConstraintErrorToExceptionConverter foreignKeyConstraintConverter,
-        TriggerConstraintErrorToExceptionConverter triggerConstraintConverter,
-        DuplicateKeyErrorToExceptionConverter duplicateKeyConverter)
+        DatabaseForeignKeyConstraintErrorToErrorConverter foreignKeyConstraintConverter,
+        TriggerConstraintErrorToErrorConverter triggerConstraintConverter,
+        DuplicateKeyErrorToErrorConverter duplicateKeyConverter)
     {
         ArgumentNullException.ThrowIfNull(foreignKeyConstraintConverter);
         ArgumentNullException.ThrowIfNull(triggerConstraintConverter);
@@ -28,7 +30,7 @@ internal sealed class DatabaseContextWriteExceptionHandler
         _duplicateKeyConverter = duplicateKeyConverter;
     }
 
-    public async Task Handle(DatabaseContextWriteContext context, Func<Task> action)
+    public async Task<Result<Error>> Handle(DatabaseContextWriteContext context, Func<Task> action)
     {
         try
         {
@@ -36,39 +38,41 @@ internal sealed class DatabaseContextWriteExceptionHandler
         }
         catch (DbUpdateException dbUpdateException) when (dbUpdateException.InnerException is PostgresException e)
         {
-            ThrowException(context, e);
+            return ConvertException(context, e);
         }
         catch (PostgresException e)
         {
-            ThrowException(context, e);
+            return ConvertException(context, e);
         }
+
+        return Result<Error>.CreateSuccess();
     }
 
-    private void ThrowException(DatabaseContextWriteContext context, PostgresException exception)
+    private Error ConvertException(DatabaseContextWriteContext context, PostgresException exception)
     {
-        if (!IDatabaseError.TryParse(exception, out var error) || 
-            !TryConvert(context, error, out var dbException))
+        if (!IDatabaseError.TryParse(exception, out var databaseError) || 
+            !TryConvert(context, databaseError, out var error))
             throw new InternalStorageException(exception.MessageText, exception);
         
-        throw dbException;
+        return error;
     }
 
     private bool TryConvert(
         DatabaseContextWriteContext context,
-        IDatabaseError error,
-        [NotNullWhen(true)] out Exception? exception)
+        IDatabaseError databaseError,
+        [NotNullWhen(true)] out Error? error)
     {
-        switch (error)
+        switch (databaseError)
         {
             case DatabaseForeignKeyConstraintError foreignKeyConstraintError:
-                return _foreignKeyConstraintConverter.TryConvert(context, foreignKeyConstraintError, out exception);
+                return _foreignKeyConstraintConverter.TryConvert(foreignKeyConstraintError, out error);
             case TriggerConstraintError triggerConstraintError:
-                exception = _triggerConstraintConverter.Convert(context, triggerConstraintError);
+                error = _triggerConstraintConverter.Convert(triggerConstraintError);
                 return true;
             case DuplicateKeyError duplicateKeyError:
-                return _duplicateKeyConverter.TryConvert(context, duplicateKeyError, out exception);
+                return _duplicateKeyConverter.TryConvert(context, duplicateKeyError, out error);
             default:
-                exception = null;
+                error = null;
                 return false;
         }
     }

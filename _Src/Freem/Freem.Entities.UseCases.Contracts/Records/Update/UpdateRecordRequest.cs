@@ -2,11 +2,15 @@
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Time.Models;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.Update;
 
-public sealed class UpdateRecordRequest
+public sealed class UpdateRecordRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Records.Update;
+
     public RecordId Id { get; }
     
     public UpdateField<DateTimePeriod>? Period { get; init; }

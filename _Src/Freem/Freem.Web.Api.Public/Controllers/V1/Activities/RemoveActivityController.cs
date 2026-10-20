@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Activities;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Remove;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
@@ -19,17 +21,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public sealed class RemoveActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public RemoveActivityController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpDelete]
@@ -38,10 +40,12 @@ public sealed class RemoveActivityController : BaseController
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(activityId);
 
-        var response = await _executor.ExecuteAsync<RemoveActivityRequest, RemoveActivityResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<RemoveActivityRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
@@ -54,12 +58,11 @@ public sealed class RemoveActivityController : BaseController
         return new RemoveActivityRequest(activityId);
     }
 
-    private static IActionResult CreateFailure(Error<RemoveActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            RemoveActivityErrorCode.ActivityNotFound => new NotFoundResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

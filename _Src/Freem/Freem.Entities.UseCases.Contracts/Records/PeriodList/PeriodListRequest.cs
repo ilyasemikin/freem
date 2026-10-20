@@ -1,10 +1,14 @@
 ﻿using Freem.Entities.UseCases.Contracts.Filter;
 using Freem.Time.Models;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Records.PeriodList;
 
-public sealed class PeriodListRequest
+public sealed class PeriodListRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Records.PeriodList;
+
     public Limit Limit { get; }
     public DateTimePeriod Period { get; }
 

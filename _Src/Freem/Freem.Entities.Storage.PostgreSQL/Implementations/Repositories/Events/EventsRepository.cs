@@ -1,12 +1,13 @@
 ﻿using Freem.Domain;
 using Freem.Domain.Events;
-using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Repositories.Events;
 using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Database;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Events;
 
@@ -34,7 +35,7 @@ internal sealed class EventsRepository : IEventRepository
         _entityConverter = entityConverter;
     }
 
-    public async Task CreateAsync(
+    public async Task<Result<Error>> CreateAsync(
         IEntityEvent<Id, UserId> entity, 
         CancellationToken cancellationToken = default) 
     {
@@ -45,20 +46,20 @@ internal sealed class EventsRepository : IEventRepository
         await _database.Events.AddAsync(dbEntity, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
+        return await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
     }
     
-    public async Task<SearchEntityResult<IEntityEvent<Id, UserId>>> FindByIdAsync(
+    public async Task<Result<IEntityEvent<Id, UserId>, Error>> FindByIdAsync(
         EventId id, 
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
         var idString = id.ToString();
-        return await _database.Events.FindAsync(e => e.Id == idString, _entityConverter.Convert, cancellationToken);
+        return await _database.Events.FindAsync(id, e => e.Id == idString, _entityConverter.Convert, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<IEntityEvent<Id, UserId>>> FindAsync(
+    public async Task<Result<AsyncBatch<IEntityEvent<Id, UserId>>, Error>> FindAsync(
         EventAfterTimeFilter filter, 
         CancellationToken cancellationToken = default)
     {

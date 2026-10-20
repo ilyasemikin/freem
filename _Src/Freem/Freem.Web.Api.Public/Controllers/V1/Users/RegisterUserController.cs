@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Users.Register;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Domain;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiRegisterUserResponse = Freem.Web.Api.Public.Contracts.DTO.Users.RegisterUserResponse;
 using ApiRegisterUserRequest = Freem.Web.Api.Public.Contracts.DTO.Users.RegisterUserRequest;
 using RegisterUserRequest = Freem.Entities.UseCases.Contracts.Users.Register.RegisterUserRequest;
@@ -22,17 +23,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users;
 public sealed class RegisterUserController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public RegisterUserController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -41,24 +42,25 @@ public sealed class RegisterUserController : BaseController
         [Required] [FromBody] ApiRegisterUserRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = new RegisterUserRequest(body.Nickname);
 
-        var response = await _executor.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<RegisterUserRequest, Result<RegisterUserResponse, Error>>(context, request, cancellationToken);
 
         if (!response.Success)
             return CreateFailure(response.Error);
 
-        var result = new ApiRegisterUserResponse(response.UserId);
+        var result = new ApiRegisterUserResponse(response.Value.UserId);
         return Ok(result);
     }
 
-    private static IActionResult CreateFailure(Error<RegisterUserErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            RegisterUserErrorCode.UserAlreadyRegistered => CreateResult(StatusCodes.Status409Conflict),
-            _ => CreateResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityAlreadyExists)
+            return CreateResult(StatusCodes.Status409Conflict);
+
+        return CreateResult(StatusCodes.Status500InternalServerError);
     }
 }

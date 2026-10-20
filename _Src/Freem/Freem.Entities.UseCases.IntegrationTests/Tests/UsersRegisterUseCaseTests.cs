@@ -1,8 +1,11 @@
 ﻿using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Register;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -21,13 +24,13 @@ public sealed class UsersRegisterUseCaseTests : UseCaseTestBase
     {
         var request = new RegisterUserRequest(Nickname);
         var userId = UserId.Parse(UserIdValue, null);
-        var context = new UseCaseExecutionContext(userId);
+        var context = new HandlerContext(userId);
         
-        var response = await Context.ExecuteAsync<RegisterUserRequest, RegisterUserResponse>(context, request);
+        var response = await Context.ExecuteAsync<RegisterUserRequest, Result<RegisterUserResponse, Error>>(context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.UserId);
+        Assert.NotNull(response.Value.UserId);
         Assert.Null(response.Error);
     }
 }

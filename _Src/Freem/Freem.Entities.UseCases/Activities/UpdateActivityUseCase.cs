@@ -1,20 +1,22 @@
-﻿using Freem.Domain.Entities.Activities;
-using Freem.Domain.Storage.Exceptions;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Update;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal sealed class UpdateActivityUseCase 
-    : IEntitiesUseCase<UpdateActivityRequest, UpdateActivityResponse, UpdateActivityErrorCode>
+    : IRequestHandler<HandlerContext, UpdateActivityRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivityRepository _repository;
@@ -38,54 +40,38 @@ internal sealed class UpdateActivityUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<UpdateActivityResponse> ExecuteAsync(
-        UseCaseExecutionContext context, UpdateActivityRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, UpdateActivityRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         if (!request.HasChanges())
-            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.NothingToUpdate);
+            return DomainErrorCatalog.Factories.CreateNothingToDo();
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        if (!result.Founded)
-            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.ActivityNotFound);
+        if (!result.Success)
+            return result.Error;
         
-        var activity = result.Entity;
+        var activity = result.Value;
         if (request.Name is not null)
             activity.Name = request.Name;
         if (request.Tags is not null)
             activity.Tags.Update(request.Tags);
 
-        try
-        {
-            await RunTransactionAsync(activity, cancellationToken);
-        }
-        catch (NotFoundRelatedException ex)
-        {
-            return ProcessNotFoundRelatedException(ex);
-        }
-        
-        return UpdateActivityResponse.CreateSuccess();
+        return await RunTransactionAsync(activity, cancellationToken);
     }
 
-    private async Task RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
+    private async Task<Result<Error>> RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.UpdateAsync(activity, cancellationToken);
-            await _eventProducer.PublishAsync(activity.BuildUpdatedEvent, cancellationToken);
+            var result = await _repository.UpdateAsync(activity, cancellationToken);
+            if (!result.Success)
+                return result;
+
+            return await _eventProducer.PublishAsync(activity.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
-    }
-
-    private static UpdateActivityResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
-    {
-        if (ex.RelatedIds.HasTagIds())
-            return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedTagsNotFound);
-
-        return UpdateActivityResponse.CreateFailure(UpdateActivityErrorCode.RelatedUnknownNotFound);
     }
 }

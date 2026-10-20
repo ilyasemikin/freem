@@ -1,13 +1,16 @@
 ﻿using System.Linq.Expressions;
-using Freem.Domain.Storage.Models;
+using Freem.Domain;
 using Microsoft.EntityFrameworkCore;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 
 internal static class SearchQueryableExtensions
 {
-    public static async Task<SearchEntityResult<TEntity>> FindAsync<TDatabaseEntity, TEntity>(
+    public static async Task<Result<TEntity, Error>> FindAsync<TDatabaseEntity, TEntity>(
         this IQueryable<TDatabaseEntity> queryable,
+        Id id,
         Expression<Func<TDatabaseEntity, bool>> predicate,
         Func<TDatabaseEntity, TEntity?> mapper,
         CancellationToken cancellationToken = default)
@@ -18,12 +21,12 @@ internal static class SearchQueryableExtensions
             .FirstOrDefaultAsync(predicate, cancellationToken);
 
         if (dbEntity is null)
-            return SearchEntityResult<TEntity>.NotFound();
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
 
         var entity = mapper(dbEntity);
         if (entity is null)
-            return SearchEntityResult<TEntity>.NotFound();
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
         
-        return SearchEntityResult<TEntity>.Found(entity);
+        return Result<TEntity, Error>.CreateSuccess(entity);
     }
 }

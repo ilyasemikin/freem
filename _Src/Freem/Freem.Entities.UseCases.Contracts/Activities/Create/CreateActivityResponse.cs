@@ -1,37 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.Activities;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+﻿using Freem.Domain.Entities.Activities;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Create;
 
-public sealed class CreateActivityResponse : IResponse<CreateActivityErrorCode>
+public sealed class CreateActivityResponse
 {
-    [MemberNotNullWhen(true, nameof(Activity))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public Activity? Activity { get; }
-    public Error<CreateActivityErrorCode>? Error { get; }
+    public Activity Activity { get; }
 
-    private CreateActivityResponse(Activity? activity = null, Error<CreateActivityErrorCode>? error = null)
-    {
-        Success = activity is not null;
-        Activity = activity;
-        Error = error;
-    }
-
-    public static CreateActivityResponse CreateSuccess(Activity activity)
+    public CreateActivityResponse(Activity activity)
     {
         ArgumentNullException.ThrowIfNull(activity);
-        
-        return new CreateActivityResponse(activity);
-    }
 
-    public static CreateActivityResponse CreateFailure(CreateActivityErrorCode code)
-    {
-        var error = new Error<CreateActivityErrorCode>(code);
-
-        return new CreateActivityResponse(error: error);
+        Activity = activity;
     }
 }

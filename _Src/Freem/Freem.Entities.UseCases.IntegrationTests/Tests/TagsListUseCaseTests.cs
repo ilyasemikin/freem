@@ -1,9 +1,11 @@
 ﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Entities.Tags.Comparers;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.List;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -11,18 +13,22 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
 {
     private const int TagsCount = 10;
 
-    private readonly UseCaseExecutionContext _context;
-    private readonly IReadOnlyList<Tag> _tags;
+    private HandlerContext _context = null!;
+    private IReadOnlyList<Tag> _tags = null!;
     
     public TagsListUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var tags = filler.Tags.CreateMany(_context, TagsCount);
+        var tags = await filler.Tags.CreateManyAsync(_context, TagsCount);
         _tags = tags
             .OrderBy(x => x.Id.ToString())
             .ToArray();
@@ -33,28 +39,18 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListTagRequest();
 
-        var response = await Context.ExecuteAsync<ListTagRequest, ListTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListTagRequest, Result<ListTagResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Tags);
+        Assert.NotNull(response.Value.Tags);
         Assert.Null(response.Error);
 
-        var tags = response.Tags
+        var tags = response.Value.Tags
             .OrderBy(x => x.Id.ToString())
             .ToArray();
         
         Assert.Equal(_tags, tags, new TagEqualityComparer());
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new ListTagRequest();
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<ListTagRequest, ListTagResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

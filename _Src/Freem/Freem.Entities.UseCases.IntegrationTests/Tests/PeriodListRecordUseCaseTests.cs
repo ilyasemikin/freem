@@ -1,9 +1,11 @@
 ﻿using Freem.Domain.Entities.Records.Comparers;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time.Models;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -11,19 +13,23 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
 {
     private const int RecordsCount = 10;
     
-    private readonly UseCaseExecutionContext _context;
-    private readonly IReadOnlyList<Domain.Entities.Records.Record> _records;
+    private HandlerContext _context = null!;
+    private IReadOnlyList<Domain.Entities.Records.Record> _records = null!;
     
     public PeriodListRecordUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
 
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
 
-        var activity = filler.Activities.Create(_context);
-        var records = filler.Records.CreateMany(_context, [activity.Id], RecordsCount);
+        var activity = await filler.Activities.CreateAsync(_context);
+        var records = await filler.Records.CreateManyAsync(_context, [activity.Id], RecordsCount);
         _records = records
             .OrderBy(e => e.Period.StartAt)
             .ThenBy(e => e.Period.EndAt)
@@ -39,28 +45,17 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
 
         var request = new PeriodListRequest(period);
 
-        var response = await Context.ExecuteAsync<PeriodListRequest, PeriodListResponse>(_context, request);
+        var response = await Context.ExecuteAsync<PeriodListRequest, Result<PeriodListResponse, Error>>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Records);
-        Assert.NotNull(response.TotalCount);
+        Assert.NotNull(response.Value.Records);
+        Assert.NotNull(response.Value.TotalCount);
         Assert.Null(response.Error);
         
-        Assert.Equal(RecordsCount, (int)response.TotalCount);
-        Assert.Equal(RecordsCount, response.Records.Count);
-        Assert.Equal(_records, response.Records, new RecordEqualityComparer());
+        Assert.Equal(RecordsCount, (int)response.Value.TotalCount);
+        Assert.Equal(RecordsCount, response.Value.Records.Count);
+        Assert.Equal(_records, response.Value.Records, new RecordEqualityComparer());
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var period = new DateTimePeriod(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(10));
-        var request = new PeriodListRequest(period);
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<PeriodListRequest, PeriodListResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

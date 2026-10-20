@@ -1,17 +1,19 @@
 ﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Domain.Tags;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.Create;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Tags;
 
 internal sealed class CreateTagUseCase 
-    : IEntitiesUseCase<CreateTagRequest, CreateTagResponse, CreateTagErrorCode>
+    : IRequestHandler<HandlerContext, CreateTagRequest, Result<CreateTagResponse, Error>>
 {
     private readonly ITagRepository _repository;
     private readonly EventProducer _eventProducer;
@@ -31,42 +33,29 @@ internal sealed class CreateTagUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<CreateTagResponse> ExecuteAsync(
-        UseCaseExecutionContext context, CreateTagRequest request,
+    public async Task<Result<CreateTagResponse, Error>> HandleAsync(
+        HandlerContext context, CreateTagRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var id = TagId.Generate();
         var tag = new Tag(id, context.UserId, request.Name);
 
-        try
-        {
-            await RunTransactionAsync(tag, cancellationToken);
-        }
-        catch (DuplicateKeyStorageException ex)
-        {
-            return ProcessDuplicateKeyStorageException(ex);
-        }
+        var writeResult = await RunTransactionAsync(tag, cancellationToken);
+        if (!writeResult.Success)
+            return writeResult.Error;
 
-        return CreateTagResponse.CreateSuccess(tag);
+        return new CreateTagResponse(tag);
     }
 
-    private async Task RunTransactionAsync(Tag tag, CancellationToken cancellationToken = default)
+    private async Task<Result<Error>> RunTransactionAsync(Tag tag, CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.CreateAsync(tag, cancellationToken);
-            await _eventProducer.PublishAsync(tag.BuildCreatedEvent, cancellationToken);
+            var repositoryResult = await _repository.CreateAsync(tag, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
+
+            return await _eventProducer.PublishAsync(tag.BuildCreatedEvent, cancellationToken);
         }, cancellationToken);
-    }
-
-    private static CreateTagResponse ProcessDuplicateKeyStorageException(DuplicateKeyStorageException ex)
-    {
-        return ex.Code switch
-        {
-            DuplicateKeyStorageException.ErrorCode.DuplicateTagName => CreateTagResponse.CreateFailure(CreateTagErrorCode.TagNameAlreadyExists),
-            _ => CreateTagResponse.CreateFailure(CreateTagErrorCode.UnknownError, ex.Message)
-        };
     }
 }

@@ -1,25 +1,32 @@
-﻿using Freem.Domain.Tags;
+﻿using Freem.Domain;
+using Freem.Domain.Tags;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.Remove;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly TagId _tagId;
+    private HandlerContext _context = null!;
+    private TagId _tagId = null!;
     
     public TagsRemoveUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var tag = filler.Tags.Create(_context);
+        var tag = await filler.Tags.CreateAsync(_context);
         _tagId = tag.Id;
     }
 
@@ -28,7 +35,7 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
     {
         var request = new RemoveTagRequest(_tagId);
 
-        var response = await Context.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
@@ -42,23 +49,13 @@ public sealed class TagsRemoveUseCaseTests : UseCaseTestBase
 
         var request = new RemoveTagRequest(notExistedTagId);
         
-        var response = await Context.ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<RemoveTagRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(RemoveTagErrorCode.TagNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new RemoveTagRequest(_tagId);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<RemoveTagRequest, RemoveTagResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.List;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal sealed class ListActivityUseCase 
-    : IEntitiesUseCase<ListActivityRequest, ListActivityResponse, ListActivityErrorCode>
+    : IRequestHandler<HandlerContext, ListActivityRequest, Result<ListActivityResponse, Error>>
 {
     private readonly IActivityRepository _repository;
 
@@ -17,12 +20,10 @@ internal sealed class ListActivityUseCase
         _repository = repository;
     }
 
-    public async Task<ListActivityResponse> ExecuteAsync(
-        UseCaseExecutionContext context, ListActivityRequest request,
+    public async Task<Result<ListActivityResponse, Error>> HandleAsync(
+        HandlerContext context, ListActivityRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var filter = new ActivityByUserFilter(context.UserId)
         {
             Offset = (int)request.Offset,
@@ -30,7 +31,10 @@ internal sealed class ListActivityUseCase
         };
             
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var activities = await result.ToArrayAsync(cancellationToken);
-        return ListActivityResponse.CreateSuccess(activities, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var activities = await result.Value.ToArrayAsync(cancellationToken);
+        return new ListActivityResponse(activities, result.Value.Count);
     }
 }

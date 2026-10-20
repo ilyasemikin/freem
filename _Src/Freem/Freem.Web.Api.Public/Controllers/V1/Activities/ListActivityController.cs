@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Entities.Activities;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.List;
 using Freem.Entities.UseCases.Contracts.Filter;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.OpenApi.Headers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiListActivityRequest = Freem.Web.Api.Public.Contracts.DTO.Activities.ListActivityRequest;
 using UseCaseListActivityRequest = Freem.Entities.UseCases.Contracts.Activities.List.ListActivityRequest;
 
@@ -26,17 +27,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public sealed class ListActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public ListActivityController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
@@ -45,13 +46,15 @@ public sealed class ListActivityController : BaseController
         [Required] [FromQuery] ApiListActivityRequest query,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(query);
 
-        var response = await _executor.ExecuteAsync<UseCaseListActivityRequest, ListActivityResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseListActivityRequest, Result<ListActivityResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(Response, response.Activities, response.TotalCount)
+            ? CreateSuccess(Response, response.Value.Activities, response.Value.TotalCount)
             : CreateFailure(response.Error);
     }
 
@@ -79,11 +82,8 @@ public sealed class ListActivityController : BaseController
         }
     }
 
-    private static IActionResult CreateFailure(Error<ListActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

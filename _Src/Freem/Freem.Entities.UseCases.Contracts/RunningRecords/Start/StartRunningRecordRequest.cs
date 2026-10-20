@@ -1,10 +1,14 @@
 ﻿using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 
-public sealed class StartRunningRecordRequest
+public sealed class StartRunningRecordRequest : IRequest
 {
+    public RequestType Type => RequestTypes.RunningRecords.Start;
+
     private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public DateTimeOffset StartAt { get; }

@@ -1,44 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.Tags;
-using Freem.Domain.Storage.Models;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+﻿using Freem.Domain.Entities.Tags;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Get;
 
-public sealed class GetTagResponse : IResponse<GetTagErrorCode>
+public sealed class GetTagResponse
 {
-    [MemberNotNullWhen(true, nameof(Tag))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public Tag? Tag { get; }
-    public Error<GetTagErrorCode>? Error { get; }
+    public Tag Tag { get; }
 
-    private GetTagResponse(Tag? tag = null, Error<GetTagErrorCode>? error = null)
-    {
-        Success = tag is not null;
-        Tag = tag;
-        Error = error;
-    }
-
-    public static GetTagResponse CreateSuccess(Tag tag)
+    public GetTagResponse(Tag tag)
     {
         ArgumentNullException.ThrowIfNull(tag);
 
-        return new GetTagResponse(tag);
-    }
-
-    public static GetTagResponse CreateFailure(GetTagErrorCode code)
-    {
-        var error = new Error<GetTagErrorCode>(code);
-        return new GetTagResponse(error: error);
-    }
-
-    public static GetTagResponse Create(SearchEntityResult<Tag> result)
-    {
-        return result.Founded
-            ? CreateSuccess(result.Entity)
-            : CreateFailure(GetTagErrorCode.TagNotFound);
+        Tag = tag;
     }
 }

@@ -1,15 +1,19 @@
-﻿using Freem.Domain.Entities.Users;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Users;
 using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.Events.Producer.Implementations;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users.Settings;
 
 internal sealed class UpdateUserSettingsUseCase :
-    IUseCase<UseCaseExecutionContext, UpdateUserSettingsRequest, UpdateUserSettingsResponse, UpdateUserSettingsErrorCode>
+    IRequestHandler<HandlerContext, UpdateUserSettingsRequest, Result<Error>>
 {
     private readonly IUserRepository _repository;
     private readonly EventProducer _eventProducer;
@@ -29,20 +33,18 @@ internal sealed class UpdateUserSettingsUseCase :
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<UpdateUserSettingsResponse> ExecuteAsync(
-        UseCaseExecutionContext context, UpdateUserSettingsRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, UpdateUserSettingsRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         if (!request.HasChanges())
-            return UpdateUserSettingsResponse.CreateFailure(UpdateUserSettingsErrorCode.NothingToDo);
+            return DomainErrorCatalog.Factories.CreateNothingToDo();
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
-        if (!result.Founded)
-            return UpdateUserSettingsResponse.CreateFailure(UpdateUserSettingsErrorCode.UserNotFound);
+        if (!result.Success)
+            return result.Error;
 
-        var user = result.Entity;
+        var user = result.Value;
         var settings = new UserSettings()
         {
             DayUtcOffset = request.UtcOffset.Value
@@ -50,12 +52,13 @@ internal sealed class UpdateUserSettingsUseCase :
         
         user.Settings = settings;
 
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.UpdateAsync(user, cancellationToken);
-            await _eventProducer.PublishAsync(user.BuildSettingsChangedEvent, cancellationToken);
+            var repositoryResult = await _repository.UpdateAsync(user, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
+
+            return await _eventProducer.PublishAsync(user.BuildSettingsChangedEvent, cancellationToken);
         }, cancellationToken);
-        
-        return UpdateUserSettingsResponse.CreateSuccess();
     }
 }

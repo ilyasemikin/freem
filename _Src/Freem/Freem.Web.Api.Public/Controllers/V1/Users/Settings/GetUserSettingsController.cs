@@ -1,12 +1,14 @@
-﻿using Freem.Domain.Entities.Users;
-using Freem.Entities.UseCases;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Users;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Users.Settings;
 
@@ -18,30 +20,32 @@ namespace Freem.Web.Api.Public.Controllers.V1.Users.Settings;
 public sealed class GetUserSettingsController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public GetUserSettingsController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
     [EndpointSummary("Get user settings")]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = GetUserSettingsRequest.Instance;
 
-        var response = await _executor.ExecuteAsync<GetUserSettingsRequest, GetUserSettingsResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.Settings)
+            ? CreateSuccess(response.Value.Settings)
             : CreateFailure(response.Error);
     }
 
@@ -51,12 +55,11 @@ public sealed class GetUserSettingsController : BaseController
         return new OkObjectResult(response);
     }
 
-    private static IActionResult CreateFailure(Error<GetUserSettingsErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            GetUserSettingsErrorCode.UserNotFound => new UnauthorizedResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new UnauthorizedResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

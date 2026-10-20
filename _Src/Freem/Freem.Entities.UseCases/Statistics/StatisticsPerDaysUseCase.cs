@@ -4,40 +4,43 @@ using Freem.Domain.Entities.Users;
 using Freem.Domain.Statistics.Time;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Users;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Statistics.PerDays;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Statistics;
 
 public sealed class StatisticsPerDaysUseCase : 
-    IUseCase<UseCaseExecutionContext, StatisticsPerDaysRequest, StatisticsPerDaysResponse, StatisticsPerDaysErrorCode>
+    IRequestHandler<HandlerContext, StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>>
 {
     private readonly IRecordRepository _repository;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public StatisticsPerDaysUseCase(
         IRecordRepository repository, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _repository = repository;
-        _executor = executor;
+        _mediator = mediator;
     }
 
-    public async Task<StatisticsPerDaysResponse> ExecuteAsync(
-        UseCaseExecutionContext context, StatisticsPerDaysRequest request,
+    public async Task<Result<StatisticsPerDaysResponse, Error>> HandleAsync(
+        HandlerContext context, StatisticsPerDaysRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
+        var settingsResult = await GetUserSettingsAsync(context, cancellationToken);
+        if (!settingsResult.Success)
+            return settingsResult.Error;
 
-        var settings = await GetUserSettingsAsync(context, cancellationToken);
-        if (settings is null)
-            return StatisticsPerDaysResponse.CreateFailure(StatisticsPerDaysErrorCode.UserNotFound);
+        var settings = settingsResult.Value;
 
         var time = TimeOnly.MinValue.Add(settings.DayUtcOffset.Value);
         var current = request.Period.StartAt.ToUtcDateTime(time);
@@ -47,7 +50,11 @@ public sealed class StatisticsPerDaysUseCase :
         var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
         while (current < end)
         {
-            var records = await FindRecordsAsync(context.UserId, current, cancellationToken);
+            var recordsResult = await FindRecordsAsync(context.UserId, current, cancellationToken);
+            if (!recordsResult.Success)
+                return recordsResult.Error;
+
+            var records = recordsResult.Value;
 
             var next = current.AddDays(1);
             var period = new DateTimePeriod(current, next);
@@ -58,18 +65,21 @@ public sealed class StatisticsPerDaysUseCase :
             current = next;
         }
 
-        return StatisticsPerDaysResponse.CreateSuccess(statisticsPerDays);
+        return new StatisticsPerDaysResponse(statisticsPerDays);
     }
 
-    private async Task<UserSettings?> GetUserSettingsAsync(
-        UseCaseExecutionContext context, CancellationToken cancellationToken)
+    private async Task<Result<UserSettings, Error>> GetUserSettingsAsync(
+        HandlerContext context, CancellationToken cancellationToken)
     {
         var request = new GetUserSettingsRequest();
-        var response = await _executor.ExecuteAsync<GetUserSettingsRequest, GetUserSettingsResponse>(context, request, cancellationToken);
-        return response.Settings;
+        var result = await _mediator.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request, cancellationToken);
+        if (!result.Success)
+            return result.Error;
+
+        return result.Value.Settings;
     }
 
-    private async Task<IReadOnlyList<Record>> FindRecordsAsync(
+    private async Task<Result<IReadOnlyList<Record>, Error>> FindRecordsAsync(
         UserId userId, DateTime start, 
         CancellationToken cancellationToken)
     {
@@ -88,12 +98,15 @@ public sealed class StatisticsPerDaysUseCase :
             var filter = new RecordByPeriodFilter(userId, period);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
-            var records = result.ToBlockingEnumerable(cancellationToken);
+            if (!result.Success)
+                return result.Error;
+
+            var records = result.Value.ToBlockingEnumerable(cancellationToken);
             
             list.AddRange(records);
 
-            if (list.Count >= result.TotalCount)
-                return list;
+            if (list.Count >= result.Value.Count)
+                return Result<IReadOnlyList<Record>, Error>.CreateSuccess(list);
         } while (true);
     }
 }

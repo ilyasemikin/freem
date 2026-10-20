@@ -1,9 +1,13 @@
 ﻿using Freem.Domain.Activities;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.Remove;
 
-public sealed class RemoveActivityRequest
+public sealed class RemoveActivityRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Activities.Remove;
+
     public ActivityId Id { get; }
     
     public RemoveActivityRequest(ActivityId id)

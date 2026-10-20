@@ -1,10 +1,12 @@
-﻿using Freem.Entities.UseCases;
+﻿using Freem.Domain;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Remove;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 
@@ -17,39 +19,40 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 public sealed class RemoveRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public RemoveRunningRecordController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpDelete]
     [EndpointSummary("Remove running record")]
     public async Task<IActionResult> RemoveAsync(CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = RemoveRunningRecordRequest.Instance;
 
-        var response = await _executor.ExecuteAsync<RemoveRunningRecordRequest, RemoveRunningRecordResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<RemoveRunningRecordRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
             : CreateFailure(response.Error);
     }
 
-    private static IActionResult CreateFailure(Error<RemoveRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            RemoveRunningRecordErrorCode.RunningRecordNotFound => new NotFoundResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

@@ -9,10 +9,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
-        <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
-        <ProjectReference Include="..\Freem.UseCases.Contracts.Abstractions\Freem.UseCases.Contracts.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Utilities.UseCases" Version="0.1.0" />
     </ItemGroup>
 
 </Project>

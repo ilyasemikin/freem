@@ -1,10 +1,13 @@
 ﻿using Freem.Domain.Storage.Repositories.Users;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Get;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Users;
 
-internal sealed class GetUserUseCase : IEntitiesUseCase<GetUserRequest, GetUserResponse, GetUserErrorCode>
+internal sealed class GetUserUseCase : IRequestHandler<HandlerContext, GetUserRequest, Result<GetUserResponse, Error>>
 {
     private readonly IUserRepository _repository;
 
@@ -15,16 +18,15 @@ internal sealed class GetUserUseCase : IEntitiesUseCase<GetUserRequest, GetUserR
         _repository = repository;
     }
 
-    public async Task<GetUserResponse> ExecuteAsync(
-        UseCaseExecutionContext context,
+    public async Task<Result<GetUserResponse, Error>> HandleAsync(
+        HandlerContext context,
         GetUserRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
-        return result.Founded 
-            ? GetUserResponse.CreateSuccess(result.Entity) 
-            : GetUserResponse.CreateNotFoundResult();
+        if (!result.Success)
+            return result.Error;
+
+        return new GetUserResponse(result.Value);
     }
 }

@@ -1,7 +1,12 @@
-﻿namespace Freem.Entities.UseCases.Contracts.Tags.GetByName;
+﻿using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
-public sealed class FindTagByNameRequest
+namespace Freem.Entities.UseCases.Contracts.Tags.GetByName;
+
+public sealed class FindTagByNameRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Tags.FindByName;
+
     public string SearchText { get; }
     
     public FindTagByNameRequest(string searchText)

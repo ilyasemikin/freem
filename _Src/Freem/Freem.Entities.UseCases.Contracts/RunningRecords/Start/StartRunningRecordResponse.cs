@@ -1,36 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.RunningRecords;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+﻿using Freem.Domain.Entities.RunningRecords;
 
 namespace Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 
-public sealed class StartRunningRecordResponse : IResponse<StartRunningRecordErrorCode>
+public sealed class StartRunningRecordResponse
 {
-    [MemberNotNullWhen(true, nameof(RunningRecord))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public RunningRecord? RunningRecord { get; }
-    public Error<StartRunningRecordErrorCode>? Error { get; }
+    public RunningRecord RunningRecord { get; }
 
-    private StartRunningRecordResponse(RunningRecord? record = null, Error<StartRunningRecordErrorCode>? error = null)
+    public StartRunningRecordResponse(RunningRecord runningRecord)
     {
-        Success = record is not null;
-        RunningRecord = record;
-        Error = error;
-    }
+        ArgumentNullException.ThrowIfNull(runningRecord);
 
-    public static StartRunningRecordResponse CreateSuccess(RunningRecord record)
-    {
-        ArgumentNullException.ThrowIfNull(record);
-        
-        return new StartRunningRecordResponse(record);
-    }
-
-    public static StartRunningRecordResponse CreateFailure(StartRunningRecordErrorCode code)
-    {
-        var error = new Error<StartRunningRecordErrorCode>(code);
-        return new StartRunningRecordResponse(error: error);
+        RunningRecord = runningRecord;
     }
 }

@@ -1,14 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Get;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
@@ -21,17 +23,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public sealed class GetActivityController : BaseController
 {
     private readonly UseCaseContextProvider _provider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public GetActivityController(
         UseCaseContextProvider provider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(provider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _provider = provider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpGet]
@@ -40,13 +42,15 @@ public sealed class GetActivityController : BaseController
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
-        var context = _provider.Get();
+        if (!_provider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(activityId);
 
-        var response = await _executor.ExecuteAsync<GetActivityRequest, GetActivityResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<GetActivityRequest, Result<GetActivityResponse, Error>>(context, request, cancellationToken);
 
         return response.Success
-            ? CreateSuccess(response.Activity)
+            ? CreateSuccess(response.Value.Activity)
             : CreateFailure(response.Error);
     }
 
@@ -62,12 +66,11 @@ public sealed class GetActivityController : BaseController
         return new OkObjectResult(response);
     }
     
-    private static IActionResult CreateFailure(Error<GetActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            GetActivityErrorCode.ActivityNotFound => new NotFoundResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

@@ -1,56 +1,53 @@
-﻿using Freem.Domain.Activities.Extensions;
-using Freem.Domain.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
-using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Repositories.RunningRecords;
-using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.RunningRecords;
 
 internal sealed class StartRunningRecordUseCase 
-    : IEntitiesUseCase<StartRunningRecordRequest, StartRunningRecordResponse, StartRunningRecordErrorCode>
+    : IRequestHandler<HandlerContext, StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRunningRecordRepository _repository;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StartRunningRecordUseCase(
         IDistributedLocker locker,
         IRunningRecordRepository repository, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor, 
+        IRequestMediator<HandlerContext> mediator, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
 
         _locker = locker;
         _repository = repository;
-        _executor = executor;
+        _mediator = mediator;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<StartRunningRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, StartRunningRecordRequest request,
+    public async Task<Result<StartRunningRecordResponse, Error>> HandleAsync(
+        HandlerContext context, StartRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var record = new RunningRecord(context.UserId, request.Activities, request.Tags, request.StartAt)
         {
             Name = request.Name,
@@ -59,43 +56,34 @@ internal sealed class StartRunningRecordUseCase
         
         var id = RunningRecordId.FromUserId(context.UserId);
         var currentResult = await _repository.FindByIdAsync(id, cancellationToken);
-        if (currentResult.Founded)
+        if (currentResult.Success)
         {
             var stopRunningRecordRequest = new StopRunningRecordRequest(record.StartAt);
-            await _executor.ExecuteAsync<StopRunningRecordRequest, StopRunningRecordResponse>(context, stopRunningRecordRequest, cancellationToken);
+            var stopResult = await _mediator.ExecuteAsync<StopRunningRecordRequest, Result<Error>>(context, stopRunningRecordRequest, cancellationToken);
+            if (!stopResult.Success)
+                return stopResult.Error;
         }
 
         await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
-        try
-        {
-            await RunTransactionAsync(context, record, cancellationToken);
-        }
-        catch (NotFoundRelatedException ex)
-        {
-            return ProcessNotFoundRelatedException(ex);
-        }
+
+        var writeResult = await RunTransactionAsync(context, record, cancellationToken);
+        if (!writeResult.Success)
+            return writeResult.Error;
         
-        return StartRunningRecordResponse.CreateSuccess(record);
+        return new StartRunningRecordResponse(record);
     }
 
-    private async Task RunTransactionAsync(
-        UseCaseExecutionContext context, RunningRecord record, 
+    private async Task<Result<Error>> RunTransactionAsync(
+        HandlerContext context, RunningRecord record, 
         CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.CreateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(record.BuildStartedEvent, cancellationToken);
+            var repositoryResult = await _repository.CreateAsync(record, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
+
+            return await _eventProducer.PublishAsync(record.BuildStartedEvent, cancellationToken);
         }, cancellationToken);
-    }
-    
-    private static StartRunningRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
-    {
-        if (ex.RelatedIds.HasActivityIds())
-            return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagIds())
-            return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedTagsNotFound);
-        
-        return StartRunningRecordResponse.CreateFailure(StartRunningRecordErrorCode.RelatedUnknownNotFound);
     }
 }

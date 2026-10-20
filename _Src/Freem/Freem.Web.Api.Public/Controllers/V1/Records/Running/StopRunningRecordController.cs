@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.RunningRecords.Stop;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Domain;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Clock.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiStopRunningRecordRequest = Freem.Web.Api.Public.Contracts.DTO.Records.Running.StopRunningRecordRequest;
 using UseCaseStopRunningRecordRequest = Freem.Entities.UseCases.Contracts.RunningRecords.Stop.StopRunningRecordRequest;
 
@@ -22,20 +23,20 @@ namespace Freem.Web.Api.Public.Controllers.V1.Records.Running;
 public sealed class StopRunningRecordController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
     private readonly IClock _clock;
 
     public StopRunningRecordController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor, 
+        IRequestMediator<HandlerContext> mediator, 
         IClock clock)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         ArgumentNullException.ThrowIfNull(clock);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
         _clock = clock;
     }
 
@@ -45,10 +46,12 @@ public sealed class StopRunningRecordController : BaseController
         [Required] [FromBody] ApiStopRunningRecordRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(body);
 
-        var response = await _executor.ExecuteAsync<UseCaseStopRunningRecordRequest, StopRunningRecordResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseStopRunningRecordRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
@@ -61,13 +64,13 @@ public sealed class StopRunningRecordController : BaseController
         return new UseCaseStopRunningRecordRequest(endAt);
     }
 
-    private static IActionResult CreateFailure(Error<StopRunningRecordErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            StopRunningRecordErrorCode.NothingToStop => new NotFoundResult(),
-            StopRunningRecordErrorCode.EndAtToEarly => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+        if (error.Type == DomainErrorCatalog.Types.PeriodIsInvalid)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

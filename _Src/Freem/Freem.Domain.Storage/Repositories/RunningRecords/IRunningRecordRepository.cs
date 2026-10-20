@@ -1,16 +1,17 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.RunningRecords;
-using Freem.Domain.Storage.Models;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Domain.Storage.Repositories.RunningRecords;
 
 public interface IRunningRecordRepository
 {
-    Task CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(RunningRecordId id, CancellationToken cancellationToken = default);
+    Task<Result<Error>> CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> UpdateAsync(RunningRecord entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> DeleteAsync(RunningRecordId id, CancellationToken cancellationToken = default);
 
-    Task<SearchEntityResult<RunningRecord>> FindByIdAsync(
+    Task<Result<RunningRecord, Error>> FindByIdAsync(
         RunningRecordId id,
         CancellationToken cancellationToken = default);
 }

@@ -1,14 +1,17 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Records.Update;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time.Models;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -17,28 +20,32 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     private static readonly RecordName UpdatedName = RecordName.Parse("record", null);
     private static readonly RecordDescription UpdatedDescription = RecordDescription.Parse("description", null);
 
-    private readonly UseCaseExecutionContext _context;
-    private readonly RecordId _recordId;
+    private HandlerContext _context = null!;
+    private RecordId _recordId = null!;
     
-    private readonly ActivityId _updatedActivityId;
-    private readonly TagId _updatedTagId;
+    private ActivityId _updatedActivityId = null!;
+    private TagId _updatedTagId = null!;
     
     public RecordsUpdateUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
-        var record = filler.Records.Create(_context, [activity.Id]);
+        var activity = await filler.Activities.CreateAsync(_context);
+        var record = await filler.Records.CreateAsync(_context, [activity.Id]);
         _recordId = record.Id;
         
-        var updatedActivity = filler.Activities.Create(_context);
+        var updatedActivity = await filler.Activities.CreateAsync(_context);
         _updatedActivityId = updatedActivity.Id;
         
-        var updateTag = filler.Tags.Create(_context);
+        var updateTag = await filler.Tags.CreateAsync(_context);
         _updatedTagId = updateTag.Id;
     }
 
@@ -53,14 +60,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Period = new UpdateField<DateTimePeriod>(period)
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Records.RequiredGet(_context, _recordId);
+        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
         Assert.Equal(startAt, actual.Period.StartAt);
         Assert.Equal(endAt, actual.Period.EndAt);
@@ -74,14 +81,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Name = new UpdateField<RecordName?>(UpdatedName)
         };
 
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Records.RequiredGet(_context, _recordId);
+        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
         Assert.Equal(UpdatedName, actual.Name);
     }
@@ -94,14 +101,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Description = new UpdateField<RecordDescription?>(UpdatedDescription)
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Records.RequiredGet(_context, _recordId);
+        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
         Assert.Equal(UpdatedDescription, actual.Description);
     }
@@ -115,14 +122,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Activities = new UpdateField<RelatedActivityIdsCollection>(activities)
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Records.RequiredGet(_context, _recordId);
+        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
         Assert.Equal(activities, actual.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
@@ -136,14 +143,14 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Records.RequiredGet(_context, _recordId);
+        var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
         Assert.Equal(tags, actual.Tags, IReadOnlyRelatedIdsCollection<TagId>.Equals);
     }
@@ -158,22 +165,22 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Activities = activities
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenActivitiesBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var activity = executor.Activities.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var activity = await executor.Activities.CreateAsync(anotherContext);
         
         var activities = new RelatedActivityIdsCollection([activity.Id]);
 
@@ -182,13 +189,13 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Activities = activities
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
@@ -201,22 +208,22 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var tag = executor.Tags.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var tag = await executor.Tags.CreateAsync(anotherContext);
         
         var tags = new RelatedTagIdsCollection([tag.Id]);
 
@@ -225,13 +232,13 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
@@ -239,26 +246,13 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateRecordRequest(_recordId);
         
-        var response = await Context.ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateRecordRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(UpdateRecordErrorCode.NothingToUpdate, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.NothingToDo, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new UpdateRecordRequest(_recordId)
-        {
-            Name = new UpdateField<RecordName?>(UpdatedName),
-        };
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<UpdateRecordRequest, UpdateRecordResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

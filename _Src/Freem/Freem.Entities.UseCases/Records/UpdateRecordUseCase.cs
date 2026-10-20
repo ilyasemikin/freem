@@ -1,21 +1,22 @@
-﻿using Freem.Domain.Activities.Extensions;
+﻿using Freem.Domain;
 using Freem.Domain.Entities.Records;
-using Freem.Domain.Storage.Exceptions;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Domain.Tags.Extensions;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.Update;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
 internal sealed class UpdateRecordUseCase 
-    : IEntitiesUseCase<UpdateRecordRequest, UpdateRecordResponse, UpdateRecordErrorCode>
+    : IRequestHandler<HandlerContext, UpdateRecordRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IRecordRepository _repository;
@@ -39,23 +40,21 @@ internal sealed class UpdateRecordUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<UpdateRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, UpdateRecordRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, UpdateRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         if (!request.HasChanges())
-            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.NothingToUpdate);
+            return DomainErrorCatalog.Factories.CreateNothingToDo();
         
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new RecordAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        if (!result.Founded)
-            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RecordNotFound);
+        if (!result.Success)
+            return result.Error;
         
-        var record = result.Entity;
+        var record = result.Value;
         if (request.Period is not null)
             record.Period = request.Period;
         if (request.Name is not null)
@@ -67,34 +66,18 @@ internal sealed class UpdateRecordUseCase
         if (request.Tags is not null)
             record.Tags.Update(request.Tags);
 
-        try
-        {
-            await RunTransactionAsync(record, cancellationToken);
-        }
-        catch (NotFoundRelatedException ex)
-        {
-            return ProcessNotFoundRelatedException(ex);
-        }
-        
-        return UpdateRecordResponse.CreateSuccess();
+        return await RunTransactionAsync(record, cancellationToken);
     }
 
-    private async Task RunTransactionAsync(Record record, CancellationToken cancellationToken = default)
+    private async Task<Result<Error>> RunTransactionAsync(Record record, CancellationToken cancellationToken = default)
     {
-        await _transactionRunner.RunAsync(async () =>
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.UpdateAsync(record, cancellationToken);
-            await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
+            var repositoryResult = await _repository.UpdateAsync(record, cancellationToken);
+            if (!repositoryResult.Success)
+                return repositoryResult;
+
+            return await _eventProducer.PublishAsync(record.BuildUpdatedEvent, cancellationToken);
         }, cancellationToken);
-    }
-
-    private static UpdateRecordResponse ProcessNotFoundRelatedException(NotFoundRelatedException ex)
-    {
-        if (ex.RelatedIds.HasActivityIds())
-            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedActivitiesNotFound);
-        if (ex.RelatedIds.HasTagIds())
-            return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedTagsNotFound);
-
-        return UpdateRecordResponse.CreateFailure(UpdateRecordErrorCode.RelatedUnknownNotFound);
     }
 }

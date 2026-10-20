@@ -1,27 +1,34 @@
-﻿using Freem.Domain.Entities.Records.Comparers;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Records.Comparers;
 using Freem.Domain.Records;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.Get;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RecordsGetUseCase : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly Domain.Entities.Records.Record _record;
+    private HandlerContext _context = null!;
+    private Domain.Entities.Records.Record _record = null!;
     
     public RecordsGetUseCase(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
-        var record = filler.Records.Create(_context, [activity.Id]);
+        var activity = await filler.Activities.CreateAsync(_context);
+        var record = await filler.Records.CreateAsync(_context, [activity.Id]);
         _record = record;
     }
 
@@ -30,13 +37,13 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
     {
         var request = new GetRecordRequest(_record.Id);
 
-        var response = await Context.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetRecordRequest, Result<GetRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Record);
+        Assert.NotNull(response.Value.Record);
         
-        Assert.Equal(_record, response.Record, new RecordEqualityComparer());
+        Assert.Equal(_record, response.Value.Record, new RecordEqualityComparer());
     }
 
     [Fact]
@@ -46,24 +53,14 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
         
         var request = new GetRecordRequest(notExistedRecordId);
         
-        var response = await Context.ExecuteAsync<GetRecordRequest, GetRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetRecordRequest, Result<GetRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Record);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(GetRecordErrorCode.RecordNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new GetRecordRequest(_record.Id);
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<GetRecordRequest, GetRecordResponse>(request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

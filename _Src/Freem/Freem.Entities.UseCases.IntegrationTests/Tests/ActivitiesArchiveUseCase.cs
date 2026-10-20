@@ -1,26 +1,33 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly ActivityId _activityId;
+    private HandlerContext _context = null!;
+    private ActivityId _activityId = null!;
 
     public ActivitiesArchiveUseCase(TestContext context)
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
+        var activity = await filler.Activities.CreateAsync(_context);
         _activityId = activity.Id;
     }
 
@@ -29,14 +36,14 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
     {
         var request = new ArchiveActivityRequest(_activityId);
 
-        var response = await Context.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ArchiveActivityRequest, Result<Error>>(_context, request);
 
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
 
         using var executor = Context.CreateExecutor();
-        var actual = executor.Activities.RequiredGet(_context, _activityId);
+        var actual = await executor.Activities.RequiredGetAsync(_context, _activityId);
 
         Assert.Equal(ActivityStatus.Archived, actual.Status);
     }
@@ -47,38 +54,27 @@ public sealed class ActivitiesArchiveUseCase : UseCaseTestBase
         var notExistedActivityId = ActivityId.Generate();
         var request = new ArchiveActivityRequest(notExistedActivityId);
 
-        var response = await Context.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ArchiveActivityRequest, Result<Error>>(_context, request);
 
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Equal(ArchiveActivityErrorCode.ActivityNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenArchiveAlreadyArchived()
     {
         using var executor = Context.CreateExecutor();
-        executor.Activities.Archive(_context, _activityId);
+        await executor.Activities.ArchiveAsync(_context, _activityId);
         
         var request = new ArchiveActivityRequest(_activityId);
         
-        var response = await Context.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ArchiveActivityRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(ArchiveActivityErrorCode.ActivityInvalidStatus, response.Error.Code);
-    }
-
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new ArchiveActivityRequest(_activityId);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
+        Assert.Equal(DomainErrorCatalog.Types.ActivityInvalidStatus, response.Error.Type);
     }
 }

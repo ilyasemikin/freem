@@ -1,29 +1,36 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.RunningRecords.Start;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
 
-    private readonly DateTimeOffset _startAt;
-    private readonly RelatedActivityIdsCollection _activities;
+    private DateTimeOffset _startAt;
+    private RelatedActivityIdsCollection _activities = null!;
     
     public RunningRecordsStartUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var activity = filler.Activities.Create(_context);
+        var activity = await filler.Activities.CreateAsync(_context);
 
         _startAt = Context.GetCurrentDateTime();
         _activities = new RelatedActivityIdsCollection([activity.Id]);
@@ -34,34 +41,56 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
     {
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.RunningRecord);
+        Assert.NotNull(response.Value.RunningRecord);
         Assert.Null(response.Error);
         
-        Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
+        Assert.Equal(_startAt, response.Value.RunningRecord.StartAt);
+        Assert.Equal(_activities, response.Value.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
     }
 
     [Fact]
     public async Task ShouldSuccess_WhenAnotherRunningRecordExist()
     {
         using var executor = Context.CreateExecutor();
-        executor.RunningRecords.Start(_context, [_activities.Ids.First()]);
+        await executor.RunningRecords.StartAsync(_context, [_activities.Ids.First()]);
         
         var request = new StartRunningRecordRequest(_startAt, _activities);
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.RunningRecord);
+        Assert.NotNull(response.Value.RunningRecord);
         Assert.Null(response.Error);
         
-        Assert.Equal(_startAt, response.RunningRecord.StartAt);
-        Assert.Equal(_activities, response.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
+        Assert.Equal(_startAt, response.Value.RunningRecord.StartAt);
+        Assert.Equal(_activities, response.Value.RunningRecord.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenAnotherRunningRecordStartedLater()
+    {
+        using var executor = Context.CreateExecutor();
+        var current = await executor.RunningRecords.StartAsync(_context, [_activities.Ids.First()]);
+        
+        var startAt = current.StartAt.AddDays(-1);
+        var request = new StartRunningRecordRequest(startAt, _activities);
+        
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Null(response.Value);
+        Assert.NotNull(response.Error);
+
+        Assert.Equal(DomainErrorCatalog.Types.PeriodIsInvalid, response.Error.Type);
+
+        var actual = await executor.RunningRecords.RequiredGetAsync(_context);
+        Assert.Equal(current.StartAt, actual.StartAt);
     }
 
     [Fact]
@@ -72,36 +101,36 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.RunningRecord);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
 
-        Assert.Equal(StartRunningRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenActivitiesBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var activity = executor.Activities.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var activity = await executor.Activities.CreateAsync(anotherContext);
         
         var activities = new RelatedActivityIdsCollection([activity.Id]);
         
         var request = new StartRunningRecordRequest(_startAt, activities);
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.RunningRecord);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(StartRunningRecordErrorCode.RelatedActivitiesNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
@@ -115,23 +144,23 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.RunningRecord);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(StartRunningRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
 
     [Fact]
     public async Task ShouldFailure_WhenTagsBelongsToAnotherUser()
     {
         using var executor = Context.CreateExecutor();
-        var anotherUserId = executor.Users.Register();
-        var anotherContext = new UseCaseExecutionContext(anotherUserId);
-        var tag = executor.Tags.Create(anotherContext);
+        var anotherUserId = await executor.Users.RegisterAsync();
+        var anotherContext = new HandlerContext(anotherUserId);
+        var tag = await executor.Tags.CreateAsync(anotherContext);
         
         var tags = new RelatedTagIdsCollection([tag.Id]);
 
@@ -140,24 +169,14 @@ public sealed class RunningRecordsStartUseCaseTests : UseCaseTestBase
             Tags = tags
         };
         
-        var response = await Context.ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(_context, request);
+        var response = await Context.ExecuteAsync<StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.RunningRecord);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(StartRunningRecordErrorCode.RelatedTagsNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new StartRunningRecordRequest(_startAt, _activities);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<StartRunningRecordRequest, StartRunningRecordResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

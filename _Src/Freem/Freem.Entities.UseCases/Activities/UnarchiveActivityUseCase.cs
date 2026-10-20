@@ -1,18 +1,23 @@
-﻿using Freem.Domain.Activities.Models;
+﻿using Freem.Domain;
+using Freem.Domain.Activities.Models;
+using Freem.Domain.Entities.Activities;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Events.Producer.Implementations;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Unarchive;
 using Freem.Locking.Abstractions;
 using Freem.Locking.Abstractions.Extensions;
 using Freem.Storage.Abstractions.Helpers;
 using Freem.Storage.Abstractions.Helpers.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal sealed class UnarchiveActivityUseCase 
-    : IEntitiesUseCase<UnarchiveActivityRequest, UnarchiveActivityResponse, UnarchiveActivityErrorCode>
+    : IRequestHandler<HandlerContext, UnarchiveActivityRequest, Result<Error>>
 {
     private readonly IDistributedLocker _locker;
     private readonly IActivityRepository _repository;
@@ -36,31 +41,35 @@ internal sealed class UnarchiveActivityUseCase
         _transactionRunner = transactionRunner;
     }
 
-    public async Task<UnarchiveActivityResponse> ExecuteAsync(
-        UseCaseExecutionContext context, UnarchiveActivityRequest request,
+    public async Task<Result<Error>> HandleAsync(
+        HandlerContext context, UnarchiveActivityRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.Id, cancellationToken);
         
         var ids = new ActivityAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        if (!result.Founded)
-            return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityNotFound);
+        if (!result.Success)
+            return result.Error;
         
-        var activity = result.Entity;
+        var activity = result.Value;
         if (activity.Status == ActivityStatus.Active)
-            return UnarchiveActivityResponse.CreateFailure(UnarchiveActivityErrorCode.ActivityInvalidStatus);
+            return DomainErrorCatalog.Factories.CreateActivityInvalidStatus(activity.Id, activity.Status);
         
         activity.Status = ActivityStatus.Active;
 
-        await _transactionRunner.RunAsync(async () =>
+        return await RunTransactionAsync(activity, cancellationToken);
+    }
+
+    private async Task<Result<Error>> RunTransactionAsync(Activity activity, CancellationToken cancellationToken = default)
+    {
+        return await _transactionRunner.RunAsync(async () =>
         {
-            await _repository.UpdateAsync(activity, cancellationToken);
-            await _eventProducer.PublishAsync(eventId => activity.BuildUnarchivedEvent(eventId), cancellationToken);
+            var result = await _repository.UpdateAsync(activity, cancellationToken);
+            if (!result.Success)
+                return result;
+
+            return await _eventProducer.PublishAsync(eventId => activity.BuildUnarchivedEvent(eventId), cancellationToken);
         }, cancellationToken);
-        
-        return UnarchiveActivityResponse.CreateSuccess();
     }
 }

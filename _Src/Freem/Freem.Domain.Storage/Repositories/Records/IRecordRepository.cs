@@ -1,25 +1,26 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
-using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Models.Ids;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Domain.Storage.Repositories.Records;
 
 public interface IRecordRepository
 {
-    Task CreateAsync(Record entity, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Record entity, CancellationToken cancellationToken = default);
-    Task DeleteAsync(RecordId id, CancellationToken cancellationToken = default);
+    Task<Result<Error>> CreateAsync(Record entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> UpdateAsync(Record entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> DeleteAsync(RecordId id, CancellationToken cancellationToken = default);
 
-    Task<SearchEntityResult<Record>> FindByIdAsync(RecordId id, CancellationToken cancellationToken = default);
-    Task<SearchEntityResult<Record>> FindByMultipleIdAsync(
+    Task<Result<Record, Error>> FindByIdAsync(RecordId id, CancellationToken cancellationToken = default);
+    Task<Result<Record, Error>> FindByMultipleIdAsync(
         RecordAndUserIds ids,
         CancellationToken cancellationToken = default);
 
-    Task<SearchEntitiesAsyncResult<Record>> FindAsync(
+    Task<Result<AsyncBatch<Record>, Error>> FindAsync(
         RecordByUserFilter filter,
         CancellationToken cancellationToken = default);
-    Task<SearchEntitiesAsyncResult<Record>> FindAsync(
+    Task<Result<AsyncBatch<Record>, Error>> FindAsync(
         RecordByPeriodFilter filter,
         CancellationToken cancellationToken = default);
 }

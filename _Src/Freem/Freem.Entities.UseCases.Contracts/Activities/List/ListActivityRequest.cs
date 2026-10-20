@@ -1,9 +1,13 @@
 ﻿using Freem.Entities.UseCases.Contracts.Filter;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Activities.List;
 
-public sealed class ListActivityRequest
+public sealed class ListActivityRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Activities.List;
+
     public Limit Limit { get; }
     public Offset Offset { get; }
 

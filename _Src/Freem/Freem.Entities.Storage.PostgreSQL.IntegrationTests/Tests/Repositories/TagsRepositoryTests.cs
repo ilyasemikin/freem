@@ -1,10 +1,11 @@
-﻿using Freem.Domain.Storage.Exceptions;
+﻿using Freem.Domain;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Domain.Tags;
 using Freem.Domain.Users;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.DataFactories;
+using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions;
 using Freem.Entities.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -34,9 +35,11 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         // Act
         var tag = dbTag.MapToDomainEntity();
         
-        await Repository.CreateAsync(tag);
+        var writeResult = await Repository.CreateAsync(tag);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var tagId = tag.Id.ToString();
         var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
 
@@ -61,9 +64,11 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         // Act
         var tag = dbUpdatedTag.MapToDomainEntity();
         
-        await Repository.UpdateAsync(tag);
+        var writeResult = await Repository.UpdateAsync(tag);
 
         // Assert
+        Assert.True(writeResult.Success);
+
         var tagId = tag.Id.ToString();
         var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
         
@@ -84,9 +89,11 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         var tag = dbTag.MapToDomainEntity();
         
         // Act
-        await Repository.UpdateAsync(tag);
+        var writeResult = await Repository.UpdateAsync(tag);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var tagId = tag.Id.ToString();
         var dbActualTag = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
         
@@ -95,7 +102,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
     }
 
     [Fact]
-    public async Task UpdateAsync_ShouldThrowException_WhenEntityNotExists()
+    public async Task UpdateAsync_ShouldReturnError_WhenEntityNotExists()
     {
         // Arrange
         var dbTag = EntitiesFactory.CreateTag();
@@ -103,13 +110,11 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         // Act
         var tag = dbTag.MapToDomainEntity();
 
-        var exception = await Record.ExceptionAsync(() => Repository.UpdateAsync(tag));
+        var result = await Repository.UpdateAsync(tag);
         
         // Assert
-        Assert.NotNull(exception);
-        
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(tag.Id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, tag.Id);
     }
 
     [Fact]
@@ -126,9 +131,11 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         // Act
         var tag = dbTag.MapToDomainEntity();
         
-        await Repository.DeleteAsync(tag.Id);
+        var writeResult = await Repository.DeleteAsync(tag.Id);
         
         // Assert
+        Assert.True(writeResult.Success);
+
         var tagId = tag.Id.ToString();
         var dbTagActual = await Database.Tags.FirstOrDefaultAsync(e => e.Id == tagId);
 
@@ -136,17 +143,17 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
     }
 
     [Fact]
-    public async Task RemoveAsync_ShouldThrowException_WhenEntityIsNotExists()
+    public async Task RemoveAsync_ShouldReturnError_WhenEntityIsNotExists()
     {
         // Arrange
         var id = TagId.Generate();
         
         // Act
-        var exception = await Record.ExceptionAsync(() => Repository.DeleteAsync(id));
+        var result = await Repository.DeleteAsync(id);
         
         // Assert
-        var concreteException = Assert.IsType<NotFoundException>(exception);
-        Assert.Equal(id, concreteException.Id);
+        Assert.False(result.Success);
+        ErrorAssert.EntityNotFound(result.Error, id);
     }
 
     [Fact]
@@ -166,10 +173,10 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
 
-        var tag = result.Entity;
+        var tag = result.Value;
         
         var actualId = tag.Id.ToString();
         Assert.Equal(dbTag.Id, actualId);
@@ -186,8 +193,8 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 
     [Fact]
@@ -209,10 +216,10 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
 
-        var tag = result.Entity;
+        var tag = result.Value;
         
         Assert.NotNull(tag);
     }
@@ -240,7 +247,7 @@ public sealed class TagsRepositoryTests : BaseRepositoryTests<ITagRepository>
         
         // Assert
         Assert.NotNull(result);
-        Assert.False(result.Founded);
-        Assert.Null(result.Entity);
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
     }
 }

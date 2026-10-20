@@ -1,36 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Entities.Users;
-using Freem.UseCases.Contracts.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+﻿using Freem.Domain.Entities.Users;
 
 namespace Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 
-public sealed class GetUserSettingsResponse : IResponse<GetUserSettingsErrorCode>
+public sealed class GetUserSettingsResponse
 {
-    [MemberNotNullWhen(true, nameof(Settings))]
-    [MemberNotNullWhen(false, nameof(Error))]
-    public bool Success { get; }
-    
-    public UserSettings? Settings { get; }
-    public Error<GetUserSettingsErrorCode>? Error { get; }
+    public UserSettings Settings { get; }
 
-    private GetUserSettingsResponse(UserSettings? settings = null, Error<GetUserSettingsErrorCode>? error = null)
-    {
-        Success = settings is not null;
-        Settings = settings;
-        Error = error;
-    }
-
-    public static GetUserSettingsResponse CreateSuccess(UserSettings settings)
+    public GetUserSettingsResponse(UserSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        
-        return new GetUserSettingsResponse(settings);
-    }
 
-    public static GetUserSettingsResponse CreateFailure(GetUserSettingsErrorCode code)
-    {
-        var error = new Error<GetUserSettingsErrorCode>(code);
-        return new GetUserSettingsResponse(error: error);
+        Settings = settings;
     }
 }

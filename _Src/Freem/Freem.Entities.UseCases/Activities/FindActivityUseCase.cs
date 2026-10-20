@@ -1,12 +1,15 @@
 ﻿using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Repositories.Activities;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Find;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Activities;
 
 internal sealed class FindActivityUseCase 
-    : IEntitiesUseCase<FindActivityRequest, FindActivityResponse, FindActivityErrorCode>
+    : IRequestHandler<HandlerContext, FindActivityRequest, Result<FindActivityResponse, Error>>
 {
     private readonly IActivityRepository _repository;
 
@@ -18,19 +21,20 @@ internal sealed class FindActivityUseCase
         _repository = repository;
     }
 
-    public async Task<FindActivityResponse> ExecuteAsync(
-        UseCaseExecutionContext context, FindActivityRequest request,
+    public async Task<Result<FindActivityResponse, Error>> HandleAsync(
+        HandlerContext context, FindActivityRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var filter = new ActivityFilter(context.UserId, request.SearchText)
         {
             Limit = Limit.Default
         };
 
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var activities = await result.ToArrayAsync(cancellationToken);
-        return FindActivityResponse.CreateSuccess(activities, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var activities = await result.Value.ToArrayAsync(cancellationToken);
+        return new FindActivityResponse(activities, result.Value.Count);
     }
 }

@@ -89,18 +89,19 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         var eventType = @event.GetType();
         
         // Act
-        await Repository.CreateAsync(@event);
+        var writeResult = await Repository.CreateAsync(@event);
 
         var result = await Repository.FindByIdAsync(id);
         
         // Assert
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(writeResult.Success);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        Assert.Equal(eventType, result.Entity.GetType());
-        Assert.Equal(id, result.Entity.Id);
-        Assert.Equal(entityId, result.Entity.EntityId);
-        Assert.Equal(userId, result.Entity.UserEntityId);
+        Assert.Equal(eventType, result.Value.GetType());
+        Assert.Equal(id, result.Value.Id);
+        Assert.Equal(entityId, result.Value.EntityId);
+        Assert.Equal(userId, result.Value.UserEntityId);
     }
 
     public static TheoryData<RecordEventGenerator> ValidRecordEntitiesCases =>
@@ -134,18 +135,19 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         var eventType = @event.GetType();
         
         // Act
-        await Repository.CreateAsync(@event);
+        var writeResult = await Repository.CreateAsync(@event);
         
         var result = await Repository.FindByIdAsync(id);
         
         // Assert
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(writeResult.Success);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        Assert.Equal(eventType, result.Entity.GetType());
-        Assert.Equal(id, result.Entity.Id);
-        Assert.Equal(entityId, result.Entity.EntityId);
-        Assert.Equal(userId, result.Entity.UserEntityId);
+        Assert.Equal(eventType, result.Value.GetType());
+        Assert.Equal(id, result.Value.Id);
+        Assert.Equal(entityId, result.Value.EntityId);
+        Assert.Equal(userId, result.Value.UserEntityId);
     }
 
     public static TheoryData<RunningRecordEventGenerator> ValidRunningRecordEventsCases =>
@@ -179,19 +181,20 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         var eventType = @event.GetType();
         
         // Act
-        await Repository.CreateAsync(@event);
+        var writeResult = await Repository.CreateAsync(@event);
         
         var result = await Repository.FindByIdAsync(id);
         
         // Assert
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(writeResult.Success);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        Assert.Equal(eventType, result.Entity.GetType());
-        Assert.Equal(id, result.Entity.Id);
+        Assert.Equal(eventType, result.Value.GetType());
+        Assert.Equal(id, result.Value.Id);
         var expectedUserId = entityId.ToUserId();
-        Assert.Equal(entityId, result.Entity.EntityId);
-        Assert.Equal(expectedUserId, result.Entity.UserEntityId);
+        Assert.Equal(entityId, result.Value.EntityId);
+        Assert.Equal(expectedUserId, result.Value.UserEntityId);
     }
 
     public static TheoryData<TagEventGenerator> ValidTagEventsCase =>
@@ -221,18 +224,19 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         var eventType = @event.GetType();
         
         // Act
-        await Repository.CreateAsync(@event);
+        var writeResult = await Repository.CreateAsync(@event);
         
         var result = await Repository.FindByIdAsync(id);
         
         // Assert
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(writeResult.Success);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        Assert.Equal(eventType, result.Entity.GetType());
-        Assert.Equal(id, result.Entity.Id);
-        Assert.Equal(entityId, result.Entity.EntityId);
-        Assert.Equal(userId, result.Entity.UserEntityId);
+        Assert.Equal(eventType, result.Value.GetType());
+        Assert.Equal(id, result.Value.Id);
+        Assert.Equal(entityId, result.Value.EntityId);
+        Assert.Equal(userId, result.Value.UserEntityId);
     }
 
     public static TheoryData<UserEventGenerator> ValidUserEventsCase =>
@@ -259,18 +263,19 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         var eventType = @event.GetType();
         
         // Act
-        await Repository.CreateAsync(@event);
+        var writeResult = await Repository.CreateAsync(@event);
 
         var result = await Repository.FindByIdAsync(id);
         
         // Assert
-        Assert.True(result.Founded);
-        Assert.NotNull(result.Entity);
+        Assert.True(writeResult.Success);
+        Assert.True(result.Success);
+        Assert.NotNull(result.Value);
         
-        Assert.Equal(eventType, result.Entity.GetType());
-        Assert.Equal(id, result.Entity.Id);
-        Assert.Equal(userId, result.Entity.EntityId);
-        Assert.Equal(userId, result.Entity.UserEntityId);
+        Assert.Equal(eventType, result.Value.GetType());
+        Assert.Equal(id, result.Value.Id);
+        Assert.Equal(userId, result.Value.EntityId);
+        Assert.Equal(userId, result.Value.UserEntityId);
     }
 
     [Fact]

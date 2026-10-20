@@ -1,11 +1,14 @@
 ﻿using Freem.Domain.Storage.Repositories.Records;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.PeriodList;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
 internal sealed class PeriodListRecordUseCase : 
-    IUseCase<UseCaseExecutionContext, PeriodListRequest, PeriodListResponse, PeriodListErrorCode>
+    IRequestHandler<HandlerContext, PeriodListRequest, Result<PeriodListResponse, Error>>
 {
     private readonly IRecordRepository _repository;
 
@@ -17,16 +20,17 @@ internal sealed class PeriodListRecordUseCase :
         _repository = repository;
     }
 
-    public async Task<PeriodListResponse> ExecuteAsync(
-        UseCaseExecutionContext context, PeriodListRequest request,
+    public async Task<Result<PeriodListResponse, Error>> HandleAsync(
+        HandlerContext context, PeriodListRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-
         var filter = new RecordByPeriodFilter(context.UserId, request.Period);
         
         var result = await _repository.FindAsync(filter, cancellationToken);
-        var records = await result.ToArrayAsync(cancellationToken);
-        return PeriodListResponse.CreateSuccess(records, result.TotalCount);
+        if (!result.Success)
+            return result.Error;
+
+        var records = await result.Value.ToArrayAsync(cancellationToken);
+        return new PeriodListResponse(records, result.Value.Count);
     }
 }

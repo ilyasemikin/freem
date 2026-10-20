@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Activities;
-using Freem.Entities.UseCases;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Activities.Archive;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 
@@ -20,17 +22,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Activities;
 public sealed class ArchiveActivityController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public ArchiveActivityController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -39,10 +41,12 @@ public sealed class ArchiveActivityController : BaseController
         [Required] [FromRoute] string activityId,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(activityId);
 
-        var response = await _executor.ExecuteAsync<ArchiveActivityRequest, ArchiveActivityResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<ArchiveActivityRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
@@ -55,13 +59,13 @@ public sealed class ArchiveActivityController : BaseController
         return new ArchiveActivityRequest(activityId);
     }
 
-    private static IActionResult CreateFailure(Error<ArchiveActivityErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            ArchiveActivityErrorCode.ActivityNotFound => new NotFoundResult(),
-            ArchiveActivityErrorCode.ActivityInvalidStatus => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+        if (error.Type == DomainErrorCatalog.Types.ActivityInvalidStatus)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

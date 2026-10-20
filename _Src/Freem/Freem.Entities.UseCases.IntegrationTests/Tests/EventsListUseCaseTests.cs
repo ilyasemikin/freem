@@ -1,22 +1,28 @@
-﻿using Freem.Entities.UseCases.Contracts.Events.List;
-using Freem.Entities.UseCases.Exceptions;
+﻿using Freem.Entities.UseCases.Context;
+using Freem.Entities.UseCases.Contracts.Events.List;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class EventsListUseCaseTests : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
     
     public EventsListUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
+        var userId = await filler.Users.RegisterAsync();
 
-        _context = new UseCaseExecutionContext(userId);
+        _context = new HandlerContext(userId);
     }
 
     [Fact]
@@ -24,13 +30,14 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
     {
         var request = new ListEventRequest();
 
-        var response = await Context.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListEventRequest, Result<ListEventResponse, Error>>(_context, request);
 
         Assert.NotNull(response);
-        Assert.NotNull(response.Events);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Value.Events);
         Assert.Null(response.Error);
         
-        Assert.NotEmpty(response.Events);
+        Assert.NotEmpty(response.Value.Events);
     }
 
     [Fact]
@@ -42,23 +49,14 @@ public sealed class EventsListUseCaseTests : UseCaseTestBase
             After = now
         };
         
-        var response = await Context.ExecuteAsync<ListEventRequest, ListEventResponse>(_context, request);
+        var response = await Context.ExecuteAsync<ListEventRequest, Result<ListEventResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
-        Assert.NotNull(response.Events);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Value.Events);
         Assert.Null(response.Error);
         
-        Assert.Empty(response.Events);
+        Assert.Empty(response.Value.Events);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new ListEventRequest();
-        
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<ListEventRequest, ListEventResponse>(UseCaseExecutionContext.Empty, request));
-        
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

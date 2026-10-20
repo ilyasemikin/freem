@@ -1,27 +1,34 @@
-﻿using Freem.Domain.Entities.Tags;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Tags;
 using Freem.Domain.Entities.Tags.Comparers;
 using Freem.Domain.Tags;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Tags.Get;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
 public sealed class TagsGetUseCaseTests : UseCaseTestBase
 {
-    private readonly UseCaseExecutionContext _context;
-    private readonly Tag _tag;
+    private HandlerContext _context = null!;
+    private Tag _tag = null!;
     
     public TagsGetUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
         
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
         
-        var tag = filler.Tags.Create(_context);
+        var tag = await filler.Tags.CreateAsync(_context);
         _tag = tag;
     }
 
@@ -30,14 +37,14 @@ public sealed class TagsGetUseCaseTests : UseCaseTestBase
     {
         var request = new GetTagRequest(_tag.Id);
 
-        var response = await Context.ExecuteAsync<GetTagRequest, GetTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetTagRequest, Result<GetTagResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
-        Assert.NotNull(response.Tag);
+        Assert.NotNull(response.Value.Tag);
         Assert.Null(response.Error);
         
-        Assert.Equal(_tag, response.Tag, new TagEqualityComparer());
+        Assert.Equal(_tag, response.Value.Tag, new TagEqualityComparer());
     }
 
     [Fact]
@@ -47,24 +54,14 @@ public sealed class TagsGetUseCaseTests : UseCaseTestBase
         
         var request = new GetTagRequest(notExistedTagId);
         
-        var response = await Context.ExecuteAsync<GetTagRequest, GetTagResponse>(_context, request);
+        var response = await Context.ExecuteAsync<GetTagRequest, Result<GetTagResponse, Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
-        Assert.Null(response.Tag);
+        Assert.Null(response.Value);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(GetTagErrorCode.TagNotFound, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new GetTagRequest(_tag.Id);
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<GetTagRequest, GetTagResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

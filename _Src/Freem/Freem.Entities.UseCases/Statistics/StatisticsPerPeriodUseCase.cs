@@ -4,42 +4,44 @@ using Freem.Domain.Entities.Users;
 using Freem.Domain.Records;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Users;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Time.Extensions;
 using Freem.Time.Models;
-using Freem.UseCases.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Statistics;
 
 internal sealed class StatisticsPerPeriodUseCase : 
-    IEntitiesUseCase<StatisticsPerPeriodRequest, StatisticsPerPeriodResponse, StatisticsPerPeriodErrorCode>
+    IRequestHandler<HandlerContext, StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>>
 {
     private readonly IRecordRepository _repository;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public StatisticsPerPeriodUseCase(
         IRecordRepository repository, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(repository);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _repository = repository;
-        _executor = executor;
+        _mediator = mediator;
     }
 
-    public async Task<StatisticsPerPeriodResponse> ExecuteAsync(
-        UseCaseExecutionContext context, 
+    public async Task<Result<StatisticsPerPeriodResponse, Error>> HandleAsync(
+        HandlerContext context, 
         StatisticsPerPeriodRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
-        var settings = await GetUserSettingsAsync(context, cancellationToken);
-        if (settings is null)
-            return StatisticsPerPeriodResponse.CreateUsersNotFoundResult();
+        var settingsResult = await GetUserSettingsAsync(context, cancellationToken);
+        if (!settingsResult.Success)
+            return settingsResult.Error;
+
+        var settings = settingsResult.Value;
 
         var datePeriod = request.Period.ToDatePeriod();
         
@@ -48,22 +50,29 @@ internal sealed class StatisticsPerPeriodUseCase :
         var end = datePeriod.EndAt.ToUtcDateTime(time);
         
         var period = new DateTimePeriod(start, end);
-        var records = await FindRecordsAsync(context.UserId, period, cancellationToken);
+        var recordsResult = await FindRecordsAsync(context.UserId, period, cancellationToken);
+        if (!recordsResult.Success)
+            return recordsResult.Error;
+
+        var records = recordsResult.Value;
 
         var statistics = TimeStatisticsCalculator.Calculate(period, records);
 
-        return StatisticsPerPeriodResponse.CreateSuccess(statistics);
+        return new StatisticsPerPeriodResponse(statistics);
     }
     
-    private async Task<UserSettings?> GetUserSettingsAsync(
-        UseCaseExecutionContext context, CancellationToken cancellationToken)
+    private async Task<Result<UserSettings, Error>> GetUserSettingsAsync(
+        HandlerContext context, CancellationToken cancellationToken)
     {
         var request = new GetUserSettingsRequest();
-        var response = await _executor.ExecuteAsync<GetUserSettingsRequest, GetUserSettingsResponse>(context, request, cancellationToken);
-        return response.Settings;
+        var result = await _mediator.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request, cancellationToken);
+        if (!result.Success)
+            return result.Error;
+
+        return result.Value.Settings;
     }
 
-    private async Task<IReadOnlyList<Record>> FindRecordsAsync(
+    private async Task<Result<IReadOnlyList<Record>, Error>> FindRecordsAsync(
         UserId userId, DateTimePeriod period, 
         CancellationToken cancellationToken)
     {
@@ -86,12 +95,15 @@ internal sealed class StatisticsPerPeriodUseCase :
             var filter = new RecordByPeriodFilter(userId, period, recordId);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
-            var records = result.ToBlockingEnumerable(cancellationToken);
+            if (!result.Success)
+                return result.Error;
+
+            var records = result.Value.ToBlockingEnumerable(cancellationToken);
             
             list.AddRange(records);
 
-            if (list.Count >= result.TotalCount)
-                return list;
+            if (list.Count >= result.Value.Count)
+                return Result<IReadOnlyList<Record>, Error>.CreateSuccess(list);
         } while (true);
     }
 }

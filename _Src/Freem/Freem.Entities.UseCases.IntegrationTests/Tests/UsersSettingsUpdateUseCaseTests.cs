@@ -1,9 +1,12 @@
-﻿using Freem.Domain.Users.Models;
+﻿using Freem.Domain;
+using Freem.Domain.Users.Models;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Update;
-using Freem.Entities.UseCases.Exceptions;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.UseCases.IntegrationTests.Tests;
 
@@ -11,15 +14,19 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
 {
     private static readonly DayUtcOffset UpdatedUtcOffset = new(TimeSpan.FromHours(1));
     
-    private readonly UseCaseExecutionContext _context;
+    private HandlerContext _context = null!;
     
     public UsersSettingsUpdateUseCaseTests(TestContext context) 
         : base(context)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
         using var filler = Context.CreateExecutor();
 
-        var userId = filler.Users.Register();
-        _context = new UseCaseExecutionContext(userId);
+        var userId = await filler.Users.RegisterAsync();
+        _context = new HandlerContext(userId);
     }
 
     [Fact]
@@ -30,14 +37,14 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
             UtcOffset = new UpdateField<DayUtcOffset>(UpdatedUtcOffset)
         };
         
-        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, UpdateUserSettingsResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.Null(response.Error);
         
         using var executor = Context.CreateExecutor();
-        var actual = executor.UsersSettings.RequiredGet(_context);
+        var actual = await executor.UsersSettings.RequiredGetAsync(_context);
         
         Assert.Equal(UpdatedUtcOffset.Value, actual.DayUtcOffset.Value);
     }
@@ -47,23 +54,13 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
     {
         var request = new UpdateUserSettingsRequest();
         
-        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, UpdateUserSettingsResponse>(_context, request);
+        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(_context, request);
         
         Assert.NotNull(response);
         Assert.False(response.Success);
         Assert.NotNull(response.Error);
         
-        Assert.Equal(UpdateUserSettingsErrorCode.NothingToDo, response.Error.Code);
+        Assert.Equal(DomainErrorCatalog.Types.NothingToDo, response.Error.Type);
     }
     
-    [Fact]
-    public async Task ShouldThrowException_WhenUnauthorized()
-    {
-        var request = new UpdateUserSettingsRequest();
-
-        var exception = await Record.ExceptionAsync(async () => await Context
-            .ExecuteAsync<UpdateUserSettingsRequest, UpdateUserSettingsResponse>(request));
-
-        Assert.IsType<UnauthorizedException>(exception);
-    }
 }

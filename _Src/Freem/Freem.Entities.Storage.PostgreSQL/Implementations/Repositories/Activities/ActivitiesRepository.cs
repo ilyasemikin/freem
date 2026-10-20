@@ -1,7 +1,6 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Domain;
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
-using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Entities.Storage.PostgreSQL.Database;
@@ -12,6 +11,8 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities.Extensions;
 using Freem.Sorting.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Activities;
 
@@ -35,7 +36,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
         _equalityComparer = equalityComparer;
     }
 
-    public async Task CreateAsync(Activity entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> CreateAsync(Activity entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         
@@ -46,20 +47,20 @@ internal sealed class ActivitiesRepository : IActivityRepository
         await _database.AddRangeAsync(dbRelations, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task UpdateAsync(Activity entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> UpdateAsync(Activity entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         var dbEntity = await _database.Activities.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            throw new NotFoundException(entity.Id);
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
         if (_equalityComparer.Equals(entity, actualEntity))
-            return;
+            return Result<Error>.CreateSuccess();
         
         dbEntity.Name = entity.Name.ToString();
         dbEntity.Status = entity.Status.MapToDatabaseEntityStatus();
@@ -67,24 +68,24 @@ internal sealed class ActivitiesRepository : IActivityRepository
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(ActivityId id, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> DeleteAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
         
         var dbEntity = await _database.Activities.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
-            throw new NotFoundException(id);
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
 
         _database.Remove(dbEntity);
 
         var context = new DatabaseContextWriteContext(id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<Activity>> FindByIdAsync(
+    public async Task<Result<Activity, Error>> FindByIdAsync(
         ActivityId id,
         CancellationToken cancellationToken = default)
     {
@@ -93,10 +94,10 @@ internal sealed class ActivitiesRepository : IActivityRepository
         var idString = id.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
-            .FindAsync(e => e.Id == idString, ActivityMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(id, e => e.Id == idString, ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<Activity>> FindByMultipleIdAsync(
+    public async Task<Result<Activity, Error>> FindByMultipleIdAsync(
         ActivityAndUserIds ids, 
         CancellationToken cancellationToken)
     {
@@ -107,12 +108,13 @@ internal sealed class ActivitiesRepository : IActivityRepository
         return await _database.Activities
             .Include(e => e.Tags)
             .FindAsync(
+                ids.ActivityId,
                 e => e.Id == activityIdString && e.UserId == userIdString,
                 ActivityMapper.MapToDomainEntity, 
                 cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(
+    public async Task<Result<AsyncBatch<Activity>, Error>> FindAsync(
         ActivityByUserFilter filter, 
         CancellationToken cancellationToken = default)
     {
@@ -127,7 +129,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
             .CountAndMapAsync(ActivityMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Activity>> FindAsync(ActivityFilter filter, CancellationToken cancellationToken = default)
+    public async Task<Result<AsyncBatch<Activity>, Error>> FindAsync(ActivityFilter filter, CancellationToken cancellationToken = default)
     {
         var userIdString = filter.UserId.ToString();
         return await _database.Activities

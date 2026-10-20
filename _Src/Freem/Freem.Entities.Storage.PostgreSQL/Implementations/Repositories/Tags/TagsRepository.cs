@@ -1,6 +1,5 @@
-﻿using Freem.Domain.Entities.Tags;
-using Freem.Domain.Storage.Exceptions;
-using Freem.Domain.Storage.Models;
+﻿using Freem.Domain;
+using Freem.Domain.Entities.Tags;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Domain.Tags;
@@ -10,6 +9,8 @@ using Freem.Entities.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Entities.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Sorting.Extensions;
+using Utilities.Errors;
+using Utilities.Primitives;
 
 namespace Freem.Entities.Storage.PostgreSQL.Implementations.Repositories.Tags;
 
@@ -33,7 +34,7 @@ internal sealed class TagsRepository : ITagRepository
         _equalityComparer = equalityComparer;
     }
 
-    public async Task CreateAsync(Tag entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> CreateAsync(Tag entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -42,52 +43,52 @@ internal sealed class TagsRepository : ITagRepository
         await _database.Tags.AddAsync(dbEntity, cancellationToken);
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task UpdateAsync(Tag entity, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> UpdateAsync(Tag entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         var dbEntity = await _database.Tags.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            throw new NotFoundException(entity.Id);
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
         if (_equalityComparer.Equals(actualEntity, entity))
-            return;
+            return Result<Error>.CreateSuccess();
 
         dbEntity.Name = entity.Name.ToString();
 
         var context = new DatabaseContextWriteContext(entity.Id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task DeleteAsync(TagId id, CancellationToken cancellationToken = default)
+    public async Task<Result<Error>> DeleteAsync(TagId id, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
         var dbEntity = await _database.Tags.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
-            throw new NotFoundException(id);
+            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
 
         _database.Remove(dbEntity);
 
         var context = new DatabaseContextWriteContext(id);
-        await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<Tag>> FindByIdAsync(
+    public async Task<Result<Tag, Error>> FindByIdAsync(
         TagId id,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
 
         var idString = id.ToString();
-        return await _database.Tags.FindAsync(e => e.Id == idString, TagMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Tags.FindAsync(id, e => e.Id == idString, TagMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntityResult<Tag>> FindByMultipleIdAsync(
+    public async Task<Result<Tag, Error>> FindByMultipleIdAsync(
         TagAndUserIds ids,
         CancellationToken cancellationToken = default)
     {
@@ -96,12 +97,13 @@ internal sealed class TagsRepository : ITagRepository
         var tagIdString = ids.TagId.ToString();
         var userIdString = ids.UserId.ToString();
         return await _database.Tags.FindAsync(
+            ids.TagId,
             e => e.Id == tagIdString && e.UserId == userIdString,
             TagMapper.MapToDomainEntity,
             cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
+    public async Task<Result<AsyncBatch<Tag>, Error>> FindAsync(
         TagByUserFilter filter,
         CancellationToken cancellationToken = default)
     {
@@ -115,7 +117,7 @@ internal sealed class TagsRepository : ITagRepository
             .CountAndMapAsync(TagMapper.MapToDomainEntity, cancellationToken);
     }
 
-    public async Task<SearchEntitiesAsyncResult<Tag>> FindAsync(
+    public async Task<Result<AsyncBatch<Tag>, Error>> FindAsync(
         TagFilter filter,
         CancellationToken cancellationToken = default)
     {

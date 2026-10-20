@@ -1,9 +1,13 @@
 ﻿using Freem.Domain.Tags;
+using Utilities.UseCases.Abstractions;
+using Utilities.UseCases.Models;
 
 namespace Freem.Entities.UseCases.Contracts.Tags.Get;
 
-public sealed class GetTagRequest
+public sealed class GetTagRequest : IRequest
 {
+    public RequestType Type => RequestTypes.Tags.Get;
+
     public TagId Id { get; }
 
     public GetTagRequest(TagId id)

@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Freem.Domain;
 using Freem.Domain.Tags;
-using Freem.Entities.UseCases;
-using Freem.Entities.UseCases.Contracts.Tags.Update;
-using Freem.UseCases.Abstractions;
-using Freem.UseCases.Contracts.Abstractions.Errors;
+using Freem.Entities.UseCases.Context;
 using Freem.Web.Api.Public.Constants;
 using Freem.Web.Api.Public.Mappers;
 using Freem.Web.Api.Public.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 using ApiUpdateTagRequest = Freem.Web.Api.Public.Contracts.DTO.Tags.UpdateTagRequest;
 using UseCaseUpdateTagRequest = Freem.Entities.UseCases.Contracts.Tags.Update.UpdateTagRequest;
 
@@ -24,17 +25,17 @@ namespace Freem.Web.Api.Public.Controllers.V1.Tags;
 public sealed class UpdateTagController : BaseController
 {
     private readonly UseCaseContextProvider _contextProvider;
-    private readonly IUseCaseExecutor<UseCaseExecutionContext> _executor;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public UpdateTagController(
         UseCaseContextProvider contextProvider, 
-        IUseCaseExecutor<UseCaseExecutionContext> executor)
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(contextProvider);
-        ArgumentNullException.ThrowIfNull(executor);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _contextProvider = contextProvider;
-        _executor = executor;
+        _mediator = mediator;
     }
 
     [HttpPut]
@@ -44,10 +45,12 @@ public sealed class UpdateTagController : BaseController
         [Required] [FromBody] ApiUpdateTagRequest body,
         CancellationToken cancellationToken = default)
     {
-        var context = _contextProvider.Get();
+        if (!_contextProvider.TryGet(out var context))
+            return new UnauthorizedResult();
+
         var request = Map(tagId, body);
 
-        var response = await _executor.ExecuteAsync<UseCaseUpdateTagRequest, UpdateTagResponse>(context, request, cancellationToken);
+        var response = await _mediator.ExecuteAsync<UseCaseUpdateTagRequest, Result<Error>>(context, request, cancellationToken);
 
         return response.Success
             ? Ok()
@@ -63,14 +66,15 @@ public sealed class UpdateTagController : BaseController
         };
     }
 
-    private static IActionResult CreateFailure(Error<UpdateTagErrorCode> error)
+    private static IActionResult CreateFailure(Error error)
     {
-        return error.Code switch
-        {
-            UpdateTagErrorCode.NothingToUpdate => new BadRequestResult(),
-            UpdateTagErrorCode.TagNotFound => new NotFoundResult(),
-            UpdateTagErrorCode.TagNameAlreadyExists => new UnprocessableEntityResult(),
-            _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-        };
+        if (error.Type == DomainErrorCatalog.Types.NothingToDo)
+            return new BadRequestResult();
+        if (error.Type == DomainErrorCatalog.Types.EntityNotFound)
+            return new NotFoundResult();
+        if (error.Type == DomainErrorCatalog.Types.TagNameAlreadyExists)
+            return new UnprocessableEntityResult();
+
+        return new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
-using Freem.Entities.UseCases.Abstractions;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Records.Get;
+using Utilities.Errors;
+using Utilities.Primitives;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Entities.UseCases.Records;
 
 internal sealed class GetRecordUseCase 
-    : IEntitiesUseCase<GetRecordRequest, GetRecordResponse, GetRecordErrorCode>
+    : IRequestHandler<HandlerContext, GetRecordRequest, Result<GetRecordResponse, Error>>
 {
     private readonly IRecordRepository _repository;
 
@@ -17,14 +20,15 @@ internal sealed class GetRecordUseCase
         _repository = repository;
     }
 
-    public async Task<GetRecordResponse> ExecuteAsync(
-        UseCaseExecutionContext context, GetRecordRequest request,
+    public async Task<Result<GetRecordResponse, Error>> HandleAsync(
+        HandlerContext context, GetRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        context.ThrowsIfUnauthorized();
-        
         var ids = new RecordAndUserIds(request.Id, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);
-        return GetRecordResponse.Create(result);
+        if (!result.Success)
+            return result.Error;
+
+        return new GetRecordResponse(result.Value);
     }
 }
