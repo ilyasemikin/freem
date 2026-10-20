@@ -7,7 +7,6 @@ using Freem.Domain.Users;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
-using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -45,9 +44,8 @@ internal sealed class StatisticsPerPeriodUseCase :
 
         var datePeriod = request.Period.ToDatePeriod();
         
-        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset.Value);
-        var start = datePeriod.StartAt.ToUtcDateTime(time);
-        var end = datePeriod.EndAt.ToUtcDateTime(time);
+        var start = settings.DayUtcOffset.GetDayStartUtc(datePeriod.StartAt);
+        var end = settings.DayUtcOffset.GetDayStartUtc(datePeriod.EndAt);
         
         var period = new DateTimePeriod(start, end);
         var recordsResult = await FindRecordsAsync(context.UserId, period, cancellationToken);

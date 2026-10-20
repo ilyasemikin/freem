@@ -8,7 +8,6 @@ using Freem.Domain.Users;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
-using Freem.Time.Extensions;
 using Freem.Time.Models;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -43,27 +42,23 @@ public sealed class StatisticsPerDaysUseCase :
 
         var settings = settingsResult.Value;
 
-        var time = TimeOnly.MinValue.Add(settings.DayUtcOffset.Value);
-        var current = request.Period.StartAt.ToUtcDateTime(time);
-        // The end of the period is inclusive
-        var end = request.Period.EndAt.AddDays(1).ToUtcDateTime(time);
+        var offset = settings.DayUtcOffset;
 
         var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
-        while (current < end)
+        // The end of the period is inclusive
+        for (var day = request.Period.StartAt; day <= request.Period.EndAt; day = day.AddDays(1))
         {
-            var recordsResult = await FindRecordsAsync(context.UserId, current, cancellationToken);
+            var start = offset.GetDayStartUtc(day);
+            var recordsResult = await FindRecordsAsync(context.UserId, start, cancellationToken);
             if (!recordsResult.Success)
                 return recordsResult.Error;
 
             var records = recordsResult.Value;
 
-            var next = current.AddDays(1);
-            var period = new DateTimePeriod(current, next);
+            var end = start.AddDays(1);
+            var period = new DateTimePeriod(start, end);
 
-            var day = current.ToDateOnly();
             statisticsPerDays[day] = TimeStatisticsCalculator.Calculate(period, records);
-            
-            current = next;
         }
 
         return new StatisticsPerDaysResponse(statisticsPerDays);

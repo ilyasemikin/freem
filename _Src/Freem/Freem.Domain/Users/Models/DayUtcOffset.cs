@@ -7,6 +7,9 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
 {
     private const string Format = "c";
 
+    public static TimeSpan MinValue { get; } = TimeSpan.FromHours(-12);
+    public static TimeSpan MaxValue { get; } = TimeSpan.FromHours(14);
+
     private readonly TimeSpan _value;
     
     public static DayUtcOffset Default { get; } = new(TimeSpan.Zero);
@@ -16,7 +19,16 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
     
     public DayUtcOffset(TimeSpan value)
     {
+        if (!IsValid(value))
+            throw new ArgumentOutOfRangeException(nameof(value), value, $"Offset must be whole minutes in range [{MinValue}, {MaxValue}].");
+        
         _value = value;
+    }
+
+    public DateTime GetDayStartUtc(DateOnly date)
+    {
+        var midnight = date.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        return midnight - _value;
     }
 
     public override string ToString()
@@ -36,7 +48,7 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
         IFormatProvider? provider,
         [NotNullWhen(true)] out DayUtcOffset? result)
     {
-        if (!TimeSpan.TryParseExact(s, Format, CultureInfo.InvariantCulture, out var value))
+        if (!TimeSpan.TryParseExact(s, Format, CultureInfo.InvariantCulture, out var value) || !IsValid(value))
         {
             result = null;
             return false;
@@ -44,5 +56,10 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
 
         result = new DayUtcOffset(value);
         return true;
+    }
+
+    private static bool IsValid(TimeSpan value)
+    {
+        return value >= MinValue && value <= MaxValue && value.Ticks % TimeSpan.TicksPerMinute == 0;
     }
 }
