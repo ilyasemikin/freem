@@ -1,16 +1,15 @@
-﻿namespace Freem.Web.Api.Public.Contracts.DTO;
+﻿using Utilities.Errors;
+
+namespace Freem.Web.Api.Public.Contracts.DTO;
 
 public sealed class ErrorResponse
 {
-    public string Code { get; }
+    public Error Error { get; }
     
-    public string Message { get; }
-    public IReadOnlyDictionary<string, string>? Properties { get; }
-    
-    public ErrorResponse(string code, string message, IReadOnlyDictionary<string, string>? properties = null)
+    public ErrorResponse(Error error)
     {
-        Code = code;
-        Message = message;
-        Properties = properties;
+        ArgumentNullException.ThrowIfNull(error);
+        
+        Error = error;
     }
 }

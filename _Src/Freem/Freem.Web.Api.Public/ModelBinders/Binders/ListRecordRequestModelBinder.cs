@@ -22,8 +22,8 @@ internal sealed class ListRecordRequestModelBinder : IModelBinder
         var or = context.ValueProvider.GetValue(_offsetName);
         var lr = context.ValueProvider.GetValue(_limitName);
 
-        if (!or.TryGetIntValue(ListRecordRequest.DefaultLimit, out var limit) ||
-            !lr.TryGetIntValue(ListRecordRequest.DefaultOffset, out var offset))
+        if (!or.TryGetIntValue(ListRecordRequest.DefaultOffset, out var offset) ||
+            !lr.TryGetIntValue(ListRecordRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
 
         var value = new ListRecordRequest(offset.Value, limit.Value);

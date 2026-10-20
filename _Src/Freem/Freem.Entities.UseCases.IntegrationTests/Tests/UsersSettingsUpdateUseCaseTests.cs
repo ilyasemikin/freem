@@ -1,4 +1,5 @@
 ﻿using Freem.Domain;
+using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
 using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts;
@@ -61,6 +62,25 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
         Assert.NotNull(response.Error);
         
         Assert.Equal(DomainErrorCatalog.Types.NothingToDo, response.Error.Type);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenUserNotRegistered()
+    {
+        var notRegisteredUserId = UserId.Generate();
+        var context = new HandlerContext(notRegisteredUserId);
+        var request = new UpdateUserSettingsRequest
+        {
+            UtcOffset = new UpdateField<DayUtcOffset>(UpdatedUtcOffset)
+        };
+        
+        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(DomainErrorCatalog.Types.UserNotRegistered, response.Error.Type);
     }
     
 }

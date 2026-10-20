@@ -18,7 +18,7 @@ internal class HeadersOpenApiOperationTransformer : IOpenApiOperationTransformer
         if (operation.Responses is null)
             return Task.CompletedTask;
 
-        var attributes = controller.ControllerTypeInfo.GetCustomAttributes<ProducesHeaderAttribute>();
+        var attributes = controller.MethodInfo.GetCustomAttributes<ProducesHeaderAttribute>();
         
         foreach (var attribute in attributes)
         foreach (var (statusCode, response) in operation.Responses)

@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Utilities.Errors" Version="0.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
       <ProjectReference Include="..\Freem.Time\Freem.Time.csproj" />
     </ItemGroup>

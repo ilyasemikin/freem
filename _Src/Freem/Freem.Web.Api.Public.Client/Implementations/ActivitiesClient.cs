@@ -1,10 +1,11 @@
 ﻿using System.Text.Json;
 using Freem.Domain.Activities;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Activities;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -20,7 +21,7 @@ public sealed class ActivitiesClient : BaseClient
         _options = options;
     }
 
-    public Task<ClientResult<CreateActivityResponse>> CreateAsync(CreateActivityRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<CreateActivityResponse, IClientError>> CreateAsync(CreateActivityRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/activities")
             .WithJsonBody(body, _options);
@@ -28,7 +29,7 @@ public sealed class ActivitiesClient : BaseClient
         return SendForUserAsync<CreateActivityResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult> UpdateAsync(
+    public Task<Result<IClientError>> UpdateAsync(
         ActivityId id,
         UpdateActivityRequest body, 
         CancellationToken cancellationToken = default)
@@ -39,28 +40,28 @@ public sealed class ActivitiesClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveAsync(ActivityId id, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> RemoveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/activities/{id}");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> ArchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> ArchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/archive");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> UnarchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> UnarchiveAsync(ActivityId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/activities/{id}/unarchive");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult<ActivityResponse>> GetAsync(
+    public Task<Result<ActivityResponse, IClientError>> GetAsync(
         ActivityId id, 
         CancellationToken cancellationToken = default)
     {
@@ -69,7 +70,7 @@ public sealed class ActivitiesClient : BaseClient
         return SendForUserAsync<ActivityResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult<IAsyncEnumerable<ActivityResponse>>> ListAsync(
+    public Task<Result<IReadOnlyList<ActivityResponse>, IClientError>> ListAsync(
         ListActivityRequest query, 
         CancellationToken cancellationToken = default)
     {
@@ -77,6 +78,6 @@ public sealed class ActivitiesClient : BaseClient
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendForUserAsync<IAsyncEnumerable<ActivityResponse>>(request, cancellationToken);
+        return SendForUserAsync<IReadOnlyList<ActivityResponse>>(request, cancellationToken);
     }
 }

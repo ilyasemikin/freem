@@ -3,9 +3,10 @@ using Freem.Domain;
 using Freem.Domain.Events;
 using Freem.Domain.Users;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Events;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -16,7 +17,7 @@ public sealed class EventsClient : BaseClient
     {
     }
 
-    public Task<ClientResult<IAsyncEnumerable<IEntityEvent<Id, UserId>>>> ListAsync(
+    public Task<Result<IReadOnlyList<IEntityEvent<Id, UserId>>, IClientError>> ListAsync(
         ListEventRequest query, 
         CancellationToken cancellationToken = default)
     {
@@ -30,7 +31,7 @@ public sealed class EventsClient : BaseClient
             request = request.WithQueryParameter(nameof(query.After), after);
         }
 
-        return SendForUserAsync<IAsyncEnumerable<IEntityEvent<Id, UserId>>>(
+        return SendForUserAsync<IReadOnlyList<IEntityEvent<Id, UserId>>>(
             request, 
             cancellationToken);
     }

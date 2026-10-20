@@ -1,6 +1,6 @@
 ﻿namespace Freem.Web.Api.Public.OpenApi.Headers;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class ProducesHeaderAttribute : Attribute
 {
     public string HeaderName { get; }

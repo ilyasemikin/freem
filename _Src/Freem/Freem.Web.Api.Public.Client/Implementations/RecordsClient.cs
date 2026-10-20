@@ -1,11 +1,12 @@
 ﻿using System.Text.Json;
 using Freem.Domain.Records;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Records;
 using Freem.Web.Api.Public.Contracts.DTO.Records.Running;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -21,7 +22,7 @@ public sealed class RecordsClient : BaseClient
         _options = options;
     }
 
-    public Task<ClientResult<CreateRecordResponse>> CreateAsync(CreateRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<CreateRecordResponse, IClientError>> CreateAsync(CreateRecordRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records")
             .WithJsonBody(body, _options);
@@ -29,7 +30,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync<CreateRecordResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult> UpdateAsync(
+    public Task<Result<IClientError>> UpdateAsync(
         RecordId id, 
         UpdateRecordRequest body,
         CancellationToken cancellationToken = default)
@@ -40,14 +41,14 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveAsync(RecordId id, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> RemoveAsync(RecordId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete($"api/v1/records/{id}");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> StartAsync(StartRunningRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> StartAsync(StartRunningRecordRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records/running/start")
             .WithJsonBody(body, _options);
@@ -55,7 +56,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> StopAsync(StopRunningRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> StopAsync(StopRunningRecordRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records/running/stop")
             .WithJsonBody(body, _options);
@@ -63,7 +64,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> UpdateRunningAsync(
+    public Task<Result<IClientError>> UpdateRunningAsync(
         UpdateRunningRecordRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put("api/v1/records/running")
@@ -72,21 +73,21 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult> RemoveRunningAsync(CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> RemoveRunningAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Delete("api/v1/records/running");
         
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult<RunningRecordResponse>> GetRunningAsync(CancellationToken cancellationToken = default)
+    public Task<Result<RunningRecordResponse, IClientError>> GetRunningAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/running");
         
         return SendForUserAsync<RunningRecordResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult<RecordResponse>> GetAsync(
+    public Task<Result<RecordResponse, IClientError>> GetAsync(
         RecordId id, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/{id}");
@@ -94,23 +95,23 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync<RecordResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult<IAsyncEnumerable<RunningRecordResponse>>> ListAsync(
+    public Task<Result<IReadOnlyList<RecordResponse>, IClientError>> ListAsync(
         ListRecordRequest query, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendForUserAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<IReadOnlyList<RecordResponse>>(request, cancellationToken);
     }
 
-    public Task<ClientResult<IAsyncEnumerable<RunningRecordResponse>>> ListByPeriodAsync(
+    public Task<Result<IReadOnlyList<RecordResponse>, IClientError>> ListByPeriodAsync(
         ListRecordByPeriodRequest query, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/by-period")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Period), query.Period.ToString());
         
-        return SendForUserAsync<IAsyncEnumerable<RunningRecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<IReadOnlyList<RecordResponse>>(request, cancellationToken);
     }
 }

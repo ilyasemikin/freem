@@ -1,4 +1,5 @@
-﻿using Freem.Domain.Storage.Repositories.Users;
+﻿using Freem.Domain;
+using Freem.Domain.Storage.Repositories.Users;
 using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Utilities.Errors;
@@ -25,7 +26,11 @@ internal sealed class GetUserSettingsUseCase :
     {
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Success)
-            return result.Error;
+        {
+            return result.Error.Type == DomainErrorCatalog.Types.EntityNotFound
+                ? DomainErrorCatalog.Factories.CreateUserNotRegistered(context.UserId)
+                : result.Error;
+        }
         
         var user = result.Value;
         return new GetUserSettingsResponse(user.Settings);

@@ -31,6 +31,8 @@ internal sealed class QueryListModelBinderProvider : IModelBinderProvider
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        return _binders.GetValueOrDefault(context.Metadata.ModelType);
+        return _binders.TryGetValue(context.Metadata.ModelType, out var binder)
+            ? new ArgumentValidationModelBinder(binder)
+            : null;
     }
 }

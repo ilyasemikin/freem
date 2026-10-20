@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
+using Freem.Web.Api.Public.UseCases.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Utilities.UseCases.Abstractions;
 
 namespace Freem.Web.Api.Public.Controllers;
 
@@ -10,16 +12,12 @@ namespace Freem.Web.Api.Public.Controllers;
 [Produces(MediaTypeNames.Application.Json)]
 public abstract class BaseController : ControllerBase
 {
-    protected static IActionResult CreateResult(int statusCode)
+    protected IRequestMediator<ApiAuthorizedHandlerContext> Mediator { get; }
+
+    protected BaseController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)
     {
-        return new StatusCodeResult(statusCode);
-    }
-    
-    protected static IActionResult CreateResult(object value, int statusCode)
-    {
-        return new ObjectResult(value)
-        {
-            StatusCode = statusCode
-        };
+        ArgumentNullException.ThrowIfNull(mediator);
+
+        Mediator = mediator;
     }
 }

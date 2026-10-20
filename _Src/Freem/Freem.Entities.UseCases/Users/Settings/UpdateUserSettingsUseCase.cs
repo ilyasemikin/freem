@@ -42,7 +42,11 @@ internal sealed class UpdateUserSettingsUseCase :
         
         var result = await _repository.FindByIdAsync(context.UserId, cancellationToken);
         if (!result.Success)
-            return result.Error;
+        {
+            return result.Error.Type == DomainErrorCatalog.Types.EntityNotFound
+                ? DomainErrorCatalog.Factories.CreateUserNotRegistered(context.UserId)
+                : result.Error;
+        }
 
         var user = result.Value;
         var settings = new UserSettings()

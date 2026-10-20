@@ -1,8 +1,11 @@
 ﻿using System.Text.Json;
-using Freem.Web.Api.Public.Client.Implementations.Extensions;
-using Freem.Web.Api.Public.Client.Models;
+using Freem.Web.Api.Public.Client.Implementations.Factories;
 using Freem.Web.Api.Public.Contracts;
 using Utilities.Http;
+using Utilities.Http.Content.Extensions;
+using Utilities.Http.Errors;
+using Utilities.Http.Errors.Abstractions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations.Base;
 
@@ -10,6 +13,7 @@ public abstract class BaseClient
 {
     private readonly IHttpClient _client;
     private readonly JsonSerializerOptions _options;
+    private readonly ClientErrorFactory _errorFactory;
     private readonly ClientSession? _session;
 
     protected BaseClient(IHttpClient client, JsonSerializerOptions options, ClientSession? session = null)
@@ -19,49 +23,78 @@ public abstract class BaseClient
         
         _client = client;
         _options = options;
+        _errorFactory = new ClientErrorFactory(options);
         _session = session;
     }
 
-    protected async Task<ClientResult> SendAsync(HttpRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await SendInnerAsync(request, cancellationToken);
-        return response.ToClientResult();
-    }
-
-    protected async Task<ClientResult> SendForUserAsync(HttpRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await SendForUserInnerAsync(request, cancellationToken);
-        return response.ToClientResult();
-    }
-
-    protected async Task<ClientResult<T>> SendAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await SendInnerAsync(request, cancellationToken);
-        return await response.ToClientResultAsync<T>(_options);
-    }
-
-    protected async Task<ClientResult<T>> SendForUserAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await SendForUserInnerAsync(request, cancellationToken);
-        return await response.ToClientResultAsync<T>(_options);
-    }
-
-    private async Task<HttpResponse> SendInnerAsync(HttpRequest request, CancellationToken cancellationToken = default)
+    protected Task<Result<IClientError>> SendAsync(HttpRequest request, CancellationToken cancellationToken = default)
     {
         request = PopulateRequest(request);
-        
-        return await _client.SendAsync(request, cancellationToken);
+        return SendInnerAsync(request, cancellationToken);
     }
-    
-    private async Task<HttpResponse> SendForUserInnerAsync(HttpRequest request, CancellationToken cancellationToken = default)
+
+    protected Task<Result<IClientError>> SendForUserAsync(HttpRequest request, CancellationToken cancellationToken = default)
+    {
+        request = PopulateUserRequest(request);
+        return SendInnerAsync(request, cancellationToken);
+    }
+
+    protected Task<Result<T, IClientError>> SendAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
+    {
+        request = PopulateRequest(request);
+        return SendInnerAsync<T>(request, cancellationToken);
+    }
+
+    protected Task<Result<T, IClientError>> SendForUserAsync<T>(HttpRequest request, CancellationToken cancellationToken = default)
+    {
+        request = PopulateUserRequest(request);
+        return SendInnerAsync<T>(request, cancellationToken);
+    }
+
+    private async Task<Result<IClientError>> SendInnerAsync(HttpRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _client.SendAsync(request, cancellationToken);
+            if (response.Success)
+                return Result<IClientError>.CreateSuccess();
+
+            var error = await _errorFactory.CreateAsync(response, cancellationToken);
+            return Result<IClientError>.CreateFailure(error);
+        }
+        catch (Exception exception)
+        {
+            return new ExceptionClientError(exception);
+        }
+    }
+
+    private async Task<Result<T, IClientError>> SendInnerAsync<T>(HttpRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _client.SendAsync(request, cancellationToken);
+            if (!response.Success)
+            {
+                var error = await _errorFactory.CreateAsync(response, cancellationToken);
+                return Result<T, IClientError>.CreateFailure(error);
+            }
+
+            var value = await response.Content.ReadFromJsonAsync<T>(_options, cancellationToken);
+            return value;
+        }
+        catch (Exception exception)
+        {
+            return new ExceptionClientError(exception);
+        }
+    }
+
+    private HttpRequest PopulateUserRequest(HttpRequest request)
     {
         if (_session is null || !_session.TryGet(out var accessToken))
             throw new InvalidOperationException("Client session is not set");
-        
+
         request = request.WithHeader(HeaderNames.Authorization, $"Bearer {accessToken}");
-        request = PopulateRequest(request);
-        
-        return await _client.SendAsync(request, cancellationToken);
+        return PopulateRequest(request);
     }
     
     private static HttpRequest PopulateRequest(HttpRequest request)

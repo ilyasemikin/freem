@@ -1,10 +1,11 @@
 ﻿using System.Text.Json;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Users;
 using Freem.Web.Api.Public.Contracts.DTO.Users.Settings;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -20,7 +21,7 @@ public sealed class UsersClient : BaseClient
         _options = options;
     }
 
-    public Task<ClientResult<RegisterUserResponse>> RegisterAsync(
+    public Task<Result<RegisterUserResponse, IClientError>> RegisterAsync(
         RegisterUserRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/user/register")
@@ -29,7 +30,7 @@ public sealed class UsersClient : BaseClient
         return SendForUserAsync<RegisterUserResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult> UpdateSettingsAsync(
+    public Task<Result<IClientError>> UpdateSettingsAsync(
         UpdateUserSettingsRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put("api/v1/user/settings")
@@ -38,14 +39,14 @@ public sealed class UsersClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<ClientResult<UserSettingsResponse>> GetSettingsAsync(CancellationToken cancellationToken = default)
+    public Task<Result<UserSettingsResponse, IClientError>> GetSettingsAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/user/settings");
         
         return SendForUserAsync<UserSettingsResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult<MeResponse>> MeAsync(CancellationToken cancellationToken = default)
+    public Task<Result<MeResponse, IClientError>> MeAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/user/me");
         

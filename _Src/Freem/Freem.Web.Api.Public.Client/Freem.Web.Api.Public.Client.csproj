@@ -8,8 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Errors.Serialization.Json" Version="0.0.1"/>
         <PackageReference Include="Utilities.Http" Version="0.0.8"/>
+        <PackageReference Include="Utilities.Http.Errors" Version="0.0.2"/>
         <PackageReference Include="Utilities.Http.SystemNet" Version="0.0.8"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -20,8 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Freem.Web.Api.Public.SyncClient"/>
-        <InternalsVisibleTo Include="Freem.Web.Api.Public.FunctionalTests"/>
+        <InternalsVisibleTo Include="Freem.Web.Api.Public.IntegrationTests"/>
     </ItemGroup>
 
 </Project>

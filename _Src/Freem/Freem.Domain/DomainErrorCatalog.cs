@@ -2,6 +2,8 @@
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
 using Freem.Domain.Tags;
+using Freem.Domain.Tags.Models;
+using Freem.Domain.Users;
 using Utilities.Errors;
 using Utilities.Errors.Extensions;
 
@@ -18,7 +20,11 @@ public static class DomainErrorCatalog
         public static readonly ErrorType EntityAlreadyExists = ErrorType.Create(Scope, "entity_already_exists");
         public static readonly ErrorType NothingToDo = ErrorType.Create(Scope, "nothing_to_do");
         public static readonly ErrorType PeriodIsInvalid = ErrorType.Create(Scope, "period_is_invalid");
+        public static readonly ErrorType InvalidRequest = ErrorType.Create(Scope, "invalid_request");
+        public static readonly ErrorType FailedDependency = ErrorType.Create(Scope, "failed_dependency");
 
+        public static readonly ErrorType AuthenticationRejected = ErrorType.Create(Scope, "auth:rejected");
+        public static readonly ErrorType UserNotRegistered = ErrorType.Create(Scope, "user:not_registered");
         public static readonly ErrorType ActivityInvalidStatus = ErrorType.Create(Scope, "activity:invalid_status");
         public static readonly ErrorType TagNameAlreadyExists = ErrorType.Create(Scope, "tag:name_already_exists");
 
@@ -35,6 +41,7 @@ public static class DomainErrorCatalog
         public const string UserId = $"{Scope}:user_id";
 
         public const string ActivityStatus = $"{Scope}:activity_status";
+        public const string TagName = $"{Scope}:tag_name";
 
         public static string GetId(Id id)
         {
@@ -99,6 +106,35 @@ public static class DomainErrorCatalog
                 .WithMessage(message);
         }
 
+        public static Error CreateInvalidRequest(ErrorMessage message)
+        {
+            return new Error.Builder()
+                .WithType(Types.InvalidRequest)
+                .WithMessage(message);
+        }
+
+        public static Error CreateFailedDependency(ErrorMessage message)
+        {
+            return new Error.Builder()
+                .WithType(Types.FailedDependency)
+                .WithMessage(message);
+        }
+
+        public static Error CreateAuthenticationRejected(ErrorMessage message)
+        {
+            return new Error.Builder()
+                .WithType(Types.AuthenticationRejected)
+                .WithMessage(message);
+        }
+
+        public static Error CreateUserNotRegistered(UserId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.UserNotRegistered)
+                .WithMessage($"User with id = [{id}] is not registered")
+                .WithProperty(Properties.UserId, id);
+        }
+
         public static Error CreateActivityInvalidStatus(ActivityId id, ActivityStatus status)
         {
             return new Error.Builder()
@@ -106,6 +142,14 @@ public static class DomainErrorCatalog
                 .WithMessage($"Activity with id = [{id}] has invalid status \"{status}\"")
                 .WithProperty(Properties.ActivityId, id)
                 .WithProperty(Properties.ActivityStatus, status);
+        }
+
+        public static Error CreateTagNotFound(TagName name)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Tag with name = [{name}] not found")
+                .WithProperty(Properties.TagName, name);
         }
 
         public static Error CreateTagNameAlreadyExists(TagId id)

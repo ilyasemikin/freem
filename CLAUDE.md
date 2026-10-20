@@ -68,7 +68,7 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   `postgres-backup`/`postgres-restore`). `.env` is created from `.env.example` by the user. Ports: `develop` Postgres
   10150, Redis 10151; `service` API 10170, web 10171; local `dotnet run` API 10190, `npm run dev` 10191 (strict).
   Images need `.nupkg` files in `_Src/Freem/packages/`.
-- `.IntegrationTests` and `FunctionalTests` run in `docker/test` (`docker compose up --build --abort-on-container-exit
+- `.IntegrationTests` (storage, Redis, use cases, API) run in `docker/test` (`docker compose up --build --abort-on-container-exit
   test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; EgoHub address and token come from `docker/test/.env` (see `.env.example`); each test assembly has its own database `freem_{storage,usecases,api}_test`, because assemblies run in parallel and truncate tables). `TruncateTables` refuses a
   database whose name does not end with `_test`. The committed `configuration.json` files of the test projects hold
   empty placeholders for local runs against `develop` (use a `*_test` database).
@@ -76,13 +76,14 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
 
 ## Repository Layout
 
-All code lives in `_Src/Freem/` (solution `Freem.sln`, ~28 projects, `net10.0`, nullable enabled). Frontend is
+All code lives in `_Src/Freem/` (solution `Freem.sln`, ~29 projects, `net10.0`, nullable enabled). Frontend is
 `_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
 Layers (names differ from StashIt):
 
 ```
-Freem.Web.Api.Public                       # ASP.NET Core API (+ .Client, .SyncClient, .FunctionalTests)
+Freem.Web.Api.Public                       # ASP.NET Core API: thin controllers over the API mediator (+ .Client, .IntegrationTests)
+Freem.Web.Api.Public.UseCases(.Contracts)  # API-level handlers: DTO <-> domain mapping, Error -> HTTP code + ErrorResponse
 Freem.Domain                               # ids, value objects, events, statistics data, DomainErrorCatalog (StashIt `Domain`)
 Freem.Domain.Entities                      # aggregates and comparers; aggregates reference each other by Id only
 Freem.Entities.UseCases(.Contracts)        # use cases (Utilities.UseCases handlers, Result<…, Error>) and their DTOs
@@ -93,7 +94,7 @@ Freem.Locking.*                            # locking (Redis)
 Freem.*                                    # small shared libraries (Time, Storage, Locking, ...)
 ```
 
-Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`) come from a local NuGet feed:
+Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`) come from a local NuGet feed:
 `_Src/Freem/Directory.Build.props` registers `_Src/Freem/packages/`, whose `.nupkg` files are not in git (only
 `.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
 `packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.
@@ -102,7 +103,7 @@ There is no own authentication: the API validates EgoHub access tokens (`EgoHub.
 takes the Freem user id from the token `sub` claim (`UseCaseContextProvider`). EgoHub is an external service configured
 by `EgoHubIntegration:Url/Token` (service token `<KeyId>:<Value>`); the web client signs in through the Freem API
 (`api/v1/auth/{register,login,refresh,logout}`, refresh token in an HttpOnly cookie), which proxies to EgoHub. A Freem
-user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `FunctionalTests` need a
+user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `Freem.Web.Api.Public.IntegrationTests` need a
 running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid token in the local test config.
 
 ## Commands
@@ -116,6 +117,6 @@ cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
 docker build -f Freem.Web.Api.Public/Dockerfile .   # run from _Src/Freem
 ```
 
-`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) and `FunctionalTests` keep a committed
+`.IntegrationTests` projects (PostgreSQL, Redis, UseCases, API) keep a committed
 `configuration.json` with empty placeholders; hide local values with `git update-index --skip-worktree` (see
 "Local Environment"). Frontend API address: `VITE_API_URL` (`Freem.Web/.env.example`).

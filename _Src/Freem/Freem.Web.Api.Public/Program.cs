@@ -17,12 +17,18 @@ using Freem.Web.Api.Public.Authentication.EgoHub;
 using Freem.Web.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Web.Api.Public.Configuration.Extensions;
 using Freem.Web.Api.Public.Contracts;
+using Freem.Web.Api.Public.ErrorHandling;
+using Freem.Web.Api.Public.Formatters;
 using Freem.Web.Api.Public.ModelBinders.Providers;
 using Freem.Web.Api.Public.OpenApi;
+using Freem.Web.Api.Public.OpenApi.Errors;
 using Freem.Web.Api.Public.OpenApi.Headers;
-using Freem.Web.Api.Public.Services.DependencyInjection.Microsoft.Extensions;
+using Freem.Web.Api.Public.UseCases.DependencyInjection.Microsoft.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Utilities.Clock.DependencyInjection.Microsoft;
+using Utilities.Errors.Serialization.Json.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,9 +82,9 @@ builder.Services
     .AddNullEventPublishing();
 
 builder.Services
-    .AddUseCaseContextProvider()
     .AddEntityIdNameConverters()
-    .AddEntitiesUseCases();
+    .AddEntitiesUseCases()
+    .AddApiUseCases();
 
 var egoHubConfiguration = builder.Configuration.GetEgoHubIntegrationConfiguration();
 var egoHubToken = TokenCredential.Parse(egoHubConfiguration.Token, null);
@@ -104,6 +110,8 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 
+builder.Services.AddApiErrorHandling();
+
 builder.Services
     .AddControllers(options =>
     {
@@ -111,18 +119,30 @@ builder.Services
     })
     .AddJsonOptions(options =>
     {
+        options.JsonSerializerOptions.PopulateErrorsConverters();
         EntitiesJsonSerialization.Populate(options.JsonSerializerOptions);
         
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // Configured on the MVC builder: a plain Configure<ApiBehaviorOptions> registered before AddControllers
+        // is overwritten by the default ProblemDetails factory.
+        options.InvalidModelStateResponseFactory = InvalidModelStateResponseFactory.Create;
     });
+
+builder.Services.AddTransient<IPostConfigureOptions<MvcOptions>, ArgumentValidationMvcOptionsSetup>();
 
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<OpenApiDocumentTransformer>();
     options.AddOperationTransformer<HeadersOpenApiOperationTransformer>();
+    options.AddSchemaTransformer<ErrorsSchemaTransformer>();
 });
 
 var application = builder.Build();
+
+application.UseApiErrorHandling();
 
 application
     .MapOpenApi()

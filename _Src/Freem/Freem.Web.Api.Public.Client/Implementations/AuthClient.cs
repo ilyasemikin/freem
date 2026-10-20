@@ -1,9 +1,10 @@
 using System.Text.Json;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Auth;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -19,7 +20,7 @@ public sealed class AuthClient : BaseClient
         _options = options;
     }
 
-    public Task<ClientResult<RegisterResponse>> RegisterAsync(
+    public Task<Result<RegisterResponse, IClientError>> RegisterAsync(
         RegisterRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/auth/register")
@@ -28,7 +29,7 @@ public sealed class AuthClient : BaseClient
         return SendAsync<RegisterResponse>(request, cancellationToken);
     }
 
-    public Task<ClientResult<SessionResponse>> LoginAsync(
+    public Task<Result<SessionResponse, IClientError>> LoginAsync(
         LoginRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/auth/login")

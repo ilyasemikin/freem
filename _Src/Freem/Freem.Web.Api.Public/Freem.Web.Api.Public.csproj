@@ -12,12 +12,12 @@
         <ProjectReference Include="..\Freem.Entities.Events.Producer\Freem.Entities.Events.Producer.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Serialization.Json\Freem.Entities.Serialization.Json.csproj"/>
         <ProjectReference Include="..\Freem.Entities.Storage.PostgreSQL\Freem.Entities.Storage.PostgreSQL.csproj"/>
-        <ProjectReference Include="..\Freem.Entities.UseCases.Contracts\Freem.Entities.UseCases.Contracts.csproj"/>
         <ProjectReference Include="..\Freem.Entities.UseCases\Freem.Entities.UseCases.csproj"/>
-        <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
         <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
         <ProjectReference Include="..\Freem.Web.Api.Public.Contracts\Freem.Web.Api.Public.Contracts.csproj"/>
+        <ProjectReference Include="..\Freem.Web.Api.Public.UseCases\Freem.Web.Api.Public.UseCases.csproj"/>
+        <ProjectReference Include="..\Freem.Web.Api.Public.UseCases.Contracts\Freem.Web.Api.Public.UseCases.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Freem.Web.Api.Public.FunctionalTests"/>
+        <InternalsVisibleTo Include="Freem.Web.Api.Public.IntegrationTests"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -36,7 +36,7 @@
       <PackageReference Include="EgoHub.Authentication.AspNetCore" Version="0.0.1"/>
       <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
       <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
-      <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+      <PackageReference Include="Utilities.Errors.Serialization.Json" Version="0.0.1"/>
       <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
     </ItemGroup>
 

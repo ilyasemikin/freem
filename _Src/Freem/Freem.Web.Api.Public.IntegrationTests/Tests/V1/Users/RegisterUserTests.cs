@@ -1,0 +1,47 @@
+﻿using System.Net;
+using Freem.Domain.Users.Models;
+using Freem.Web.Api.Public.Contracts.DTO.Users;
+using Freem.Web.Api.Public.IntegrationTests.Context;
+using Freem.Web.Api.Public.IntegrationTests.Context.Preparers;
+using Freem.Web.Api.Public.IntegrationTests.Extensions;
+using Freem.Web.Api.Public.IntegrationTests.Tests.Base;
+
+namespace Freem.Web.Api.Public.IntegrationTests.Tests.V1.Users;
+
+public sealed class RegisterUserTests : TestBase
+{
+    public RegisterUserTests(TestContext context) 
+        : base(context)
+    {
+    }
+
+    [Fact]
+    public async Task Request_ShouldSuccess()
+    {
+        var client = Context.Client;
+        await Context.Preparer.Users.AuthenticateAsync();
+
+        var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
+        var request = new RegisterUserRequest(nickname);
+        
+        var result = await client.Users.RegisterAsync(request);
+
+        Assert.NotNull(result);
+        result.ShouldSuccess();
+    }
+
+    [Fact]
+    public async Task Request_WhenAlreadyRegistered_ShouldConflict()
+    {
+        var client = Context.Client;
+        await Context.Preparer.Users.RegisterAsync();
+
+        var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
+        var request = new RegisterUserRequest(nickname);
+
+        var result = await client.Users.RegisterAsync(request);
+
+        Assert.NotNull(result);
+        result.ShouldHaveStatusCode(HttpStatusCode.Conflict);
+    }
+}

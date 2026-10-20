@@ -1,4 +1,6 @@
-﻿using Freem.Entities.UseCases.Context;
+﻿using Freem.Domain;
+using Freem.Domain.Users;
+using Freem.Entities.UseCases.Context;
 using Freem.Entities.UseCases.Contracts.Users.Settings.Get;
 using Freem.Entities.UseCases.IntegrationTests.Fixtures;
 using Freem.Entities.UseCases.IntegrationTests.Tests.Abstractions;
@@ -35,5 +37,20 @@ public sealed class UsersSettingsGetUseCaseTests : UseCaseTestBase
         Assert.True(response.Success);
         Assert.Null(response.Error);
     }
-    
+
+    [Fact]
+    public async Task ShouldFailure_WhenUserNotRegistered()
+    {
+        var notRegisteredUserId = UserId.Generate();
+        var context = new HandlerContext(notRegisteredUserId);
+        var request = new GetUserSettingsRequest();
+        
+        var response = await Context.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request);
+        
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        
+        Assert.Equal(DomainErrorCatalog.Types.UserNotRegistered, response.Error.Type);
+    }
 }

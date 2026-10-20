@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
 using Freem.Web.Api.Public.Client.Implementations.Base;
-using Freem.Web.Api.Public.Client.Models;
 using Freem.Web.Api.Public.Contracts.DTO.Statistics;
 using Utilities.Http;
+using Utilities.Http.Errors.Abstractions;
+using Utilities.Primitives;
 
 namespace Freem.Web.Api.Public.Client.Implementations;
 
@@ -13,7 +14,7 @@ public sealed class StatisticsClient : BaseClient
     {
     }
 
-    public Task<ClientResult<StatisticsPerDaysResponse>> GetAsync(
+    public Task<Result<StatisticsPerDaysResponse, IClientError>> GetAsync(
         StatisticsPerDaysRequest query, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/statistics/per-days")

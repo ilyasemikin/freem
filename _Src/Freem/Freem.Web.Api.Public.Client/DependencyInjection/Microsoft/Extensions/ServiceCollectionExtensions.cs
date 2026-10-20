@@ -4,6 +4,7 @@ using Freem.Web.Api.Public.Client.Configuration;
 using Freem.Web.Api.Public.Client.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Utilities.Errors.Serialization.Json.Extensions;
 using Utilities.Http.SystemNet.DependencyInjection.Microsoft.Extensions;
 using NetHttpClient = System.Net.Http.HttpClient;
 
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddWebClientSpecific(this IServiceCollection services)
     {
         var jso = EntitiesJsonSerialization.CreateSerializerOptions();
+        jso.PopulateErrorsConverters();
         
         // The API host overrides the naming policy with camelCase (Program.cs), the client must match it.
         jso.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
