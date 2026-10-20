@@ -9,13 +9,14 @@ export interface IDatePickerProps {
   value?: Date;
   error?: string;
   showTime?: boolean;
+  disabled?: boolean;
   minValue?: Date;
   maxValue?: Date;
   onChange?: (value?: Date) => void;
 }
 
 export function DatePicker(props: IDatePickerProps) {
-  const {style, placeholder, value, error, showTime, minValue, maxValue, onChange} = props;
+  const {style, placeholder, value, error, showTime, disabled, minValue, maxValue, onChange} = props;
 
   function change(e: FormEvent<Date>) {
     if (onChange) {
@@ -32,6 +33,7 @@ export function DatePicker(props: IDatePickerProps) {
             placeholder={placeholder}
             value={value}
             showTime={showTime}
+            disabled={disabled}
             dateFormat="dd/mm/yy"
             showSeconds
             hourFormat="24"

@@ -1,19 +1,23 @@
 ﻿import {forwardRef, useImperativeHandle, useState} from "react";
-import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 import {TagEntity} from "../../entities/TagEntity.ts";
 import {RecordEntity} from "../../entities/RecordEntity.ts";
 import {InputText} from "../../components/inputs/InputText.tsx";
 import {InputTextarea} from "primereact/inputtextarea";
-import {DatePicker} from "../../components/inputs/DatePicker.tsx";
 import {ActivitiesPicker} from "../../components/inputs/ActivitiesPicker.tsx";
 import {TagsPicker} from "../../components/inputs/TagsPicker.tsx";
+import {CustomButton} from "../../components/inputs/CustomButton.tsx";
+import {ValidationError} from "../../components/ValidationError.tsx";
+import {IPeriodRowData, IPeriodRowState, RecordPeriodsHelper} from "../../helpers/RecordPeriodsHelper.ts";
+import {RecordPeriodRow} from "./RecordPeriodRow.tsx";
 
 export interface IRecordEditorHandle {
   validate: () => boolean;
   data: () => IRecordEditorData;
 }
 
+// Without a record the editor creates a new one and lets the user enter periods;
+// periods of an existing record are edited separately (see RecordPeriodsPanel)
 export interface IRecordEditorProps {
   loading?: boolean;
   record?: RecordEntity;
@@ -22,7 +26,7 @@ export interface IRecordEditorProps {
 export interface IRecordEditorData {
   name?: string;
   description?: string;
-  period: DateTimePeriod;
+  periods: IPeriodRowData[];
   activityIds: string[];
   tagIds?: string[];
 }
@@ -30,67 +34,62 @@ export interface IRecordEditorData {
 interface IRecordEditorState {
   name: string;
   description: string;
-  startAt?: Date;
-  endAt?: Date;
+  rows: IPeriodRowState[];
   activities: ActivityEntity[];
   tags: TagEntity[];
 }
 
 export interface IRecordEditorValidationResult {
-  startAtError?: string;
-  endAtError?: string;
   activitiesError?: string;
+  periodsError?: string;
+  rowErrors: Record<string, string>;
 }
 
 export const RecordEditor = forwardRef<IRecordEditorHandle, IRecordEditorProps>((props, ref) => {
   const {loading, record} = props;
 
+  const periodsEditable = record === undefined;
+
   const [state, setState] = useState<IRecordEditorState>({
     name: record?.name || "",
     description: record?.description || "",
-    startAt: record?.period.startAt,
-    endAt: record?.period.endAt,
+    rows: periodsEditable ? [RecordPeriodsHelper.createRow()] : [],
     activities: record?.activities || [],
     tags: record?.tags || []
   });
 
-  const [validationResult, setValidationResult] = useState<IRecordEditorValidationResult>({});
+  const [validationResult, setValidationResult] = useState<IRecordEditorValidationResult>({rowErrors: {}});
 
   useImperativeHandle(ref, () => ({
     validate() {
-      const newValidationResult = {...validationResult};
+      const newValidationResult: IRecordEditorValidationResult = {rowErrors: {}};
 
       if (state.activities.length === 0) {
         newValidationResult.activitiesError = "Activities are required";
       }
 
-      if (state.startAt === undefined || state.startAt === null) {
-        newValidationResult.startAtError = "Start at is required";
-      }
+      if (periodsEditable) {
+        if (state.rows.length === 0) {
+          newValidationResult.periodsError = "At least one period is required";
+        }
 
-      if (state.endAt === undefined || state.endAt === null) {
-        newValidationResult.endAtError = "End at is required";
+        newValidationResult.rowErrors = RecordPeriodsHelper.validateRows(state.rows);
       }
 
       setValidationResult(newValidationResult);
       return newValidationResult.activitiesError === undefined
-          && newValidationResult.startAtError === undefined
-          && newValidationResult.endAtError === undefined;
+          && newValidationResult.periodsError === undefined
+          && Object.keys(newValidationResult.rowErrors).length === 0;
     },
     data() {
-      if (state.startAt === undefined || state.startAt === null ||
-          state.endAt === undefined || state.endAt === null) {
-        throw new Error();
-      }
-
-      const period = new DateTimePeriod(state.startAt, state.endAt);
+      const periods = state.rows.map(row => RecordPeriodsHelper.toRowData(row));
       const activityIds = state.activities.map(activity => activity.id);
       const tagIds = state.tags.map(tag => tag.id);
 
       return {
         name: state.name !== undefined ? state.name : undefined,
         description: state.description != undefined ? state.description : undefined,
-        period: period,
+        periods: periods,
         activityIds: activityIds,
         tagIds: tagIds
       };
@@ -104,7 +103,32 @@ export const RecordEditor = forwardRef<IRecordEditorHandle, IRecordEditorProps>(
     }
 
     setState(newState);
-    setValidationResult({});
+    setValidationResult({rowErrors: {}});
+  }
+
+  function changeRow(row: IPeriodRowState) {
+    change("rows", state.rows.map(item => item.key === row.key ? row : item));
+  }
+
+  function addRow() {
+    const last = state.rows[state.rows.length - 1];
+    change("rows", [...state.rows, RecordPeriodsHelper.createRow(last?.endAt)]);
+  }
+
+  function removeRow(key: string) {
+    change("rows", state.rows.filter(item => item.key !== key));
+  }
+
+  function renderRemoveAction(row: IPeriodRowState) {
+    if (state.rows.length <= 1) {
+      return undefined;
+    }
+
+    return (
+        <CustomButton onClick={() => removeRow(row.key)}>
+          <span style={{fontSize: "18px"}} className="pi pi-trash"/>
+        </CustomButton>
+    );
   }
 
   return (
@@ -123,25 +147,24 @@ export const RecordEditor = forwardRef<IRecordEditorHandle, IRecordEditorProps>(
             cols={25}
             autoResize
             placeholder="Description"
+            value={state.description}
             onChange={e => change(e.target.name, e.target.value)}/>
-        <div style={{display: "flex", flexDirection: "row"}}>
-          <DatePicker
-              style={{width: "50%", marginRight: "3px"}}
-              placeholder="Start at"
-              showTime
-              value={state.startAt}
-              maxValue={state.endAt}
-              error={validationResult.startAtError}
-              onChange={value => change("startAt", value)}/>
-          <DatePicker
-              style={{width: "50%"}}
-              placeholder="End at"
-              showTime
-              value={state.endAt}
-              minValue={state.startAt}
-              error={validationResult.endAtError}
-              onChange={value => change("endAt", value)}/>
-        </div>
+        {periodsEditable &&
+            <>
+              {state.rows.map(row =>
+                  <RecordPeriodRow
+                      key={row.key}
+                      row={row}
+                      loading={loading}
+                      error={validationResult.rowErrors[row.key]}
+                      actions={renderRemoveAction(row)}
+                      onChange={changeRow}/>)}
+              <ValidationError error={validationResult.periodsError}/>
+              <CustomButton style={{marginBottom: "8px"}} onClick={addRow}>
+                <span style={{marginRight: "5px"}} className="pi pi-plus"/>
+                <span>Add period</span>
+              </CustomButton>
+            </>}
         <ActivitiesPicker
             loading={loading}
             activities={state.activities}

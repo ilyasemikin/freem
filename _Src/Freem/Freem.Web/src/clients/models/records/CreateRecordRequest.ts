@@ -1,5 +1,7 @@
+import {RecordPeriodRequest} from "./RecordPeriodRequest.ts";
+
 export class CreateRecordRequest {
-  public readonly period: string;
+  public readonly periods: RecordPeriodRequest[];
   public readonly activities: string[];
 
   public readonly name?: string;
@@ -7,15 +9,15 @@ export class CreateRecordRequest {
   public readonly tags?: string[];
 
   constructor(
-    period: string, 
+    periods: RecordPeriodRequest[],
     activities: string[],
-    name?: string, 
-    description?: string, 
+    name?: string,
+    description?: string,
     tags?: string[]
   ) {
-    this.period = period;
+    this.periods = periods;
     this.activities = activities;
-    
+
     this.name = name;
     this.description = description;
     this.tags = tags;

@@ -19,7 +19,7 @@ function group(groupRecords: boolean, records: RecordEntity[]): RecordEntity[][]
   const groups = new Map<string, RecordEntity[]>();
 
   for (const record of records) {
-    const key = formatDate(record.period.startAt);
+    const key = formatDate(record.startAt);
 
     if (!groups.has(key)) {
       groups.set(key, []);
@@ -46,7 +46,7 @@ export function RecordListGrouped(props: IRecordListGroupedProps) {
   const groups = useMemo(() => group(groupRecords, records), [groupRecords, records]);
 
   function render(group: RecordEntity[]) {
-    const start = group[0]?.period.startAt ?? new Date();
+    const start = group[0]?.startAt ?? new Date();
     const key = formatDate(start);
     const date = groupRecords
         ? key

@@ -9,6 +9,7 @@ import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {RecordAddModal} from "./RecordAddModal.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
 import {CreateRecordRequest} from "../../clients/models/records/CreateRecordRequest.ts";
+import {RecordPeriodRequest} from "../../clients/models/records/RecordPeriodRequest.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {DatePeriodPicker} from "../../components/inputs/DatePeriodPicker.tsx";
 import {DateHelper} from "../../helpers/DateHelper.ts";
@@ -73,8 +74,10 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
   }
 
   async function addRecord(data: IRecordEditorData) {
+    const periods = data.periods.map(item =>
+        new RecordPeriodRequest(item.period.toString(), item.description));
     const request = new CreateRecordRequest(
-        data.period.toString(),
+        periods,
         data.activityIds,
         data.name,
         data.description,

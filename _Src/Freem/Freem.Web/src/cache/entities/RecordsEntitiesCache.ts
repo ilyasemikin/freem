@@ -4,6 +4,7 @@ import {TagsEntitiesCache} from "./TagsEntitiesCache.ts";
 import {ActivitiesEntitiesCache} from "./ActivitiesEntitiesCache.ts";
 import {ListRecordByPeriodRequest} from "../../clients/models/records/ListRecordByPeriodRequest.ts";
 import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {RecordPeriodEntity} from "../../entities/RecordPeriodEntity.ts";
 import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 
 export class RecordsEntitiesCache {
@@ -43,12 +44,13 @@ export class RecordsEntitiesCache {
   }
 
   private async map(response: RecordResponse): Promise<RecordEntity> {
-    const period = DateTimePeriod.parse(response.period);
+    const periods = response.periods.map(item =>
+        new RecordPeriodEntity(item.id, DateTimePeriod.parse(item.period), item.description));
     const activities = await this.activitiesCache.list(response.activities);
     const tags = response.tags !== undefined
         ? await this.tagsCache.list(response.tags)
         : [];
 
-    return new RecordEntity(response.id, period, activities, response.name, response.description, tags);
+    return new RecordEntity(response.id, periods, activities, response.name, response.description, tags);
   }
 }

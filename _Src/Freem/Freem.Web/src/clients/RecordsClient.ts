@@ -1,6 +1,8 @@
 ﻿import {IHttpClient} from "./http/IHttpClient.ts";
 import {CreateRecordRequest} from "./models/records/CreateRecordRequest.ts";
 import {UpdateRecordRequest} from "./models/records/UpdateRecordRequest.ts";
+import {RecordPeriodRequest} from "./models/records/RecordPeriodRequest.ts";
+import {UpdateRecordPeriodRequest} from "./models/records/UpdateRecordPeriodRequest.ts";
 import {StartRunningRecordRequest} from "./models/records/running/StartRunningRecordRequest.ts";
 import {StopRunningRecordRequest} from "./models/records/running/StopRunningRecordRequest.ts";
 import {UpdateRunningRecordRequest} from "./models/records/running/UpdateRunningRecordRequest.ts";
@@ -24,6 +26,18 @@ export class RecordsClient {
 
   public async remove(id: string): Promise<Response> {
     return await this.client.delete({url: `api/v1/records/${id}`});
+  }
+
+  public async addPeriod(recordId: string, request: RecordPeriodRequest): Promise<Response> {
+    return await this.client.post({url: `api/v1/records/${recordId}/periods`, body: request});
+  }
+
+  public async updatePeriod(recordId: string, periodId: string, request: UpdateRecordPeriodRequest): Promise<Response> {
+    return await this.client.put({url: `api/v1/records/${recordId}/periods/${periodId}`, body: request});
+  }
+
+  public async removePeriod(recordId: string, periodId: string): Promise<Response> {
+    return await this.client.delete({url: `api/v1/records/${recordId}/periods/${periodId}`});
   }
 
   public async start(request: StartRunningRecordRequest): Promise<Response> {

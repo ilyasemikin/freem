@@ -1,26 +1,45 @@
 ﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
 import {IRecordEditorData, IRecordEditorHandle, RecordEditor} from "./RecordEditor.tsx";
-import {useRef, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 import {DialogFooter} from "../../dialog/DialogFooter.tsx";
+import {RecordPeriodsPanel} from "./RecordPeriodsPanel.tsx";
 
 export interface IRecordUpdateModalProps {
   record: RecordEntity;
 
   onUpdate?: (data: IRecordEditorData) => void;
   onDelete?: () => void;
+  onPeriodsChanged?: () => void;
   onCancel?: () => void;
 }
 
 export function RecordUpdateModal(props: IRecordUpdateModalProps) {
-  const {record, onUpdate, onDelete, onCancel} = props;
+  const {record, onUpdate, onDelete, onPeriodsChanged, onCancel} = props;
 
   const [loading, setLoading] = useState(false);
 
   const editorRef = useRef<IRecordEditorHandle>(null);
+  const periodsDirtyRef = useRef(false);
+
+  const changePeriodsDirty = useCallback((dirty: boolean) => {
+    periodsDirtyRef.current = dirty;
+  }, []);
+
+  // Period changes are saved by their own buttons, so closing the dialog with unsaved ones loses them
+  function confirmDiscardPeriods(): boolean {
+    return !periodsDirtyRef.current
+        || window.confirm("There are unsaved period changes. Discard them?");
+  }
+
+  function cancel() {
+    if (confirmDiscardPeriods()) {
+      onCancel?.();
+    }
+  }
 
   function update() {
-    if (editorRef.current === null) {
+    if (editorRef.current === null || !confirmDiscardPeriods()) {
       return;
     }
 
@@ -47,11 +66,15 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
         <RecordEditor
             ref={editorRef}
             record={record}/>
+        <RecordPeriodsPanel
+            record={record}
+            onChanged={onPeriodsChanged}
+            onDirtyChange={changePeriodsDirty}/>
         <DialogFooter
             loading={loading}
             actionText="Save"
             onAction={update}
-            onCancel={onCancel}/>
+            onCancel={cancel}/>
       </>
   )
 }

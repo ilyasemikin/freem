@@ -21,13 +21,12 @@ export function RecordList(props: IRecordListProps) {
   const clients = useBackendClients();
 
   async function updateRecord(id: string, data: IRecordEditorData) {
-    const period = new UpdateField(data.period.toString());
     const activities = new UpdateField(data.activityIds);
     const name = new UpdateField(data.name);
     const description = new UpdateField(data.description);
     const tags = new UpdateField(data.tagIds);
 
-    const request = new UpdateRecordRequest(period, name, description, activities, tags);
+    const request = new UpdateRecordRequest(name, description, activities, tags);
 
     const response = await clients.records.update(id, request);
 
@@ -59,7 +58,8 @@ export function RecordList(props: IRecordListProps) {
                 key={record.id}
                 record={record}
                 onUpdate={data => updateRecord(record.id, data)}
-                onDelete={() => removeRecord(record.id)}/>)}
+                onDelete={() => removeRecord(record.id)}
+                onPeriodsChanged={() => onUpdate(record.id)}/>)}
       </>
   );
 }
