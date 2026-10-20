@@ -37,8 +37,14 @@ internal sealed class CreateRecordUseCase
         HandlerContext context, CreateRecordRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (request.Period.Duration <= TimeSpan.Zero)
+            return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("Period must have positive duration.");
+
         var id = RecordId.Generate();
-        var record = new Record(id, context.UserId, request.Activities, request.Tags, request.Period)
+        var periodId = RecordPeriodId.Generate();
+        var recordPeriod = new RecordPeriod(periodId, request.Period);
+        var periods = new RecordPeriodsCollection(recordPeriod);
+        var record = new Record(id, context.UserId, request.Activities, request.Tags, periods)
         {
             Name = request.Name,
             Description = request.Description

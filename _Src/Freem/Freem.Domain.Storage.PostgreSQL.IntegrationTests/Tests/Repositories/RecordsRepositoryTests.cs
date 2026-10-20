@@ -1,5 +1,7 @@
 ﻿using Freem.Domain;
+using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
+using Freem.Domain.Records.Models;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
@@ -404,8 +406,8 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         var dbRecord = await AddRecordWithRelationsAsync();
 
         var userId = UserId.Parse(dbRecord.UserId, null);
-        var startAt = dbRecord.StartAt.AddHours(-1);
-        var endAt = dbRecord.EndAt.AddHours(1);
+        var startAt = dbRecord.Periods!.Min(p => p.StartAt).AddHours(-1);
+        var endAt = dbRecord.Periods!.Max(p => p.EndAt).AddHours(1);
         var period = new DateTimePeriod(startAt, endAt);
         var filter = new RecordByPeriodFilter(userId, period);
         
@@ -452,6 +454,221 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         Assert.NotNull(result);
         Assert.False(result.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, result.Error.Type);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldAddChangeAndRemovePeriods()
+    {
+        // Arrange
+        var baseTime = new DateTimeOffset(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 60), (120, 180)]);
+        var record = await FindRecordAsync(dbRecord.Id);
+
+        var kept = record.Periods[0];
+        var changed = new RecordPeriod(
+            kept.Id,
+            new DateTimePeriod(baseTime, baseTime.AddMinutes(30)),
+            RecordPeriodDescription.Parse("changed", null));
+        var added = new RecordPeriod(
+            RecordPeriodId.Generate(),
+            new DateTimePeriod(baseTime.AddMinutes(240), baseTime.AddMinutes(300)));
+
+        Assert.True(record.Periods.TryReplace(changed));
+        Assert.True(record.Periods.TryRemove(record.Periods[1].Id));
+        Assert.True(record.Periods.TryAdd(added));
+
+        // Act
+        var result = await Repository.UpdateAsync(record);
+
+        // Assert
+        Assert.True(result.Success);
+
+        Database.ChangeTracker.Clear();
+        var actual = await FindRecordAsync(dbRecord.Id);
+        Assert.Equal([changed, added], actual.Periods);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldRemovePeriods()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 60), (120, 180)]);
+        var recordId = RecordId.Parse(dbRecord.Id, null);
+
+        // Act
+        var result = await Repository.DeleteAsync(recordId);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Empty(await Database.Set<RecordPeriodEntity>().ToListAsync());
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldReturnRecordOnce_WhenSeveralPeriodsMatch()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 60), (120, 180)]);
+
+        // Act
+        var records = await FindByPeriodAsync(dbRecord, -30, 200);
+
+        // Assert
+        Assert.Single(records);
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldReturnRecord_WhenPeriodCoversFilter()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 600)]);
+
+        // Act
+        var records = await FindByPeriodAsync(dbRecord, 100, 200);
+
+        // Assert
+        Assert.Single(records);
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldReturnRecord_WhenOnlyOnePeriodMatches()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 60), (500, 560)]);
+
+        // Act
+        var records = await FindByPeriodAsync(dbRecord, 100, 200);
+
+        // Assert
+        Assert.Empty(records);
+
+        var matched = await FindByPeriodAsync(dbRecord, 520, 540);
+        Assert.Single(matched);
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldNotReturnRecord_WhenPeriodOnlyTouchesFilter()
+    {
+        // Arrange
+        var dbRecord = await AddRecordWithPeriodsAsync([(0, 60)]);
+
+        // Act
+        var records = await FindByPeriodAsync(dbRecord, 60, 120);
+
+        // Assert
+        Assert.Empty(records);
+    }
+
+    [Fact]
+    public async Task FindAsyncByPeriod_ShouldPaginateByCursor()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+        await Database.AddRangeAsync(dbUser, dbActivity);
+
+        var baseTime = new DateTimeOffset(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+        var layouts = new (int Start, int End)[][]
+        {
+            [(0, 10), (400, 410)],
+            [(5, 20)],
+            [(5, 25)],
+            [(5, 25)],
+            [(100, 110)]
+        };
+
+        foreach (var layout in layouts)
+        {
+            var dbRecord = EntitiesFactory.CreateRecord();
+            dbRecord.Activities = [dbActivity];
+            dbRecord.Tags = [];
+            dbRecord.Periods = layout
+                .Select(p => new RecordPeriodEntity
+                {
+                    Id = RecordPeriodId.Generate().ToString(),
+                    RecordId = dbRecord.Id,
+                    StartAt = baseTime.AddMinutes(p.Start),
+                    EndAt = baseTime.AddMinutes(p.End)
+                })
+                .ToList();
+            await Database.AddAsync(dbRecord);
+        }
+
+        await Database.SaveChangesAsync();
+        Database.ChangeTracker.Clear();
+
+        var userId = UserId.Parse(dbUser.Id, null);
+        var period = new DateTimePeriod(baseTime.AddMinutes(-10), baseTime.AddMinutes(500));
+
+        // Act
+        var all = new List<Domain.Entities.Records.Record>();
+        RecordId? after = null;
+        while (true)
+        {
+            var filter = new RecordByPeriodFilter(userId, period, after) { Limit = new Limit(2) };
+            var result = await Repository.FindAsync(filter);
+            Assert.True(result.Success);
+            Assert.Equal(layouts.Length, result.Value.Count);
+
+            var page = await result.Value.ToListAsync();
+            if (page.Count == 0)
+                break;
+
+            all.AddRange(page);
+            after = page[^1].Id;
+        }
+
+        // Assert
+        Assert.Equal(layouts.Length, all.Count);
+        Assert.Equal(layouts.Length, all.Select(r => r.Id).Distinct().Count());
+
+        var keys = all
+            .Select(r => (r.Periods.Min(p => p.Period.StartAt), r.Periods.Max(p => p.Period.EndAt), r.Id.ToString()))
+            .ToArray();
+        Assert.Equal(keys.OrderBy(k => k.Item1).ThenBy(k => k.Item2).ThenBy(k => k.Item3, StringComparer.Ordinal), keys);
+    }
+
+    private async Task<RecordEntity> AddRecordWithPeriodsAsync(IEnumerable<(int Start, int End)> periods)
+    {
+        var baseTime = new DateTimeOffset(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+        var dbRecord = EntitiesFactory.CreateRecord();
+        dbRecord.Activities = [dbActivity];
+        dbRecord.Tags = [];
+        dbRecord.Periods = periods
+            .Select(p => new RecordPeriodEntity
+            {
+                Id = RecordPeriodId.Generate().ToString(),
+                RecordId = dbRecord.Id,
+                StartAt = baseTime.AddMinutes(p.Start),
+                EndAt = baseTime.AddMinutes(p.End)
+            })
+            .ToList();
+
+        await Database.AddRangeAsync(dbUser, dbActivity, dbRecord);
+        await Database.SaveChangesAsync();
+        Database.ChangeTracker.Clear();
+
+        return dbRecord;
+    }
+
+    private async Task<Domain.Entities.Records.Record> FindRecordAsync(string id)
+    {
+        var recordId = RecordId.Parse(id, null);
+        var result = await Repository.FindByIdAsync(recordId);
+        Assert.True(result.Success);
+        return result.Value;
+    }
+
+    private async Task<List<Domain.Entities.Records.Record>> FindByPeriodAsync(
+        RecordEntity dbRecord, int startMinutes, int endMinutes)
+    {
+        var baseTime = new DateTimeOffset(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+        var userId = UserId.Parse(dbRecord.UserId, null);
+        var period = new DateTimePeriod(baseTime.AddMinutes(startMinutes), baseTime.AddMinutes(endMinutes));
+        var result = await Repository.FindAsync(new RecordByPeriodFilter(userId, period));
+        Assert.True(result.Success);
+        return await result.Value.ToListAsync();
     }
 
     private async Task<RecordEntity> AddRecordWithRelationsAsync()

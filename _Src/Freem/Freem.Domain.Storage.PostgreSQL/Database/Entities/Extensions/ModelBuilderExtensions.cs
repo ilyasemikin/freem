@@ -18,6 +18,7 @@ internal static class ModelBuilderExtensions
         builder.ApplyConfiguration(new ActivityEntityTypeConfiguration());
         
         builder.ApplyConfiguration(new RecordEntityTypeConfiguration());
+        builder.ApplyConfiguration(new RecordPeriodEntityTypeConfiguration());
         builder.ApplyConfiguration(new RunningRecordEntityTypeConfiguration());
         
         builder.ApplyConfiguration(new TagEntityTypeConfiguration());

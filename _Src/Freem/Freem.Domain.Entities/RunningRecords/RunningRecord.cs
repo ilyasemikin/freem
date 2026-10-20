@@ -35,7 +35,7 @@ public class RunningRecord :
         Activities = activities;
         Tags = tags;
 
-        StartAt = DateTimeOperations.EraseMilliseconds(startAt.UtcDateTime);
+        StartAt = DateTimeOperations.TruncateToMilliseconds(startAt.UtcDateTime);
     }
 
     public RunningRecordStartedEvent BuildStartedEvent(EventId eventId)

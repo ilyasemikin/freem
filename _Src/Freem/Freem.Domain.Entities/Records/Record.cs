@@ -4,7 +4,6 @@ using Freem.Domain.Records.Events;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users;
-using Freem.Time.Models;
 
 namespace Freem.Domain.Entities.Records;
 
@@ -19,18 +18,18 @@ public sealed class Record :
     public RecordName? Name { get; set; }
     public RecordDescription? Description { get; set; }
 
-    public DateTimePeriod Period { get; set; }
+    public RecordPeriodsCollection Periods { get; }
 
     public Record(
         RecordId id,
         UserId userId,
         RelatedActivityIdsCollection activities,
         RelatedTagIdsCollection tags,
-        DateTimePeriod period)
+        RecordPeriodsCollection periods)
     {
         ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(tags);
-        ArgumentNullException.ThrowIfNull(period);
+        ArgumentNullException.ThrowIfNull(periods);
 
         Id = id;
         UserId = userId;
@@ -38,19 +37,20 @@ public sealed class Record :
         Activities = activities;
         Tags = tags;
         
-        Period = period;
+        Periods = periods;
     }
 
     public RecordCreatedEvent BuildCreatedEvent(EventId eventId)
     {
         var activityIds = Activities.Ids.ToArray();
         var tagIds = Tags.Ids.ToArray();
+        var periods = CreatePeriodSnapshots();
         return new RecordCreatedEvent(eventId)
         {
             RecordId = Id,
             Name = Name,
             Description = Description,
-            Period = Period,
+            Periods = periods,
             ActivityIds = activityIds,
             TagIds = tagIds
         };
@@ -60,15 +60,23 @@ public sealed class Record :
     {
         var activityIds = Activities.Ids.ToArray();
         var tagIds = Tags.Ids.ToArray();
+        var periods = CreatePeriodSnapshots();
         return new RecordUpdatedEvent(eventId)
         {
             RecordId = Id,
             Name = Name,
             Description = Description,
-            Period = Period,
+            Periods = periods,
             ActivityIds = activityIds,
             TagIds = tagIds
         };
+    }
+
+    private RecordPeriodSnapshot[] CreatePeriodSnapshots()
+    {
+        return Periods
+            .Select(p => new RecordPeriodSnapshot(p.Id, p.Period, p.Description))
+            .ToArray();
     }
 
     public RecordRemovedEvent BuildRemovedEvent(EventId eventId)

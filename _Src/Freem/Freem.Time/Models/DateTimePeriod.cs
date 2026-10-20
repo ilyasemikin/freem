@@ -14,8 +14,8 @@ public sealed class DateTimePeriod : IEquatable<DateTimePeriod>, IParsable<DateT
 
     public DateTimePeriod(DateTimeOffset startAt, DateTimeOffset endAt)
     {
-        StartAt = DateTimeOperations.EraseMilliseconds(startAt.UtcDateTime);
-        EndAt = DateTimeOperations.EraseMilliseconds(endAt.UtcDateTime);
+        StartAt = DateTimeOperations.TruncateToMilliseconds(startAt.UtcDateTime);
+        EndAt = DateTimeOperations.TruncateToMilliseconds(endAt.UtcDateTime);
 
         if (StartAt > EndAt)
             throw new ArgumentException($"'{nameof(endAt)}' must be not less than '{nameof(startAt)}'");

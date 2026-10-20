@@ -65,6 +65,19 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
     }
 
     [Fact]
+    public async Task ShouldFailure_WhenPeriodHasZeroDuration()
+    {
+        var period = new DateTimePeriod(_period.StartAt, _period.StartAt);
+        var request = new CreateRecordRequest(period, _activities);
+
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.Equal(DomainErrorCatalog.Types.PeriodIsInvalid, response.Error.Type);
+    }
+
+    [Fact]
     public async Task ShouldFailure_WhenActivitiesDoesNotExist()
     {
         var notExistedActivityId = ActivityId.Generate();

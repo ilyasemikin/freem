@@ -11,12 +11,25 @@ internal sealed class DatabaseEntitiesFactory
 
     public UserEntity User { get; }
 
+    private readonly DateTimeOffset _now = DateTimeOperations.TruncateToMilliseconds(DateTimeOffset.UtcNow);
+
+    private static RecordPeriodEntity CreatePeriod(string recordId, DateTimeOffset startAt, DateTimeOffset endAt)
+    {
+        return new RecordPeriodEntity
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            RecordId = recordId,
+            StartAt = startAt,
+            EndAt = endAt
+        };
+    }
+
     internal DatabaseEntitiesFactory(string userId)
     {
         _fixture = new Fixture();
         _fixture.Customizations.Add(new UtcRandomDateTimeSequenceGenerator());
 
-        var utc = DateTimeOperations.EraseMilliseconds(DateTimeOffset.UtcNow);
+        var utc = DateTimeOperations.TruncateToMilliseconds(DateTimeOffset.UtcNow);
 
         _fixture.Customize<TagEntity>(builder => builder
             .With(e => e.UserId, userId)
@@ -34,11 +47,14 @@ internal sealed class DatabaseEntitiesFactory
 
         _fixture.Customize<RecordEntity>(builder => builder
             .With(e => e.UserId, userId)
-            .With(e => e.StartAt, utc.AddHours(-10))
-            .With(e => e.EndAt, utc)
             .Without(e => e.User)
+            .Without(e => e.Periods)
             .Without(e => e.Activities)
             .Without(e => e.Tags)
+            .Without(e => e.UpdatedAt));
+
+        _fixture.Customize<RecordPeriodEntity>(builder => builder
+            .Without(e => e.Record)
             .Without(e => e.UpdatedAt));
 
         _fixture.Customize<RunningRecordEntity>(builder => builder
@@ -89,14 +105,17 @@ internal sealed class DatabaseEntitiesFactory
 
     public IReadOnlyList<RecordEntity> CreateRecords(int count)
     {
-        return _fixture
-            .CreateMany<RecordEntity>(count)
+        return Enumerable
+            .Range(0, count)
+            .Select(_ => CreateRecord())
             .ToArray();
     }
 
     public RecordEntity CreateRecord()
     {
-        return _fixture.Create<RecordEntity>();
+        var record = _fixture.Create<RecordEntity>();
+        record.Periods = [CreatePeriod(record.Id, _now.AddHours(-10), _now)];
+        return record;
     }
 
     public static DatabaseEntitiesFactory CreateFirstUserEntitiesFactory() => new("user1");

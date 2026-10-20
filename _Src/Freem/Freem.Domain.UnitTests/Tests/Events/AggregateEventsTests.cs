@@ -88,7 +88,9 @@ public sealed class AggregateEventsTests
         var activities = new RelatedActivityIdsCollection(_activityId);
         var tags = new RelatedTagIdsCollection(_tagId);
         var period = new DateTimePeriod(DateTimeOffset.UtcNow.AddHours(-1), TimeSpan.FromHours(1));
-        var record = new EntityRecord(recordId, _userId, activities, tags, period)
+        var recordPeriod = new RecordPeriod(RecordPeriodId.Generate(), period);
+        var periods = new RecordPeriodsCollection(recordPeriod);
+        var record = new EntityRecord(recordId, _userId, activities, tags, periods)
         {
             Name = RecordName.Parse("name", null)
         };
@@ -99,7 +101,9 @@ public sealed class AggregateEventsTests
         Assert.Equal(new EntityRef(EntityType.Record, recordId.ToString()), @event.EntityRef);
         Assert.Equal(record.Name, @event.Name);
         Assert.Null(@event.Description);
-        Assert.Equal(period, @event.Period);
+        var snapshot = Assert.Single(@event.Periods);
+        Assert.Equal(recordPeriod.Id, snapshot.Id);
+        Assert.Equal(period, snapshot.Period);
         Assert.Equal([_activityId], @event.ActivityIds);
         Assert.Equal([_tagId], @event.TagIds);
     }

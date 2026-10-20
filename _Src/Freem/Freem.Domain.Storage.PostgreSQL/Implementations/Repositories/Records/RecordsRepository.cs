@@ -68,8 +68,7 @@ internal sealed class RecordsRepository : IRecordRepository
         dbEntity.Name = entity.Name?.ToString();
         dbEntity.Description = entity.Description?.ToString();
 
-        dbEntity.StartAt = entity.Period.StartAt;
-        dbEntity.EndAt = entity.Period.EndAt;
+        UpdatePeriods(dbEntity, entity);
 
         await _database.UpdateRelatedActivitiesAsync(entity, cancellationToken);
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);
@@ -100,6 +99,7 @@ internal sealed class RecordsRepository : IRecordRepository
 
         var idString = id.ToString();
         return await _database.Records
+            .Include(e => e.Periods)
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(id, e => e.Id == idString, RecordMapper.MapToDomainEntity, cancellationToken);
@@ -114,6 +114,7 @@ internal sealed class RecordsRepository : IRecordRepository
         var recordIdString = ids.RecordId.ToString();
         var userIdString = ids.UserId.ToString();
         return await _database.Records
+            .Include(e => e.Periods)
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
@@ -131,11 +132,12 @@ internal sealed class RecordsRepository : IRecordRepository
 
         var userIdString = filter.UserId.ToString();
         return await _database.Records
+            .Include(e => e.Periods)
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .Where(e => e.UserId == userIdString)
-            .OrderBy(e => e.StartAt)
-            .ThenBy(e => e.EndAt)
+            .OrderBy(e => e.Periods!.Min(p => p.StartAt))
+            .ThenBy(e => e.Periods!.Max(p => p.EndAt))
             .ThenBy(e => e.Id)
             .AsNoTracking()
             .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
@@ -148,34 +150,77 @@ internal sealed class RecordsRepository : IRecordRepository
         ArgumentNullException.ThrowIfNull(filter);
 
         var userIdString = filter.UserId.ToString();
+        var startAt = filter.Period.StartAt;
+        var endAt = filter.Period.EndAt;
 
-        async Task<Result<AsyncBatch<Record>, Error>> FindInnerAsync(Expression<Func<RecordEntity, bool>> predicate)
+        var matching = _database.Records
+            .Include(e => e.Periods)
+            .Include(e => e.Activities)
+            .Include(e => e.Tags)
+            .Where(e =>
+                e.UserId == userIdString &&
+                e.Periods!.Any(p => p.StartAt < endAt && p.EndAt > startAt))
+            .OrderBy(e => e.Periods!.Min(p => p.StartAt))
+            .ThenBy(e => e.Periods!.Max(p => p.EndAt))
+            .ThenBy(e => e.Id)
+            .AsNoTracking();
+
+        var page = matching;
+        if (filter.AfterRecordId is not null)
         {
-            return await _database.Records
-                .Include(e => e.Activities)
-                .Include(e => e.Tags)
-                .Where(predicate)
-                .OrderBy(e => e.StartAt)
-                .ThenBy(e => e.EndAt)
-                .ThenBy(e => e.Id)
-                .AsNoTracking()
-                .CountAndMapAsync(filter, RecordMapper.MapToDomainEntity, cancellationToken);
+            var afterRecordId = filter.AfterRecordId.ToString();
+            var cursor = await _database.Records
+                .Where(e => e.Id == afterRecordId && e.UserId == userIdString)
+                .Select(e => new
+                {
+                    StartAt = e.Periods!.Min(p => p.StartAt),
+                    EndAt = e.Periods!.Max(p => p.EndAt)
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (cursor is null)
+                return DomainErrorCatalog.Factories.CreateEntityNotFound(filter.AfterRecordId);
+
+            var cursorStartAt = cursor.StartAt;
+            var cursorEndAt = cursor.EndAt;
+            page = matching.Where(e =>
+                e.Periods!.Min(p => p.StartAt) > cursorStartAt ||
+                e.Periods!.Min(p => p.StartAt) == cursorStartAt && e.Periods!.Max(p => p.EndAt) > cursorEndAt ||
+                e.Periods!.Min(p => p.StartAt) == cursorStartAt && e.Periods!.Max(p => p.EndAt) == cursorEndAt &&
+                string.Compare(e.Id, afterRecordId) > 0);
         }
 
-        if (filter.AfterRecordId is null)
-            return await FindInnerAsync(e =>
-                e.UserId == userIdString &&
-                (filter.Period.StartAt <= e.StartAt && e.StartAt < filter.Period.EndAt ||
-                 filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt));
+        return await matching.CountAndMapAsync(page, filter, RecordMapper.MapToDomainEntity, cancellationToken);
+    }
 
-        var afterRecordId = filter.AfterRecordId.ToString();
-        return await FindInnerAsync(e =>
-            e.UserId == userIdString &&
-            (filter.Period.StartAt <= e.StartAt && e.StartAt < filter.Period.EndAt ||
-             filter.Period.StartAt <= e.EndAt && e.EndAt < filter.Period.EndAt) &&
-            (e.StartAt > filter.Period.StartAt ||
-             e.StartAt == filter.Period.StartAt && e.EndAt > filter.Period.EndAt ||
-             e.StartAt == filter.Period.EndAt && e.EndAt == filter.Period.EndAt && string.Compare(e.Id, afterRecordId) > 0)
-            );
+    private void UpdatePeriods(RecordEntity dbEntity, Record entity)
+    {
+        var dbPeriods = dbEntity.Periods ??= [];
+        var recordId = dbEntity.Id;
+
+        var actualIds = entity.Periods
+            .Select(p => p.Id.ToString())
+            .ToHashSet();
+
+        var removed = dbPeriods
+            .Where(p => !actualIds.Contains(p.Id))
+            .ToArray();
+        foreach (var dbPeriod in removed)
+            dbPeriods.Remove(dbPeriod);
+
+        foreach (var period in entity.Periods)
+        {
+            var id = period.Id.ToString();
+            var dbPeriod = dbPeriods.FirstOrDefault(p => p.Id == id);
+            if (dbPeriod is null)
+            {
+                var added = period.MapToDatabaseEntity(recordId);
+                _database.Add(added);
+                continue;
+            }
+
+            dbPeriod.StartAt = period.Period.StartAt;
+            dbPeriod.EndAt = period.Period.EndAt;
+            dbPeriod.Description = period.Description?.ToString();
+        }
     }
 }

@@ -20,10 +20,10 @@ public class Properites
     }
 
     [Fact]
-    public void DateTimeOffsets_ShouldEraseMilliseconds()
+    public void DateTimeOffsets_ShouldKeepMilliseconds_AndEraseFiner()
     {
-        var input = new DateTimeOffset(2025, 1, 1, 0, 0, 0, 10, TimeSpan.Zero);
-        var expected = new DateTimeOffset(input.Year, input.Month, input.Day, input.Hour, input.Minute, input.Second, input.Offset);
+        var expected = new DateTimeOffset(2025, 1, 1, 0, 0, 0, 10, TimeSpan.Zero);
+        var input = expected.AddTicks(9_999);
 
         var period = new DateTimePeriod(input, input);
         

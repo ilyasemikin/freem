@@ -140,10 +140,6 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("character varying(1024)")
                         .HasColumnName("description");
 
-                    b.Property<DateTimeOffset>("EndAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_at");
-
                     b.Property<string>("Name")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
@@ -154,10 +150,6 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
-
-                    b.Property<DateTimeOffset>("StartAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_at");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -174,9 +166,54 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.HasIndex("UserId")
                         .HasDatabaseName("records_user_id_idx");
 
-                    b.ToTable("records", "core_entities", t =>
+                    b.ToTable("records", "core_entities");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordPeriodEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset>("EndAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_at");
+
+                    b.Property<string>("RecordId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("record_id");
+
+                    b.Property<DateTimeOffset>("StartAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_at");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("record_periods_pk");
+
+                    b.HasIndex("RecordId")
+                        .HasDatabaseName("record_periods_record_id_idx");
+
+                    b.HasIndex("StartAt", "EndAt")
+                        .HasDatabaseName("record_periods_start_at_end_at_idx");
+
+                    b.ToTable("record_periods", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("records_users_check", "start_at <= end_at");
+                            t.HasCheckConstraint("record_periods_start_at_end_at_check", "start_at < end_at");
                         });
                 });
 
@@ -454,6 +491,18 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordPeriodEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordEntity", "Record")
+                        .WithMany("Periods")
+                        .HasForeignKey("RecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("record_periods_records_fk");
+
+                    b.Navigation("Record");
+                });
+
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.Relations.ActivityTagRelationEntity", b =>
                 {
                     b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ActivityEntity", "Activity")
@@ -593,6 +642,11 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasConstraintName("user_settings_users_fk");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
+                {
+                    b.Navigation("Periods");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.UserEntity", b =>

@@ -44,6 +44,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
             var nickname = Nickname.Parse("nickname", null);
             var offset = new DayUtcOffset(TimeSpan.FromHours(3));
             var period = new DateTimePeriod(OccurredAt, TimeSpan.FromHours(1));
+            var periods = new[] { new RecordPeriodSnapshot(RecordPeriodId.Generate(), period) };
 
             return new TheoryData<EntityType, EventGenerator>
             {
@@ -52,8 +53,8 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
                 { EntityType.Activity, (id, e, _, _) => new ActivityRemovedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
                 { EntityType.Activity, (id, e, _, _) => new ActivityArchivedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
                 { EntityType.Activity, (id, e, _, _) => new ActivityUnarchivedEvent(id) { ActivityId = ActivityId.Parse(e, null) } },
-                { EntityType.Record, (id, e, activities, tags) => new RecordCreatedEvent(id) { RecordId = RecordId.Parse(e, null), Name = recordName, Period = period, ActivityIds = activities, TagIds = tags } },
-                { EntityType.Record, (id, e, activities, tags) => new RecordUpdatedEvent(id) { RecordId = RecordId.Parse(e, null), Period = period, ActivityIds = activities, TagIds = tags } },
+                { EntityType.Record, (id, e, activities, tags) => new RecordCreatedEvent(id) { RecordId = RecordId.Parse(e, null), Name = recordName, Periods = periods, ActivityIds = activities, TagIds = tags } },
+                { EntityType.Record, (id, e, activities, tags) => new RecordUpdatedEvent(id) { RecordId = RecordId.Parse(e, null), Periods = periods, ActivityIds = activities, TagIds = tags } },
                 { EntityType.Record, (id, e, _, _) => new RecordRemovedEvent(id) { RecordId = RecordId.Parse(e, null) } },
                 { EntityType.RunningRecord, (id, e, activities, tags) => new RunningRecordStartedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null), StartAt = OccurredAt, ActivityIds = activities, TagIds = tags } },
                 { EntityType.RunningRecord, (id, e, activities, tags) => new RunningRecordUpdatedEvent(id) { RunningRecordId = RunningRecordId.Parse(e, null), StartAt = OccurredAt, ActivityIds = activities, TagIds = tags } },

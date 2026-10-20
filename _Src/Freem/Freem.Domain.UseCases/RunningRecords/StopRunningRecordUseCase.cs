@@ -65,9 +65,13 @@ internal sealed class StopRunningRecordUseCase
 
         return await _transactionRunner.RunAsync(async () =>
         {
-            var createResult = await _mediator.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(context, createRecordRequest, cancellationToken);
-            if (!createResult.Success)
-                return createResult.Error;
+            // Период короче секунды после округления пустой: записи не создаём, запущенная запись просто останавливается
+            if (createRecordRequest.Period.Duration > TimeSpan.Zero)
+            {
+                var createResult = await _mediator.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(context, createRecordRequest, cancellationToken);
+                if (!createResult.Success)
+                    return createResult.Error;
+            }
 
             var deleteResult = await _repository.DeleteAsync(record.Id, cancellationToken);
             if (!deleteResult.Success)

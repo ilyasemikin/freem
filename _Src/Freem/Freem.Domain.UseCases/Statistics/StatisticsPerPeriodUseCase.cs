@@ -78,20 +78,13 @@ internal sealed class StatisticsPerPeriodUseCase :
     {
         var list = new List<Record>();
 
-        var start = period.StartAt;
-        var end = period.EndAt;
         var recordId = (RecordId?)null;
         
         do
         {
             if (list.Count != 0)
-            {
-                var last = list.Last();
-                start =  last.Period.StartAt.DateTime;
-                recordId = last.Id;
-            }
+                recordId = list.Last().Id;
             
-            period = new DateTimePeriod(start, end);
             var filter = new RecordByPeriodFilter(userId, period, recordId);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
@@ -100,9 +93,10 @@ internal sealed class StatisticsPerPeriodUseCase :
 
             var records = result.Value.ToBlockingEnumerable(cancellationToken);
             
+            var countBefore = list.Count;
             list.AddRange(records);
 
-            if (list.Count >= result.Value.Count)
+            if (list.Count == countBefore || list.Count >= result.Value.Count)
                 return Result<IReadOnlyList<Record>, Error>.CreateSuccess(list);
         } while (true);
     }

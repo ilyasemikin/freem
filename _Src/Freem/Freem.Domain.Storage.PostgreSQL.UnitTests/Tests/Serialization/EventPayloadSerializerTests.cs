@@ -30,7 +30,11 @@ public sealed class EventPayloadSerializerTests
     private static readonly TagId[] TagIds = [FirstTagId, SecondTagId];
     private static readonly ActivityId[] ActivityIds = [ActivityId];
     private static readonly DateTimeOffset StartAt = new(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
-    private static readonly DateTimePeriod Period = new(StartAt, TimeSpan.FromHours(1));
+    private static readonly RecordPeriodSnapshot[] Periods =
+    [
+        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt, TimeSpan.FromHours(1)), RecordPeriodDescription.Parse("first, \"quoted\"\nline", null)),
+        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt.AddHours(2), TimeSpan.FromHours(1)))
+    ];
 
     public static TheoryData<EntityEvent> Events
     {
@@ -51,8 +55,8 @@ public sealed class EventPayloadSerializerTests
                 new ActivityRemovedEvent(id) { ActivityId = ActivityId },
                 new ActivityArchivedEvent(id) { ActivityId = ActivityId },
                 new ActivityUnarchivedEvent(id) { ActivityId = ActivityId },
-                new RecordCreatedEvent(id) { RecordId = RecordId, Name = recordName, Description = recordDescription, Period = Period, ActivityIds = ActivityIds, TagIds = TagIds },
-                new RecordUpdatedEvent(id) { RecordId = RecordId, Period = Period, ActivityIds = ActivityIds, TagIds = [] },
+                new RecordCreatedEvent(id) { RecordId = RecordId, Name = recordName, Description = recordDescription, Periods = Periods, ActivityIds = ActivityIds, TagIds = TagIds },
+                new RecordUpdatedEvent(id) { RecordId = RecordId, Periods = Periods, ActivityIds = ActivityIds, TagIds = [] },
                 new RecordRemovedEvent(id) { RecordId = RecordId },
                 new RunningRecordStartedEvent(id) { RunningRecordId = RunningRecordId, Name = recordName, StartAt = StartAt, ActivityIds = ActivityIds, TagIds = TagIds },
                 new RunningRecordUpdatedEvent(id) { RunningRecordId = RunningRecordId, Description = recordDescription, StartAt = StartAt, ActivityIds = ActivityIds, TagIds = [] },
@@ -97,7 +101,7 @@ public sealed class EventPayloadSerializerTests
         {
             RecordId = RecordId,
             Name = recordName,
-            Period = Period,
+            Periods = Periods,
             ActivityIds = ActivityIds,
             TagIds = TagIds
         };
@@ -107,7 +111,13 @@ public sealed class EventPayloadSerializerTests
         var restored = Assert.IsType<RecordCreatedEvent>(result.Value.Event);
         Assert.Equal(recordName, restored.Name);
         Assert.Null(restored.Description);
-        Assert.Equal(Period, restored.Period);
+        Assert.Equal(Periods.Length, restored.Periods.Count);
+        for (var i = 0; i < Periods.Length; i++)
+        {
+            Assert.Equal(Periods[i].Id, restored.Periods[i].Id);
+            Assert.Equal(Periods[i].Period, restored.Periods[i].Period);
+            Assert.Equal(Periods[i].Description, restored.Periods[i].Description);
+        }
         Assert.Equal(ActivityIds, restored.ActivityIds);
         Assert.Equal(TagIds, restored.TagIds);
     }
@@ -130,6 +140,27 @@ public sealed class EventPayloadSerializerTests
         var record = CreateRecord(@event, payload: new EventPayload(Utilities.Naming.Abstractions.INamingPolicy.CamelCase));
 
         var result = EventPayloadSerializer.Deserialize(record);
+
+        Assert.False(result.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EventDeserializationFailed, result.Error.Type);
+    }
+
+    [Theory]
+    [InlineData("not a json")]
+    [InlineData("null")]
+    [InlineData("[{\"id\":\"p\",\"startAt\":\"2026-10-20T11:00:00+00:00\",\"endAt\":\"2026-10-20T10:00:00+00:00\"}]")]
+    public void Deserialize_ShouldFail_WhenPeriodsPayloadIsInvalid(string periods)
+    {
+        var @event = new RecordCreatedEvent(EventId.Generate())
+        {
+            RecordId = RecordId,
+            Periods = Periods,
+            ActivityIds = ActivityIds,
+            TagIds = TagIds
+        };
+        var payload = EventPayloadSerializer.Serialize(@event).Set(nameof(RecordCreatedEvent.Periods), periods);
+
+        var result = EventPayloadSerializer.Deserialize(CreateRecord(@event, payload: payload));
 
         Assert.False(result.Success);
         Assert.Equal(DomainErrorCatalog.Types.EventDeserializationFailed, result.Error.Type);

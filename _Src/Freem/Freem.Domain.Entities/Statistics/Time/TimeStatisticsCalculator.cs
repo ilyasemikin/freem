@@ -14,11 +14,17 @@ public static class TimeStatisticsCalculator
 
         var calculator = new Calculator(period);
 
-        foreach (var record in records)
-            calculator.Process(record);
+        var intervals = records
+            .SelectMany(record => record.Periods.Select(p => new RecordInterval(p.Period, record.Activities.Ids)))
+            .OrderBy(interval => interval.Period.StartAt);
+
+        foreach (var interval in intervals)
+            calculator.Process(interval);
 
         return calculator.GenerateResult();
     }
+
+    private sealed record RecordInterval(DateTimePeriod Period, IEnumerable<ActivityId> ActivityIds);
 
     private sealed class Calculator
     {
@@ -43,13 +49,13 @@ public static class TimeStatisticsCalculator
             _resultByActivityIds = new Dictionary<ActivityId, TimeSpan>();
         }
 
-        public void Process(Record record)
+        public void Process(RecordInterval interval)
         {
-            if (record.Period.EndAt < _period.StartAt)
+            if (interval.Period.EndAt < _period.StartAt)
                 return;
 
-            var startAt = record.Period.StartAt;
-            var endAt = DateTimeOperations.Min(_period.EndAt, record.Period.EndAt);
+            var startAt = interval.Period.StartAt;
+            var endAt = DateTimeOperations.Min(_period.EndAt, interval.Period.EndAt);
 
             if (startAt < _lastEntAt)
                 startAt = _lastEntAt;
@@ -60,13 +66,13 @@ public static class TimeStatisticsCalculator
                 _lastEntAt = endAt;
             }
 
-            foreach (var activityId in record.Activities.Ids)
+            foreach (var activityId in interval.ActivityIds)
             {
                 if (!_lastEndAtByActivityIds.TryGetValue(activityId, out var lastEndAtByActivityId))
                     lastEndAtByActivityId = _period.StartAt;
 
-                startAt = record.Period.StartAt;
-                endAt = DateTimeOperations.Min(_period.EndAt, record.Period.EndAt);
+                startAt = interval.Period.StartAt;
+                endAt = DateTimeOperations.Min(_period.EndAt, interval.Period.EndAt);
 
                 if (startAt < lastEndAtByActivityId)
                     startAt = lastEndAtByActivityId;

@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Activities;
+using Freem.Domain.Entities.Records;
 using Freem.Domain.Entities.Statistics.Time;
 using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
@@ -213,12 +214,47 @@ public class TimeStatisticsTests
         }
     }
 
+    [Fact]
+    public void Calculate_ShouldCountOnce_WhenPeriodsOfRecordsInterleave()
+    {
+        var date = new DateOnly(2025, 01, 01);
+        var expected = TimeSpan.FromHours(6);
+
+        var first = CreateRecord(date.ToUtcDateTime(1), date.ToUtcDateTime(3));
+        var secondPeriods = new[]
+        {
+            CreatePeriod(date.ToUtcDateTime(2), date.ToUtcDateTime(5)),
+            CreatePeriod(date.ToUtcDateTime(8), date.ToUtcDateTime(10))
+        };
+        var second = new Record(
+            RecordId.Generate(),
+            DefaultUserId,
+            DefaultRelatedActivities,
+            RelatedTagIdsCollection.Empty,
+            new RecordPeriodsCollection(secondPeriods));
+
+        var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
+
+        var statistics = TimeStatisticsCalculator.Calculate(period, [second, first]);
+
+        Assert.Equal(expected, statistics.RecordedTime);
+        Assert.Equal(expected, statistics.PerActivities[DefaultActivityId].RecordedTime);
+    }
+
+    private static RecordPeriod CreatePeriod(DateTimeOffset startAt, DateTimeOffset endAt)
+    {
+        return new RecordPeriod(RecordPeriodId.Generate(), new DateTimePeriod(startAt, endAt));
+    }
+
     private static Record CreateRecord(DateTimeOffset startAt, DateTimeOffset endAt, RelatedActivityIdsCollection? activities = null)
     {
         activities ??= DefaultRelatedActivities;
         
         var period = new DateTimePeriod(startAt, endAt);
         var id = RecordId.Generate();
-        return new Record(id, DefaultUserId, activities, RelatedTagIdsCollection.Empty, period);
+        var periodId = RecordPeriodId.Generate();
+        var recordPeriod = new RecordPeriod(periodId, period);
+        var periods = new RecordPeriodsCollection(recordPeriod);
+        return new Record(id, DefaultUserId, activities, RelatedTagIdsCollection.Empty, periods);
     }
 }

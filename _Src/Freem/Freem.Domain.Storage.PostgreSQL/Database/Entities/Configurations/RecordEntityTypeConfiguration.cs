@@ -10,10 +10,7 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
 {
     public void Configure(EntityTypeBuilder<RecordEntity> builder)
     {
-        builder.ToTable(EntitiesNames.Records.Table, table =>
-            table.HasCheckConstraint(
-                EntitiesNames.Records.Constraints.TimePeriodCheck, 
-                $"{EntitiesNames.Records.Properties.StartAt} <= {EntitiesNames.Records.Properties.EndAt}"));
+        builder.ToTable(EntitiesNames.Records.Table);
 
         builder
             .Property(e => e.Id)
@@ -35,16 +32,6 @@ internal sealed class RecordEntityTypeConfiguration : IEntityTypeConfiguration<R
             .Property(e => e.Description)
             .HasMaxLength(RecordDescription.MaxLength)
             .HasColumnName(EntitiesNames.Records.Properties.Description);
-
-        builder
-            .Property(e => e.StartAt)
-            .HasColumnName(EntitiesNames.Records.Properties.StartAt)
-            .IsRequired();
-
-        builder
-            .Property(e => e.EndAt)
-            .HasColumnName(EntitiesNames.Records.Properties.EndAt)
-            .IsRequired();
 
         builder
             .Property(e => e.CreatedAt)

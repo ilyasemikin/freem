@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Freem.Domain.Activities;
 using Freem.Domain.Activities.Events;
 using Freem.Domain.Activities.Models;
@@ -23,8 +24,11 @@ namespace Freem.Domain.Storage.Serialization;
 
 public static class EventPayloadSerializer
 {
-    private const string PeriodStartAt = "PeriodStartAt";
-    private const string PeriodEndAt = "PeriodEndAt";
+    private sealed record RecordPeriodPayload(
+        string Id,
+        DateTimeOffset StartAt,
+        DateTimeOffset EndAt,
+        string? Description);
 
     private static readonly INamingPolicy Policy = INamingPolicy.CamelCase;
 
@@ -43,9 +47,9 @@ public static class EventPayloadSerializer
             case ActivityUnarchivedEvent:
                 return new EventPayload(Policy);
             case RecordCreatedEvent e:
-                return SerializeRecord(e.Name, e.Description, e.Period, e.ActivityIds, e.TagIds);
+                return SerializeRecord(e.Name, e.Description, e.Periods, e.ActivityIds, e.TagIds);
             case RecordUpdatedEvent e:
-                return SerializeRecord(e.Name, e.Description, e.Period, e.ActivityIds, e.TagIds);
+                return SerializeRecord(e.Name, e.Description, e.Periods, e.ActivityIds, e.TagIds);
             case RecordRemovedEvent:
                 return new EventPayload(Policy);
             case RunningRecordStartedEvent e:
@@ -135,7 +139,7 @@ public static class EventPayloadSerializer
                 RecordId = RecordId.Parse(entityRef, null),
                 Name = payload.GetOptional(nameof(RecordCreatedEvent.Name), RecordName.Parse),
                 Description = payload.GetOptional(nameof(RecordCreatedEvent.Description), RecordDescription.Parse),
-                Period = DeserializePeriod(payload),
+                Periods = DeserializePeriods(payload),
                 ActivityIds = payload.GetList(nameof(RecordCreatedEvent.ActivityIds), ActivityId.Parse),
                 TagIds = payload.GetList(nameof(RecordCreatedEvent.TagIds), TagId.Parse)
             };
@@ -145,7 +149,7 @@ public static class EventPayloadSerializer
                 RecordId = RecordId.Parse(entityRef, null),
                 Name = payload.GetOptional(nameof(RecordUpdatedEvent.Name), RecordName.Parse),
                 Description = payload.GetOptional(nameof(RecordUpdatedEvent.Description), RecordDescription.Parse),
-                Period = DeserializePeriod(payload),
+                Periods = DeserializePeriods(payload),
                 ActivityIds = payload.GetList(nameof(RecordUpdatedEvent.ActivityIds), ActivityId.Parse),
                 TagIds = payload.GetList(nameof(RecordUpdatedEvent.TagIds), TagId.Parse)
             };
@@ -217,11 +221,46 @@ public static class EventPayloadSerializer
         return null;
     }
 
-    private static DateTimePeriod DeserializePeriod(EventPayload payload)
+    private static IReadOnlyList<RecordPeriodSnapshot> DeserializePeriods(EventPayload payload)
     {
-        var startAt = payload.GetDate(PeriodStartAt);
-        var endAt = payload.GetDate(PeriodEndAt);
-        return new DateTimePeriod(startAt, endAt);
+        var json = payload.GetRequired(nameof(RecordCreatedEvent.Periods));
+        var items = DeserializePeriodPayloads(json);
+
+        return items.Select(MapToSnapshot).ToArray();
+    }
+
+    private static RecordPeriodPayload[] DeserializePeriodPayloads(string json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<RecordPeriodPayload[]>(json) ??
+                   throw new FormatException("Invalid value for record periods");
+        }
+        catch (JsonException exception)
+        {
+            throw new FormatException("Invalid value for record periods", exception);
+        }
+    }
+
+    private static RecordPeriodSnapshot MapToSnapshot(RecordPeriodPayload item)
+    {
+        var id = RecordPeriodId.Parse(item.Id, null);
+        if (!DateTimePeriod.TryCreate(item.StartAt, item.EndAt, out var period))
+            throw new FormatException($"Invalid value for record period: {item.StartAt:O},{item.EndAt:O}");
+
+        var description = item.Description is null
+            ? null
+            : RecordPeriodDescription.Parse(item.Description, null);
+        return new RecordPeriodSnapshot(id, period, description);
+    }
+
+    private static RecordPeriodPayload MapToPayload(RecordPeriodSnapshot snapshot)
+    {
+        return new RecordPeriodPayload(
+            snapshot.Id.ToString(),
+            snapshot.Period.StartAt,
+            snapshot.Period.EndAt,
+            snapshot.Description?.ToString());
     }
 
     private static EventPayload SerializeActivity(
@@ -236,15 +275,16 @@ public static class EventPayloadSerializer
     private static EventPayload SerializeRecord(
         RecordName? name,
         RecordDescription? description,
-        DateTimePeriod period,
+        IEnumerable<RecordPeriodSnapshot> periods,
         IEnumerable<ActivityId> activityIds,
         IEnumerable<TagId> tagIds)
     {
+        var payloads = periods.Select(MapToPayload).ToArray();
+        var periodsJson = JsonSerializer.Serialize(payloads);
         return new EventPayload(Policy)
             .Set(nameof(RecordCreatedEvent.Name), name)
             .Set(nameof(RecordCreatedEvent.Description), description)
-            .SetDate(PeriodStartAt, period.StartAt)
-            .SetDate(PeriodEndAt, period.EndAt)
+            .Set(nameof(RecordCreatedEvent.Periods), periodsJson)
             .SetList(nameof(RecordCreatedEvent.ActivityIds), activityIds)
             .SetList(nameof(RecordCreatedEvent.TagIds), tagIds);
     }

@@ -19,7 +19,7 @@ public sealed class RecordEqualityComparer : IEqualityComparer<Record>
         return 
             x.Id.Equals(y.Id) && 
             x.UserId.Equals(y.UserId) && 
-            x.Period == y.Period &&
+            x.Periods.Equals(y.Periods) &&
             x.Name == y.Name &&
             x.Description == y.Description &&
             IReadOnlyRelatedIdsCollection<ActivityId>.Equals(x.Activities, y.Activities) &&
@@ -28,6 +28,6 @@ public sealed class RecordEqualityComparer : IEqualityComparer<Record>
 
     public int GetHashCode(Record obj)
     {
-        return HashCode.Combine(obj.Id, obj.UserId, obj.Activities, obj.Tags, obj.Period);
+        return HashCode.Combine(obj.Id, obj.UserId, obj.Activities, obj.Tags, obj.Periods);
     }
 }

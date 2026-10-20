@@ -50,6 +50,21 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
     }
 
     [Fact]
+    public async Task ShouldSuccessWithoutRecord_WhenPeriodIsEmpty()
+    {
+        var request = new StopRunningRecordRequest(_record.StartAt);
+
+        var response = await Context.ExecuteAsync<StopRunningRecordRequest, Result<Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+
+        using var executor = Context.CreateExecutor();
+        var running = await executor.RunningRecords.GetAsync(_context);
+        Assert.False(running.Success);
+    }
+
+    [Fact]
     public async Task ShouldFailure_WhenNothingRunning()
     {
         using var executor = Context.CreateExecutor();

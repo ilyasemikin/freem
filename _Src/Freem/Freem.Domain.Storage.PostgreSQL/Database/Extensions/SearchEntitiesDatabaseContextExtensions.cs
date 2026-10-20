@@ -52,6 +52,7 @@ internal static class SearchEntitiesDatabaseContextExtensions
         CancellationToken cancellationToken = default)
     {
         return await queryable
+            .Include(e => e.Periods)
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FirstOrDefaultAsync(predicate, cancellationToken);

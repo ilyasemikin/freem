@@ -12,8 +12,10 @@ public static class DateTimeOperations
         return left > right ? left : right;
     }
 
-    public static DateTimeOffset EraseMilliseconds(DateTimeOffset value)
+    // Точность времени в системе — миллисекунды: этого хватает JS Date/ISO 8601 и без потерь помещается в timestamptz
+    public static DateTimeOffset TruncateToMilliseconds(DateTimeOffset value)
     {
-        return new DateTimeOffset(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Offset);
+        var ticks = value.Ticks - value.Ticks % TimeSpan.TicksPerMillisecond;
+        return new DateTimeOffset(ticks, value.Offset);
     }
 }

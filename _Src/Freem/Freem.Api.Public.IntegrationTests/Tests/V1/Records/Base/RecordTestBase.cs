@@ -39,7 +39,7 @@ public abstract class RecordTestBase : TestBase
         var startAt = DateTimeOffset.UtcNow.AddDays(-1);
         for (var i = 0; i < RecordsCount; i++)
         {
-            var endAt = startAt + TimeSpan.FromHours(i);
+            var endAt = startAt + TimeSpan.FromHours(i + 1);
             var period = new DateTimePeriod(startAt, endAt);
             startAt = endAt;
 

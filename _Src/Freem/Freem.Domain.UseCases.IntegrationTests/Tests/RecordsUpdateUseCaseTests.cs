@@ -69,8 +69,9 @@ public sealed class RecordsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = await executor.Records.RequiredGetAsync(_context, _recordId);
         
-        Assert.Equal(startAt, actual.Period.StartAt);
-        Assert.Equal(endAt, actual.Period.EndAt);
+        var actualPeriod = Assert.Single(actual.Periods);
+        Assert.Equal(startAt, actualPeriod.Period.StartAt);
+        Assert.Equal(endAt, actualPeriod.Period.EndAt);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Entities.Records;
+using Freem.Domain.Records;
 using Freem.Domain.Entities.Statistics.Time;
 using Freem.Domain.Entities.Users;
 using Freem.Domain.Statistics.Time;
@@ -84,18 +85,17 @@ public sealed class StatisticsPerDaysUseCase :
         CancellationToken cancellationToken)
     {
         var list = new List<Record>();
+
+        var end = start.AddDays(1);
+        var period = new DateTimePeriod(start, end);
+        var recordId = (RecordId?)null;
         
         do
         {
             if (list.Count != 0)
-            {
-                var last = list.Last();
-                start =  last.Period.EndAt.DateTime;
-            }
+                recordId = list.Last().Id;
 
-            var end = start.AddDays(1);
-            var period = new DateTimePeriod(start, end);
-            var filter = new RecordByPeriodFilter(userId, period);
+            var filter = new RecordByPeriodFilter(userId, period, recordId);
 
             var result = await _repository.FindAsync(filter, cancellationToken);
             if (!result.Success)
@@ -103,9 +103,10 @@ public sealed class StatisticsPerDaysUseCase :
 
             var records = result.Value.ToBlockingEnumerable(cancellationToken);
             
+            var countBefore = list.Count;
             list.AddRange(records);
 
-            if (list.Count >= result.Value.Count)
+            if (list.Count == countBefore || list.Count >= result.Value.Count)
                 return Result<IReadOnlyList<Record>, Error>.CreateSuccess(list);
         } while (true);
     }

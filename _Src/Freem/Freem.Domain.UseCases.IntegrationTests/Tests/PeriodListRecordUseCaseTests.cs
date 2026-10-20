@@ -31,8 +31,8 @@ public sealed class PeriodListRecordUseCaseTests : UseCaseTestBase
         var activity = await filler.Activities.CreateAsync(_context);
         var records = await filler.Records.CreateManyAsync(_context, [activity.Id], RecordsCount);
         _records = records
-            .OrderBy(e => e.Period.StartAt)
-            .ThenBy(e => e.Period.EndAt)
+            .OrderBy(e => e.Periods.Min(p => p.Period.StartAt))
+            .ThenBy(e => e.Periods.Max(p => p.Period.EndAt))
             .ThenBy(e => e.Id.ToString())
             .ToArray();
     }

@@ -15,10 +15,8 @@ internal sealed class RecordEntity :
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public DateTimeOffset StartAt { get; set; }
-    public DateTimeOffset EndAt { get; set; }
-
     public UserEntity? User { get; set; }
+    public ICollection<RecordPeriodEntity>? Periods { get; set; }
     public ICollection<ActivityEntity>? Activities { get; set; }
     public ICollection<TagEntity>? Tags { get; set; }
 
@@ -39,8 +37,7 @@ internal sealed class RecordEntity :
             UserId == other.UserId && 
             Name == other.Name && 
             Description == other.Description && 
-            StartAt.Equals(other.StartAt) && 
-            EndAt.Equals(other.EndAt) && 
+            Periods.NullableUnorderedEquals(other.Periods) && 
             Activities.NullableUnorderedEquals(other.Activities) && 
             Tags.NullableUnorderedEquals(other.Tags) &&
             UpdatedAt.HasValue == other.UpdatedAt.HasValue;

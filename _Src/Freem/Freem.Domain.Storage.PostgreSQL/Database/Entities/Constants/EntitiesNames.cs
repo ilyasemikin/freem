@@ -103,6 +103,27 @@ internal static class EntitiesNames
             public const string UserId = "user_id";
             public const string Name = "name";
             public const string Description = "description";
+            public const string CreatedAt = "created_at";
+            public const string UpdatedAt = "updated_at";
+        }
+
+        public static class Constraints
+        {
+            public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
+            public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
+            public const string UserIdIndex = $"{Table}_{Properties.UserId}_{NamingConvention.IndexSuffix}";
+        }
+    }
+
+    public static class RecordPeriods
+    {
+        public const string Table = "record_periods";
+
+        public static class Properties
+        {
+            public const string Id = "id";
+            public const string RecordId = "record_id";
+            public const string Description = "description";
             public const string StartAt = "start_at";
             public const string EndAt = "end_at";
             public const string CreatedAt = "created_at";
@@ -112,9 +133,10 @@ internal static class EntitiesNames
         public static class Constraints
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
-            public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
-            public const string TimePeriodCheck = $"{Table}_{Users.Table}_{NamingConvention.CheckSuffix}";
-            public const string UserIdIndex = $"{Table}_{Properties.UserId}_{NamingConvention.IndexSuffix}";
+            public const string RecordsForeignKey = $"{Table}_{Records.Table}_{NamingConvention.ForeignKeySuffix}";
+            public const string TimePeriodCheck = $"{Table}_{Properties.StartAt}_{Properties.EndAt}_{NamingConvention.CheckSuffix}";
+            public const string RecordIdIndex = $"{Table}_{Properties.RecordId}_{NamingConvention.IndexSuffix}";
+            public const string TimePeriodIndex = $"{Table}_{Properties.StartAt}_{Properties.EndAt}_{NamingConvention.IndexSuffix}";
         }
     }
 
