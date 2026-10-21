@@ -24,7 +24,7 @@ export function ExpandableItemPanel(props: IExpandableItemPanelProps) {
   return (
       <ItemBorder>
         <div style={{display: "flex", flexDirection: "row", gap: "10px"}}>
-          <CustomButton onClick={toggle}>
+          <CustomButton label="Toggle details" onClick={toggle}>
             <span
                 style={{
                   width: "15px",

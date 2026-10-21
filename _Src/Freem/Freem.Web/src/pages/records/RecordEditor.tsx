@@ -125,7 +125,7 @@ export const RecordEditor = forwardRef<IRecordEditorHandle, IRecordEditorProps>(
     }
 
     return (
-        <CustomButton onClick={() => removeRow(row.key)}>
+        <CustomButton label="Remove period" onClick={() => removeRow(row.key)}>
           <span style={{fontSize: "18px"}} className="pi pi-trash"/>
         </CustomButton>
     );

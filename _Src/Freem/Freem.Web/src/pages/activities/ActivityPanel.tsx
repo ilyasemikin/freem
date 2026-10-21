@@ -41,10 +41,10 @@ export function ActivityPanel(props: IActivityPanelProps) {
       <ItemPanel>
         <span className="item-title">{activity.name}</span>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <CustomButton onClick={start}>
+          <CustomButton label="Start" onClick={start}>
             <span style={{fontSize: "25px"}} className="pi pi-play-circle"/>
           </CustomButton>
-          <CustomButton onClick={openEdit}>
+          <CustomButton label="Edit activity" onClick={openEdit}>
             <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>
           </CustomButton>
         </div>

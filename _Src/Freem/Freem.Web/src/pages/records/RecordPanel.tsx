@@ -52,7 +52,7 @@ export function RecordPanel(props: IRecordPanelProps) {
               {range}
             </span>
             <TimeDurationPanel duration={record.duration}/>
-            <CustomButton onClick={openEdit}>
+            <CustomButton label="Edit record" onClick={openEdit}>
               <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>
             </CustomButton>
           </div>

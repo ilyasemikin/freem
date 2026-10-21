@@ -187,11 +187,11 @@ export function RecordPeriodsPanel(props: IRecordPeriodsPanelProps) {
 
     return (
         <div style={{display: "flex", flexDirection: "row", gap: "6px"}}>
-          <CustomButton onClick={() => save(row)}>
+          <CustomButton label="Save period" onClick={() => save(row)}>
             <span style={{fontSize: "18px"}} className="pi pi-check"/>
           </CustomButton>
           {removable &&
-              <CustomButton onClick={() => remove(row)}>
+              <CustomButton label="Remove period" onClick={() => remove(row)}>
                 <span style={{fontSize: "18px"}} className="pi pi-trash"/>
               </CustomButton>}
         </div>

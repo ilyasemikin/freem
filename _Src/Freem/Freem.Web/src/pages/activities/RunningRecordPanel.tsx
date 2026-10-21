@@ -80,10 +80,10 @@ export function RunningRecordPanel(props: IRunningRecordPanelProps) {
         <ActivitiesListPanel activities={record.activities}/>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <DateTimePeriodDurationPanel period={period} align="right"/>
-          <CustomButton onClick={stop}>
+          <CustomButton label="Stop" onClick={stop}>
             <span style={{fontSize: "25px"}} className="pi pi-stop-circle"/>
           </CustomButton>
-          <CustomButton onClick={openEdit}>
+          <CustomButton label="Edit running record" onClick={openEdit}>
             <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>
           </CustomButton>
         </div>

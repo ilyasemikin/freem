@@ -1,5 +1,5 @@
 ﻿import {DateUnit} from "../data/DateUnit.ts";
-import {MouseEvent, useRef} from "react";
+import {KeyboardEvent, MouseEvent, useRef} from "react";
 import {IPopoverPanelHandle, PopoverPanel} from "./PopoverPanel.tsx";
 import {CustomButton} from "./inputs/CustomButton.tsx";
 import {DateHelper} from "../helpers/DateHelper.ts";
@@ -21,9 +21,16 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
 
   const panelRef = useRef<IPopoverPanelHandle>(null);
 
+  function handleKeyDown(e: KeyboardEvent<HTMLSpanElement>) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.currentTarget.click();
+    }
+  }
+
   function toggle(e: MouseEvent<HTMLSpanElement>) {
     if (panelRef.current) {
-      panelRef.current.toggle(e.target);
+      panelRef.current.toggle(e.currentTarget);
     }
   }
 
@@ -86,15 +93,19 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
   return (
       <>
         <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-          <CustomButton onClick={() => changeByDiff(-1)}>
+          <CustomButton label="Previous" onClick={() => changeByDiff(-1)}>
             <span style={{userSelect: "none"}} className="pi pi-chevron-left"/>
           </CustomButton>
           <span
+              role="button"
+              tabIndex={0}
+              aria-label="Select date"
               className="numeric" style={{width: "10ch", margin: "0 8px", textAlign: "center", cursor: "pointer", fontWeight: 500}}
-              onClick={toggle}>
+              onClick={toggle}
+              onKeyDown={handleKeyDown}>
             {current()}
           </span>
-          <CustomButton onClick={() => changeByDiff(1)}>
+          <CustomButton label="Next" onClick={() => changeByDiff(1)}>
             <span className="pi pi-chevron-right"/>
           </CustomButton>
         </div>

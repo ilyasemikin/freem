@@ -41,7 +41,7 @@ export function TagPanel(props: ITagPanelProps) {
       <ItemPanel>
         <span className="item-title">{tag.name}</span>
         <div>
-          <CustomButton onClick={openEdit}>
+          <CustomButton label="Edit tag" onClick={openEdit}>
             <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>
           </CustomButton>
         </div>

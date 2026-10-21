@@ -46,7 +46,7 @@ export function RunningRecordUpdateModal(props: IRunningRecordUpdateModalProps) 
   return (
       <>
         <div style={{display: "flex", justifyContent: "end", marginBottom: "5px"}}>
-          <CustomButton onClick={remove}>
+          <CustomButton label="Delete running record" onClick={remove}>
             <span style={{fontSize: "20px"}} className="pi pi-trash"/>
           </CustomButton>
         </div>

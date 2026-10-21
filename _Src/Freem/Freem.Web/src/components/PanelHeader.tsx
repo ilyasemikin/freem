@@ -13,7 +13,7 @@ export function PanelHeader(props: IPanelHeaderProps) {
       <div className="panel-header">
         <h2 className="panel-title">{title}</h2>
         {onAdd &&
-            <CustomButton onClick={onAdd}>
+            <CustomButton label={`Add ${title}`} onClick={onAdd}>
               <span className="pi pi-plus"/>
             </CustomButton>}
       </div>

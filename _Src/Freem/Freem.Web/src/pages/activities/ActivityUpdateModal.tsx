@@ -40,10 +40,10 @@ export function ActivityUpdateModal(props: IActivityUpdateModalProps) {
   return (
       <>
         <div style={{display: "flex", justifyContent: "end", marginBottom: "5px"}}>
-          <CustomButton>
+          <CustomButton label="Archive activity">
             <span style={{fontSize: "20px"}} className="pi pi-inbox"/>
           </CustomButton>
-          <CustomButton onClick={onDelete}>
+          <CustomButton label="Delete activity" onClick={onDelete}>
             <span style={{ marginLeft: "5px", fontSize: "20px" }} className="pi pi-trash"/>
           </CustomButton>
         </div>

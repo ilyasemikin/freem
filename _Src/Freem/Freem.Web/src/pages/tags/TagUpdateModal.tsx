@@ -40,7 +40,7 @@ export function TagUpdateModal(props: ITagUpdateModalProps) {
   return (
       <>
         <div style={{display: "flex", justifyContent: "end", marginBottom: "5px"}}>
-          <CustomButton onClick={onDelete}>
+          <CustomButton label="Delete tag" onClick={onDelete}>
             <span style={{marginLeft: "5px", fontSize: "20px"}} className="pi pi-trash"/>
           </CustomButton>
         </div>

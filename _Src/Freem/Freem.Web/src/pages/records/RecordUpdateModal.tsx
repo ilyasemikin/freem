@@ -59,7 +59,7 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
   return (
       <>
         <div style={{display: "flex", justifyContent: "end", marginBottom: "5px"}}>
-          <CustomButton onClick={onDelete}>
+          <CustomButton label="Delete record" onClick={onDelete}>
             <span style={{marginLeft: "5px", fontSize: "20px"}} className="pi pi-trash"/>
           </CustomButton>
         </div>
