@@ -12,13 +12,13 @@
         <PackageReference Include="Utilities.Collections" Version="0.1.0"/>
         <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
         <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+        <PackageReference Include="Utilities.Sorting" Version="0.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
-        <ProjectReference Include="..\Freem.Sorting\Freem.Sorting.csproj"/>
         <ProjectReference Include="..\Freem.Storage.Transactions.EFCore\Freem.Storage.Transactions.EFCore.csproj" />
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
     </ItemGroup>

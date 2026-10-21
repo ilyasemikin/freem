@@ -8,7 +8,7 @@ using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Extensions;
-using Freem.Sorting.Extensions;
+using Utilities.Sorting.Extensions;
 using Utilities.Errors;
 using Utilities.Primitives;
 

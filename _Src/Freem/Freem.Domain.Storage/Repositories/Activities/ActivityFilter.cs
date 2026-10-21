@@ -2,7 +2,7 @@
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Sorting;
 using Freem.Domain.Users;
-using Freem.Sorting;
+using Utilities.Sorting;
 
 namespace Freem.Domain.Storage.Repositories.Activities;
 
@@ -10,7 +10,7 @@ public sealed class ActivityFilter : ILimitFilter, ISortingFilter<ActivitySortFi
 {
     public static readonly SortOptions<ActivitySortField> DefaultSorting = new(
         ActivitySortField.CreatedAt,
-        SortOrder.Descending);
+        SortDirection.Descending);
 
     private readonly SortOptions<ActivitySortField> _sorting = DefaultSorting;
     

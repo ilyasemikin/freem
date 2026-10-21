@@ -1,4 +1,4 @@
-﻿using Freem.Sorting;
+﻿using Utilities.Sorting;
 
 namespace Freem.Domain.Storage.Models.Filters.Abstractions;
 

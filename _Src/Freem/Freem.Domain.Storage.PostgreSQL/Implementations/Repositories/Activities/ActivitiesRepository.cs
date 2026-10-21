@@ -9,7 +9,7 @@ using Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Activities.Extensions;
-using Freem.Sorting.Extensions;
+using Utilities.Sorting.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Errors;
 using Utilities.Primitives;

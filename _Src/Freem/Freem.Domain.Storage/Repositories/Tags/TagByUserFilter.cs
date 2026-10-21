@@ -2,13 +2,13 @@
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Sorting;
 using Freem.Domain.Users;
-using Freem.Sorting;
+using Utilities.Sorting;
 
 namespace Freem.Domain.Storage.Repositories.Tags;
 
 public sealed class TagByUserFilter : ILimitFilter, IOffsetFilter, ISortingFilter<TagSortField>
 {
-    public static readonly SortOptions<TagSortField> DefaultSorting = new(TagSortField.Name, SortOrder.Ascending);
+    public static readonly SortOptions<TagSortField> DefaultSorting = new(TagSortField.Name, SortDirection.Ascending);
 
     private readonly SortOptions<TagSortField> _sorting = DefaultSorting;
     

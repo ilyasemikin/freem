@@ -2,7 +2,7 @@
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Sorting;
 using Freem.Domain.Users;
-using Freem.Sorting;
+using Utilities.Sorting;
 
 namespace Freem.Domain.Storage.Repositories.Tags;
 
@@ -10,7 +10,7 @@ public class TagFilter : ILimitFilter, ISortingFilter<TagSortField>
 {
     public static readonly SortOptions<TagSortField> DefaultSorting = new(
         TagSortField.Name,
-        SortOrder.Descending);
+        SortDirection.Descending);
 
     private readonly SortOptions<TagSortField> _sorting = DefaultSorting;
     
