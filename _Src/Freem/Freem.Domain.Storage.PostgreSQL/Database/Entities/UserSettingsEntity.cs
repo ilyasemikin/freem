@@ -9,7 +9,7 @@ internal sealed class UserSettingsEntity :
 {
     public required string UserId { get; init; }
 
-    public required long UtcOffsetTicks { get; set; }
+    public required long TimeZoneOffsetTicks { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -27,7 +27,7 @@ internal sealed class UserSettingsEntity :
             return true;
         return
             UserId == other.UserId &&
-            UtcOffsetTicks == other.UtcOffsetTicks &&
+            TimeZoneOffsetTicks == other.TimeZoneOffsetTicks &&
             CreatedAt == other.CreatedAt &&
             UpdatedAt.HasValue == other.UpdatedAt.HasValue;
     }

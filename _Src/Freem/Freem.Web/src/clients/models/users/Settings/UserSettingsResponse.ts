@@ -1,7 +1,7 @@
 export class UserSettingsResponse {
-    public readonly dayUtcOffset: string;
+    public readonly timeZoneOffset: string;
 
-    constructor(dayUtcOffset: string) {
-        this.dayUtcOffset = dayUtcOffset;
+    constructor(timeZoneOffset: string) {
+        this.timeZoneOffset = timeZoneOffset;
     }
 }

@@ -16,8 +16,8 @@ internal sealed class UserSettingsEntityTypeConfiguration : IEntityTypeConfigura
             .IsRequired();
 
         builder
-            .Property(e => e.UtcOffsetTicks)
-            .HasColumnName(EntitiesNames.UserSettings.Properties.UtcOffsetTicks)
+            .Property(e => e.TimeZoneOffsetTicks)
+            .HasColumnName(EntitiesNames.UserSettings.Properties.TimeZoneOffsetTicks)
             .IsRequired();
 
         builder

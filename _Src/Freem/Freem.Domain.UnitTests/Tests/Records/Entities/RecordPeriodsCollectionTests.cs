@@ -1,5 +1,6 @@
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
+using Freem.Domain.Users.Models;
 using Freem.Time.Models;
 
 namespace Freem.Domain.UnitTests.Tests.Records.Entities;
@@ -14,7 +15,7 @@ public sealed class RecordPeriodsCollectionTests
         var startAt = Base.AddMinutes(startMinutes);
         var endAt = Base.AddMinutes(endMinutes);
         var period = new DateTimePeriod(startAt, endAt);
-        return new RecordPeriod(id, period);
+        return new RecordPeriod(id, period, TimeZoneOffset.Default);
     }
 
     [Fact]
@@ -62,7 +63,7 @@ public sealed class RecordPeriodsCollectionTests
     public void Constructor_ShouldThrow_WhenIdsDuplicate()
     {
         var first = CreatePeriod(0, 30);
-        var duplicate = new RecordPeriod(first.Id, new DateTimePeriod(Base.AddMinutes(60), Base.AddMinutes(90)));
+        var duplicate = new RecordPeriod(first.Id, new DateTimePeriod(Base.AddMinutes(60), Base.AddMinutes(90)), TimeZoneOffset.Default);
 
         var exception = Xunit.Record.Exception(() => new RecordPeriodsCollection(first, duplicate));
 
@@ -131,7 +132,7 @@ public sealed class RecordPeriodsCollectionTests
         var first = CreatePeriod(0, 30);
         var second = CreatePeriod(60, 90);
         var collection = new RecordPeriodsCollection(first, second);
-        var moved = new RecordPeriod(second.Id, new DateTimePeriod(Base.AddMinutes(20), Base.AddMinutes(90)));
+        var moved = new RecordPeriod(second.Id, new DateTimePeriod(Base.AddMinutes(20), Base.AddMinutes(90)), TimeZoneOffset.Default);
 
         var success = collection.TryReplace(moved);
 
@@ -144,7 +145,7 @@ public sealed class RecordPeriodsCollectionTests
     {
         var first = CreatePeriod(0, 30);
         var collection = new RecordPeriodsCollection(first);
-        var shrunk = new RecordPeriod(first.Id, new DateTimePeriod(Base, Base.AddMinutes(10)));
+        var shrunk = new RecordPeriod(first.Id, new DateTimePeriod(Base, Base.AddMinutes(10)), TimeZoneOffset.Default);
 
         var success = collection.TryReplace(shrunk);
 

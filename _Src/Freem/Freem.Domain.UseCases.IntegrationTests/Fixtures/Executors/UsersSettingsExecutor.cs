@@ -29,11 +29,11 @@ public sealed class UsersSettingsExecutor
         return response.Settings;
     }
 
-    public async Task UpdateUtcOffsetAsync(HandlerContext context, DayUtcOffset offset)
+    public async Task UpdateTimeZoneOffsetAsync(HandlerContext context, TimeZoneOffset offset)
     {
         var request = new UpdateUserSettingsRequest
         {
-            UtcOffset = new UpdateField<DayUtcOffset>(offset)
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(offset)
         };
         var result = await _mediator.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(context, request);
         result.EnsureSuccess();

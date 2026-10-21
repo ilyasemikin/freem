@@ -2,6 +2,7 @@
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Users;
+using Freem.Domain.Users.Models;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Mappers;
 using Freem.Time.Models;
@@ -34,7 +35,8 @@ internal static class RecordMapper
             RecordId = recordId,
             Description = entity.Description?.ToString(),
             StartAt = entity.Period.StartAt,
-            EndAt = entity.Period.EndAt
+            EndAt = entity.Period.EndAt,
+            TimeZoneOffsetTicks = entity.TimeZoneOffset.Ticks
         };
     }
 
@@ -42,10 +44,12 @@ internal static class RecordMapper
     {
         var id = RecordPeriodId.Parse(entity.Id, null);
         var period = new DateTimePeriod(entity.StartAt, entity.EndAt);
+        var offsetValue = new TimeSpan(entity.TimeZoneOffsetTicks);
+        var timeZoneOffset = new TimeZoneOffset(offsetValue);
         var description = entity.Description is null
             ? null
             : RecordPeriodDescription.Parse(entity.Description, null);
-        return new RecordPeriod(id, period, description);
+        return new RecordPeriod(id, period, timeZoneOffset, description);
     }
 
     public static Record MapToDomainEntity(this RecordEntity entity)

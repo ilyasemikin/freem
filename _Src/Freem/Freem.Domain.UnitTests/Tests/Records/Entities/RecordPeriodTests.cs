@@ -1,5 +1,6 @@
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
+using Freem.Domain.Users.Models;
 using Freem.Time.Models;
 
 namespace Freem.Domain.UnitTests.Tests.Records.Entities;
@@ -13,7 +14,7 @@ public sealed class RecordPeriodTests
         var id = RecordPeriodId.Generate();
         var period = new DateTimePeriod(now, now);
 
-        var exception = Xunit.Record.Exception(() => new RecordPeriod(id, period));
+        var exception = Xunit.Record.Exception(() => new RecordPeriod(id, period, TimeZoneOffset.Default));
 
         Assert.IsType<ArgumentException>(exception);
     }
@@ -25,7 +26,7 @@ public sealed class RecordPeriodTests
         var id = RecordPeriodId.Generate();
         var period = new DateTimePeriod(now, now.AddSeconds(1));
 
-        var recordPeriod = new RecordPeriod(id, period);
+        var recordPeriod = new RecordPeriod(id, period, TimeZoneOffset.Default);
 
         Assert.Equal(period, recordPeriod.Period);
         Assert.Null(recordPeriod.Description);

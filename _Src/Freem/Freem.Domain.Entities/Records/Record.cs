@@ -75,7 +75,7 @@ public sealed class Record :
     private RecordPeriodSnapshot[] CreatePeriodSnapshots()
     {
         return Periods
-            .Select(p => new RecordPeriodSnapshot(p.Id, p.Period, p.Description))
+            .Select(p => new RecordPeriodSnapshot(p.Id, p.Period, p.TimeZoneOffset, p.Description))
             .ToArray();
     }
 

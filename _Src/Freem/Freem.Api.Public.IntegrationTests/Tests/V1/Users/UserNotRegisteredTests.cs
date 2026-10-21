@@ -44,10 +44,10 @@ public sealed class UserNotRegisteredTests : TestBase
     public async Task UpdateSettings_ShouldReturnUserNotRegisteredError()
     {
         var offset = TimeSpan.FromHours(1);
-        var dayUtcOffset = new DayUtcOffset(offset);
+        var timeZoneOffset = new TimeZoneOffset(offset);
         var request = new UpdateUserSettingsRequest
         {
-            DayUtcOffset = new UpdateField<DayUtcOffset>(dayUtcOffset)
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(timeZoneOffset)
         };
 
         var response = await Context.Client.Users.UpdateSettingsAsync(request);

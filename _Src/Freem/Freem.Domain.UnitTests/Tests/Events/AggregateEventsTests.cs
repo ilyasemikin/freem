@@ -88,7 +88,7 @@ public sealed class AggregateEventsTests
         var activities = new RelatedActivityIdsCollection(_activityId);
         var tags = new RelatedTagIdsCollection(_tagId);
         var period = new DateTimePeriod(DateTimeOffset.UtcNow.AddHours(-1), TimeSpan.FromHours(1));
-        var recordPeriod = new RecordPeriod(RecordPeriodId.Generate(), period);
+        var recordPeriod = new RecordPeriod(RecordPeriodId.Generate(), period, TimeZoneOffset.Default);
         var periods = new RecordPeriodsCollection(recordPeriod);
         var record = new EntityRecord(recordId, _userId, activities, tags, periods)
         {
@@ -129,7 +129,7 @@ public sealed class AggregateEventsTests
     {
         var nickname = Nickname.Parse("nickname", null);
         var user = new User(_userId, nickname);
-        user.Settings.DayUtcOffset = new DayUtcOffset(TimeSpan.FromHours(3));
+        user.Settings.TimeZoneOffset = new TimeZoneOffset(TimeSpan.FromHours(3));
 
         var registered = user.BuildRegisteredEvent(EventId.Generate());
         var changed = user.BuildSettingsChangedEvent(EventId.Generate());
@@ -138,6 +138,6 @@ public sealed class AggregateEventsTests
         Assert.Equal(new EntityRef(EntityType.User, _userId.ToString()), registered.EntityRef);
         Assert.Equal(nickname, registered.Nickname);
         Assert.Equal(EventTypes.Users.SettingsChanged, changed.Type);
-        Assert.Equal(TimeSpan.FromHours(3), changed.DayUtcOffset.Value);
+        Assert.Equal(TimeSpan.FromHours(3), changed.TimeZoneOffset.Value);
     }
 }

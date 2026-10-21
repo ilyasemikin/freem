@@ -1,5 +1,6 @@
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Users.Models;
 using Freem.Time.Models;
 
 namespace Freem.Domain.Entities.Records;
@@ -8,21 +9,25 @@ public sealed class RecordPeriod : IEquatable<RecordPeriod>
 {
     public RecordPeriodId Id { get; }
     public DateTimePeriod Period { get; }
+    public TimeZoneOffset TimeZoneOffset { get; }
     public RecordPeriodDescription? Description { get; }
 
     public RecordPeriod(
         RecordPeriodId id,
         DateTimePeriod period,
+        TimeZoneOffset timeZoneOffset,
         RecordPeriodDescription? description = null)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(period);
+        ArgumentNullException.ThrowIfNull(timeZoneOffset);
 
         if (period.Duration <= TimeSpan.Zero)
             throw new ArgumentException("Period of record must have positive duration", nameof(period));
 
         Id = id;
         Period = period;
+        TimeZoneOffset = timeZoneOffset;
         Description = description;
     }
 
@@ -35,6 +40,7 @@ public sealed class RecordPeriod : IEquatable<RecordPeriod>
         return
             Id.Equals(other.Id) &&
             Period.Equals(other.Period) &&
+            TimeZoneOffset.Equals(other.TimeZoneOffset) &&
             Equals(Description, other.Description);
     }
 
@@ -45,6 +51,6 @@ public sealed class RecordPeriod : IEquatable<RecordPeriod>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Id, Period, Description);
+        return HashCode.Combine(Id, Period, TimeZoneOffset, Description);
     }
 }

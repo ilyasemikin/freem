@@ -41,6 +41,11 @@ internal sealed class RecordPeriodEntityTypeConfiguration : IEntityTypeConfigura
             .IsRequired();
 
         builder
+            .Property(e => e.TimeZoneOffsetTicks)
+            .HasColumnName(EntitiesNames.RecordPeriods.Properties.TimeZoneOffsetTicks)
+            .IsRequired();
+
+        builder
             .Property(e => e.CreatedAt)
             .HasColumnName(EntitiesNames.RecordPeriods.Properties.CreatedAt)
             .IsRequired();

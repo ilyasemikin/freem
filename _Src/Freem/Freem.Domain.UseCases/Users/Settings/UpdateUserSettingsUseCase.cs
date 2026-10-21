@@ -51,7 +51,7 @@ internal sealed class UpdateUserSettingsUseCase :
         var user = result.Value;
         var settings = new UserSettings()
         {
-            DayUtcOffset = request.UtcOffset.Value
+            TimeZoneOffset = request.TimeZoneOffset.Value
         };
         
         user.Settings = settings;

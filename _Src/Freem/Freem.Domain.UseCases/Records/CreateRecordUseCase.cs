@@ -4,6 +4,7 @@ using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
+using Freem.Domain.UseCases.Users.Settings;
 using Freem.Storage.Transactions.Helpers;
 using Freem.Storage.Transactions.Helpers.Extensions;
 using Utilities.Errors;
@@ -18,26 +19,34 @@ internal sealed class CreateRecordUseCase
     private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public CreateRecordUseCase(
         IRecordRepository repository, 
         EventProducer eventProducer, 
-        StorageTransactionRunner transactionRunner)
+        StorageTransactionRunner transactionRunner,
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
+        ArgumentNullException.ThrowIfNull(mediator);
         
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
+        _mediator = mediator;
     }
 
     public async Task<Result<CreateRecordResponse, Error>> HandleAsync(
         HandlerContext context, CreateRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        var periodsResult = RecordPeriodsFactory.Create(request.Periods);
+        var settingsResult = await _mediator.GetUserSettingsAsync(context, cancellationToken);
+        if (!settingsResult.Success)
+            return settingsResult.Error;
+
+        var periodsResult = RecordPeriodsFactory.Create(request.Periods, settingsResult.Value.TimeZoneOffset);
         if (!periodsResult.Success)
             return periodsResult.Error;
 

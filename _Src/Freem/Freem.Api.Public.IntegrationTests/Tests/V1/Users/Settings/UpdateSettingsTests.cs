@@ -21,10 +21,10 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var value = new DayUtcOffset(TimeSpan.FromHours(1));
+        var value = new TimeZoneOffset(TimeSpan.FromHours(1));
         var request = new UpdateUserSettingsRequest
         {
-            DayUtcOffset = new UpdateField<DayUtcOffset>(value)
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(value)
         };
 
         var response = await Context.Client.Users.UpdateSettingsAsync(request);
@@ -51,7 +51,7 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     public async Task Request_ShouldReturnInvalidRequestError_WhenOffsetIsInvalid(string offset)
     {
         using var client = Context.CreateHttpClient();
-        var body = $$$"""{"dayUtcOffset":{"value":"{{{offset}}}"}}""";
+        var body = $$$"""{"timeZoneOffset":{"value":"{{{offset}}}"}}""";
         using var content = new StringContent(body, Encoding.UTF8, MediaTypeNames.Application.Json);
 
         using var response = await client.PutAsync("api/v1/user/settings", content);

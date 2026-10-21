@@ -6,6 +6,7 @@ using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Users;
+using Freem.Domain.Users.Models;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
 using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Records;
@@ -465,13 +466,19 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         var record = await FindRecordAsync(dbRecord.Id);
 
         var kept = record.Periods[0];
+        var changedOffsetValue = TimeSpan.FromHours(3);
+        var changedOffset = new TimeZoneOffset(changedOffsetValue);
+        var addedOffsetValue = TimeSpan.FromHours(-5);
+        var addedOffset = new TimeZoneOffset(addedOffsetValue);
         var changed = new RecordPeriod(
             kept.Id,
             new DateTimePeriod(baseTime, baseTime.AddMinutes(30)),
+            changedOffset,
             RecordPeriodDescription.Parse("changed", null));
         var added = new RecordPeriod(
             RecordPeriodId.Generate(),
-            new DateTimePeriod(baseTime.AddMinutes(240), baseTime.AddMinutes(300)));
+            new DateTimePeriod(baseTime.AddMinutes(240), baseTime.AddMinutes(300)),
+            addedOffset);
 
         Assert.True(record.Periods.TryReplace(changed));
         Assert.True(record.Periods.TryRemove(record.Periods[1].Id));

@@ -10,7 +10,7 @@ internal static class RecordMapper
     public static RecordResponse Map(this Record record)
     {
         var periods = record.Periods
-            .Select(p => new RecordPeriodResponse(p.Id, p.Period) { Description = p.Description })
+            .Select(p => new RecordPeriodResponse(p.Id, p.Period, p.TimeZoneOffset) { Description = p.Description })
             .ToArray();
         return new RecordResponse(record.Id, periods, record.Activities, record.Tags)
         {

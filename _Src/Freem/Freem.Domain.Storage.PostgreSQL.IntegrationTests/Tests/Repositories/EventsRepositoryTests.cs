@@ -42,9 +42,9 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
             var recordName = RecordName.Parse("record", null);
             var tagName = TagName.Parse("tag", null);
             var nickname = Nickname.Parse("nickname", null);
-            var offset = new DayUtcOffset(TimeSpan.FromHours(3));
+            var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
             var period = new DateTimePeriod(OccurredAt, TimeSpan.FromHours(1));
-            var periods = new[] { new RecordPeriodSnapshot(RecordPeriodId.Generate(), period) };
+            var periods = new[] { new RecordPeriodSnapshot(RecordPeriodId.Generate(), period, offset) };
 
             return new TheoryData<EntityType, EventGenerator>
             {
@@ -64,7 +64,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
                 { EntityType.Tag, (id, e, _, _) => new TagUpdatedEvent(id) { TagId = TagId.Parse(e, null), Name = tagName } },
                 { EntityType.Tag, (id, e, _, _) => new TagRemovedEvent(id) { TagId = TagId.Parse(e, null) } },
                 { EntityType.User, (id, e, _, _) => new UserRegisteredEvent(id) { UserId = UserId.Parse(e, null), Nickname = nickname } },
-                { EntityType.User, (id, e, _, _) => new UserSettingsChangedEvent(id) { UserId = UserId.Parse(e, null), DayUtcOffset = offset } },
+                { EntityType.User, (id, e, _, _) => new UserSettingsChangedEvent(id) { UserId = UserId.Parse(e, null), TimeZoneOffset = offset } },
             };
         }
     }

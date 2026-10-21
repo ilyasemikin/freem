@@ -2,7 +2,7 @@
 
 namespace Freem.Domain.UnitTests.Tests.Users.Models;
 
-public sealed class DayUtcOffsetTests
+public sealed class TimeZoneOffsetTests
 {
     [Theory]
     [InlineData("00:00:00")]
@@ -12,7 +12,7 @@ public sealed class DayUtcOffsetTests
     [InlineData("-12:00:00")]
     public void Parse_ShouldKeepValue_WhenValueIsValid(string value)
     {
-        var result = DayUtcOffset.Parse(value, null);
+        var result = TimeZoneOffset.Parse(value, null);
         var actual = result.ToString();
 
         Assert.Equal(value, actual);
@@ -22,7 +22,7 @@ public sealed class DayUtcOffsetTests
     public void ToString_ShouldUseTimeSpanConstantFormat()
     {
         var value = TimeSpan.FromHours(1);
-        var offset = new DayUtcOffset(value);
+        var offset = new TimeZoneOffset(value);
 
         var actual = offset.ToString();
 
@@ -40,7 +40,7 @@ public sealed class DayUtcOffsetTests
     [InlineData("03:00:30")]
     public void TryParse_ShouldFailure_WhenValueIsInvalid(string? value)
     {
-        var success = DayUtcOffset.TryParse(value, null, out var result);
+        var success = TimeZoneOffset.TryParse(value, null, out var result);
 
         Assert.False(success);
         Assert.Null(result);
@@ -53,7 +53,7 @@ public sealed class DayUtcOffsetTests
     {
         var value = TimeSpan.FromMinutes(minutes);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new DayUtcOffset(value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TimeZoneOffset(value));
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public sealed class DayUtcOffsetTests
     {
         var value = TimeSpan.FromSeconds(90);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new DayUtcOffset(value));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TimeZoneOffset(value));
     }
 
     [Theory]
@@ -76,7 +76,7 @@ public sealed class DayUtcOffsetTests
         int offsetMinutes, int year, int month, int day, int hour, int minute)
     {
         var value = TimeSpan.FromMinutes(offsetMinutes);
-        var offset = new DayUtcOffset(value);
+        var offset = new TimeZoneOffset(value);
         var date = new DateOnly(2025, 3, 10);
 
         var actual = offset.GetDayStartUtc(date);
@@ -84,5 +84,16 @@ public sealed class DayUtcOffsetTests
         var expected = new DateTime(year, month, day, hour, minute, 0, DateTimeKind.Utc);
         Assert.Equal(expected, actual);
         Assert.Equal(DateTimeKind.Utc, actual.Kind);
+    }
+
+    [Fact]
+    public void Equals_ShouldCompareByValue()
+    {
+        var value = TimeSpan.FromHours(3);
+        var first = new TimeZoneOffset(value);
+        var second = new TimeZoneOffset(value);
+
+        Assert.Equal(first, second);
+        Assert.Equal(first.GetHashCode(), second.GetHashCode());
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Entities.Statistics.Time;
-using Freem.Domain.Entities.Users;
 using Freem.Domain.Records;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Users;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
-using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
+using Freem.Domain.UseCases.Users.Settings;
 using Freem.Time.Models;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -36,7 +35,7 @@ internal sealed class StatisticsPerPeriodUseCase :
         StatisticsPerPeriodRequest request,
         CancellationToken cancellationToken = default)
     {
-        var settingsResult = await GetUserSettingsAsync(context, cancellationToken);
+        var settingsResult = await _mediator.GetUserSettingsAsync(context, cancellationToken);
         if (!settingsResult.Success)
             return settingsResult.Error;
 
@@ -44,8 +43,8 @@ internal sealed class StatisticsPerPeriodUseCase :
 
         var datePeriod = request.Period.ToDatePeriod();
         
-        var start = settings.DayUtcOffset.GetDayStartUtc(datePeriod.StartAt);
-        var end = settings.DayUtcOffset.GetDayStartUtc(datePeriod.EndAt);
+        var start = settings.TimeZoneOffset.GetDayStartUtc(datePeriod.StartAt);
+        var end = settings.TimeZoneOffset.GetDayStartUtc(datePeriod.EndAt);
         
         var period = new DateTimePeriod(start, end);
         var recordsResult = await FindRecordsAsync(context.UserId, period, cancellationToken);
@@ -59,17 +58,6 @@ internal sealed class StatisticsPerPeriodUseCase :
         return new StatisticsPerPeriodResponse(statistics);
     }
     
-    private async Task<Result<UserSettings, Error>> GetUserSettingsAsync(
-        HandlerContext context, CancellationToken cancellationToken)
-    {
-        var request = new GetUserSettingsRequest();
-        var result = await _mediator.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request, cancellationToken);
-        if (!result.Success)
-            return result.Error;
-
-        return result.Value.Settings;
-    }
-
     private async Task<Result<IReadOnlyList<Record>, Error>> FindRecordsAsync(
         UserId userId, DateTimePeriod period, 
         CancellationToken cancellationToken)

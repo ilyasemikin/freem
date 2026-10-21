@@ -1,13 +1,12 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Entities.Statistics.Time;
-using Freem.Domain.Entities.Users;
 using Freem.Domain.Statistics.Time;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Users;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
-using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
+using Freem.Domain.UseCases.Users.Settings;
 using Freem.Time.Models;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -36,13 +35,13 @@ public sealed class StatisticsPerDaysUseCase :
         HandlerContext context, StatisticsPerDaysRequest request,
         CancellationToken cancellationToken = default)
     {
-        var settingsResult = await GetUserSettingsAsync(context, cancellationToken);
+        var settingsResult = await _mediator.GetUserSettingsAsync(context, cancellationToken);
         if (!settingsResult.Success)
             return settingsResult.Error;
 
         var settings = settingsResult.Value;
 
-        var offset = settings.DayUtcOffset;
+        var offset = settings.TimeZoneOffset;
 
         var statisticsPerDays = new Dictionary<DateOnly, TimeStatistics>();
         // The end of the period is inclusive
@@ -62,17 +61,6 @@ public sealed class StatisticsPerDaysUseCase :
         }
 
         return new StatisticsPerDaysResponse(statisticsPerDays);
-    }
-
-    private async Task<Result<UserSettings, Error>> GetUserSettingsAsync(
-        HandlerContext context, CancellationToken cancellationToken)
-    {
-        var request = new GetUserSettingsRequest();
-        var result = await _mediator.ExecuteAsync<GetUserSettingsRequest, Result<GetUserSettingsResponse, Error>>(context, request, cancellationToken);
-        if (!result.Success)
-            return result.Error;
-
-        return result.Value.Settings;
     }
 
     private async Task<Result<IReadOnlyList<Record>, Error>> FindRecordsAsync(

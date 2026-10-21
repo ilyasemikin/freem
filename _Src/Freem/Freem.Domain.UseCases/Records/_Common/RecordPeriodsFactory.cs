@@ -1,5 +1,6 @@
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
+using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Time.Models;
 using Utilities.Errors;
@@ -17,7 +18,7 @@ internal static class RecordPeriodsFactory
         return null;
     }
 
-    public static Result<RecordPeriodsCollection, Error> Create(IReadOnlyList<NewRecordPeriod> items)
+    public static Result<RecordPeriodsCollection, Error> Create(IReadOnlyList<NewRecordPeriod> items, TimeZoneOffset timeZoneOffset)
     {
         if (items.Count < RecordPeriodsCollection.MinCount)
             return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("Record must contain at least one period.");
@@ -30,7 +31,7 @@ internal static class RecordPeriodsFactory
                 return error;
 
             var id = RecordPeriodId.Generate();
-            var period = new RecordPeriod(id, item.Period, item.Description);
+            var period = new RecordPeriod(id, item.Period, timeZoneOffset, item.Description);
             periods.Add(period);
         }
 

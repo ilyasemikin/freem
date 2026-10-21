@@ -22,7 +22,7 @@ internal static class UserMapper
         return new UserSettingsEntity
         {
             UserId = userId.ToString(),
-            UtcOffsetTicks = settings.DayUtcOffset.Ticks
+            TimeZoneOffsetTicks = settings.TimeZoneOffset.Ticks
         };
     }
 
@@ -40,11 +40,11 @@ internal static class UserMapper
 
     public static UserSettings MapToDomainEntity(this UserSettingsEntity entity)
     {
-        var value = new TimeSpan(entity.UtcOffsetTicks);
-        var offset = new DayUtcOffset(value);
+        var value = new TimeSpan(entity.TimeZoneOffsetTicks);
+        var offset = new TimeZoneOffset(value);
         return new UserSettings()
         {
-            DayUtcOffset = offset
+            TimeZoneOffset = offset
         };
     }
 }

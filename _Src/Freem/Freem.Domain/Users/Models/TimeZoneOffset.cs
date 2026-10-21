@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Freem.Domain.Users.Models;
 
-public sealed class DayUtcOffset : IParsable<DayUtcOffset>
+public sealed class TimeZoneOffset : IEquatable<TimeZoneOffset>, IParsable<TimeZoneOffset>
 {
     private const string Format = "c";
 
@@ -12,12 +12,12 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
 
     private readonly TimeSpan _value;
     
-    public static DayUtcOffset Default { get; } = new(TimeSpan.Zero);
+    public static TimeZoneOffset Default { get; } = new(TimeSpan.Zero);
     
     public TimeSpan Value => _value;
     public long Ticks => _value.Ticks;
     
-    public DayUtcOffset(TimeSpan value)
+    public TimeZoneOffset(TimeSpan value)
     {
         if (!IsValid(value))
             throw new ArgumentOutOfRangeException(nameof(value), value, $"Offset must be whole minutes in range [{MinValue}, {MaxValue}].");
@@ -31,22 +31,41 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
         return midnight - _value;
     }
 
+    public bool Equals(TimeZoneOffset? other)
+    {
+        if (other is null) 
+            return false;
+        if (ReferenceEquals(this, other)) 
+            return true;
+        return _value == other._value;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return ReferenceEquals(this, obj) || obj is TimeZoneOffset other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return _value.GetHashCode();
+    }
+
     public override string ToString()
     {
         return _value.ToString(Format, CultureInfo.InvariantCulture);
     }
 
-    public static DayUtcOffset Parse(string s, IFormatProvider? provider)
+    public static TimeZoneOffset Parse(string s, IFormatProvider? provider)
     {
         return TryParse(s, provider, out var result)
             ? result
-            : throw new FormatException($"Invalid value for DayUtcOffset: {s}");
+            : throw new FormatException($"Invalid value for TimeZoneOffset: {s}");
     }
 
     public static bool TryParse(
         [NotNullWhen(true)] string? s,
         IFormatProvider? provider,
-        [NotNullWhen(true)] out DayUtcOffset? result)
+        [NotNullWhen(true)] out TimeZoneOffset? result)
     {
         if (!TimeSpan.TryParseExact(s, Format, CultureInfo.InvariantCulture, out var value) || !IsValid(value))
         {
@@ -54,7 +73,7 @@ public sealed class DayUtcOffset : IParsable<DayUtcOffset>
             return false;
         }
 
-        result = new DayUtcOffset(value);
+        result = new TimeZoneOffset(value);
         return true;
     }
 

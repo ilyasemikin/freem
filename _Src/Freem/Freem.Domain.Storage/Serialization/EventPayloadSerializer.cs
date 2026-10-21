@@ -28,7 +28,8 @@ public static class EventPayloadSerializer
         string Id,
         DateTimeOffset StartAt,
         DateTimeOffset EndAt,
-        string? Description);
+        string? Description,
+        string? TimeZoneOffset);
 
     private static readonly INamingPolicy Policy = INamingPolicy.CamelCase;
 
@@ -70,7 +71,7 @@ public static class EventPayloadSerializer
                     .Set(nameof(UserRegisteredEvent.Nickname), e.Nickname);
             case UserSettingsChangedEvent e:
                 return new EventPayload(Policy)
-                    .Set(nameof(UserSettingsChangedEvent.DayUtcOffset), e.DayUtcOffset);
+                    .Set(nameof(UserSettingsChangedEvent.TimeZoneOffset), e.TimeZoneOffset);
             default:
                 throw new InvalidOperationException($"Unmapped event type [{@event.Type}]");
         }
@@ -215,7 +216,7 @@ public static class EventPayloadSerializer
             return new UserSettingsChangedEvent(record.Id)
             {
                 UserId = UserId.Parse(entityRef, null),
-                DayUtcOffset = payload.Get(nameof(UserSettingsChangedEvent.DayUtcOffset), DayUtcOffset.Parse)
+                TimeZoneOffset = payload.GetOptional(nameof(UserSettingsChangedEvent.TimeZoneOffset), TimeZoneOffset.Parse) ?? TimeZoneOffset.Default
             };
 
         return null;
@@ -251,7 +252,11 @@ public static class EventPayloadSerializer
         var description = item.Description is null
             ? null
             : RecordPeriodDescription.Parse(item.Description, null);
-        return new RecordPeriodSnapshot(id, period, description);
+        // Payloads written before the offset was stored have no value
+        var timeZoneOffset = item.TimeZoneOffset is null
+            ? TimeZoneOffset.Default
+            : TimeZoneOffset.Parse(item.TimeZoneOffset, null);
+        return new RecordPeriodSnapshot(id, period, timeZoneOffset, description);
     }
 
     private static RecordPeriodPayload MapToPayload(RecordPeriodSnapshot snapshot)
@@ -260,7 +265,8 @@ public static class EventPayloadSerializer
             snapshot.Id.ToString(),
             snapshot.Period.StartAt,
             snapshot.Period.EndAt,
-            snapshot.Description?.ToString());
+            snapshot.Description?.ToString(),
+            snapshot.TimeZoneOffset.ToString());
     }
 
     private static EventPayload SerializeActivity(

@@ -13,11 +13,11 @@ using Utilities.Primitives;
 
 namespace Freem.Domain.UseCases.IntegrationTests.Tests;
 
-public sealed class StatisticsUtcOffsetUseCaseTests : UseCaseTestBase
+public sealed class StatisticsTimeZoneOffsetUseCaseTests : UseCaseTestBase
 {
     private static readonly DateOnly Day = new(2025, 3, 10);
 
-    public StatisticsUtcOffsetUseCaseTests(TestContext context)
+    public StatisticsTimeZoneOffsetUseCaseTests(TestContext context)
         : base(context)
     {
     }
@@ -66,8 +66,8 @@ public sealed class StatisticsUtcOffsetUseCaseTests : UseCaseTestBase
         var context = new HandlerContext(userId);
 
         var value = TimeSpan.FromMinutes(offsetMinutes);
-        var offset = new DayUtcOffset(value);
-        await filler.UsersSettings.UpdateUtcOffsetAsync(context, offset);
+        var offset = new TimeZoneOffset(value);
+        await filler.UsersSettings.UpdateTimeZoneOffsetAsync(context, offset);
 
         var activity = await filler.Activities.CreateAsync(context);
         var activities = new RelatedActivityIdsCollection([activity.Id]);

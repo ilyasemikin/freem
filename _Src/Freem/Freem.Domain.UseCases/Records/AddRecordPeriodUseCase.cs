@@ -5,6 +5,7 @@ using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
+using Freem.Domain.UseCases.Users.Settings;
 using Freem.Locking;
 using Freem.Locking.Extensions;
 using Freem.Storage.Transactions.Helpers;
@@ -22,22 +23,26 @@ internal sealed class AddRecordPeriodUseCase
     private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public AddRecordPeriodUseCase(
         IDistributedLocker locker,
         IRecordRepository repository,
         EventProducer eventProducer,
-        StorageTransactionRunner transactionRunner)
+        StorageTransactionRunner transactionRunner,
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
+        ArgumentNullException.ThrowIfNull(mediator);
 
         _locker = locker;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
+        _mediator = mediator;
     }
 
     public async Task<Result<AddRecordPeriodResponse, Error>> HandleAsync(
@@ -47,6 +52,10 @@ internal sealed class AddRecordPeriodUseCase
         var durationError = RecordPeriodsFactory.ValidateDuration(request.Period);
         if (durationError is not null)
             return durationError;
+
+        var settingsResult = await _mediator.GetUserSettingsAsync(context, cancellationToken);
+        if (!settingsResult.Success)
+            return settingsResult.Error;
 
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.RecordId, cancellationToken);
 
@@ -58,7 +67,7 @@ internal sealed class AddRecordPeriodUseCase
         var record = result.Value;
 
         var periodId = RecordPeriodId.Generate();
-        var period = new RecordPeriod(periodId, request.Period, request.Description);
+        var period = new RecordPeriod(periodId, request.Period, settingsResult.Value.TimeZoneOffset, request.Description);
         if (!record.Periods.TryAdd(period))
             return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("Period must not overlap other periods of the record.");
 

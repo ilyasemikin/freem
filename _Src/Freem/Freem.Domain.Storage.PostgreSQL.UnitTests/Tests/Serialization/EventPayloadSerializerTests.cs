@@ -30,10 +30,11 @@ public sealed class EventPayloadSerializerTests
     private static readonly TagId[] TagIds = [FirstTagId, SecondTagId];
     private static readonly ActivityId[] ActivityIds = [ActivityId];
     private static readonly DateTimeOffset StartAt = new(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
+    private static readonly TimeZoneOffset PeriodOffset = new(TimeSpan.FromMinutes(-330));
     private static readonly RecordPeriodSnapshot[] Periods =
     [
-        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt, TimeSpan.FromHours(1)), RecordPeriodDescription.Parse("first, \"quoted\"\nline", null)),
-        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt.AddHours(2), TimeSpan.FromHours(1)))
+        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt, TimeSpan.FromHours(1)), PeriodOffset, RecordPeriodDescription.Parse("first, \"quoted\"\nline", null)),
+        new(RecordPeriodId.Generate(), new DateTimePeriod(StartAt.AddHours(2), TimeSpan.FromHours(1)), TimeZoneOffset.Default)
     ];
 
     public static TheoryData<EntityEvent> Events
@@ -46,7 +47,7 @@ public sealed class EventPayloadSerializerTests
             var recordDescription = RecordDescription.Parse("description", null);
             var tagName = TagName.Parse("tag", null);
             var nickname = Nickname.Parse("nickname", null);
-            var offset = new DayUtcOffset(TimeSpan.FromHours(3));
+            var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
 
             return new TheoryData<EntityEvent>
             {
@@ -66,7 +67,7 @@ public sealed class EventPayloadSerializerTests
                 new TagUpdatedEvent(id) { TagId = FirstTagId, Name = tagName },
                 new TagRemovedEvent(id) { TagId = FirstTagId },
                 new UserRegisteredEvent(id) { UserId = UserId, Nickname = nickname },
-                new UserSettingsChangedEvent(id) { UserId = UserId, DayUtcOffset = offset }
+                new UserSettingsChangedEvent(id) { UserId = UserId, TimeZoneOffset = offset }
             };
         }
     }
@@ -116,6 +117,7 @@ public sealed class EventPayloadSerializerTests
         {
             Assert.Equal(Periods[i].Id, restored.Periods[i].Id);
             Assert.Equal(Periods[i].Period, restored.Periods[i].Period);
+            Assert.Equal(Periods[i].TimeZoneOffset, restored.Periods[i].TimeZoneOffset);
             Assert.Equal(Periods[i].Description, restored.Periods[i].Description);
         }
         Assert.Equal(ActivityIds, restored.ActivityIds);
@@ -164,6 +166,42 @@ public sealed class EventPayloadSerializerTests
 
         Assert.False(result.Success);
         Assert.Equal(DomainErrorCatalog.Types.EventDeserializationFailed, result.Error.Type);
+    }
+
+    [Fact]
+    public void Deserialize_ShouldUseDefaultOffset_WhenPeriodPayloadHasNoOffset()
+    {
+        var @event = new RecordCreatedEvent(EventId.Generate())
+        {
+            RecordId = RecordId,
+            Periods = Periods,
+            ActivityIds = ActivityIds,
+            TagIds = TagIds
+        };
+        var periodId = Periods[0].Id.ToString();
+        var periods = $$"""[{"Id":"{{periodId}}","StartAt":"2026-10-20T10:00:00+00:00","EndAt":"2026-10-20T11:00:00+00:00","Description":null}]""";
+        var payload = EventPayloadSerializer.Serialize(@event).Set(nameof(RecordCreatedEvent.Periods), periods);
+
+        var result = EventPayloadSerializer.Deserialize(CreateRecord(@event, payload: payload));
+
+        Assert.True(result.Success);
+        var restored = Assert.IsType<RecordCreatedEvent>(result.Value.Event);
+        var period = Assert.Single(restored.Periods);
+        Assert.Equal(TimeZoneOffset.Default, period.TimeZoneOffset);
+    }
+
+    [Fact]
+    public void Deserialize_ShouldUseDefaultOffset_WhenSettingsPayloadHasNoOffset()
+    {
+        var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
+        var @event = new UserSettingsChangedEvent(EventId.Generate()) { UserId = UserId, TimeZoneOffset = offset };
+        var payload = new EventPayload(Utilities.Naming.Abstractions.INamingPolicy.CamelCase);
+
+        var result = EventPayloadSerializer.Deserialize(CreateRecord(@event, payload: payload));
+
+        Assert.True(result.Success);
+        var restored = Assert.IsType<UserSettingsChangedEvent>(result.Value.Event);
+        Assert.Equal(TimeZoneOffset.Default, restored.TimeZoneOffset);
     }
 
     [Fact]

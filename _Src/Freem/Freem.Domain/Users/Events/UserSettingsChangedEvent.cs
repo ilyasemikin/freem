@@ -14,5 +14,5 @@ public sealed class UserSettingsChangedEvent : EntityEvent
     public override EntityRef EntityRef => new(EntityType.User, UserId.ToString());
 
     public required UserId UserId { get; init; }
-    public required DayUtcOffset DayUtcOffset { get; init; }
+    public required TimeZoneOffset TimeZoneOffset { get; init; }
 }

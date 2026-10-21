@@ -13,7 +13,7 @@ namespace Freem.Domain.UseCases.IntegrationTests.Tests;
 
 public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
 {
-    private static readonly DayUtcOffset UpdatedUtcOffset = new(TimeSpan.FromHours(1));
+    private static readonly TimeZoneOffset UpdatedTimeZoneOffset = new(TimeSpan.FromHours(1));
     
     private HandlerContext _context = null!;
     
@@ -31,11 +31,11 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
     }
 
     [Fact]
-    public async Task ShouldSuccess_WhenUpdateUtcOffset()
+    public async Task ShouldSuccess_WhenUpdateTimeZoneOffset()
     {
         var request = new UpdateUserSettingsRequest
         {
-            UtcOffset = new UpdateField<DayUtcOffset>(UpdatedUtcOffset)
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(UpdatedTimeZoneOffset)
         };
         
         var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(_context, request);
@@ -47,7 +47,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var actual = await executor.UsersSettings.RequiredGetAsync(_context);
         
-        Assert.Equal(UpdatedUtcOffset.Value, actual.DayUtcOffset.Value);
+        Assert.Equal(UpdatedTimeZoneOffset.Value, actual.TimeZoneOffset.Value);
     }
     
     [Fact]
@@ -71,7 +71,7 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
         var context = new HandlerContext(notRegisteredUserId);
         var request = new UpdateUserSettingsRequest
         {
-            UtcOffset = new UpdateField<DayUtcOffset>(UpdatedUtcOffset)
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(UpdatedTimeZoneOffset)
         };
         
         var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(context, request);

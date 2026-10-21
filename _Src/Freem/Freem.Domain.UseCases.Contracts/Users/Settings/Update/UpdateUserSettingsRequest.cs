@@ -9,11 +9,11 @@ public sealed class UpdateUserSettingsRequest : IRequest
 {
     public RequestType Type => RequestTypes.Users.Settings.Update;
 
-    public UpdateField<DayUtcOffset>? UtcOffset { get; init; }
+    public UpdateField<TimeZoneOffset>? TimeZoneOffset { get; init; }
 
-    [MemberNotNullWhen(true, nameof(UtcOffset))]
+    [MemberNotNullWhen(true, nameof(TimeZoneOffset))]
     public bool HasChanges()
     {
-        return UtcOffset is not null;
+        return TimeZoneOffset is not null;
     }
 }

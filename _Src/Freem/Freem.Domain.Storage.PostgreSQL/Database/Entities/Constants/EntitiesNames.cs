@@ -31,7 +31,7 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string UserId = "user_id";
-            public const string UtcOffsetTicks = "utc_offset_ticks";
+            public const string TimeZoneOffsetTicks = "time_zone_offset_ticks";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";
         }
@@ -126,6 +126,7 @@ internal static class EntitiesNames
             public const string Description = "description";
             public const string StartAt = "start_at";
             public const string EndAt = "end_at";
+            public const string TimeZoneOffsetTicks = "time_zone_offset_ticks";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";
         }

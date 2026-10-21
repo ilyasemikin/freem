@@ -1,8 +1,10 @@
 using System.Net;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Users.Models;
 using Freem.Time.Models;
 using Freem.Api.Public.Contracts.DTO.Records;
+using Freem.Api.Public.Contracts.DTO.Users.Settings;
 using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
@@ -28,6 +30,30 @@ public sealed class RecordPeriodTests : RecordTestBase
     {
         var response = await Context.Client.Records.GetAsync(id);
         return response.Unwrap();
+    }
+
+    [Fact]
+    public async Task Add_ShouldReturnCurrentTimeZoneOffset()
+    {
+        var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
+        var settings = new UpdateUserSettingsRequest
+        {
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(offset)
+        };
+        var settingsResponse = await Context.Client.Users.UpdateSettingsAsync(settings);
+        settingsResponse.ShouldSuccess();
+
+        var period = CreateAfterAddedPeriods(1, 2);
+        var body = new RecordPeriodRequest(period);
+        var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], body);
+        response.ShouldSuccess();
+
+        var addedId = response.Unwrap().Id;
+        var record = await GetRecordAsync(AddedRecordIds[0]);
+        var added = Assert.Single(record.Periods, p => p.Id.Equals(addedId));
+        Assert.Equal(offset, added.TimeZoneOffset);
+        var existing = Assert.Single(record.Periods, p => !p.Id.Equals(addedId));
+        Assert.Equal(TimeZoneOffset.Default, existing.TimeZoneOffset);
     }
 
     [Fact]

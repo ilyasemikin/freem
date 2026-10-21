@@ -5,6 +5,8 @@ using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.UpdatePeriod;
+using Freem.Domain.UseCases.Users.Settings;
+using Freem.Domain.Users.Models;
 using Freem.Locking;
 using Freem.Locking.Extensions;
 using Freem.Storage.Transactions.Helpers;
@@ -22,22 +24,26 @@ internal sealed class UpdateRecordPeriodUseCase
     private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
+    private readonly IRequestMediator<HandlerContext> _mediator;
 
     public UpdateRecordPeriodUseCase(
         IDistributedLocker locker,
         IRecordRepository repository,
         EventProducer eventProducer,
-        StorageTransactionRunner transactionRunner)
+        StorageTransactionRunner transactionRunner,
+        IRequestMediator<HandlerContext> mediator)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
+        ArgumentNullException.ThrowIfNull(mediator);
 
         _locker = locker;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
+        _mediator = mediator;
     }
 
     public async Task<Result<Error>> HandleAsync(
@@ -47,11 +53,19 @@ internal sealed class UpdateRecordPeriodUseCase
         if (!request.HasChanges())
             return DomainErrorCatalog.Factories.CreateNothingToDo();
 
+        var newTimeZoneOffset = (TimeZoneOffset?)null;
         if (request.Period is not null)
         {
             var durationError = RecordPeriodsFactory.ValidateDuration(request.Period);
             if (durationError is not null)
                 return durationError;
+
+            // Any change of the period time takes the current offset of the user
+            var settingsResult = await _mediator.GetUserSettingsAsync(context, cancellationToken);
+            if (!settingsResult.Success)
+                return settingsResult.Error;
+
+            newTimeZoneOffset = settingsResult.Value.TimeZoneOffset;
         }
 
         await using var @lock = await _locker.LockAsync(Lock.Prefix + request.RecordId, cancellationToken);
@@ -69,7 +83,8 @@ internal sealed class UpdateRecordPeriodUseCase
 
         var period = request.Period is not null ? request.Period.Value : current.Period;
         var description = request.Description is not null ? request.Description.Value : current.Description;
-        var updated = new RecordPeriod(current.Id, period, description);
+        var timeZoneOffset = newTimeZoneOffset ?? current.TimeZoneOffset;
+        var updated = new RecordPeriod(current.Id, period, timeZoneOffset, description);
         if (!record.Periods.TryReplace(updated))
             return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("Period must not overlap other periods of the record.");
 

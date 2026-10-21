@@ -198,6 +198,10 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("start_at");
 
+                    b.Property<long>("TimeZoneOffsetTicks")
+                        .HasColumnType("bigint")
+                        .HasColumnName("time_zone_offset_ticks");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -453,13 +457,13 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
+                    b.Property<long>("TimeZoneOffsetTicks")
+                        .HasColumnType("bigint")
+                        .HasColumnName("time_zone_offset_ticks");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
-
-                    b.Property<long>("UtcOffsetTicks")
-                        .HasColumnType("bigint")
-                        .HasColumnName("utc_offset_ticks");
 
                     b.HasKey("UserId")
                         .HasName("user_settings_pk");

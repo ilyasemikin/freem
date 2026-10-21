@@ -220,6 +220,7 @@ internal sealed class RecordsRepository : IRecordRepository
 
             dbPeriod.StartAt = period.Period.StartAt;
             dbPeriod.EndAt = period.Period.EndAt;
+            dbPeriod.TimeZoneOffsetTicks = period.TimeZoneOffset.Ticks;
             dbPeriod.Description = period.Description?.ToString();
         }
     }

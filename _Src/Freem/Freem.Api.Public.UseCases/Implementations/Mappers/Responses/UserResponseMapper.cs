@@ -37,7 +37,7 @@ internal static class UserResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new UserSettingsResponse(result.Value.Settings.DayUtcOffset);
+        var response = new UserSettingsResponse(result.Value.Settings.TimeZoneOffset);
         return new OkObjectResult(response);
     }
 }

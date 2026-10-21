@@ -13,6 +13,7 @@ internal sealed class RecordPeriodEntity :
 
     public DateTimeOffset StartAt { get; set; }
     public DateTimeOffset EndAt { get; set; }
+    public long TimeZoneOffsetTicks { get; set; }
 
     public RecordEntity? Record { get; set; }
 
@@ -30,7 +31,8 @@ internal sealed class RecordPeriodEntity :
             RecordId == other.RecordId &&
             Description == other.Description &&
             StartAt.Equals(other.StartAt) &&
-            EndAt.Equals(other.EndAt);
+            EndAt.Equals(other.EndAt) &&
+            TimeZoneOffsetTicks == other.TimeZoneOffsetTicks;
     }
 
     public override bool Equals(object? obj)

@@ -70,7 +70,7 @@ public static class EntitiesJsonSerialization
 
         yield return new TimeStatisticsPerActivityCollectionJsonConverter();
 
-        yield return new ParsableJsonConverter<DayUtcOffset>();
+        yield return new ParsableJsonConverter<TimeZoneOffset>();
         yield return new ParsableJsonConverter<Nickname>();
 
         yield return new ParsableJsonConverter<UserId>();
