@@ -25,6 +25,7 @@
         <PackageReference Include="EgoHub.Api.Public.Client" Version="0.0.10"/>
         <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
         <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Locking" Version="0.1.0"/>
         <PackageReference Include="Utilities.Http.Errors" Version="0.0.2"/>
         <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
         <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>

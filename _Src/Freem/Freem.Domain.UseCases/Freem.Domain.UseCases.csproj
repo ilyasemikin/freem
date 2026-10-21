@@ -12,7 +12,6 @@
         <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
         <ProjectReference Include="..\Freem.Domain.UseCases.Contracts\Freem.Domain.UseCases.Contracts.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
-        <ProjectReference Include="..\Freem.Locking\Freem.Locking.csproj"/>
         <ProjectReference Include="..\Freem.Storage.Transactions\Freem.Storage.Transactions.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
     </ItemGroup>
@@ -20,6 +19,7 @@
     <ItemGroup>
         <PackageReference Include="Utilities.Clock" Version="0.1.0" />
         <PackageReference Include="Utilities.Errors" Version="0.0.1" />
+        <PackageReference Include="Utilities.Locking" Version="0.1.0" />
         <PackageReference Include="Utilities.Primitives" Version="0.0.3" />
         <PackageReference Include="Utilities.UseCases" Version="0.1.0" />
     </ItemGroup>

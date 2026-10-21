@@ -15,12 +15,10 @@ internal static class ConfigurationManagerExtensions
         };
     }
     
-    public static Freem.Locking.Redis.DependencyInjection.Microsoft.RedisConfiguration GetRedisLockingConfiguration(
-        this IConfiguration section)
+    public static string GetRedisConnectionString(this IConfiguration section)
     {
         var configuration = section.GetConfiguration();
-        return new Freem.Locking.Redis.DependencyInjection.Microsoft.RedisConfiguration(
-            configuration.Redis.ConnectionString);
+        return configuration.Redis.ConnectionString;
     }
     
     public static OpenApiConfiguration GetOpenApiConfiguration(this IConfiguration section)

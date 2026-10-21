@@ -6,11 +6,10 @@ using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Users.Settings;
-using Freem.Locking;
-using Freem.Locking.Extensions;
 using Freem.Storage.Transactions.Helpers;
 using Freem.Storage.Transactions.Helpers.Extensions;
 using Utilities.Errors;
+using Utilities.Locking;
 using Utilities.Primitives;
 using Utilities.UseCases.Abstractions;
 
@@ -19,14 +18,14 @@ namespace Freem.Domain.UseCases.Records;
 internal sealed class AddRecordPeriodUseCase
     : IRequestHandler<HandlerContext, AddRecordPeriodRequest, Result<AddRecordPeriodResponse, Error>>
 {
-    private readonly IDistributedLocker _locker;
+    private readonly ILocker _locker;
     private readonly IRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
     private readonly IRequestMediator<HandlerContext> _mediator;
 
     public AddRecordPeriodUseCase(
-        IDistributedLocker locker,
+        ILocker locker,
         IRecordRepository repository,
         EventProducer eventProducer,
         StorageTransactionRunner transactionRunner,
@@ -57,7 +56,11 @@ internal sealed class AddRecordPeriodUseCase
         if (!settingsResult.Success)
             return settingsResult.Error;
 
-        await using var @lock = await _locker.LockAsync(Lock.Prefix + request.RecordId, cancellationToken);
+        var lockResult = await _locker.LockAsync(Lock.Prefix + request.RecordId, cancellationToken);
+        if (!lockResult.Success)
+            return lockResult.Error;
+
+        await using var @lock = lockResult.Value;
 
         var ids = new RecordAndUserIds(request.RecordId, context.UserId);
         var result = await _repository.FindByMultipleIdAsync(ids, cancellationToken);

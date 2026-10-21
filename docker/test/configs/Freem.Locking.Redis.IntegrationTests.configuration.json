@@ -1,3 +1,0 @@
-{
-  "RedisConnectionString": "redis:6379,allowAdmin=true"
-}

@@ -6,8 +6,7 @@ using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.IntegrationTests.Infrastructure;
-using Freem.Domain.UseCases.IntegrationTests.Infrastructure.Locking;
-using Freem.Locking;
+using Utilities.Locking.InMemory.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -74,11 +73,12 @@ public sealed class TestContext
         services
             .AddUtcTruncatedToSecondsClock()
             .AddEntityIdNameConverters()
-            .AddSingleton<IDistributedLocker, EmptyDistributedLocker>()
             .AddPostgreSqlStorage(storageConfiguration)
             .AddEntitiesUseCases()
             .AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
         
+        services.AddInMemoryLocking();
+
         var options = new ServiceProviderOptions { ValidateOnBuild = true };
         
         return services.BuildServiceProvider(options);

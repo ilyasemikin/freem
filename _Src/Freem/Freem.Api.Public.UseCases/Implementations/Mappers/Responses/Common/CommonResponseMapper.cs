@@ -3,6 +3,7 @@ using Freem.Api.Public.Contracts.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
+using Utilities.Locking;
 using Utilities.Primitives;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
@@ -19,7 +20,8 @@ internal static class CommonResponseMapper
             return StatusCodes.Status401Unauthorized;
         if (type == DomainErrorCatalog.Types.EntityNotFound)
             return StatusCodes.Status404NotFound;
-        if (type == DomainErrorCatalog.Types.EntityAlreadyExists)
+        if (type == DomainErrorCatalog.Types.EntityAlreadyExists ||
+            type == LockingErrorCatalog.Types.LockAcquisitionFailed)
             return StatusCodes.Status409Conflict;
         if (type == DomainErrorCatalog.Types.RelatedEntitiesNotFound ||
             type == DomainErrorCatalog.Types.ActivityInvalidStatus ||

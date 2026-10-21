@@ -92,12 +92,11 @@ Freem.Domain.Entities                      # aggregates and comparers; aggregate
 Freem.Domain.UseCases(.Contracts)          # use cases (Utilities.UseCases handlers, Result<…, Error>) and their DTOs
 Freem.Domain.Storage                       # one repository interface per aggregate + its filters
 Freem.Domain.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
-Freem.Locking(.Redis)                      # locking abstractions + Redis implementation
 Freem.Storage.Transactions(.EFCore)        # storage transactions + EF Core implementation
 Freem.*                                    # small shared libraries (Time, Sorting, ...)
 ```
 
-Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`) come from a local NuGet feed:
+Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`, `Locking`, `Locking.Redis`, `Locking.InMemory`) come from a local NuGet feed:
 `_Src/Freem/Directory.Build.props` registers `_Src/Freem/packages/`, whose `.nupkg` files are not in git (only
 `.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
 `packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.

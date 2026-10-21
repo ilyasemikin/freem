@@ -11,7 +11,6 @@ using Freem.Domain.DependencyInjection;
 using Freem.Domain.Serialization.Json;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.DependencyInjection.Microsoft.Extensions;
-using Freem.Locking.Redis.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Authentication.EgoHub;
 using Freem.Api.Public.Build;
 using Freem.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
@@ -29,6 +28,7 @@ using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Utilities.Clock.DependencyInjection.Microsoft;
 using Utilities.Errors.Serialization.Json.Extensions;
+using Utilities.Locking.Redis.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,8 +79,9 @@ builder.Services
     .AddLogging();
 
 builder.Services
-    .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration())
-    .AddSimpleRedisDistributedLocks(builder.Configuration.GetRedisLockingConfiguration());
+    .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration());
+
+builder.Services.AddRedisLocking(builder.Configuration.GetRedisConnectionString());
 
 builder.Services
     .AddEntityIdNameConverters()

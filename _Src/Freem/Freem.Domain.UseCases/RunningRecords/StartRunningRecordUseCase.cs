@@ -5,11 +5,10 @@ using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Start;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
-using Freem.Locking;
-using Freem.Locking.Extensions;
 using Freem.Storage.Transactions.Helpers;
 using Freem.Storage.Transactions.Helpers.Extensions;
 using Utilities.Errors;
+using Utilities.Locking;
 using Utilities.Primitives;
 using Utilities.UseCases.Abstractions;
 
@@ -18,14 +17,14 @@ namespace Freem.Domain.UseCases.RunningRecords;
 internal sealed class StartRunningRecordUseCase 
     : IRequestHandler<HandlerContext, StartRunningRecordRequest, Result<StartRunningRecordResponse, Error>>
 {
-    private readonly IDistributedLocker _locker;
+    private readonly ILocker _locker;
     private readonly IRunningRecordRepository _repository;
     private readonly IRequestMediator<HandlerContext> _mediator;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public StartRunningRecordUseCase(
-        IDistributedLocker locker,
+        ILocker locker,
         IRunningRecordRepository repository, 
         IRequestMediator<HandlerContext> mediator, 
         EventProducer eventProducer, 
@@ -64,7 +63,11 @@ internal sealed class StartRunningRecordUseCase
                 return stopResult.Error;
         }
 
-        await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
+        var lockResult = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
+        if (!lockResult.Success)
+            return lockResult.Error;
+
+        await using var @lock = lockResult.Value;
 
         var writeResult = await RunTransactionAsync(context, record, cancellationToken);
         if (!writeResult.Success)

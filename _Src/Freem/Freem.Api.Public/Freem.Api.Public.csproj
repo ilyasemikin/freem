@@ -15,7 +15,6 @@
         <ProjectReference Include="..\Freem.Domain.Serialization.Json\Freem.Domain.Serialization.Json.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage.PostgreSQL\Freem.Domain.Storage.PostgreSQL.csproj"/>
         <ProjectReference Include="..\Freem.Domain.UseCases\Freem.Domain.UseCases.csproj"/>
-        <ProjectReference Include="..\Freem.Locking.Redis\Freem.Locking.Redis.csproj"/>
         <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
         <ProjectReference Include="..\Freem.Api.Public.Contracts\Freem.Api.Public.Contracts.csproj"/>
         <ProjectReference Include="..\Freem.Api.Public.UseCases\Freem.Api.Public.UseCases.csproj"/>
@@ -38,6 +37,7 @@
       <PackageReference Include="EgoHub.Authentication.AspNetCore" Version="0.0.1"/>
       <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
       <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+      <PackageReference Include="Utilities.Locking.Redis" Version="0.1.0"/>
       <PackageReference Include="Utilities.Errors.Serialization.Json" Version="0.0.1"/>
       <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
     </ItemGroup>

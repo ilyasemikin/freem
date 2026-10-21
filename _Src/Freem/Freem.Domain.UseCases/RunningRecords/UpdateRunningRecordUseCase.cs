@@ -5,11 +5,10 @@ using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Update;
-using Freem.Locking;
-using Freem.Locking.Extensions;
 using Freem.Storage.Transactions.Helpers;
 using Freem.Storage.Transactions.Helpers.Extensions;
 using Utilities.Errors;
+using Utilities.Locking;
 using Utilities.Primitives;
 using Utilities.UseCases.Abstractions;
 
@@ -18,13 +17,13 @@ namespace Freem.Domain.UseCases.RunningRecords;
 internal class UpdateRunningRecordUseCase 
     : IRequestHandler<HandlerContext, UpdateRunningRecordRequest, Result<Error>>
 {
-    private readonly IDistributedLocker _locker;
+    private readonly ILocker _locker;
     private readonly IRunningRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
 
     public UpdateRunningRecordUseCase(
-        IDistributedLocker locker,
+        ILocker locker,
         IRunningRecordRepository repository, 
         EventProducer eventProducer, 
         StorageTransactionRunner transactionRunner)
@@ -44,10 +43,14 @@ internal class UpdateRunningRecordUseCase
         HandlerContext context, UpdateRunningRecordRequest request,
         CancellationToken cancellationToken = default)
     {
-        await using var @lock = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
-
         if (!request.HasChanges())
             return DomainErrorCatalog.Factories.CreateNothingToDo();
+
+        var lockResult = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
+        if (!lockResult.Success)
+            return lockResult.Error;
+
+        await using var @lock = lockResult.Value;
         
         var id = RunningRecordId.FromUserId(context.UserId);
         var result = await _repository.FindByIdAsync(id, cancellationToken);
