@@ -1,6 +1,7 @@
 import {MouseEvent, useEffect, useRef, useState} from "react";
 import {Button} from "primereact/button";
 import {OverlayPanel} from "primereact/overlaypanel";
+import {useNavigate} from "react-router";
 import {useAuth} from "../authorization/context/useAuth.ts";
 import {useBackendClients} from "../clients/context/useBackendClients.ts";
 import {MeResponse} from "../clients/models/users/MeResponse.ts";
@@ -8,6 +9,7 @@ import {MeResponse} from "../clients/models/users/MeResponse.ts";
 export function AppHeader() {
   const {logout} = useAuth();
   const {user} = useBackendClients();
+  const navigate = useNavigate();
 
   const overlayRef = useRef<OverlayPanel>(null);
   const [nickname, setNickname] = useState<string | undefined>();
@@ -38,6 +40,11 @@ export function AppHeader() {
     overlayRef.current?.toggle(e);
   }
 
+  function openSettings() {
+    overlayRef.current?.hide();
+    navigate("/settings");
+  }
+
   async function signOut() {
     overlayRef.current?.hide();
     await logout();
@@ -54,6 +61,8 @@ export function AppHeader() {
               <span className="item-title">{nickname ?? "…"}</span>
             </div>
             <hr className="divider"/>
+            <Button text size="small" severity="secondary" icon="pi pi-cog" label="Settings" onClick={openSettings}
+                    style={{width: "100%", justifyContent: "flex-start"}}/>
             <Button text size="small" severity="secondary" icon="pi pi-sign-out" label="Log out" onClick={signOut}
                     style={{width: "100%", justifyContent: "flex-start"}}/>
           </div>

@@ -1,16 +1,13 @@
 ﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
 import {CustomButton} from "../../components/inputs/CustomButton.tsx";
-import {DateHelper} from "../../helpers/DateHelper.ts";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
 import {RecordUpdateModal} from "./RecordUpdateModal.tsx";
 import {IRecordEditorData} from "./RecordEditor.tsx";
 import {ExpandableItemPanel} from "../../components/ExpandableItemPanel.tsx";
 import {ActivitiesListPanel} from "../activities/ActivitiesListPanel.tsx";
 import {TimeDurationPanel} from "../../components/TimeDurationPanel.tsx";
-
-function formatTime(date: Date): string {
-  return DateHelper.toFormattedString(date).slice(0, 5);
-}
 
 export interface IRecordPanelProps {
   record: RecordEntity;
@@ -24,6 +21,7 @@ export function RecordPanel(props: IRecordPanelProps) {
   const {record, onUpdate, onDelete, onPeriodsChanged} = props;
 
   const {openDialog, closeDialog} = useDialog();
+  const {timeZoneOffset} = useUserSettings();
 
   function openEdit() {
     openDialog({
@@ -36,8 +34,7 @@ export function RecordPanel(props: IRecordPanelProps) {
     });
   }
 
-  const start = formatTime(record.startAt);
-  const end = formatTime(record.endAt);
+  const range = TimeZoneHelper.formatRange(record.startAt, record.endAt, timeZoneOffset);
   const periodsCount = record.periods.length;
 
   function renderContent() {
@@ -52,7 +49,7 @@ export function RecordPanel(props: IRecordPanelProps) {
           </div>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
             <span className="numeric muted" style={{fontSize: "13px", marginRight: "10px"}}>
-              {start} - {end}
+              {range}
             </span>
             <TimeDurationPanel duration={record.duration}/>
             <CustomButton onClick={openEdit}>
@@ -72,7 +69,7 @@ export function RecordPanel(props: IRecordPanelProps) {
                   key={item.id}
                   style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <span className="numeric muted" style={{fontSize: "13px", marginRight: "10px"}}>
-                  {formatTime(item.period.startAt)} - {formatTime(item.period.endAt)}
+                  {TimeZoneHelper.formatRange(item.period.startAt, item.period.endAt, timeZoneOffset)}
                 </span>
                 <span className="item-subtitle" style={{flex: 1}}>{item.description}</span>
                 <span className="numeric muted">{item.period.getDurationFormatted()}</span>

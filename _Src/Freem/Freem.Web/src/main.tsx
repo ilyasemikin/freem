@@ -10,6 +10,7 @@ import {DialogProvider} from "./dialog/context/DialogProvider.tsx";
 import {EntitiesCacheProvider} from "./cache/context/EntitiesCacheProvider.tsx";
 import {AuthProvider} from "./authorization/context/AuthProvider.tsx";
 import {AuthGate} from "./authorization/components/AuthGate.tsx";
+import {UserSettingsProvider} from "./settings/context/UserSettingsProvider.tsx";
 import "./main.css"
 
 const root = document.getElementById('root')!;
@@ -20,11 +21,13 @@ createRoot(root).render(
         <BackendClientsProvider>
           <AuthProvider>
             <AuthGate>
-              <EntitiesCacheProvider>
-                <DialogProvider>
-                  <RouterProvider router={router}/>
-                </DialogProvider>
-              </EntitiesCacheProvider>
+              <UserSettingsProvider>
+                <EntitiesCacheProvider>
+                  <DialogProvider>
+                    <RouterProvider router={router}/>
+                  </DialogProvider>
+                </EntitiesCacheProvider>
+              </UserSettingsProvider>
             </AuthGate>
           </AuthProvider>
         </BackendClientsProvider>

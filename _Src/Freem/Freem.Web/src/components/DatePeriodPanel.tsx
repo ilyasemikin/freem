@@ -6,9 +6,11 @@ import {DateHelper} from "../helpers/DateHelper.ts";
 import {DatePeriod} from "../data/DatePeriod.ts";
 import {Calendar} from "primereact/calendar";
 import {FormEvent} from "primereact/ts-helpers";
+import {TimeZoneHelper} from "../helpers/TimeZoneHelper.ts";
 
 export interface IDatePeriodProps {
   unit: DateUnit;
+  // Date without time (00:00 UTC of the user's day)
   date: Date;
 
   onChange?: (period: DatePeriod) => void;
@@ -40,29 +42,15 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
     panelRef.current?.hide();
 
     if (onChange) {
-      const value = e.value === null
+      const value = e.value === null || e.value === undefined
           ? undefined
-          : e.value
+          : TimeZoneHelper.dateFromCalendarValue(e.value);
       change(value);
     }
   }
 
   function changeByDiff(diff: number) {
-    const changed = new Date(date);
-
-    switch (unit) {
-      case DateUnit.Day: {
-        changed.setDate(date.getDate() + diff);
-        break;
-      }
-      case DateUnit.Month: {
-        changed.setMonth(date.getMonth() + diff);
-        break;
-      }
-      case DateUnit.Year: {
-        changed.setFullYear(date.getFullYear() + diff);
-      }
-    }
+    const changed = DateHelper.addUnits(unit, date, diff);
 
     if (onChange) {
       change(changed)
@@ -70,9 +58,9 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
   }
 
   function current() {
-    const day = DateHelper.padPart(date.getDate());
-    const month = DateHelper.padPart(date.getMonth() + 1);
-    const year = date.getFullYear();
+    const day = DateHelper.padPart(date.getUTCDate());
+    const month = DateHelper.padPart(date.getUTCMonth() + 1);
+    const year = date.getUTCFullYear();
 
     switch (unit) {
       case DateUnit.Day:
@@ -113,7 +101,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
         <PopoverPanel ref={panelRef}>
           <Calendar
               view={view()}
-              value={date}
+              value={TimeZoneHelper.dateToCalendarValue(date)}
               onChange={changeByCalendar}
               inline/>
         </PopoverPanel>

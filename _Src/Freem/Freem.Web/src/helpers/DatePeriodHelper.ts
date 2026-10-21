@@ -4,9 +4,9 @@ import {DateUnitPeriod} from "../clients/models/statistics/DateUnitPeriod.ts";
 
 export class DatePeriodHelper {
   public static toPerPeriodRequest(unit: DateUnit, period: DatePeriod): DateUnitPeriod {
-    const day = period.start.getDate();
-    const month = period.start.getMonth() + 1;
-    const year = period.start.getFullYear();
+    const day = period.start.getUTCDate();
+    const month = period.start.getUTCMonth() + 1;
+    const year = period.start.getUTCFullYear();
 
     switch (unit) {
       case DateUnit.Day:

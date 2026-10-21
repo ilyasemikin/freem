@@ -4,6 +4,8 @@ import {DateUnit} from "../../data/DateUnit.ts";
 import {useState} from "react";
 import {DateHelper} from "../../helpers/DateHelper.ts";
 import {DatePeriodPanel} from "../DatePeriodPanel.tsx";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 
 export interface IDatePeriodPickerProps {
   onChange?: (unit: DateUnit, period: DatePeriod) => void;
@@ -12,16 +14,18 @@ export interface IDatePeriodPickerProps {
 export function DatePeriodPicker(props: IDatePeriodPickerProps) {
   const {onChange} = props;
 
+  const {timeZoneOffset} = useUserSettings();
+
   const [unit, setUnit] = useState<DateUnit>(DateUnit.Day);
-  const [start, setStart] = useState<Date>(new Date());
+  const [start, setStart] = useState<Date>(() => TimeZoneHelper.today(timeZoneOffset));
 
   function changeUnit(value: DateUnit) {
     setUnit(value);
 
-    const now = new Date();
-    setStart(now);
+    const today = TimeZoneHelper.today(timeZoneOffset);
+    setStart(today);
     if (onChange) {
-      const period = DateHelper.getPeriod(value, now);
+      const period = DateHelper.getPeriod(value, today);
       onChange(value, period);
     }
   }
@@ -29,7 +33,6 @@ export function DatePeriodPicker(props: IDatePeriodPickerProps) {
   function change(period: DatePeriod) {
     setStart(period.start);
     if (onChange) {
-      const period = DateHelper.getPeriod(unit, start);
       onChange(unit, period);
     }
   }

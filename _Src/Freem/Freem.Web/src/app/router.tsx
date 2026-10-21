@@ -4,6 +4,7 @@ import {TagsDashboard} from "../pages/tags/TagsDashboard.tsx";
 import {RecordsDashboard} from "../pages/records/RecordsDashboard.tsx";
 import {StatisticsDashboard} from "../pages/statistics/StatisticsDashboard.tsx";
 import {Dashboard} from "../pages/home/Dashboard.tsx";
+import {SettingsPage} from "../pages/settings/SettingsPage.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -30,5 +31,10 @@ export const router = createBrowserRouter([
     path: "/tags",
     element:
         <TagsDashboard/>
+  },
+  {
+    path: "/settings",
+    element:
+        <SettingsPage/>
   }
 ]);

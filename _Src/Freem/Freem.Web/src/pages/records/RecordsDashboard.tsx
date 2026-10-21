@@ -17,6 +17,8 @@ import {DateUnit} from "../../data/DateUnit.ts";
 import {DatePeriod} from "../../data/DatePeriod.ts";
 import {Divider} from "../../components/Divider.tsx";
 import {RecordListGrouped} from "./RecordListGrouped.tsx";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 
 export interface IRecordsDashboardProps {
   version?: number;
@@ -29,8 +31,11 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
   const [error, setError] = useState<string | undefined>();
   const [update, setUpdate] = useState(false);
 
+  const {timeZoneOffset} = useUserSettings();
+
   const [, setUnit] = useState<DateUnit>(DateUnit.Day);
-  const [period, setPeriod] = useState<DatePeriod>(DateHelper.getPeriod(DateUnit.Day, new Date()));
+  const [period, setPeriod] = useState<DatePeriod>(
+      () => DateHelper.getPeriod(DateUnit.Day, TimeZoneHelper.today(timeZoneOffset)));
   const [records, setRecords] = useState<RecordEntity[] | undefined>(undefined);
 
   const {openDialog, closeDialog} = useDialog();
@@ -41,7 +46,9 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
     let current = true;
 
     async function load() {
-      const request = new ListRecordByPeriodRequest(period.toString())
+      const moments = TimeZoneHelper.toDateTimePeriod(period, timeZoneOffset);
+      const value = moments.toString();
+      const request = new ListRecordByPeriodRequest(value);
       const entities = await cache.records.listByPeriodRequest(request);
 
       if (current) {
@@ -63,7 +70,7 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
     return () => {
       current = false;
     };
-  }, [update, version, period, cache.records]);
+  }, [update, version, period, timeZoneOffset, cache.records]);
 
   function openAdd() {
     openDialog({

@@ -2,7 +2,10 @@
 import {FormEvent} from "primereact/ts-helpers";
 import {ValidationError} from "../ValidationError.tsx";
 import {CSSProperties} from "react";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
 
+// Values are moments; the calendar shows and takes them in the user's time zone
 export interface IDatePickerProps {
   style?: CSSProperties;
   placeholder?: string;
@@ -18,11 +21,19 @@ export interface IDatePickerProps {
 export function DatePicker(props: IDatePickerProps) {
   const {style, placeholder, value, error, showTime, disabled, minValue, maxValue, onChange} = props;
 
+  const {timeZoneOffset} = useUserSettings();
+
+  function toCalendarValue(moment?: Date) {
+    return moment === undefined
+        ? undefined
+        : TimeZoneHelper.toCalendarValue(moment, timeZoneOffset);
+  }
+
   function change(e: FormEvent<Date>) {
     if (onChange) {
-      const value = e.value === null
+      const value = e.value === null || e.value === undefined
           ? undefined
-          : e.value;
+          : TimeZoneHelper.fromCalendarValue(e.value, timeZoneOffset);
       onChange(value);
     }
   }
@@ -31,14 +42,14 @@ export function DatePicker(props: IDatePickerProps) {
       <div style={{...style, marginBottom: "8px"}}>
         <Calendar
             placeholder={placeholder}
-            value={value}
+            value={toCalendarValue(value)}
             showTime={showTime}
             disabled={disabled}
             dateFormat="dd/mm/yy"
             showSeconds
             hourFormat="24"
-            minDate={minValue}
-            maxDate={maxValue}
+            minDate={toCalendarValue(minValue)}
+            maxDate={toCalendarValue(maxValue)}
             onChange={change}/>
         {error !== undefined && <ValidationError error={error}/>}
       </div>

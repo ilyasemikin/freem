@@ -13,6 +13,8 @@ import {StatisticsPerPeriodRequest} from "../../clients/models/statistics/Statis
 import {DatePeriodHelper} from "../../helpers/DatePeriodHelper.ts";
 import {StatisticsPerPeriodEntity} from "../../entities/StatisticsPerPeriodEntity.ts";
 import {StatisticsPerActivityChart} from "./StatisticsPerActivityChart.tsx";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 
 export interface IStatisticsDashboardProps {
   version?: number;
@@ -24,12 +26,16 @@ export function StatisticsDashboard(props: IStatisticsDashboardProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
 
+  const {timeZoneOffset} = useUserSettings();
+
   const [unit, setUnit] = useState<DateUnit>(DateUnit.Day);
-  const [period, setPeriod] = useState<DatePeriod>(DateHelper.getPeriod(DateUnit.Day, new Date()));
+  const [period, setPeriod] = useState<DatePeriod>(
+      () => DateHelper.getPeriod(DateUnit.Day, TimeZoneHelper.today(timeZoneOffset)));
   const [entity, setEntity] = useState<StatisticsPerPeriodEntity | undefined>();
 
   const cache = useEntitiesCache();
 
+  // The server computes day bounds from the offset, so a new offset needs a reload
   useEffect(() => {
     let current = true;
 
@@ -57,7 +63,7 @@ export function StatisticsDashboard(props: IStatisticsDashboardProps) {
     return () => {
       current = false;
     };
-  }, [unit, version, period, cache.statistics]);
+  }, [unit, version, period, timeZoneOffset, cache.statistics]);
 
   function changePeriod(unit: DateUnit, value: DatePeriod) {
     setUnit(unit);

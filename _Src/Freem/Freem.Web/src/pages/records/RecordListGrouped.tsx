@@ -1,17 +1,17 @@
 ﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
-import {DateHelper} from "../../helpers/DateHelper.ts";
 import {useMemo} from "react";
 import {RecordList} from "./RecordList.tsx";
+import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {TimeZoneOffset} from "../../data/TimeZoneOffset.ts";
+import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 
-function formatDate(date: Date): string {
-  const day = DateHelper.padPart(date.getDate());
-  const month = DateHelper.padPart(date.getMonth() + 1);
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
+// ISO date of the user's day: sorts chronologically
+function getDayKey(moment: Date, offset: TimeZoneOffset): string {
+  const date = TimeZoneHelper.toDate(moment, offset);
+  return date.toISOString().slice(0, 10);
 }
 
-function group(groupRecords: boolean, records: RecordEntity[]): RecordEntity[][] {
+function group(groupRecords: boolean, records: RecordEntity[], offset: TimeZoneOffset): RecordEntity[][] {
   if (!groupRecords) {
     return [records];
   }
@@ -19,7 +19,7 @@ function group(groupRecords: boolean, records: RecordEntity[]): RecordEntity[][]
   const groups = new Map<string, RecordEntity[]>();
 
   for (const record of records) {
-    const key = formatDate(record.startAt);
+    const key = getDayKey(record.startAt, offset);
 
     if (!groups.has(key)) {
       groups.set(key, []);
@@ -43,13 +43,18 @@ export interface IRecordListGroupedProps {
 export function RecordListGrouped(props: IRecordListGroupedProps) {
   const {groupRecords, records, onUpdate, onDelete} = props;
 
-  const groups = useMemo(() => group(groupRecords, records), [groupRecords, records]);
+  const {timeZoneOffset} = useUserSettings();
+
+  const groups = useMemo(
+      () => group(groupRecords, records, timeZoneOffset),
+      [groupRecords, records, timeZoneOffset]);
 
   function render(group: RecordEntity[]) {
     const start = group[0]?.startAt ?? new Date();
-    const key = formatDate(start);
+    const key = getDayKey(start, timeZoneOffset);
+    const day = TimeZoneHelper.toDate(start, timeZoneOffset);
     const date = groupRecords
-        ? key
+        ? TimeZoneHelper.formatDate(day)
         : undefined;
 
     return (
