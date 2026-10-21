@@ -72,7 +72,10 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; EgoHub address and token come from `docker/test/.env` (see `.env.example`); each test assembly has its own database `freem_{storage,usecases,api}_test`, because assemblies run in parallel and truncate tables). `TruncateTables` refuses a
   database whose name does not end with `_test`. The committed `configuration.json` files of the test projects hold
   empty placeholders for local runs against `develop` (use a `*_test` database).
-- Do not spend time on manual browser passes once build and tests pass; ask first.
+- Do not spend time on manual browser passes once build and tests pass; ask first. When the user agrees, follow
+  `skills/web-manual-test/SKILL.md` (Playwright MCP from `.mcp.json`, `scripts/web-env-check.sh`, `scripts/dev-account.sh`;
+  subagents must `Read` the `SKILL.md`). The dev account credentials are `FREEM_DEV_USERNAME`/`FREEM_DEV_PASSWORD` in
+  `docker/develop/.env`; agents may also create extra accounts when a check needs a clean state.
 
 ## Repository Layout
 
