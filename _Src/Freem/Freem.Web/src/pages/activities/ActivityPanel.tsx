@@ -3,6 +3,7 @@ import {IActivityEditorData} from "./ActivityEditor.tsx";
 import {ActivityUpdateModal} from "./ActivityUpdateModal.tsx";
 import {CustomButton} from "../../components/inputs/CustomButton.tsx";
 import {ItemPanel} from "../../components/ItemPanel.tsx";
+import {ColorDot} from "../../components/ColorDot.tsx";
 import {useDialog} from "../../dialog/context/useDialog.ts";
 
 export interface IActivityPanelProps {
@@ -38,8 +39,11 @@ export function ActivityPanel(props: IActivityPanelProps) {
   }
 
   return (
-      <ItemPanel>
-        <span className="item-title">{activity.name}</span>
+      <ItemPanel color={activity.color}>
+        <span className="item-title">
+          <ColorDot color={activity.color}/>
+          {activity.name}
+        </span>
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <CustomButton label="Start" onClick={start}>
             <span style={{fontSize: "25px"}} className="pi pi-play-circle"/>

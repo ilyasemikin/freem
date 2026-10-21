@@ -1,0 +1,64 @@
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.color-picker-swatch,
+.color-picker-custom {
+  position: relative;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background-clip: padding-box;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-picker-swatch:hover:not(:disabled),
+.color-picker-custom:hover {
+  transform: scale(1.12);
+}
+
+.color-picker-swatch[aria-checked="true"],
+.color-picker-custom--selected {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text-muted);
+}
+
+.color-picker-swatch:focus-visible,
+.color-picker-custom:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.color-picker-swatch:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.color-picker-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--text-faint);
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.color-picker-custom--selected {
+  border-color: transparent;
+}
+
+.color-picker-custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}

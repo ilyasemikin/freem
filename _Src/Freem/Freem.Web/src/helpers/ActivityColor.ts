@@ -12,12 +12,14 @@ const palette = [
 ];
 
 export class ActivityColor {
-  public static fromId(id: string): string {
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-    }
+  public static readonly palette: readonly string[] = palette;
 
-    return palette[hash % palette.length];
+  public static random(): string {
+    const index = Math.floor(Math.random() * palette.length);
+    return palette[index];
+  }
+
+  public static isFromPalette(color: string): boolean {
+    return palette.includes(color.toLowerCase());
   }
 }

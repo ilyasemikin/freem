@@ -4,6 +4,7 @@ import {AutoComplete, AutoCompleteChangeEvent, AutoCompleteCompleteEvent} from "
 import {FindActivityByNameRequest} from "../../clients/models/activities/FindActivityByNameRequest.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {ValidationError} from "../ValidationError.tsx";
+import {ColorDot} from "../ColorDot.tsx";
 
 export interface IActivitiesPickerProps {
   loading?: boolean;
@@ -38,11 +39,11 @@ export function ActivitiesPicker(props: IActivitiesPickerProps) {
   }
 
   function itemTemplate(activity: ActivityEntity) {
-    return (<span>{activity.name}</span>);
+    return (<span><ColorDot color={activity.color}/>{activity.name}</span>);
   }
 
   function selectedItemTemplate(activity: ActivityEntity) {
-    return (<span>{activity.name}</span>)
+    return (<span><ColorDot color={activity.color}/>{activity.name}</span>)
   }
 
   return (

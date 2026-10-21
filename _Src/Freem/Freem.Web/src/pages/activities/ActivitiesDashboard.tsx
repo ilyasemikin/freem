@@ -110,7 +110,7 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
   }
 
   async function addActivity(data: IActivityEditorData) {
-    const request = new CreateActivityRequest(data.name, data.tagIds);
+    const request = new CreateActivityRequest(data.name, data.color, data.tagIds);
     const response = await clients.activities.create(request);
 
     if (response.ok) {
@@ -121,9 +121,10 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
 
   async function updateActivity(id: string, data: IActivityEditorData) {
     const nameUpdateField = new UpdateField(data.name);
+    const colorUpdateField = new UpdateField(data.color);
     const tagsUpdateField = new UpdateField(data.tagIds);
 
-    const request = new UpdateActivityRequest(nameUpdateField, tagsUpdateField);
+    const request = new UpdateActivityRequest(nameUpdateField, colorUpdateField, tagsUpdateField);
     const response = await clients.activities.update(id, request);
 
     if (response.ok) {

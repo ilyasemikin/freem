@@ -3,6 +3,8 @@ import {ActivityEntity} from "../../entities/ActivityEntity.ts";
 import {InputText} from "../../components/inputs/InputText.tsx";
 import {TagsPicker} from "../../components/inputs/TagsPicker.tsx";
 import {TagEntity} from "../../entities/TagEntity.ts";
+import {ColorPicker} from "../../components/inputs/ColorPicker.tsx";
+import {ActivityColor} from "../../helpers/ActivityColor.ts";
 
 export interface IActivityEditorHandle {
   validate: () => boolean;
@@ -17,11 +19,13 @@ export interface IActivityEditorProps {
 
 export interface IActivityEditorData {
   name: string;
+  color: string;
   tagIds: string[];
 }
 
 export interface IActivityEditorInternalData {
   name: string;
+  color: string;
   tags: TagEntity[];
 }
 
@@ -34,6 +38,7 @@ export const ActivityEditor = forwardRef<IActivityEditorHandle, IActivityEditorP
 
   const [data, setData] = useState<IActivityEditorInternalData>({
     name: activity?.name || "",
+    color: activity?.color ?? ActivityColor.random(),
     tags: activity?.tags ?? [],
   });
 
@@ -55,6 +60,7 @@ export const ActivityEditor = forwardRef<IActivityEditorHandle, IActivityEditorP
       const tagIds = data.tags.map(tag => tag.id);
       return {
         name: data.name,
+        color: data.color,
         tagIds: tagIds
       };
     }
@@ -68,6 +74,13 @@ export const ActivityEditor = forwardRef<IActivityEditorHandle, IActivityEditorP
 
     setData(newData);
     setValidationResult({});
+  }
+
+  function changeColor(value: string) {
+    setData({
+      ...data,
+      color: value
+    });
   }
 
   function changeTags(value: TagEntity[]) {
@@ -90,6 +103,10 @@ export const ActivityEditor = forwardRef<IActivityEditorHandle, IActivityEditorP
             value={data.name}
             error={validationResult.nameError}
             onChange={change}/>
+        <ColorPicker
+            disabled={loading}
+            value={data.color}
+            onChange={changeColor}/>
         <TagsPicker
             loading={loading}
             tags={data.tags}

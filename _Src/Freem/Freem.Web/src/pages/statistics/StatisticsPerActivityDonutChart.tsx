@@ -1,6 +1,5 @@
 ﻿import {StatisticsPerActivityEntity} from "../../entities/StatisticsPerActivityEntity.ts";
 import {ReactNode, useState} from "react";
-import {ActivityColor} from "../../helpers/ActivityColor.ts";
 
 export interface IStatisticsPerActivityDonutChartProps {
   activities?: StatisticsPerActivityEntity[];
@@ -23,7 +22,7 @@ class Sector {
   public constructor(entity: StatisticsPerActivityEntity, angle: number) {
     this.entity = entity;
     this.angle = angle;
-    this.color = ActivityColor.fromId(entity.activity.id);
+    this.color = entity.activity.color;
   }
 }
 

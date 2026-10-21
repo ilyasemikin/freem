@@ -123,6 +123,14 @@ body {
   gap: 12px;
 }
 
+.item--colored {
+  border-color: color-mix(in srgb, var(--item-color) 45%, var(--border));
+}
+
+.item--colored:hover {
+  border-color: var(--item-color);
+}
+
 .item--running {
   background: var(--accent-soft);
   border-color: var(--accent);
@@ -130,6 +138,27 @@ body {
 
 .item--running:hover {
   background: var(--accent-soft);
+}
+
+.item--running.item--colored {
+  background: color-mix(in srgb, var(--item-color) 12%, var(--surface));
+  border-width: 2px;
+  border-color: var(--item-color);
+  padding: 11px 13px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--item-color) 18%, transparent);
+}
+
+.item--running.item--colored:hover {
+  background: color-mix(in srgb, var(--item-color) 12%, var(--surface));
+}
+
+.color-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: baseline;
 }
 
 .item-title {
