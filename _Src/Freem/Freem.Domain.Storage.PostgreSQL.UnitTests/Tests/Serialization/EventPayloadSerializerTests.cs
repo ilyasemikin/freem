@@ -43,6 +43,7 @@ public sealed class EventPayloadSerializerTests
         {
             var id = EventId.Generate();
             var activityName = ActivityName.Parse("activity", null);
+            var activityColor = ActivityColor.Parse("#6366f1", null);
             var recordName = RecordName.Parse("record", null);
             var recordDescription = RecordDescription.Parse("description", null);
             var tagName = TagName.Parse("tag", null);
@@ -51,8 +52,8 @@ public sealed class EventPayloadSerializerTests
 
             return new TheoryData<EntityEvent>
             {
-                new ActivityCreatedEvent(id) { ActivityId = ActivityId, Name = activityName, Status = ActivityStatus.Active, TagIds = TagIds },
-                new ActivityUpdatedEvent(id) { ActivityId = ActivityId, Name = activityName, Status = ActivityStatus.Archived, TagIds = [] },
+                new ActivityCreatedEvent(id) { ActivityId = ActivityId, Name = activityName, Color = activityColor, Status = ActivityStatus.Active, TagIds = TagIds },
+                new ActivityUpdatedEvent(id) { ActivityId = ActivityId, Name = activityName, Color = activityColor, Status = ActivityStatus.Archived, TagIds = [] },
                 new ActivityRemovedEvent(id) { ActivityId = ActivityId },
                 new ActivityArchivedEvent(id) { ActivityId = ActivityId },
                 new ActivityUnarchivedEvent(id) { ActivityId = ActivityId },

@@ -32,6 +32,12 @@ internal sealed class ActivityEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired();
 
         builder
+            .Property(e => e.Color)
+            .HasMaxLength(ActivityColor.Length)
+            .HasColumnName(EntitiesNames.Activities.Properties.Color)
+            .IsRequired();
+
+        builder
             .Property(e => e.Status)
             .HasColumnName(EntitiesNames.Activities.Properties.Status)
             .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.Activities.Models.Status}")

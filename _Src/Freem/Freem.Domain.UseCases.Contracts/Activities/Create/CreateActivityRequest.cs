@@ -12,6 +12,7 @@ public sealed class CreateActivityRequest : IRequest
     private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
     
     public ActivityName Name { get; }
+    public ActivityColor Color { get; }
 
     public RelatedTagIdsCollection Tags
     {
@@ -24,10 +25,12 @@ public sealed class CreateActivityRequest : IRequest
         }
     }
 
-    public CreateActivityRequest(ActivityName name)
+    public CreateActivityRequest(ActivityName name, ActivityColor color)
     {
         ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(color);
         
         Name = name;
+        Color = color;
     }
 }

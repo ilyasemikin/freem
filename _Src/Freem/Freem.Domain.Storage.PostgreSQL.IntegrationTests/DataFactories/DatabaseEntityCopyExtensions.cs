@@ -11,6 +11,7 @@ internal static class DatabaseEntityCopyExtensions
             Id = entity.Id,
             UserId = entity.UserId,
             Name = entity.Name,
+            Color = entity.Color,
             Status = entity.Status,
             User = entity.User,
             Tags = entity.Tags?.ToList(),

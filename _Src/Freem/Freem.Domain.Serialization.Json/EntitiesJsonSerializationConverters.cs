@@ -50,6 +50,7 @@ public static class EntitiesJsonSerialization
         
         yield return new ParsableJsonConverter<ActivityId>();
         yield return new ParsableJsonConverter<ActivityName>();
+        yield return new ParsableJsonConverter<ActivityColor>();
         yield return new ParsableJsonConverter<ActivityStatus>();
 
         yield return new ParsableJsonConverter<EventId>();

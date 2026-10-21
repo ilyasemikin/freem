@@ -7,6 +7,6 @@ internal static class ActivityMapper
 {
     public static ActivityResponse Map(this Activity activity)
     {
-        return new ActivityResponse(activity.Id, activity.Name, activity.Status, activity.Tags);
+        return new ActivityResponse(activity.Id, activity.Name, activity.Color, activity.Status, activity.Tags);
     }
 }

@@ -18,10 +18,12 @@ public sealed class ActivitiesPreparer
         _context = context;
     }
 
+    private static readonly ActivityColor DefaultColor = ActivityColor.Parse("#6366f1", null);
+
     public async Task<ActivityId> CreateAsync(string name = "name0")
     {
         var activityName = ActivityName.Parse(name, null);
-        var request = new CreateActivityRequest(activityName);
+        var request = new CreateActivityRequest(activityName, DefaultColor);
         var response = await _context.Client.Activities.CreateAsync(request);
 
         return response.Unwrap().Id;
@@ -39,7 +41,7 @@ public sealed class ActivitiesPreparer
             var name = $"name{i}";
             var activityName = ActivityName.Parse(name, null);
             
-            var request = new CreateActivityRequest(activityName, tags);
+            var request = new CreateActivityRequest(activityName, DefaultColor, tags);
             var response = await _context.Client.Activities.CreateAsync(request);
 
             ids[i] = response.Unwrap().Id;

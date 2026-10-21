@@ -30,12 +30,14 @@ public sealed class ActivitiesExecutor
         return response.Activity;
     }
 
+    private static readonly ActivityColor DefaultColor = ActivityColor.Parse("#6366f1", null);
+
     public async Task<Activity> CreateAsync(HandlerContext context)
     {
         var value = Guid.NewGuid().ToString();
         var name = ActivityName.Parse(value, null);
 
-        var request = new CreateActivityRequest(name);
+        var request = new CreateActivityRequest(name, DefaultColor);
         return await CreateAsync(context, request);
     }
 

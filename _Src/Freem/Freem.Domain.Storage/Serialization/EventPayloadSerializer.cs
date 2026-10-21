@@ -40,9 +40,9 @@ public static class EventPayloadSerializer
         switch (@event)
         {
             case ActivityCreatedEvent e:
-                return SerializeActivity(e.Name, e.Status, e.TagIds);
+                return SerializeActivity(e.Name, e.Color, e.Status, e.TagIds);
             case ActivityUpdatedEvent e:
-                return SerializeActivity(e.Name, e.Status, e.TagIds);
+                return SerializeActivity(e.Name, e.Color, e.Status, e.TagIds);
             case ActivityRemovedEvent:
             case ActivityArchivedEvent:
             case ActivityUnarchivedEvent:
@@ -108,6 +108,7 @@ public static class EventPayloadSerializer
             {
                 ActivityId = ActivityId.Parse(entityRef, null),
                 Name = payload.Get(nameof(ActivityCreatedEvent.Name), ActivityName.Parse),
+                Color = payload.GetOptional(nameof(ActivityCreatedEvent.Color), ActivityColor.Parse),
                 Status = payload.Get(nameof(ActivityCreatedEvent.Status), ActivityStatus.Parse),
                 TagIds = payload.GetList(nameof(ActivityCreatedEvent.TagIds), TagId.Parse)
             };
@@ -116,6 +117,7 @@ public static class EventPayloadSerializer
             {
                 ActivityId = ActivityId.Parse(entityRef, null),
                 Name = payload.Get(nameof(ActivityUpdatedEvent.Name), ActivityName.Parse),
+                Color = payload.GetOptional(nameof(ActivityUpdatedEvent.Color), ActivityColor.Parse),
                 Status = payload.Get(nameof(ActivityUpdatedEvent.Status), ActivityStatus.Parse),
                 TagIds = payload.GetList(nameof(ActivityUpdatedEvent.TagIds), TagId.Parse)
             };
@@ -270,10 +272,11 @@ public static class EventPayloadSerializer
     }
 
     private static EventPayload SerializeActivity(
-        ActivityName name, ActivityStatus status, IEnumerable<TagId> tagIds)
+        ActivityName name, ActivityColor? color, ActivityStatus status, IEnumerable<TagId> tagIds)
     {
         return new EventPayload(Policy)
             .Set(nameof(ActivityCreatedEvent.Name), name)
+            .Set(nameof(ActivityCreatedEvent.Color), color)
             .Set(nameof(ActivityCreatedEvent.Status), status)
             .SetList(nameof(ActivityCreatedEvent.TagIds), tagIds);
     }

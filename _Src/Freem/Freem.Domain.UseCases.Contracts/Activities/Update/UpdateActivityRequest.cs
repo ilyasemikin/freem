@@ -13,6 +13,8 @@ public sealed class UpdateActivityRequest : IRequest
     public ActivityId Id { get; }
     
     public UpdateField<ActivityName>? Name { get; init; }
+
+    public UpdateField<ActivityColor>? Color { get; init; }
     
     public UpdateField<RelatedTagIdsCollection>? Tags { get; init; }
 
@@ -25,6 +27,6 @@ public sealed class UpdateActivityRequest : IRequest
 
     public bool HasChanges()
     {
-        return Name is not null || Tags is not null;
+        return Name is not null || Color is not null || Tags is not null;
     }
 }

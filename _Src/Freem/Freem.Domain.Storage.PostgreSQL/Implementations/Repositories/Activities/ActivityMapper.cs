@@ -18,6 +18,7 @@ internal static class ActivityMapper
         {
             Id = activity.Id.ToString(),
             Name = activity.Name.ToString(),
+            Color = activity.Color.ToString(),
             Status = MapToDatabaseEntityStatus(activity.Status),
             UserId = activity.UserId.ToString()
         };
@@ -38,9 +39,10 @@ internal static class ActivityMapper
         var id = ActivityId.Parse(entity.Id, null);
         var userId = UserId.Parse(entity.UserId, null);
         var name = ActivityName.Parse(entity.Name, null);
+        var color = ActivityColor.Parse(entity.Color, null);
         var tags = MapToDomainRelatedTags(entity);
         
-        return new Activity(id, userId, name, tags, MapToDomainEntityStatus(entity.Status));
+        return new Activity(id, userId, name, color, tags, MapToDomainEntityStatus(entity.Status));
     }
     
     public static EntityActivityStatus MapToDomainEntityStatus(this DatabaseActivityStatus status)

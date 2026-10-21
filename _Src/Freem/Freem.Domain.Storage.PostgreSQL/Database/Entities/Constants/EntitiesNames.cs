@@ -75,6 +75,7 @@ internal static class EntitiesNames
             public const string Id = "id";
             public const string UserId = "user_id";
             public const string Name = "name";
+            public const string Color = "color";
             public const string Status = "status";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";

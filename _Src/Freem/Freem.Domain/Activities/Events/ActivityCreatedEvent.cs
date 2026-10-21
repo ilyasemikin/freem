@@ -16,6 +16,7 @@ public sealed class ActivityCreatedEvent : EntityEvent
 
     public required ActivityId ActivityId { get; init; }
     public required ActivityName Name { get; init; }
+    public ActivityColor? Color { get; init; }
     public required ActivityStatus Status { get; init; }
     public required IReadOnlyList<TagId> TagIds { get; init; }
 }

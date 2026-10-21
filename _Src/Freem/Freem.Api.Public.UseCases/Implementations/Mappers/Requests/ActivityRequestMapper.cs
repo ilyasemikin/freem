@@ -23,7 +23,7 @@ internal static class ActivityRequestMapper
     public static CreateActivityRequest Map(this ApiCreateActivityRequest request)
     {
         var tags = new RelatedTagIdsCollection(request.Body.Tags);
-        return new CreateActivityRequest(request.Body.Name)
+        return new CreateActivityRequest(request.Body.Name, request.Body.Color)
         {
             Tags = tags
         };
@@ -69,6 +69,7 @@ internal static class ActivityRequestMapper
         return new UpdateActivityRequest(request.Id)
         {
             Name = body.Name?.Map(),
+            Color = body.Color?.Map(),
             Tags = tags
         };
     }

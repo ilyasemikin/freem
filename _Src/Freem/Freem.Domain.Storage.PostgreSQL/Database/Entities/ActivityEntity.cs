@@ -14,6 +14,7 @@ internal sealed class ActivityEntity :
     public required string UserId { get; init; }
 
     public required string Name { get; set; }
+    public required string Color { get; set; }
 
     public required ActivityStatusDb Status { get; set; }
 
@@ -36,6 +37,7 @@ internal sealed class ActivityEntity :
             Id == other.Id &&
             UserId == other.UserId &&
             Name == other.Name &&
+            Color == other.Color &&
             Status == other.Status &&
             Tags.NullableUnorderedEquals(other.Tags) &&
             UpdatedAt.HasValue == other.UpdatedAt.HasValue;

@@ -57,6 +57,8 @@ internal sealed class UpdateActivityUseCase
         var activity = result.Value;
         if (request.Name is not null)
             activity.Name = request.Name;
+        if (request.Color is not null)
+            activity.Color = request.Color;
         if (request.Tags is not null)
             activity.Tags.Update(request.Tags);
 

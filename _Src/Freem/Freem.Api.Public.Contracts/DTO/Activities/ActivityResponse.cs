@@ -12,6 +12,8 @@ public sealed class ActivityResponse
     public ActivityId Id { get; }
     /// <summary>Activity name.</summary>
     public ActivityName Name { get; }
+    /// <summary>Activity color as a <c>#rrggbb</c> hex string.</summary>
+    public ActivityColor Color { get; }
     /// <summary>Whether the activity is active or archived.</summary>
     public ActivityStatus Status { get; }
     
@@ -19,16 +21,18 @@ public sealed class ActivityResponse
     public IReadOnlyRelatedIdsCollection<TagId> Tags { get; }
 
     public ActivityResponse(
-        ActivityId id, ActivityName name, ActivityStatus status, 
+        ActivityId id, ActivityName name, ActivityColor color, ActivityStatus status, 
         IReadOnlyRelatedIdsCollection<TagId> tags)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(color);
         ArgumentNullException.ThrowIfNull(status);
         ArgumentNullException.ThrowIfNull(tags);
         
         Id = id;
         Name = name;
+        Color = color;
         Status = status;
         Tags = tags;
     }

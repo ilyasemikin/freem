@@ -31,6 +31,12 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("color");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");

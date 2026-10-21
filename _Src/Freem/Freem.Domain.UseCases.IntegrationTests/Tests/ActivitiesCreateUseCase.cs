@@ -15,6 +15,7 @@ namespace Freem.Domain.UseCases.IntegrationTests.Tests;
 public sealed class ActivitiesCreateUseCase : UseCaseTestBase
 {
     private static readonly ActivityName ActivityName = ActivityName.Parse("activity", null);
+    private static readonly ActivityColor ActivityColor = ActivityColor.Parse("#6366f1", null);
     
     private HandlerContext _context = null!;
     
@@ -34,7 +35,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     [Fact]
     public async Task ShouldSuccess()
     {
-        var request = new CreateActivityRequest(ActivityName);
+        var request = new CreateActivityRequest(ActivityName, ActivityColor);
         
         var response = await Context.ExecuteAsync<CreateActivityRequest, Result<CreateActivityResponse, Error>>(_context, request);
         
@@ -55,7 +56,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         var notExistedTagId = TagId.Generate();
         var tags = new RelatedTagIdsCollection([notExistedTagId]);
 
-        var request = new CreateActivityRequest(ActivityName)
+        var request = new CreateActivityRequest(ActivityName, ActivityColor)
         {
             Tags = tags
         };
@@ -80,7 +81,7 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
         
         var tags = new RelatedTagIdsCollection([tag.Id]);
 
-        var request = new CreateActivityRequest(ActivityName)
+        var request = new CreateActivityRequest(ActivityName, ActivityColor)
         {
             Tags = tags
         };

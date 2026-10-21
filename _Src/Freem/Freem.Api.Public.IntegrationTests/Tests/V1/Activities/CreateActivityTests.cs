@@ -18,7 +18,8 @@ public sealed class CreateActivityTests : ActivityTestBase
     public async Task Request_ShouldSuccess()
     {
         var name = ActivityName.Parse("name", null);
-        var request = new CreateActivityRequest(name, AddedRelatedTags);
+        var color = ActivityColor.Parse("#10b981", null);
+        var request = new CreateActivityRequest(name, color, AddedRelatedTags);
         
         var response = await Context.Client.Activities.CreateAsync(request);
 

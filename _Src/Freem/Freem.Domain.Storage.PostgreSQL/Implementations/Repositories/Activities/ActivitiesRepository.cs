@@ -63,6 +63,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
             return Result<Error>.CreateSuccess();
         
         dbEntity.Name = entity.Name.ToString();
+        dbEntity.Color = entity.Color.ToString();
         dbEntity.Status = entity.Status.MapToDatabaseEntityStatus();
 
         await _database.UpdateRelatedTagsAsync(entity, cancellationToken);

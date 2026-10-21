@@ -41,7 +41,7 @@ internal sealed class CreateActivityUseCase :
         CancellationToken cancellationToken = default)
     {
         var id = ActivityId.Generate();
-        var activity = new Activity(id, context.UserId, request.Name, request.Tags, DefaultActivityStatus);
+        var activity = new Activity(id, context.UserId, request.Name, request.Color, request.Tags, DefaultActivityStatus);
 
         var result = await RunTransactionAsync(activity, cancellationToken);
         if (!result.Success)

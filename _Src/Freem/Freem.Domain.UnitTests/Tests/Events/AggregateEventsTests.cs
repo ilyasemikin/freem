@@ -55,14 +55,16 @@ public sealed class AggregateEventsTests
     public void Activity_ShouldBuildUpdatedEventWithSnapshot()
     {
         var name = ActivityName.Parse("name", null);
+        var color = ActivityColor.Parse("#6366f1", null);
         var tags = new RelatedTagIdsCollection(_tagId);
-        var activity = new Activity(_activityId, _userId, name, tags, ActivityStatus.Archived);
+        var activity = new Activity(_activityId, _userId, name, color, tags, ActivityStatus.Archived);
 
         var @event = activity.BuildUpdatedEvent(EventId.Generate());
 
         Assert.Equal(EventTypes.Activities.Updated, @event.Type);
         Assert.Equal(new EntityRef(EntityType.Activity, _activityId.ToString()), @event.EntityRef);
         Assert.Equal(name, @event.Name);
+        Assert.Equal(color, @event.Color);
         Assert.Equal(ActivityStatus.Archived, @event.Status);
         Assert.Equal([_tagId], @event.TagIds);
     }
@@ -71,8 +73,9 @@ public sealed class AggregateEventsTests
     public void Activity_ShouldBuildArchivedAndUnarchivedEventsWithDifferentTypes()
     {
         var name = ActivityName.Parse("name", null);
+        var color = ActivityColor.Parse("#6366f1", null);
         var tags = new RelatedTagIdsCollection();
-        var activity = new Activity(_activityId, _userId, name, tags, ActivityStatus.Active);
+        var activity = new Activity(_activityId, _userId, name, color, tags, ActivityStatus.Active);
 
         var archived = activity.BuildArchivedEvent(EventId.Generate());
         var unarchived = activity.BuildUnarchivedEvent(EventId.Generate());

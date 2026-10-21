@@ -11,6 +11,7 @@ public sealed class Activity :
     IEntity<ActivityId>
 {
     private ActivityName _activityName = null!;
+    private ActivityColor _color = null!;
     private ActivityStatus _status = null!;
 
     public ActivityId Id { get; }
@@ -25,6 +26,17 @@ public sealed class Activity :
             ArgumentNullException.ThrowIfNull(value);
             
             _activityName = value;
+        }
+    }
+
+    public ActivityColor Color
+    {
+        get => _color;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            
+            _color = value;
         }
     }
 
@@ -43,6 +55,7 @@ public sealed class Activity :
         ActivityId id,
         UserId userId,
         ActivityName name,
+        ActivityColor color,
         RelatedTagIdsCollection relatedTags,
         ActivityStatus status)
     {
@@ -51,6 +64,7 @@ public sealed class Activity :
         Id = id;
         UserId = userId;
         Name = name;
+        Color = color;
         Tags = relatedTags;
         Status = status;
     }
@@ -62,6 +76,7 @@ public sealed class Activity :
         {
             ActivityId = Id,
             Name = Name,
+            Color = Color,
             Status = Status,
             TagIds = tagIds
         };
@@ -74,6 +89,7 @@ public sealed class Activity :
         {
             ActivityId = Id,
             Name = Name,
+            Color = Color,
             Status = Status,
             TagIds = tagIds
         };

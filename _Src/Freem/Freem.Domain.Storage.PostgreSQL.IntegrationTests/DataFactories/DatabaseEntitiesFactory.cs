@@ -41,6 +41,7 @@ internal sealed class DatabaseEntitiesFactory
 
         _fixture.Customize<ActivityEntity>(builder => builder
             .With(e => e.UserId, userId)
+            .With(e => e.Color, "#6366f1")
             .Without(e => e.User)
             .Without(e => e.Tags)
             .Without(e => e.UpdatedAt));
