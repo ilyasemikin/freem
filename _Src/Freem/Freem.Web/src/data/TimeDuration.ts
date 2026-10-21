@@ -8,10 +8,11 @@ export class TimeDuration {
   }
 
   public toString(): string {
-    const days = Math.floor(this.seconds / 60 / 60 / 24).toString();
-    const hours = DateHelper.padPart(Math.floor(this.seconds / 60 / 60) % 24);
-    const minutes = DateHelper.padPart(Math.floor(this.seconds / 60) % 60);
-    const seconds = DateHelper.padPart(this.seconds % 60);
+    const total = Math.floor(this.seconds);
+    const days = Math.floor(total / 60 / 60 / 24).toString();
+    const hours = DateHelper.padPart(Math.floor(total / 60 / 60) % 24);
+    const minutes = DateHelper.padPart(Math.floor(total / 60) % 60);
+    const seconds = DateHelper.padPart(total % 60);
 
     const result = `${hours}:${minutes}:${seconds}`;
     return days !== "0"
