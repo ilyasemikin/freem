@@ -100,6 +100,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
               role="button"
               tabIndex={0}
               aria-label="Select date"
+              title="Select date"
               className="numeric" style={{width: "10ch", margin: "0 8px", textAlign: "center", cursor: "pointer", fontWeight: 500}}
               onClick={toggle}
               onKeyDown={handleKeyDown}>

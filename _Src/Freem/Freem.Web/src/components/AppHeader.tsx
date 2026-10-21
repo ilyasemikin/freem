@@ -53,7 +53,7 @@ export function AppHeader() {
   return (
       <header className="app-header">
         <span className="app-header-title">Freem</span>
-        <Button text rounded severity="secondary" icon="pi pi-user" aria-label="User menu" onClick={toggle}/>
+        <Button text rounded severity="secondary" icon="pi pi-user" aria-label="User menu" tooltip="User menu" tooltipOptions={{position: "bottom", showDelay: 400}} onClick={toggle}/>
         <OverlayPanel ref={overlayRef}>
           <div className="user-menu">
             <div className="user-menu-name">

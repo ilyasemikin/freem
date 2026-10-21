@@ -160,7 +160,7 @@ export const RecordEditor = forwardRef<IRecordEditorHandle, IRecordEditorProps>(
                       actions={renderRemoveAction(row)}
                       onChange={changeRow}/>)}
               <ValidationError error={validationResult.periodsError}/>
-              <CustomButton style={{marginBottom: "8px"}} onClick={addRow}>
+              <CustomButton label="Add period" style={{marginBottom: "8px"}} onClick={addRow}>
                 <span style={{marginRight: "5px"}} className="pi pi-plus"/>
                 <span>Add period</span>
               </CustomButton>

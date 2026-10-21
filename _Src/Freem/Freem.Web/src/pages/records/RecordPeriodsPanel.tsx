@@ -212,7 +212,7 @@ export function RecordPeriodsPanel(props: IRecordPeriodsPanelProps) {
                 actions={renderActions(row)}
                 onChange={changeRow}/>)}
         <ValidationError error={dirty ? "There are unsaved period changes" : undefined}/>
-        <CustomButton onClick={addRow}>
+        <CustomButton label="Add period" onClick={addRow}>
           <span style={{marginRight: "5px"}} className="pi pi-plus"/>
           <span>Add period</span>
         </CustomButton>
