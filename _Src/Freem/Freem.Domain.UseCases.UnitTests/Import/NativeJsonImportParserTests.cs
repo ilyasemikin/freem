@@ -88,7 +88,7 @@ public sealed class NativeJsonImportParserTests
         Assert.Equal(DomainErrorCatalog.Types.InvalidRequest, result.Error.Type);
     }
 
-    private async Task<Utilities.Primitives.Result<Freem.Domain.Entities.Import.ImportDocument, Utilities.Errors.Error>> ParseAsync(
+    private async Task<Utilities.Primitives.Result<Freem.Domain.Entities.Import.ImportParseResult, Utilities.Errors.Error>> ParseAsync(
         string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));

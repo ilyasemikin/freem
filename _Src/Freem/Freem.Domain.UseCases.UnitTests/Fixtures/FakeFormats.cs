@@ -43,7 +43,7 @@ internal sealed class FakeImportParser : IImportParser
         Format = new FormatDescription(formatKey, name, fileExtension, mediaType);
     }
 
-    public Task<Result<ImportDocument, Error>> ParseAsync(
+    public Task<Result<ImportParseResult, Error>> ParseAsync(
         Stream input,
         CancellationToken cancellationToken = default)
     {

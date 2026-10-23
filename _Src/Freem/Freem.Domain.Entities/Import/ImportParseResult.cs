@@ -1,12 +1,12 @@
 namespace Freem.Domain.Entities.Import;
 
-public sealed class ImportDocument
+public sealed class ImportParseResult
 {
     public IReadOnlyList<ImportTag> Tags { get; }
     public IReadOnlyList<ImportActivity> Activities { get; }
     public IReadOnlyList<ImportRecord> Records { get; }
 
-    public ImportDocument(
+    public ImportParseResult(
         IReadOnlyList<ImportTag> tags,
         IReadOnlyList<ImportActivity> activities,
         IReadOnlyList<ImportRecord> records)

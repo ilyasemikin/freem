@@ -20,7 +20,7 @@ public sealed class NativeJsonImportParser : IImportParser
 
     public FormatDescription Format => NativeJsonFormat.Description;
 
-    public async Task<Result<ImportDocument, Error>> ParseAsync(
+    public async Task<Result<ImportParseResult, Error>> ParseAsync(
         Stream input,
         CancellationToken cancellationToken = default)
     {
@@ -49,7 +49,7 @@ public sealed class NativeJsonImportParser : IImportParser
         }
     }
 
-    private static ImportDocument Map(NativeJsonFile file)
+    private static ImportParseResult Map(NativeJsonFile file)
     {
         if (file.Format != NativeJsonFormat.FormatMarker)
             throw new NativeJsonParseException($"Unexpected format \"{file.Format}\", expected \"{NativeJsonFormat.FormatMarker}\"");
@@ -69,7 +69,7 @@ public sealed class NativeJsonImportParser : IImportParser
             .ToArray();
         CreateIdSet(records.Select(record => record.Id), "record");
 
-        return new ImportDocument(tags, activities, records);
+        return new ImportParseResult(tags, activities, records);
     }
 
     private static ImportTag MapTag(NativeJsonTag tag)
