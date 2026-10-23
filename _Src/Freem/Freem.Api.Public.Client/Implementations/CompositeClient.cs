@@ -9,6 +9,7 @@ public sealed class CompositeClient
     public EventsClient Events { get; }
     public StatisticsClient Statistics { get; }
     public DataTransferClient DataTransfer { get; }
+    public ImportsClient Imports { get; }
     
     public UsersClient Users { get; }
     public AuthClient Auth { get; }
@@ -23,6 +24,7 @@ public sealed class CompositeClient
         EventsClient events, 
         StatisticsClient statistics, 
         DataTransferClient dataTransfer,
+        ImportsClient imports,
         UsersClient users,
         AuthClient auth,
         HealthClient health,
@@ -34,6 +36,7 @@ public sealed class CompositeClient
         ArgumentNullException.ThrowIfNull(events);
         ArgumentNullException.ThrowIfNull(statistics);
         ArgumentNullException.ThrowIfNull(dataTransfer);
+        ArgumentNullException.ThrowIfNull(imports);
         ArgumentNullException.ThrowIfNull(users);
         ArgumentNullException.ThrowIfNull(auth);
         ArgumentNullException.ThrowIfNull(health);
@@ -45,6 +48,7 @@ public sealed class CompositeClient
         Events = events;
         Statistics = statistics;
         DataTransfer = dataTransfer;
+        Imports = imports;
         Users = users;
         Auth = auth;
         Health = health;

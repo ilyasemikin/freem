@@ -46,7 +46,9 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         UserId userId,
         ImportDocumentStatus? status = null,
         IReadOnlyList<ImportDocumentTag>? tags = null,
-        IReadOnlyList<ImportDocumentActivity>? activities = null)
+        IReadOnlyList<ImportDocumentActivity>? activities = null,
+        int rowsInFile = 12,
+        int rowsParsed = 10)
     {
         var id = ImportDocumentId.Generate();
         var format = FormatKey.Parse("time-tracker", null);
@@ -60,6 +62,8 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
             fileName,
             timeZoneOffset,
             status ?? ImportDocumentStatus.Created,
+            rowsInFile,
+            rowsParsed,
             tags ?? [],
             activities ?? []);
     }
@@ -137,6 +141,8 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         Assert.Equal(document.FileName, actual.FileName);
         Assert.Equal(document.TimeZoneOffset, actual.TimeZoneOffset);
         Assert.Equal(ImportDocumentStatus.Created, actual.Status);
+        Assert.Equal(12, actual.RowsInFile);
+        Assert.Equal(10, actual.RowsParsed);
         Assert.Single(actual.Tags);
         Assert.Null(actual.Tags[0].Resolution);
         Assert.Single(actual.Activities);
@@ -469,6 +475,28 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         Assert.All(items, i => Assert.Equal(2, i.Record.Periods.Count));
         Assert.True(otherPage.Success);
         Assert.Equal(0, otherPage.Value.Count);
+    }
+
+    [Fact]
+    public async Task AddRowsAsync_ShouldSaveRow_WhenPeriodStartEqualsEnd()
+    {
+        var userId = await CreateUserAsync();
+        var document = CreateDocument(userId);
+        await Repository.CreateAsync(document);
+        var recordId = ImportRecordId.Parse("r1", null);
+        ImportActivityId[] activityIds = [ImportActivityId.Parse("a1", null)];
+        ImportTagId[] tagIds = [];
+        var period = new DateTimePeriod(BaseTime, BaseTime);
+        ImportRecordPeriod[] periods = [new(period, TimeZoneOffset.Default)];
+        var record = new ImportRecord(recordId, null, null, activityIds, tagIds, periods);
+        var row = new ImportRow(ImportRowId.Generate(), document.Id, record);
+
+        var writeResult = await Repository.AddRowsAsync([row]);
+        var readResult = await Repository.FindRowByIdAsync(row.Id);
+
+        Assert.True(writeResult.Success);
+        Assert.True(readResult.Success);
+        Assert.Equal(period, readResult.Value.Record.Periods[0].Period);
     }
 
     [Fact]

@@ -21,6 +21,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\Freem.Domain.UseCases.UnitTests\Resources\TimeTrackerSample.csv" Link="Resources\TimeTrackerSample.csv" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <Using Include="Xunit"/>
     </ItemGroup>
 

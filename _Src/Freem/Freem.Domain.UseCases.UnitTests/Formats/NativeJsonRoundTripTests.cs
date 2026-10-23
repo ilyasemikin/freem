@@ -1,6 +1,7 @@
 using Freem.Domain.Entities.Export;
 using Freem.Domain.UseCases.Export;
 using Freem.Domain.UseCases.Import;
+using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
 namespace Freem.Domain.UseCases.UnitTests.Formats;
@@ -18,7 +19,7 @@ public sealed class NativeJsonRoundTripTests
         using var stream = new MemoryStream();
         await new NativeJsonExportWriter().WriteAsync(AsyncItems.From(items), stream);
         stream.Position = 0;
-        var result = await new NativeJsonImportParser().ParseAsync(stream);
+        var result = await new NativeJsonImportParser().ParseAsync(stream, new ImportParseOptions(TimeZoneOffset.Default));
 
         Assert.True(result.Success);
         var document = result.Value;

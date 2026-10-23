@@ -24,6 +24,15 @@ public static class RequestTypes
         public static readonly RequestType Register = RequestType.Parse("api.auth.register", null);
     }
 
+    public static class Imports
+    {
+        public static readonly RequestType Get = RequestType.Parse("api.imports.get", null);
+        public static readonly RequestType List = RequestType.Parse("api.imports.list", null);
+        public static readonly RequestType ListRows = RequestType.Parse("api.imports.list-rows", null);
+        public static readonly RequestType Remove = RequestType.Parse("api.imports.remove", null);
+        public static readonly RequestType Upload = RequestType.Parse("api.imports.upload", null);
+    }
+
     public static class DataTransfer
     {
         public static readonly RequestType Export = RequestType.Parse("api.data-transfer.export", null);

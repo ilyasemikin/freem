@@ -5,6 +5,8 @@ using Freem.Api.Public.UseCases.Contracts.Events;
 using Freem.Api.Public.UseCases.Contracts.Records;
 using Freem.Api.Public.UseCases.Contracts.RunningRecords;
 using Freem.Api.Public.UseCases.Contracts.DataTransfer;
+using Freem.Api.Public.UseCases.Contracts.Imports;
+using Freem.Api.Public.UseCases.Implementations.Handlers.Imports;
 using Freem.Api.Public.UseCases.Contracts.Statistics;
 using Freem.Api.Public.UseCases.Contracts.Tags;
 using Freem.Api.Public.UseCases.Contracts.Users;
@@ -114,6 +116,12 @@ public static class ServiceCollectionExtensions
     {
         services.AddHandler<ApiExportDataRequest, ApiExportDataRequestHandler>();
         services.AddHandler<ApiListFormatsRequest, ApiListFormatsRequestHandler>();
+
+        services.AddHandler<ApiUploadImportRequest, ApiUploadImportRequestHandler>();
+        services.AddHandler<ApiGetImportRequest, ApiGetImportRequestHandler>();
+        services.AddHandler<ApiListImportRequest, ApiListImportRequestHandler>();
+        services.AddHandler<ApiListImportRowRequest, ApiListImportRowRequestHandler>();
+        services.AddHandler<ApiRemoveImportRequest, ApiRemoveImportRequestHandler>();
 
         return services;
     }

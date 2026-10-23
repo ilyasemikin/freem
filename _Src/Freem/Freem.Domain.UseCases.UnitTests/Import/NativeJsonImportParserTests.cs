@@ -1,11 +1,13 @@
 using System.Text;
 using Freem.Domain.UseCases.Import;
+using Freem.Domain.Users.Models;
 
 namespace Freem.Domain.UseCases.UnitTests.Import;
 
 public sealed class NativeJsonImportParserTests
 {
     private readonly NativeJsonImportParser _parser = new();
+    private static readonly ImportParseOptions DefaultOptions = new(TimeZoneOffset.Default);
 
     [Fact]
     public async Task ParseAsync_ShouldReturnDocument_WhenFileIsValid()
@@ -92,6 +94,6 @@ public sealed class NativeJsonImportParserTests
         string json)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-        return await _parser.ParseAsync(stream);
+        return await _parser.ParseAsync(stream, DefaultOptions);
     }
 }

@@ -22,9 +22,11 @@ public sealed class NativeJsonImportParser : IImportParser
 
     public async Task<Result<ImportParseResult, Error>> ParseAsync(
         Stream input,
+        ImportParseOptions options,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(options);
 
         NativeJsonFile? file;
         try
@@ -69,7 +71,7 @@ public sealed class NativeJsonImportParser : IImportParser
             .ToArray();
         CreateIdSet(records.Select(record => record.Id), "record");
 
-        return new ImportParseResult(tags, activities, records);
+        return new ImportParseResult(tags, activities, records, records.Length, []);
     }
 
     private static ImportTag MapTag(NativeJsonTag tag)

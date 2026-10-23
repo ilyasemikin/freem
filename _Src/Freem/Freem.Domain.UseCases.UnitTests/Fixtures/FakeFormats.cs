@@ -45,6 +45,7 @@ internal sealed class FakeImportParser : IImportParser
 
     public Task<Result<ImportParseResult, Error>> ParseAsync(
         Stream input,
+        ImportParseOptions options,
         CancellationToken cancellationToken = default)
     {
         throw new NotSupportedException();

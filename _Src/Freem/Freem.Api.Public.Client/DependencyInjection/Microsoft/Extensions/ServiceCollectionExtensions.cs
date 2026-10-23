@@ -39,6 +39,7 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ActivitiesClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<DataTransferClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<EventsClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ImportsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<RecordsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<StatisticsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<TagsClient>(provider, jso));

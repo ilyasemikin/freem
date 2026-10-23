@@ -11,5 +11,6 @@ public interface IImportParser
 
     Task<Result<ImportParseResult, Error>> ParseAsync(
         Stream input,
+        ImportParseOptions options,
         CancellationToken cancellationToken = default);
 }

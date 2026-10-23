@@ -10,6 +10,8 @@ internal sealed class ImportDocumentEntity : IAuditableEntity
     public required string FileName { get; set; }
     public long TimeZoneOffsetTicks { get; set; }
     public required string Status { get; set; }
+    public int RowsInFile { get; set; }
+    public int RowsParsed { get; set; }
 
     public UserEntity? User { get; set; }
     public ICollection<ImportDocumentTagEntity>? Tags { get; set; }

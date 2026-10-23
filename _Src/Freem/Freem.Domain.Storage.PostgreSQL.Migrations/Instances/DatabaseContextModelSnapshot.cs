@@ -224,6 +224,14 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("character varying(64)")
                         .HasColumnName("format");
 
+                    b.Property<int>("RowsInFile")
+                        .HasColumnType("integer")
+                        .HasColumnName("rows_in_file");
+
+                    b.Property<int>("RowsParsed")
+                        .HasColumnType("integer")
+                        .HasColumnName("rows_parsed");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -251,6 +259,8 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable("import_documents", "core_entities", t =>
                         {
+                            t.HasCheckConstraint("import_documents_rows_check", "rows_parsed >= 0 AND rows_parsed <= rows_in_file");
+
                             t.HasCheckConstraint("import_documents_status_check", "status IN ('Created', 'Parsing', 'Parsed', 'Failed')");
                         });
                 });
@@ -399,7 +409,7 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
 
                     b.ToTable("import_row_periods", "core_entities", t =>
                         {
-                            t.HasCheckConstraint("import_row_periods_start_at_end_at_check", "start_at < end_at");
+                            t.HasCheckConstraint("import_row_periods_start_at_end_at_check", "start_at <= end_at");
                         });
                 });
 

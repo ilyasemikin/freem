@@ -6,6 +6,7 @@ using Freem.Domain.UseCases.Contracts.Export;
 using Freem.Domain.UseCases.Contracts.Formats.List;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Import;
+using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time.Models;
@@ -62,7 +63,7 @@ public sealed class ExportDataUseCase : UseCaseTestBase
         Assert.Equal(NativeJsonKey, response.Value.Format.Key);
 
         output.Position = 0;
-        var parsed = await new NativeJsonImportParser().ParseAsync(output);
+        var parsed = await new NativeJsonImportParser().ParseAsync(output, new ImportParseOptions(TimeZoneOffset.Default));
         Assert.True(parsed.Success);
 
         var document = parsed.Value;
@@ -91,7 +92,7 @@ public sealed class ExportDataUseCase : UseCaseTestBase
 
         Assert.True(response.Success);
         output.Position = 0;
-        var parsed = await new NativeJsonImportParser().ParseAsync(output);
+        var parsed = await new NativeJsonImportParser().ParseAsync(output, new ImportParseOptions(TimeZoneOffset.Default));
         Assert.True(parsed.Success);
         Assert.Empty(parsed.Value.Tags);
         Assert.Empty(parsed.Value.Activities);

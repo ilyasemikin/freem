@@ -32,6 +32,15 @@ public static class RequestTypes
         public static readonly RequestType List = RequestType.Parse("formats.list", null);
     }
 
+    public static class Imports
+    {
+        public static readonly RequestType Get = RequestType.Parse("imports.get", null);
+        public static readonly RequestType List = RequestType.Parse("imports.list", null);
+        public static readonly RequestType ListRows = RequestType.Parse("imports.list-rows", null);
+        public static readonly RequestType Remove = RequestType.Parse("imports.remove", null);
+        public static readonly RequestType Upload = RequestType.Parse("imports.upload", null);
+    }
+
     public static class Records
     {
         public static readonly RequestType AddPeriod = RequestType.Parse("records.add-period", null);

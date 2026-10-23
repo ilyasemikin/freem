@@ -200,6 +200,8 @@ internal static class EntitiesNames
             public const string FileName = "file_name";
             public const string TimeZoneOffsetTicks = "time_zone_offset_ticks";
             public const string Status = "status";
+            public const string RowsInFile = "rows_in_file";
+            public const string RowsParsed = "rows_parsed";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";
         }
@@ -208,6 +210,7 @@ internal static class EntitiesNames
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string StatusCheck = $"{Table}_{Properties.Status}_{NamingConvention.CheckSuffix}";
+            public const string RowsCheck = $"{Table}_rows_{NamingConvention.CheckSuffix}";
             public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string UserIdIndex = $"{Table}_{Properties.UserId}_{NamingConvention.IndexSuffix}";
         }

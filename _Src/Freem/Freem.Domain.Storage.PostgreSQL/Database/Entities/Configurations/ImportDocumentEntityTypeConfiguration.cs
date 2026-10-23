@@ -11,9 +11,14 @@ internal sealed class ImportDocumentEntityTypeConfiguration : IEntityTypeConfigu
     public void Configure(EntityTypeBuilder<ImportDocumentEntity> builder)
     {
         builder.ToTable(EntitiesNames.ImportDocuments.Table, table =>
+        {
             table.HasCheckConstraint(
                 EntitiesNames.ImportDocuments.Constraints.StatusCheck,
-                $"{EntitiesNames.ImportDocuments.Properties.Status} IN ('Created', 'Parsing', 'Parsed', 'Failed')"));
+                $"{EntitiesNames.ImportDocuments.Properties.Status} IN ('Created', 'Parsing', 'Parsed', 'Failed')");
+            table.HasCheckConstraint(
+                EntitiesNames.ImportDocuments.Constraints.RowsCheck,
+                $"{EntitiesNames.ImportDocuments.Properties.RowsParsed} >= 0 AND {EntitiesNames.ImportDocuments.Properties.RowsParsed} <= {EntitiesNames.ImportDocuments.Properties.RowsInFile}");
+        });
 
         builder
             .Property(e => e.Id)
@@ -47,6 +52,16 @@ internal sealed class ImportDocumentEntityTypeConfiguration : IEntityTypeConfigu
             .Property(e => e.Status)
             .HasColumnName(EntitiesNames.ImportDocuments.Properties.Status)
             .HasMaxLength(32)
+            .IsRequired();
+
+        builder
+            .Property(e => e.RowsInFile)
+            .HasColumnName(EntitiesNames.ImportDocuments.Properties.RowsInFile)
+            .IsRequired();
+
+        builder
+            .Property(e => e.RowsParsed)
+            .HasColumnName(EntitiesNames.ImportDocuments.Properties.RowsParsed)
             .IsRequired();
 
         builder

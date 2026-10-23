@@ -65,7 +65,11 @@ public static class EntitiesJsonSerialization
         yield return new ParsableJsonConverter<FormatFileExtension>();
         yield return new ParsableJsonConverter<FormatMediaType>();
         yield return new ParsableJsonConverter<ImportActivityId>();
+        yield return new ParsableJsonConverter<ImportDocumentId>();
+        yield return new ParsableJsonConverter<ImportDocumentStatus>();
+        yield return new ParsableJsonConverter<ImportFileName>();
         yield return new ParsableJsonConverter<ImportRecordId>();
+        yield return new ParsableJsonConverter<ImportRowId>();
         yield return new ParsableJsonConverter<ImportTagId>();
 
         yield return new ParsableJsonConverter<RecordId>();

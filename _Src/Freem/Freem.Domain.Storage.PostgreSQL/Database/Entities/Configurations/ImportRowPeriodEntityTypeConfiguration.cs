@@ -12,7 +12,7 @@ internal sealed class ImportRowPeriodEntityTypeConfiguration : IEntityTypeConfig
         builder.ToTable(EntitiesNames.ImportRowPeriods.Table, table =>
             table.HasCheckConstraint(
                 EntitiesNames.ImportRowPeriods.Constraints.TimePeriodCheck,
-                $"{EntitiesNames.ImportRowPeriods.Properties.StartAt} < {EntitiesNames.ImportRowPeriods.Properties.EndAt}"));
+                $"{EntitiesNames.ImportRowPeriods.Properties.StartAt} <= {EntitiesNames.ImportRowPeriods.Properties.EndAt}"));
 
         builder
             .Property(e => e.RowId)

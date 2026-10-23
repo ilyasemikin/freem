@@ -9,6 +9,7 @@ public static class ControllerTags
     public const string Statistics = "Statistics";
     public const string DataTransfer = "Data transfer";
     public const string Events = "Events";
+    public const string Imports = "Imports";
     public const string User = "User";
     public const string Auth = "Auth";
     public const string Infrastructure = "Infrastructure";

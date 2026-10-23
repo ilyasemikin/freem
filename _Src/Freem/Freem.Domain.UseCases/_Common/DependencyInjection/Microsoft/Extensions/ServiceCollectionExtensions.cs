@@ -38,6 +38,11 @@ using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Update;
 using Freem.Domain.UseCases.Contracts.Export;
 using Freem.Domain.UseCases.Contracts.Formats.List;
+using Freem.Domain.UseCases.Contracts.Imports.Get;
+using Freem.Domain.UseCases.Contracts.Imports.List;
+using Freem.Domain.UseCases.Contracts.Imports.ListRows;
+using Freem.Domain.UseCases.Contracts.Imports.Remove;
+using Freem.Domain.UseCases.Contracts.Imports.Upload;
 using Freem.Domain.UseCases.Events;
 using Freem.Domain.UseCases.Export;
 using Freem.Domain.UseCases.Formats;
@@ -178,12 +183,18 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IExportWriter, NativeJsonExportWriter>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IImportParser, NativeJsonImportParser>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IImportParser, TimeTrackerImportParser>());
         services.TryAddSingleton<ExportWriterRegistry>();
         services.TryAddSingleton<ImportParserRegistry>();
         services.TryAddTransient<ExportItemReader>();
 
         services.AddHandler<ExportDataRequest, Result<ExportDataResponse, Error>, ExportDataUseCase>();
         services.AddHandler<ListFormatsRequest, Result<ListFormatsResponse, Error>, ListFormatsUseCase>();
+        services.AddHandler<UploadImportRequest, Result<UploadImportResponse, Error>, UploadImportUseCase>();
+        services.AddHandler<GetImportRequest, Result<GetImportResponse, Error>, GetImportUseCase>();
+        services.AddHandler<ListImportRequest, Result<ListImportResponse, Error>, ListImportUseCase>();
+        services.AddHandler<ListImportRowRequest, Result<ListImportRowResponse, Error>, ListImportRowUseCase>();
+        services.AddHandler<RemoveImportRequest, Result<Error>, RemoveImportUseCase>();
 
         return services;
     }

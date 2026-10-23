@@ -30,6 +30,8 @@ internal static class ImportDocumentMapper
             FileName = entity.FileName.ToString(),
             TimeZoneOffsetTicks = entity.TimeZoneOffset.Ticks,
             Status = entity.Status.ToString(),
+            RowsInFile = entity.RowsInFile,
+            RowsParsed = entity.RowsParsed,
             Tags = tags,
             Activities = activities
         };
@@ -95,7 +97,17 @@ internal static class ImportDocumentMapper
             .Select(a => a.MapToDomainEntity())
             .ToList();
 
-        return new ImportDocument(id, userId, format, fileName, timeZoneOffset, status, tags, activities);
+        return new ImportDocument(
+            id,
+            userId,
+            format,
+            fileName,
+            timeZoneOffset,
+            status,
+            entity.RowsInFile,
+            entity.RowsParsed,
+            tags,
+            activities);
     }
 
     public static ImportDocumentTag MapToDomainEntity(this ImportDocumentTagEntity entity)
