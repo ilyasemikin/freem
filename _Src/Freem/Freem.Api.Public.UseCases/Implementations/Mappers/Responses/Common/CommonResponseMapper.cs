@@ -22,6 +22,7 @@ internal static class CommonResponseMapper
             type == DomainErrorCatalog.Types.FormatNotFound)
             return StatusCodes.Status404NotFound;
         if (type == DomainErrorCatalog.Types.EntityAlreadyExists ||
+            type == DomainErrorCatalog.Types.ImportInvalidStatus ||
             type == LockingErrorCatalog.Types.LockAcquisitionFailed)
             return StatusCodes.Status409Conflict;
         if (type == DomainErrorCatalog.Types.RelatedEntitiesNotFound ||

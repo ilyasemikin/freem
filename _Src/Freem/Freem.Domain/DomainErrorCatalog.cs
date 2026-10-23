@@ -2,6 +2,7 @@
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
 using Freem.Domain.Formats;
+using Freem.Domain.Import;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
@@ -29,6 +30,7 @@ public static class DomainErrorCatalog
         public static readonly ErrorType UserNotRegistered = ErrorType.Create(Scope, "user:not_registered");
         public static readonly ErrorType ActivityInvalidStatus = ErrorType.Create(Scope, "activity:invalid_status");
         public static readonly ErrorType TagNameAlreadyExists = ErrorType.Create(Scope, "tag:name_already_exists");
+        public static readonly ErrorType ImportInvalidStatus = ErrorType.Create(Scope, "import:invalid_status");
         public static readonly ErrorType FormatNotFound = ErrorType.Create(Scope, "format:not_found");
 
         public static readonly ErrorType InternalServerError = ErrorType.Create(Scope, "internal_server_error");
@@ -39,6 +41,8 @@ public static class DomainErrorCatalog
         public const string ActivityId = $"{Scope}:activity_id";
         public const string EventId = $"{Scope}:event_id";
         public const string EventType = $"{Scope}:event_type";
+        public const string ImportDocumentId = $"{Scope}:import_document_id";
+        public const string ImportRowId = $"{Scope}:import_row_id";
         public const string RecordId = $"{Scope}:record_id";
         public const string RecordPeriodId = $"{Scope}:record_period_id";
         public const string RunningRecordId = $"{Scope}:running_record_id";
@@ -55,6 +59,8 @@ public static class DomainErrorCatalog
             {
                 Activities.ActivityId => ActivityId,
                 Events.EventId => EventId,
+                Import.ImportDocumentId => ImportDocumentId,
+                Import.ImportRowId => ImportRowId,
                 Records.RecordId => RecordId,
                 Records.RecordPeriodId => RecordPeriodId,
                 RunningRecords.RunningRecordId => RunningRecordId,
@@ -173,6 +179,15 @@ public static class DomainErrorCatalog
                 .WithType(Types.TagNameAlreadyExists)
                 .WithMessage($"Name of tag with id = [{id}] already exists")
                 .WithProperty(Properties.TagId, id);
+        }
+
+        public static Error CreateImportInvalidStatus(Id id, object current, object requested)
+        {
+            var property = Properties.GetId(id);
+            return new Error.Builder()
+                .WithType(Types.ImportInvalidStatus)
+                .WithMessage($"Entity with id = [{id}] cannot change status from \"{current}\" to \"{requested}\"")
+                .WithProperty(property, id);
         }
 
         public static Error CreateFormatNotFound(FormatKey key)

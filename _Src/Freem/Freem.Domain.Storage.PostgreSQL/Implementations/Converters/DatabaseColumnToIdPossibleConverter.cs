@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Domain;
 using Freem.Domain.Activities;
+using Freem.Domain.Import;
 using Freem.Domain.Records;
 using Freem.Domain.Tags;
 using Freem.Domain.Users;
@@ -17,6 +18,7 @@ internal sealed class DatabaseColumnToIdPossibleConverter
         new Dictionary<string, EntityIdFactory>()
         {
             [EntitiesNames.Activities.Table] = value => ActivityId.Parse(value, null),
+            [EntitiesNames.ImportDocuments.Table] = value => ImportDocumentId.Parse(value, null),
             [EntitiesNames.Records.Table] = value => RecordId.Parse(value, null),
             [EntitiesNames.Tags.Table] = value => TagId.Parse(value, null),
             [EntitiesNames.Users.Table] = value => UserId.Parse(value, null)

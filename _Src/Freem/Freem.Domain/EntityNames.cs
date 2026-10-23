@@ -3,6 +3,8 @@
 public static class EntityNames
 {
     public const string Activity = "activity";
+    public const string ImportDocument = "import_document";
+    public const string ImportRow = "import_row";
     public const string Record = "record";
     public const string RecordPeriod = "record_period";
     public const string RunningRecord = "running_record";

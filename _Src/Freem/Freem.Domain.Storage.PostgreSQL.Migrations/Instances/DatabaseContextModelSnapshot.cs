@@ -130,6 +130,300 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         });
                 });
 
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityEntity", b =>
+                {
+                    b.Property<string>("DocumentId")
+                        .HasColumnType("text")
+                        .HasColumnName("document_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("SourceId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_id");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("color");
+
+                    b.Property<bool>("CreateNew")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("create_new");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("ResolvedActivityId")
+                        .HasColumnType("text")
+                        .HasColumnName("resolved_activity_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("status");
+
+                    b.HasKey("DocumentId", "SourceId")
+                        .HasName("import_document_activities_pk");
+
+                    b.HasIndex("ResolvedActivityId")
+                        .HasDatabaseName("import_document_activities_resolved_activity_id_idx");
+
+                    b.ToTable("import_document_activities", "core_entities", t =>
+                        {
+                            t.HasCheckConstraint("import_document_activities_resolution_check", "NOT (create_new AND resolved_activity_id IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityTagEntity", b =>
+                {
+                    b.Property<string>("DocumentId")
+                        .HasColumnType("text")
+                        .HasColumnName("document_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("ActivitySourceId")
+                        .HasColumnType("text")
+                        .HasColumnName("activity_source_id");
+
+                    b.Property<string>("TagSourceId")
+                        .HasColumnType("text")
+                        .HasColumnName("tag_source_id");
+
+                    b.HasKey("DocumentId", "ActivitySourceId", "TagSourceId")
+                        .HasName("import_document_activity_tags_pk");
+
+                    b.ToTable("import_document_activity_tags", "core_entities");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("file_name");
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("format");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("status");
+
+                    b.Property<long>("TimeZoneOffsetTicks")
+                        .HasColumnType("bigint")
+                        .HasColumnName("time_zone_offset_ticks");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("import_documents_pk");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("import_documents_user_id_idx");
+
+                    b.ToTable("import_documents", "core_entities", t =>
+                        {
+                            t.HasCheckConstraint("import_documents_status_check", "status IN ('Created', 'Parsing', 'Parsed', 'Failed')");
+                        });
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentTagEntity", b =>
+                {
+                    b.Property<string>("DocumentId")
+                        .HasColumnType("text")
+                        .HasColumnName("document_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("SourceId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_id");
+
+                    b.Property<bool>("CreateNew")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("create_new");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("ResolvedTagId")
+                        .HasColumnType("text")
+                        .HasColumnName("resolved_tag_id");
+
+                    b.HasKey("DocumentId", "SourceId")
+                        .HasName("import_document_tags_pk");
+
+                    b.HasIndex("ResolvedTagId")
+                        .HasDatabaseName("import_document_tags_resolved_tag_id_idx");
+
+                    b.ToTable("import_document_tags", "core_entities", t =>
+                        {
+                            t.HasCheckConstraint("import_document_tags_resolution_check", "NOT (create_new AND resolved_tag_id IS NOT NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowActivityEntity", b =>
+                {
+                    b.Property<string>("RowId")
+                        .HasColumnType("text")
+                        .HasColumnName("row_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("SourceActivityId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_activity_id");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.HasKey("RowId", "SourceActivityId")
+                        .HasName("import_row_activities_pk");
+
+                    b.ToTable("import_row_activities", "core_entities");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("DocumentId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("document_id");
+
+                    b.Property<DateTimeOffset>("FirstStartAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_start_at");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("SourceId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("source_id");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("import_rows_pk");
+
+                    b.HasIndex("DocumentId", "FirstStartAt", "Id")
+                        .HasDatabaseName("import_rows_document_id_first_start_at_id_idx");
+
+                    b.ToTable("import_rows", "core_entities");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowPeriodEntity", b =>
+                {
+                    b.Property<string>("RowId")
+                        .HasColumnType("text")
+                        .HasColumnName("row_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset>("EndAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_at");
+
+                    b.Property<DateTimeOffset>("StartAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_at");
+
+                    b.Property<long>("TimeZoneOffsetTicks")
+                        .HasColumnType("bigint")
+                        .HasColumnName("time_zone_offset_ticks");
+
+                    b.HasKey("RowId", "Position")
+                        .HasName("import_row_periods_pk");
+
+                    b.HasIndex("StartAt", "EndAt")
+                        .HasDatabaseName("import_row_periods_start_at_end_at_idx");
+
+                    b.ToTable("import_row_periods", "core_entities", t =>
+                        {
+                            t.HasCheckConstraint("import_row_periods_start_at_end_at_check", "start_at < end_at");
+                        });
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowTagEntity", b =>
+                {
+                    b.Property<string>("RowId")
+                        .HasColumnType("text")
+                        .HasColumnName("row_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("SourceTagId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_tag_id");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.HasKey("RowId", "SourceTagId")
+                        .HasName("import_row_tags_pk");
+
+                    b.ToTable("import_row_tags", "core_entities");
+                });
+
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -489,6 +783,118 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", "Document")
+                        .WithMany("Activities")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_document_activities_import_documents_fk");
+
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ActivityEntity", "ResolvedActivity")
+                        .WithMany()
+                        .HasForeignKey("ResolvedActivityId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("import_document_activities_activities_fk");
+
+                    b.Navigation("Document");
+
+                    b.Navigation("ResolvedActivity");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityTagEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityEntity", "Activity")
+                        .WithMany("Tags")
+                        .HasForeignKey("DocumentId", "ActivitySourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_document_activity_tags_import_document_activities_fk");
+
+                    b.Navigation("Activity");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_documents_users_fk");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentTagEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", "Document")
+                        .WithMany("Tags")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_document_tags_import_documents_fk");
+
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.TagEntity", "ResolvedTag")
+                        .WithMany()
+                        .HasForeignKey("ResolvedTagId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("import_document_tags_tags_fk");
+
+                    b.Navigation("Document");
+
+                    b.Navigation("ResolvedTag");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowActivityEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", "Row")
+                        .WithMany("Activities")
+                        .HasForeignKey("RowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_row_activities_import_rows_fk");
+
+                    b.Navigation("Row");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", "Document")
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_rows_import_documents_fk");
+
+                    b.Navigation("Document");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowPeriodEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", "Row")
+                        .WithMany("Periods")
+                        .HasForeignKey("RowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_row_periods_import_rows_fk");
+
+                    b.Navigation("Row");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowTagEntity", b =>
+                {
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", "Row")
+                        .WithMany("Tags")
+                        .HasForeignKey("RowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("import_row_tags_import_rows_fk");
+
+                    b.Navigation("Row");
+                });
+
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>
                 {
                     b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.UserEntity", "User")
@@ -652,6 +1058,27 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasConstraintName("user_settings_users_fk");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityEntity", b =>
+                {
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentEntity", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowEntity", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Periods");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordEntity", b =>

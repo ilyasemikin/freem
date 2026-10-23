@@ -26,6 +26,15 @@ internal static class ModelBuilderExtensions
         builder.ApplyConfiguration(new UserEntityTypeConfiguration());
         builder.ApplyConfiguration(new UserSettingsEntityTypeConfiguration());
         
+        builder.ApplyConfiguration(new ImportDocumentEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportDocumentTagEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportDocumentActivityEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportDocumentActivityTagEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportRowEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportRowPeriodEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportRowActivityEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ImportRowTagEntityTypeConfiguration());
+        
         builder.ApplyConfiguration(new EventEntityTypeConfiguration());
         
         return builder;

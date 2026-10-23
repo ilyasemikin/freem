@@ -18,6 +18,16 @@ internal sealed class DatabaseContext : DbContext
     public DbSet<UserEntity> Users => Set<UserEntity>();
     public DbSet<UserSettingsEntity> UserSettings => Set<UserSettingsEntity>();
     
+
+    public DbSet<ImportDocumentEntity> ImportDocuments => Set<ImportDocumentEntity>();
+    public DbSet<ImportDocumentTagEntity> ImportDocumentTags => Set<ImportDocumentTagEntity>();
+    public DbSet<ImportDocumentActivityEntity> ImportDocumentActivities => Set<ImportDocumentActivityEntity>();
+    public DbSet<ImportDocumentActivityTagEntity> ImportDocumentActivityTags => Set<ImportDocumentActivityTagEntity>();
+    public DbSet<ImportRowEntity> ImportRows => Set<ImportRowEntity>();
+    public DbSet<ImportRowPeriodEntity> ImportRowPeriods => Set<ImportRowPeriodEntity>();
+    public DbSet<ImportRowActivityEntity> ImportRowActivities => Set<ImportRowActivityEntity>();
+    public DbSet<ImportRowTagEntity> ImportRowTags => Set<ImportRowTagEntity>();
+
     public DbSet<EventEntity> Events => Set<EventEntity>();
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options)

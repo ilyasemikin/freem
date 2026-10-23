@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Activities;
+using Freem.Domain.Import;
 using Freem.Domain.Records;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;
@@ -15,6 +16,8 @@ public sealed class EntityIdNameProvider
         return id switch
         {
             ActivityId => EntityNames.Activity,
+            ImportDocumentId => EntityNames.ImportDocument,
+            ImportRowId => EntityNames.ImportRow,
             RecordId => EntityNames.Record,
             RecordPeriodId => EntityNames.RecordPeriod,
             RunningRecordId => EntityNames.RunningRecord,
