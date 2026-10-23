@@ -24,6 +24,12 @@ public static class RequestTypes
         public static readonly RequestType Register = RequestType.Parse("api.auth.register", null);
     }
 
+    public static class DataTransfer
+    {
+        public static readonly RequestType Export = RequestType.Parse("api.data-transfer.export", null);
+        public static readonly RequestType ListFormats = RequestType.Parse("api.data-transfer.list-formats", null);
+    }
+
     public static class Events
     {
         public static readonly RequestType Get = RequestType.Parse("api.events.get", null);

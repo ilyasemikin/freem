@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
+        <PackageReference Include="xunit" Version="2.9.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
+        <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
+        <PackageReference Include="Utilities.Primitives" Version="0.0.3"/>
+        <PackageReference Include="Utilities.Sorting" Version="0.1.0"/>
+        <PackageReference Include="Utilities.UseCases" Version="0.1.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.Entities\Freem.Domain.Entities.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
+        <ProjectReference Include="..\Freem.Domain.UseCases\Freem.Domain.UseCases.csproj"/>
+        <ProjectReference Include="..\Freem.Time\Freem.Time.csproj"/>
+    </ItemGroup>
+
+</Project>

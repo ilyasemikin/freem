@@ -51,6 +51,14 @@ public abstract class BaseClient
         return SendInnerAsync<T>(request, cancellationToken);
     }
 
+    protected Task<Result<byte[], IClientError>> SendForUserBytesAsync(
+        HttpRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        request = PopulateUserRequest(request);
+        return SendInnerBytesAsync(request, cancellationToken);
+    }
+
     private async Task<Result<IClientError>> SendInnerAsync(HttpRequest request, CancellationToken cancellationToken)
     {
         try
@@ -81,6 +89,30 @@ public abstract class BaseClient
 
             var value = await response.Content.ReadFromJsonAsync<T>(_options, cancellationToken);
             return value;
+        }
+        catch (Exception exception)
+        {
+            return new ExceptionClientError(exception);
+        }
+    }
+
+    private async Task<Result<byte[], IClientError>> SendInnerBytesAsync(
+        HttpRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response = await _client.SendAsync(request, cancellationToken);
+            if (!response.Success)
+            {
+                var error = await _errorFactory.CreateAsync(response, cancellationToken);
+                return Result<byte[], IClientError>.CreateFailure(error);
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer, cancellationToken);
+            return buffer.ToArray();
         }
         catch (Exception exception)
         {

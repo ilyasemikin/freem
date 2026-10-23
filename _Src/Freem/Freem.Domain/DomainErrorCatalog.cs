@@ -1,6 +1,7 @@
 ﻿using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
+using Freem.Domain.Formats;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
@@ -28,6 +29,7 @@ public static class DomainErrorCatalog
         public static readonly ErrorType UserNotRegistered = ErrorType.Create(Scope, "user:not_registered");
         public static readonly ErrorType ActivityInvalidStatus = ErrorType.Create(Scope, "activity:invalid_status");
         public static readonly ErrorType TagNameAlreadyExists = ErrorType.Create(Scope, "tag:name_already_exists");
+        public static readonly ErrorType FormatNotFound = ErrorType.Create(Scope, "format:not_found");
 
         public static readonly ErrorType InternalServerError = ErrorType.Create(Scope, "internal_server_error");
     }
@@ -45,6 +47,7 @@ public static class DomainErrorCatalog
 
         public const string ActivityStatus = $"{Scope}:activity_status";
         public const string TagName = $"{Scope}:tag_name";
+        public const string FormatKey = $"{Scope}:format_key";
 
         public static string GetId(Id id)
         {
@@ -170,6 +173,14 @@ public static class DomainErrorCatalog
                 .WithType(Types.TagNameAlreadyExists)
                 .WithMessage($"Name of tag with id = [{id}] already exists")
                 .WithProperty(Properties.TagId, id);
+        }
+
+        public static Error CreateFormatNotFound(FormatKey key)
+        {
+            return new Error.Builder()
+                .WithType(Types.FormatNotFound)
+                .WithMessage($"Format with key = [{key}] not found")
+                .WithProperty(Properties.FormatKey, key);
         }
 
         public static Error CreateInternalServerError(Error? error = null)

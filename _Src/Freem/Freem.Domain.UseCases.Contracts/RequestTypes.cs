@@ -22,6 +22,16 @@ public static class RequestTypes
         public static readonly RequestType List = RequestType.Parse("events.list", null);
     }
 
+    public static class Export
+    {
+        public static readonly RequestType Data = RequestType.Parse("export.data", null);
+    }
+
+    public static class Formats
+    {
+        public static readonly RequestType List = RequestType.Parse("formats.list", null);
+    }
+
     public static class Records
     {
         public static readonly RequestType AddPeriod = RequestType.Parse("records.add-period", null);

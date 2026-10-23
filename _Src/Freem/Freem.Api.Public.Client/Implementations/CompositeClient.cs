@@ -8,6 +8,7 @@ public sealed class CompositeClient
     
     public EventsClient Events { get; }
     public StatisticsClient Statistics { get; }
+    public DataTransferClient DataTransfer { get; }
     
     public UsersClient Users { get; }
     public AuthClient Auth { get; }
@@ -21,6 +22,7 @@ public sealed class CompositeClient
         TagsClient tags, 
         EventsClient events, 
         StatisticsClient statistics, 
+        DataTransferClient dataTransfer,
         UsersClient users,
         AuthClient auth,
         HealthClient health,
@@ -31,6 +33,7 @@ public sealed class CompositeClient
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(events);
         ArgumentNullException.ThrowIfNull(statistics);
+        ArgumentNullException.ThrowIfNull(dataTransfer);
         ArgumentNullException.ThrowIfNull(users);
         ArgumentNullException.ThrowIfNull(auth);
         ArgumentNullException.ThrowIfNull(health);
@@ -41,6 +44,7 @@ public sealed class CompositeClient
         Tags = tags;
         Events = events;
         Statistics = statistics;
+        DataTransfer = dataTransfer;
         Users = users;
         Auth = auth;
         Health = health;

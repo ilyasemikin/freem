@@ -4,6 +4,7 @@ using Freem.Api.Public.UseCases.Contracts.Auth;
 using Freem.Api.Public.UseCases.Contracts.Events;
 using Freem.Api.Public.UseCases.Contracts.Records;
 using Freem.Api.Public.UseCases.Contracts.RunningRecords;
+using Freem.Api.Public.UseCases.Contracts.DataTransfer;
 using Freem.Api.Public.UseCases.Contracts.Statistics;
 using Freem.Api.Public.UseCases.Contracts.Tags;
 using Freem.Api.Public.UseCases.Contracts.Users;
@@ -13,6 +14,7 @@ using Freem.Api.Public.UseCases.Implementations.Handlers.Auth;
 using Freem.Api.Public.UseCases.Implementations.Handlers.Events;
 using Freem.Api.Public.UseCases.Implementations.Handlers.Records;
 using Freem.Api.Public.UseCases.Implementations.Handlers.RunningRecords;
+using Freem.Api.Public.UseCases.Implementations.Handlers.DataTransfer;
 using Freem.Api.Public.UseCases.Implementations.Handlers.Statistics;
 using Freem.Api.Public.UseCases.Implementations.Handlers.Tags;
 using Freem.Api.Public.UseCases.Implementations.Handlers.Users;
@@ -41,6 +43,7 @@ public static class ServiceCollectionExtensions
             .AddRecordsUseCases()
             .AddRunningRecordsUseCases()
             .AddStatisticsUseCases()
+            .AddDataTransferUseCases()
             .AddTagsUseCases()
             .AddUsersUseCases()
             .AddUserSettingsUseCases();
@@ -103,6 +106,14 @@ public static class ServiceCollectionExtensions
         services.AddHandler<ApiStartRunningRecordRequest, ApiStartRunningRecordRequestHandler>();
         services.AddHandler<ApiStopRunningRecordRequest, ApiStopRunningRecordRequestHandler>();
         services.AddHandler<ApiUpdateRunningRecordRequest, ApiUpdateRunningRecordRequestHandler>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddDataTransferUseCases(this IServiceCollection services)
+    {
+        services.AddHandler<ApiExportDataRequest, ApiExportDataRequestHandler>();
+        services.AddHandler<ApiListFormatsRequest, ApiListFormatsRequestHandler>();
 
         return services;
     }

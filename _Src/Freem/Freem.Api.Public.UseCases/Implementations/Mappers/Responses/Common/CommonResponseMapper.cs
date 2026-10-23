@@ -18,7 +18,8 @@ internal static class CommonResponseMapper
         if (type == DomainErrorCatalog.Types.UserNotRegistered ||
             type == DomainErrorCatalog.Types.AuthenticationRejected)
             return StatusCodes.Status401Unauthorized;
-        if (type == DomainErrorCatalog.Types.EntityNotFound)
+        if (type == DomainErrorCatalog.Types.EntityNotFound ||
+            type == DomainErrorCatalog.Types.FormatNotFound)
             return StatusCodes.Status404NotFound;
         if (type == DomainErrorCatalog.Types.EntityAlreadyExists ||
             type == LockingErrorCatalog.Types.LockAcquisitionFailed)

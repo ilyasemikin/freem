@@ -36,7 +36,12 @@ using Freem.Domain.UseCases.Contracts.Users.Get;
 using Freem.Domain.UseCases.Contracts.Users.Register;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Update;
+using Freem.Domain.UseCases.Contracts.Export;
+using Freem.Domain.UseCases.Contracts.Formats.List;
 using Freem.Domain.UseCases.Events;
+using Freem.Domain.UseCases.Export;
+using Freem.Domain.UseCases.Formats;
+using Freem.Domain.UseCases.Import;
 using Freem.Domain.UseCases.Records;
 using Freem.Domain.UseCases.RunningRecords;
 using Freem.Domain.UseCases.Statistics;
@@ -68,7 +73,8 @@ public static class ServiceCollectionExtensions
             .AddUserUseCases()
             .AddUserSettingsUseCases()
             .AddUsersRegistrationUseCases()
-            .AddStatisticsUseCases();
+            .AddStatisticsUseCases()
+            .AddDataTransferUseCases();
 
         return services;
     }
@@ -164,6 +170,20 @@ public static class ServiceCollectionExtensions
     {
         services.AddHandler<StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>, StatisticsPerDaysUseCase>();
         services.AddHandler<StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>, StatisticsPerPeriodUseCase>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddDataTransferUseCases(this IServiceCollection services)
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IExportWriter, NativeJsonExportWriter>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IImportParser, NativeJsonImportParser>());
+        services.TryAddSingleton<ExportWriterRegistry>();
+        services.TryAddSingleton<ImportParserRegistry>();
+        services.TryAddTransient<ExportItemReader>();
+
+        services.AddHandler<ExportDataRequest, Result<ExportDataResponse, Error>, ExportDataUseCase>();
+        services.AddHandler<ListFormatsRequest, Result<ListFormatsResponse, Error>, ListFormatsUseCase>();
 
         return services;
     }
