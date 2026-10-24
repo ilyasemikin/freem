@@ -40,9 +40,9 @@ export function AppHeader() {
     overlayRef.current?.toggle(e);
   }
 
-  function openSettings() {
+  function open(path: string) {
     overlayRef.current?.hide();
-    navigate("/settings");
+    navigate(path);
   }
 
   async function signOut() {
@@ -61,7 +61,11 @@ export function AppHeader() {
               <span className="item-title">{nickname ?? "…"}</span>
             </div>
             <hr className="divider"/>
-            <Button text size="small" severity="secondary" icon="pi pi-cog" label="Settings" onClick={openSettings}
+            <Button text size="small" severity="secondary" icon="pi pi-cog" label="Settings" onClick={() => open("/settings")}
+                    style={{width: "100%", justifyContent: "flex-start"}}/>
+            <Button text size="small" severity="secondary" icon="pi pi-upload" label="Imports" onClick={() => open("/imports")}
+                    style={{width: "100%", justifyContent: "flex-start"}}/>
+            <Button text size="small" severity="secondary" icon="pi pi-download" label="Export" onClick={() => open("/export")}
                     style={{width: "100%", justifyContent: "flex-start"}}/>
             <Button text size="small" severity="secondary" icon="pi pi-sign-out" label="Log out" onClick={signOut}
                     style={{width: "100%", justifyContent: "flex-start"}}/>

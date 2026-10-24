@@ -60,6 +60,16 @@ export class HttpClient implements IHttpClient{
       headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
+    // The browser sets the multipart Content-Type with its boundary itself.
+    if (body instanceof FormData) {
+      return {
+        method: method,
+        headers: headers,
+        body: body,
+        credentials: "include"
+      }
+    }
+
     if (body !== undefined) {
       return {
         method: method,

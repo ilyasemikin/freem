@@ -93,6 +93,6 @@ export class ActivitiesEntitiesCache {
     const tags = response.tags !== undefined
         ? await this.tagsEntitiesCache.list(response.tags)
         : [];
-    return new ActivityEntity(response.id, response.name, response.color, tags);
+    return new ActivityEntity(response.id, response.name, response.color, response.status, tags);
   }
 }

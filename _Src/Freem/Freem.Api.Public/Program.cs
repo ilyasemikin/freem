@@ -66,7 +66,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader()
                 .AllowCredentials()
                 .AllowAnyMethod()
-                .WithExposedHeaders([HeaderNames.ItemsCount, HeaderNames.TotalItemsCount]);
+                .WithExposedHeaders([HeaderNames.ItemsCount, HeaderNames.TotalItemsCount, HeaderNames.ContentDisposition]);
         }
     });
 });

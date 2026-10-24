@@ -8,6 +8,8 @@ import {BackendClientsContext, IBackendClientsContext} from "./BackendClientsCon
 import {StatisticsClient} from "../StatisticsClient.ts";
 import {AuthClient} from "../AuthClient.ts";
 import {AuthSession} from "../AuthSession.ts";
+import {DataTransferClient} from "../DataTransferClient.ts";
+import {ImportsClient} from "../ImportsClient.ts";
 
 interface IBackendClientsProviderProps {
   children: ReactNode;
@@ -25,6 +27,8 @@ export function BackendClientsProvider({children}: IBackendClientsProviderProps)
       records: new RecordsClient(httpClient),
       tags: new TagsClient(httpClient),
       statistics: new StatisticsClient(httpClient),
+      dataTransfer: new DataTransferClient(httpClient),
+      imports: new ImportsClient(httpClient),
       user: new UserClient(httpClient),
       auth: new AuthClient(httpClient),
       session: session,
