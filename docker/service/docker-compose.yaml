@@ -31,7 +31,7 @@ services:
 
   postgres-migration:
     build:
-      context: ../../_Src/Freem
+      context: ../../source
       dockerfile: ./Freem.Domain.Storage.PostgreSQL.Migrations/Dockerfile
     environment:
       POSTGRES_HOST: postgres
@@ -47,7 +47,7 @@ services:
 
   api:
     build:
-      context: ../../_Src/Freem
+      context: ../../source
       dockerfile: ./Freem.Api.Public/Dockerfile
       args:
         GIT_COMMIT: ${GIT_COMMIT:-}
@@ -79,7 +79,7 @@ services:
 
   web:
     build:
-      context: ../../_Src/Freem/Freem.Web
+      context: ../../source/Freem.Web
       args:
         VITE_API_URL: ${API_PUBLIC_URL}
     ports:

@@ -35,7 +35,7 @@ services:
 
   postgres-migration:
     build:
-      context: ../../_Src/Freem
+      context: ../../source
       dockerfile: ./Freem.Domain.Storage.PostgreSQL.Migrations/Dockerfile
     environment:
       POSTGRES_HOST: postgres

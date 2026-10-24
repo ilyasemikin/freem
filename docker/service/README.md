@@ -7,7 +7,7 @@ cp .env.example .env   # fill POSTGRES_USER / POSTGRES_PASSWORD and the EGOHUB_I
 docker compose up -d --build
 ```
 
-`_Src/Freem/packages/` must contain the `.nupkg` files (see the root `CLAUDE.md`), otherwise the API and migrations
+`source/packages/` must contain the `.nupkg` files (see the root `CLAUDE.md`), otherwise the API and migrations
 images are not built. The web address in the browser is `WEB_PUBLIC_URL`; the API address baked into the web build is
 `API_PUBLIC_URL` (rebuild `web` after changing it).
 

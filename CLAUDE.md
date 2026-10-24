@@ -32,9 +32,9 @@ yourself. This covers code, plans, docs and git. A reply to a multi-part proposa
 
 ## Planning Documents
 
-Large, multi-stage initiatives get a persistent plan under `plans/` (not `docs/`). Either one flat file or
-`plans/<slug>/general/roadmap.md` + `plans/<slug>/stages/NN-<stage>.md`. Conventions are formalized as project skills
-in `skills/` (`roadmap`, `roadmap-stage`), copied from StashIt. Before writing or continuing a
+Large, multi-stage initiatives get a persistent plan under `ai/plans/` (not `docs/`). Either one flat file or
+`ai/plans/<slug>/general/roadmap.md` + `ai/plans/<slug>/stages/NN-<stage>.md`. Conventions are formalized as project skills
+in `ai/skills/` (`roadmap`, `roadmap-stage`), copied from StashIt. Before writing or continuing a
 plan, read the matching `SKILL.md` — even if it did not trigger automatically (subagents cannot see project
 skills via the Skill tool and must `Read` the `SKILL.md`). Plans are written in Russian. Effort is estimated by
 code impact (point fix vs structural change, review volume), not in days/weeks.
@@ -67,20 +67,24 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   built from `Freem.Domain.Storage.PostgreSQL.Migrations/Dockerfile`; `service` adds API, web and manual
   `postgres-backup`/`postgres-restore`). `.env` is created from `.env.example` by the user. Ports: `develop` Postgres
   10150, Redis 10151; `service` API 10170, web 10171; local `dotnet run` API 10190, `npm run dev` 10191 (strict).
-  Images need `.nupkg` files in `_Src/Freem/packages/`.
+  Images need `.nupkg` files in `source/packages/`.
 - `.IntegrationTests` (storage, Redis, use cases, API) run in `docker/test` (`docker compose up --build --abort-on-container-exit
   test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; EgoHub address and token come from `docker/test/.env` (see `.env.example`); each test assembly has its own database `freem_{storage,usecases,api}_test`, because assemblies run in parallel and truncate tables). `TruncateTables` refuses a
   database whose name does not end with `_test`. The committed `configuration.json` files of the test projects hold
   empty placeholders for local runs against `develop` (use a `*_test` database).
 - Do not spend time on manual browser passes once build and tests pass; ask first. When the user agrees, follow
-  `skills/web-manual-test/SKILL.md` (Playwright MCP from `.mcp.json`, `scripts/web-env-check.sh`, `scripts/dev-account.sh`;
+  `ai/skills/web-manual-test/SKILL.md` (Playwright MCP from `.mcp.json`, `ai/scripts/web-env-check.sh`, `ai/scripts/dev-account.sh`;
   subagents must `Read` the `SKILL.md`). The dev account credentials are `FREEM_DEV_USERNAME`/`FREEM_DEV_PASSWORD` in
   `docker/develop/.env`; agents may also create extra accounts when a check needs a clean state.
 
 ## Repository Layout
 
-All code lives in `_Src/Freem/` (solution `Freem.sln`, ~28 projects, `net10.0`, nullable enabled). Frontend is
-`_Src/Freem/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
+Repository root: `source/` (all code), `docker/` (environments), `ai/` (everything agent-related: `plans/`, `skills/`,
+`scripts/` helpers for the skills), `tasks.md`. `.claude/`, `.mcp.json` and `CLAUDE.md` stay in the root because Claude Code
+reads them from there.
+
+All code lives in `source/` (solution `Freem.slnx`, ~28 projects, `net10.0`, nullable enabled). Frontend is
+`source/Freem.Web` (React 19 + Vite + PrimeReact + Chart.js, react-router 8).
 
 Layers (names follow StashIt, without the `Core` segment):
 
@@ -97,7 +101,7 @@ Freem.*                                    # small shared libraries (Time, Sorti
 ```
 
 Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`, `Locking`, `Locking.Redis`, `Locking.InMemory`) come from a local NuGet feed:
-`_Src/Freem/Directory.Build.props` registers `_Src/Freem/packages/`, whose `.nupkg` files are not in git (only
+`source/Directory.Build.props` registers `source/packages/`, whose `.nupkg` files are not in git (only
 `.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
 `packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.
 
@@ -111,12 +115,12 @@ running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid
 ## Commands
 
 ```bash
-cd _Src/Freem
-dotnet build Freem.sln
-dotnet test Freem.sln          # unit tests only are self-contained
+cd source
+dotnet build Freem.slnx
+dotnet test Freem.slnx          # unit tests only are self-contained
 dotnet run --project Freem.Api.Public/
 cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
-docker build -f Freem.Api.Public/Dockerfile .   # run from _Src/Freem
+docker build -f Freem.Api.Public/Dockerfile .   # run from source
 ```
 
 `.IntegrationTests` projects (PostgreSQL, Redis, UseCases, API) keep a committed
