@@ -4,7 +4,7 @@
 # Usage: ai/scripts/dev-account.sh [api_url]
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 API_URL="${1:-http://localhost:10190}/api/v1"
 
 set -a
