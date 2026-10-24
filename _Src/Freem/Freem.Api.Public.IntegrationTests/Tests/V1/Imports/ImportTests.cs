@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
@@ -35,7 +35,7 @@ public sealed class ImportTests : TestBase
         return File.OpenRead(path);
     }
 
-    private async Task<UploadImportResponse> UploadSampleAsync(TimeZoneOffset? offset = null)
+    private async Task<ImportUploadResponse> UploadSampleAsync(TimeZoneOffset? offset = null)
     {
         await using var content = OpenSample();
         var response = await Context.Client.Imports.UploadAsync(TimeTrackerKey, "sample.csv", content, offset);
@@ -58,10 +58,10 @@ public sealed class ImportTests : TestBase
         Assert.Equal(offset, uploaded.Import.TimeZoneOffset);
         Assert.Empty(uploaded.Warnings);
 
-        var rows = await Context.Client.Imports.ListRowsAsync(uploaded.Import.Id, new ListImportRowRequest(0, 100));
+        var rows = await Context.Client.Imports.ListRowsAsync(uploaded.Import.Id, new ImportRowListRequest(0, 100));
         rows.ShouldSuccess();
         Assert.NotNull(rows.Value);
-        Assert.Equal(47, rows.Value.Count);
+        Assert.Equal(47, rows.Value.Rows.Count);
     }
 
     [Fact]
@@ -69,15 +69,15 @@ public sealed class ImportTests : TestBase
     {
         var uploaded = await UploadSampleAsync();
 
-        var list = await Context.Client.Imports.ListAsync(new ListImportRequest(0, 10));
+        var list = await Context.Client.Imports.ListAsync(new ImportListRequest(0, 10));
         var get = await Context.Client.Imports.GetAsync(uploaded.Import.Id);
 
         list.ShouldSuccess();
         Assert.NotNull(list.Value);
-        Assert.Equal(uploaded.Import.Id, Assert.Single(list.Value).Id);
+        Assert.Equal(uploaded.Import.Id, Assert.Single(list.Value.Imports).Id);
         get.ShouldSuccess();
         Assert.NotNull(get.Value);
-        Assert.Equal(47, get.Value.RowsParsed);
+        Assert.Equal(47, get.Value.Import.RowsParsed);
     }
 
     [Fact]
@@ -85,16 +85,16 @@ public sealed class ImportTests : TestBase
     {
         var uploaded = await UploadSampleAsync();
 
-        var all = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ListImportActivityRequest(0, 100));
-        var page = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ListImportActivityRequest(3, 10));
+        var all = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ImportActivityListRequest(0, 100));
+        var page = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ImportActivityListRequest(3, 10));
 
         all.ShouldSuccess();
         Assert.NotNull(all.Value);
-        Assert.Equal(5, all.Value.Count);
-        Assert.All(all.Value, a => Assert.Null(a.MappedActivityId));
+        Assert.Equal(5, all.Value.Activities.Count);
+        Assert.All(all.Value.Activities, a => Assert.Null(a.MappedActivityId));
         page.ShouldSuccess();
         Assert.NotNull(page.Value);
-        Assert.Equal(2, page.Value.Count);
+        Assert.Equal(2, page.Value.Activities.Count);
     }
 
     [Fact]
@@ -102,18 +102,18 @@ public sealed class ImportTests : TestBase
     {
         var uploaded = await UploadSampleAsync();
 
-        var tags = await Context.Client.Imports.ListTagsAsync(uploaded.Import.Id, new ListImportTagRequest(0, 100));
+        var tags = await Context.Client.Imports.ListTagsAsync(uploaded.Import.Id, new ImportTagListRequest(0, 100));
 
         tags.ShouldSuccess();
         Assert.NotNull(tags.Value);
-        Assert.Empty(tags.Value);
+        Assert.Empty(tags.Value.Tags);
     }
 
     [Fact]
     public async Task ListActivities_ShouldReturnNotFound_WhenImportDoesNotExist()
     {
-        var activities = await Context.Client.Imports.ListActivitiesAsync(ImportDocumentId.Generate(), new ListImportActivityRequest(0, 100));
-        var tags = await Context.Client.Imports.ListTagsAsync(ImportDocumentId.Generate(), new ListImportTagRequest(0, 100));
+        var activities = await Context.Client.Imports.ListActivitiesAsync(ImportDocumentId.Generate(), new ImportActivityListRequest(0, 100));
+        var tags = await Context.Client.Imports.ListTagsAsync(ImportDocumentId.Generate(), new ImportTagListRequest(0, 100));
 
         activities.ShouldHaveStatusCode(HttpStatusCode.NotFound);
         tags.ShouldHaveStatusCode(HttpStatusCode.NotFound);
@@ -124,11 +124,11 @@ public sealed class ImportTests : TestBase
     {
         var uploaded = await UploadSampleAsync();
 
-        var rows = await Context.Client.Imports.ListRowsAsync(uploaded.Import.Id, new ListImportRowRequest(40, 10));
+        var rows = await Context.Client.Imports.ListRowsAsync(uploaded.Import.Id, new ImportRowListRequest(40, 10));
 
         rows.ShouldSuccess();
         Assert.NotNull(rows.Value);
-        Assert.Equal(7, rows.Value.Count);
+        Assert.Equal(7, rows.Value.Rows.Count);
     }
 
     [Fact]

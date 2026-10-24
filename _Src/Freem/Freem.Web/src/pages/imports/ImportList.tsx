@@ -51,7 +51,7 @@ export function ImportList(props: IImportListProps) {
         throw await ApiError.fromResponse(response);
       }
 
-      const value = await ListResponse.read<ImportResponse>(response);
+      const value = await ListResponse.read<ImportResponse>(response, "imports");
       if (current) {
         setPage(value);
         setError(undefined);

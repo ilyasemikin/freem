@@ -1,5 +1,5 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Users;
+﻿using Freem.Domain.Entities.Users;
+using Freem.Domain.Entities.Users.Comparers;
 using Freem.Domain.Storage.Repositories.Users;
 using Freem.Domain.Users;
 using Freem.Domain.Storage.PostgreSQL.Database;
@@ -17,20 +17,16 @@ internal sealed class UsersRepository : IUserRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IEqualityComparer<User> _equalityComparer;
 
     public UsersRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<User> equalityComparer)
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
-        ArgumentNullException.ThrowIfNull(equalityComparer);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
-        _equalityComparer = equalityComparer;
     }
 
     public async Task<Result<Error>> CreateAsync(User entity, CancellationToken cancellationToken = default)
@@ -53,10 +49,10 @@ internal sealed class UsersRepository : IUserRepository
             .Include(e => e.Settings)
             .FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
+            return DomainErrorCatalog.Factories.CreateUserNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
-        if (_equalityComparer.Equals(entity, actualEntity))
+        if (UserEqualityComparer.Instance.Equals(entity, actualEntity))
             return Result<Error>.CreateSuccess();
 
         dbEntity.Settings = entity.Settings.MapToDatabaseEntity(entity.Id);
@@ -86,6 +82,10 @@ internal sealed class UsersRepository : IUserRepository
         var idString = id.ToString();
         return await _database.Users
             .Include(e => e.Settings)
-            .FindAsync(id, e => e.Id == idString, UserMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(
+                () => DomainErrorCatalog.Factories.CreateUserNotFound(id),
+                e => e.Id == idString,
+                UserMapper.MapToDomainEntity,
+                cancellationToken);
     }
 }

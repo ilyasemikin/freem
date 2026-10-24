@@ -3,7 +3,6 @@ using Freem.Api.Public.UseCases.Contracts.Imports;
 using Freem.Api.Public.UseCases.Implementations.Mappers;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Requests;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
-using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Imports.ListTags;
 using Microsoft.AspNetCore.Mvc;

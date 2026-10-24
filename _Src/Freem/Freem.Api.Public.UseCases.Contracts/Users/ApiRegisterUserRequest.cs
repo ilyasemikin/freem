@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Users;
+using Freem.Api.Public.Contracts.V1.Users;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiRegisterUserRequest : IRequest
 {
     public RequestType Type => RequestTypes.Users.Register;
 
-    public RegisterUserRequest Body { get; }
+    public UserRegisterRequest Body { get; }
 
-    public ApiRegisterUserRequest(RegisterUserRequest body)
+    public ApiRegisterUserRequest(UserRegisterRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

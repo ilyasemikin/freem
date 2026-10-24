@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Tags;
+﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Entities.Tags.Comparers;
 using Freem.Domain.Tags;
 using Freem.Domain.UseCases.Context;
@@ -44,7 +43,7 @@ public sealed class TagsGetUseCaseTests : UseCaseTestBase
         Assert.NotNull(response.Value.Tag);
         Assert.Null(response.Error);
         
-        Assert.Equal(_tag, response.Value.Tag, new TagEqualityComparer());
+        Assert.Equal(_tag, response.Value.Tag, TagEqualityComparer.Instance);
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1.Users;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.Contracts.DTO.Users;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Context.Preparers;
 using Freem.Api.Public.IntegrationTests.Extensions;
@@ -22,7 +22,7 @@ public sealed class RegisterUserTests : TestBase
         await Context.Preparer.Users.AuthenticateAsync();
 
         var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
-        var request = new RegisterUserRequest(nickname);
+        var request = new UserRegisterRequest(nickname);
         
         var result = await client.Users.RegisterAsync(request);
 
@@ -37,7 +37,7 @@ public sealed class RegisterUserTests : TestBase
         await Context.Preparer.Users.RegisterAsync();
 
         var nickname = Nickname.Parse(UserPreparer.NicknameValue, null);
-        var request = new RegisterUserRequest(nickname);
+        var request = new UserRegisterRequest(nickname);
 
         var result = await client.Users.RegisterAsync(request);
 

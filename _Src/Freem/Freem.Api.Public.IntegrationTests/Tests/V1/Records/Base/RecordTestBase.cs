@@ -1,8 +1,8 @@
 ﻿using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
-using Freem.Time.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
+using Freem.Time;
 using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;

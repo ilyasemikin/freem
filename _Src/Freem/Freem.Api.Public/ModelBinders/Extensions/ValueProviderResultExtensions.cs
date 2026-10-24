@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Time.Models;
+using Freem.Time;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Freem.Api.Public.ModelBinders.Extensions;

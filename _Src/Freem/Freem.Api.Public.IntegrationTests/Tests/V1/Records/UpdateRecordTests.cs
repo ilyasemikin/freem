@@ -1,14 +1,13 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Records;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Activities;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Records;
-using Freem.Api.Public.Contracts.DTO.Tags;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
@@ -27,7 +26,7 @@ public sealed class UpdateRecordTests : RecordTestBase
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
         var name = RecordName.Parse("name", null);
-        var request = new UpdateRecordRequest
+        var request = new RecordUpdateRequest
         {
             Name = new UpdateField<RecordName?>(name)
         };
@@ -42,7 +41,7 @@ public sealed class UpdateRecordTests : RecordTestBase
     public async Task Request_ShouldSuccess_WhenUpdateDescription()
     {
         var description = RecordDescription.Parse("description", null);
-        var request = new UpdateRecordRequest
+        var request = new RecordUpdateRequest
         {
             Description = new UpdateField<RecordDescription?>(description)
         };
@@ -59,7 +58,7 @@ public sealed class UpdateRecordTests : RecordTestBase
         var activityId = await Context.Preparer.Activities.CreateAsync("name");
         var activities = new RelatedActivityIdsCollection(activityId);
 
-        var request = new UpdateRecordRequest
+        var request = new RecordUpdateRequest
         {
             Activities = new UpdateField<IReadOnlyRelatedIdsCollection<ActivityId>>(activities)
         };
@@ -74,12 +73,12 @@ public sealed class UpdateRecordTests : RecordTestBase
     public async Task Request_ShouldSuccess_WhenUpdateTags()
     {
         var tagName = TagName.Parse("name", null);
-        var trq = new CreateTagRequest(tagName);
+        var trq = new TagCreateRequest(tagName);
         var trs = await Context.Client.Tags.CreateAsync(trq);
         
         var tags = new RelatedTagIdsCollection([trs.Unwrap().Id]);
 
-        var request = new UpdateRecordRequest
+        var request = new RecordUpdateRequest
         {
             Tags = new UpdateField<IReadOnlyRelatedIdsCollection<TagId>>(tags)
         };
@@ -93,7 +92,7 @@ public sealed class UpdateRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenNothingToDo()
     {
-        var request = new UpdateRecordRequest();
+        var request = new RecordUpdateRequest();
         
         var response = await Context.Client.Records.UpdateAsync(AddedRecordIds[0], request);
         
@@ -108,7 +107,7 @@ public sealed class UpdateRecordTests : RecordTestBase
         var id = RecordId.Parse(idString, null);
         
         var name = RecordName.Parse("name", null);
-        var request = new UpdateRecordRequest
+        var request = new RecordUpdateRequest
         {
             Name = new UpdateField<RecordName?>(name)
         };

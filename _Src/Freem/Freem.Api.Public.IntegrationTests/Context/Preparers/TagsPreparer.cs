@@ -1,6 +1,6 @@
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Api.Public.Contracts.DTO.Tags;
 using Freem.Api.Public.IntegrationTests.Extensions;
 
 namespace Freem.Api.Public.IntegrationTests.Context.Preparers;
@@ -19,7 +19,7 @@ public sealed class TagsPreparer
     public async Task<TagId> CreateAsync(string name = "name0")
     {
         var tagName = TagName.Parse(name, null);
-        var request = new CreateTagRequest(tagName);
+        var request = new TagCreateRequest(tagName);
         var response = await _context.Client.Tags.CreateAsync(request);
 
         return response.Unwrap().Id;

@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Tags;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiCreateTagRequest : IRequest
 {
     public RequestType Type => RequestTypes.Tags.Create;
 
-    public CreateTagRequest Body { get; }
+    public TagCreateRequest Body { get; }
 
-    public ApiCreateTagRequest(CreateTagRequest body)
+    public ApiCreateTagRequest(TagCreateRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

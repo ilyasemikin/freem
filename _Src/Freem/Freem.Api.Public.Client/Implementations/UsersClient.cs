@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Users;
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
+using Freem.Api.Public.Contracts.V1.Users;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Utilities.Http;
 using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
@@ -21,17 +21,17 @@ public sealed class UsersClient : BaseClient
         _options = options;
     }
 
-    public Task<Result<RegisterUserResponse, IClientError>> RegisterAsync(
-        RegisterUserRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<UserRegisterResponse, IClientError>> RegisterAsync(
+        UserRegisterRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/user/register")
             .WithJsonBody(body, _options);
 
-        return SendForUserAsync<RegisterUserResponse>(request, cancellationToken);
+        return SendForUserAsync<UserRegisterResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> UpdateSettingsAsync(
-        UpdateUserSettingsRequest body, CancellationToken cancellationToken = default)
+        UserSettingsUpdateRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put("api/v1/user/settings")
             .WithJsonBody(body, _options);
@@ -46,10 +46,10 @@ public sealed class UsersClient : BaseClient
         return SendForUserAsync<UserSettingsResponse>(request, cancellationToken);
     }
 
-    public Task<Result<MeResponse, IClientError>> MeAsync(CancellationToken cancellationToken = default)
+    public Task<Result<UserResponse, IClientError>> MeAsync(CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/user/me");
         
-        return SendForUserAsync<MeResponse>(request, cancellationToken);
+        return SendForUserAsync<UserResponse>(request, cancellationToken);
     }
 }

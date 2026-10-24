@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiStopRunningRecordRequest : IRequest
 {
     public RequestType Type => RequestTypes.RunningRecords.Stop;
 
-    public StopRunningRecordRequest Body { get; }
+    public RunningRecordStopRequest Body { get; }
 
-    public ApiStopRunningRecordRequest(StopRunningRecordRequest body)
+    public ApiStopRunningRecordRequest(RunningRecordStopRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

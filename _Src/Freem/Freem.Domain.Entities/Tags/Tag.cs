@@ -9,19 +9,17 @@ namespace Freem.Domain.Entities.Tags;
 public sealed class Tag : 
     IEntity<TagId>
 {
-    private TagName _name = null!;
-
     public TagId Id { get; }
     public UserId UserId { get; }
 
     public TagName Name
     {
-        get => _name;
+        get;
         set
         {
             ArgumentNullException.ThrowIfNull(value);
 
-            _name = value;
+            field = value;
         }
     }
 

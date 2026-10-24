@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiListImportRequest : IRequest
 {
     public RequestType Type => RequestTypes.Imports.List;
 
-    public ListImportRequest Query { get; }
+    public ImportListRequest Query { get; }
 
-    public ApiListImportRequest(ListImportRequest query)
+    public ApiListImportRequest(ImportListRequest query)
     {
         ArgumentNullException.ThrowIfNull(query);
 

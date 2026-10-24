@@ -3,10 +3,10 @@ using Freem.Domain.Entities.Import;
 using Freem.Domain.Formats;
 using Freem.Domain.Import;
 using Freem.Domain.Tags.Models;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UseCases.UnitTests.Import;
 

@@ -30,7 +30,9 @@ import {ImportRowsTable} from "./ImportRowsTable.tsx";
 const PageSize = 100;
 
 // Activities and tags of an import are few and needed together, so all their pages are read at once.
-async function readAllPages<T>(readPage: (offset: number, limit: number) => Promise<Response>): Promise<T[]> {
+async function readAllPages<T>(
+    property: string,
+    readPage: (offset: number, limit: number) => Promise<Response>): Promise<T[]> {
   const items: T[] = [];
   for (; ;) {
     const response = await readPage(items.length, PageSize);
@@ -38,7 +40,7 @@ async function readAllPages<T>(readPage: (offset: number, limit: number) => Prom
       throw await ApiError.fromResponse(response);
     }
 
-    const page = await ListResponse.read<T>(response);
+    const page = await ListResponse.read<T>(response, property);
     items.push(...page.items);
     if (page.items.length === 0 || items.length >= page.totalCount) {
       return items;
@@ -85,12 +87,13 @@ export function ImportPage() {
         throw await ApiError.fromResponse(response);
       }
 
-      const body: ImportResponse = await response.json();
-      const loadedActivities = await readAllPages<ImportActivityResponse>((offset, limit) => {
+      const imported = await response.json();
+      const body: ImportResponse = imported.import;
+      const loadedActivities = await readAllPages<ImportActivityResponse>("activities", (offset, limit) => {
         const request = new ListImportActivityRequest(offset, limit);
         return imports.listActivities(importId, request);
       });
-      const loadedTags = await readAllPages<ImportTagResponse>((offset, limit) => {
+      const loadedTags = await readAllPages<ImportTagResponse>("tags", (offset, limit) => {
         const request = new ListImportTagRequest(offset, limit);
         return imports.listTags(importId, request);
       });

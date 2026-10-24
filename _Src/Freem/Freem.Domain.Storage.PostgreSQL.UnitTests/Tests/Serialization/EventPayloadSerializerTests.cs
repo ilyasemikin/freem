@@ -15,7 +15,7 @@ using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Events;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Storage.PostgreSQL.UnitTests.Tests.Serialization;
 

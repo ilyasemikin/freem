@@ -3,6 +3,8 @@ using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
 using Freem.Domain.Formats;
 using Freem.Domain.Import;
+using Freem.Domain.Records;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
@@ -13,7 +15,7 @@ namespace Freem.Domain;
 
 public static class DomainErrorCatalog
 {
-    public const string Scope = "freem";
+    private const string Scope = "freem";
 
     public static class Types
     {
@@ -57,58 +59,120 @@ public static class DomainErrorCatalog
         public const string TagName = $"{Scope}:tag_name";
         public const string FormatKey = $"{Scope}:format_key";
         public const string RowsLimit = $"{Scope}:rows_limit";
-
-        public static string GetId(Id id)
-        {
-            return id switch
-            {
-                Activities.ActivityId => ActivityId,
-                Events.EventId => EventId,
-                Import.ImportActivityId => ImportActivityId,
-                Import.ImportDocumentId => ImportDocumentId,
-                Import.ImportRowId => ImportRowId,
-                Import.ImportTagId => ImportTagId,
-                Records.RecordId => RecordId,
-                Records.RecordPeriodId => RecordPeriodId,
-                RunningRecords.RunningRecordId => RunningRecordId,
-                Tags.TagId => TagId,
-                Users.UserId => UserId,
-                _ => throw new ArgumentOutOfRangeException(nameof(id), id.GetType(), string.Empty)
-            };
-        }
     }
 
     public static class Factories
     {
-        private const string EventEntityName = "event";
-
-        public static Error CreateEntityNotFound(Id id)
+        public static Error CreateActivityNotFound(ActivityId id)
         {
-            var name = GetEntityName(id);
-            var property = Properties.GetId(id);
             return new Error.Builder()
                 .WithType(Types.EntityNotFound)
-                .WithMessage($"Entity \"{name}\" with id = [{id}] not found")
-                .WithProperty(property, id);
+                .WithMessage($"Activity with id = [{id}] not found")
+                .WithProperty(Properties.ActivityId, id);
         }
 
-        public static Error CreateRelatedEntitiesNotFound(IEnumerable<Id> ids)
+        public static Error CreateEventNotFound(EventId id)
         {
-            var details = ids.Select(CreateEntityNotFound);
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Event with id = [{id}] not found")
+                .WithProperty(Properties.EventId, id);
+        }
+
+        public static Error CreateImportActivityNotFound(ImportActivityId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Import activity with id = [{id}] not found")
+                .WithProperty(Properties.ImportActivityId, id);
+        }
+
+        public static Error CreateImportDocumentNotFound(ImportDocumentId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Import document with id = [{id}] not found")
+                .WithProperty(Properties.ImportDocumentId, id);
+        }
+
+        public static Error CreateImportRowNotFound(ImportRowId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Import row with id = [{id}] not found")
+                .WithProperty(Properties.ImportRowId, id);
+        }
+
+        public static Error CreateImportTagNotFound(ImportTagId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Import tag with id = [{id}] not found")
+                .WithProperty(Properties.ImportTagId, id);
+        }
+
+        public static Error CreateRecordNotFound(RecordId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Record with id = [{id}] not found")
+                .WithProperty(Properties.RecordId, id);
+        }
+
+        public static Error CreateRecordPeriodNotFound(RecordPeriodId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Record period with id = [{id}] not found")
+                .WithProperty(Properties.RecordPeriodId, id);
+        }
+
+        public static Error CreateRunningRecordNotFound(RunningRecordId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Running record with id = [{id}] not found")
+                .WithProperty(Properties.RunningRecordId, id);
+        }
+
+        public static Error CreateTagNotFound(TagId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"Tag with id = [{id}] not found")
+                .WithProperty(Properties.TagId, id);
+        }
+
+        public static Error CreateUserNotFound(UserId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityNotFound)
+                .WithMessage($"User with id = [{id}] not found")
+                .WithProperty(Properties.UserId, id);
+        }
+
+        public static Error CreateRelatedEntitiesNotFound(IEnumerable<Error> details)
+        {
             return new Error.Builder()
                 .WithType(Types.RelatedEntitiesNotFound)
                 .WithMessage("Related entities not found")
                 .WithDetails(details);
         }
 
-        public static Error CreateEntityAlreadyExists(Id id)
+        public static Error CreateRunningRecordAlreadyExists(RunningRecordId id)
         {
-            var name = GetEntityName(id);
-            var property = Properties.GetId(id);
             return new Error.Builder()
                 .WithType(Types.EntityAlreadyExists)
-                .WithMessage($"Entity \"{name}\" with id = [{id}] already exists")
-                .WithProperty(property, id);
+                .WithMessage($"Running record with id = [{id}] already exists")
+                .WithProperty(Properties.RunningRecordId, id);
+        }
+
+        public static Error CreateUserAlreadyExists(UserId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.EntityAlreadyExists)
+                .WithMessage($"User with id = [{id}] already exists")
+                .WithProperty(Properties.UserId, id);
         }
 
         public static Error CreateEventDeserializationFailed(string eventType, string reason)
@@ -188,32 +252,25 @@ public static class DomainErrorCatalog
                 .WithProperty(Properties.TagId, id);
         }
 
-        public static Error CreateImportInvalidStatus(Id id, object current, object requested)
+        public static Error CreateImportInvalidStatus(ImportDocumentId id, object current, object requested)
         {
-            var property = Properties.GetId(id);
             return new Error.Builder()
                 .WithType(Types.ImportInvalidStatus)
-                .WithMessage($"Entity with id = [{id}] cannot change status from \"{current}\" to \"{requested}\"")
-                .WithProperty(property, id);
+                .WithMessage($"Import document with id = [{id}] cannot change status from \"{current}\" to \"{requested}\"")
+                .WithProperty(Properties.ImportDocumentId, id);
         }
 
-        public static Error CreateImportUnmappedEntities(IEnumerable<Id> ids)
+        public static Error CreateImportUnmappedEntities(
+            IEnumerable<ImportActivityId> activityIds,
+            IEnumerable<ImportTagId> tagIds)
         {
-            var details = ids.Select(CreateImportUnmappedEntity);
+            var activityDetails = activityIds.Select(CreateImportUnmappedActivity);
+            var tagDetails = tagIds.Select(CreateImportUnmappedTag);
+            var details = activityDetails.Concat(tagDetails);
             return new Error.Builder()
                 .WithType(Types.ImportUnmappedEntities)
                 .WithMessage("Import activities and tags used by selected rows are not mapped")
                 .WithDetails(details);
-        }
-
-        private static Error CreateImportUnmappedEntity(Id id)
-        {
-            var name = GetEntityName(id);
-            var property = Properties.GetId(id);
-            return new Error.Builder()
-                .WithType(Types.ImportUnmappedEntities)
-                .WithMessage($"Entity \"{name}\" with id = [{id}] is not mapped")
-                .WithProperty(property, id);
         }
 
         public static Error CreateImportTooManyRows(int limit)
@@ -247,11 +304,20 @@ public static class DomainErrorCatalog
                 .WithMessage(message);
         }
 
-        private static string GetEntityName(Id id)
+        private static Error CreateImportUnmappedActivity(ImportActivityId id)
         {
-            return id is EventId
-                ? EventEntityName
-                : EntityIdNameProvider.Instance.Get(id);
+            return new Error.Builder()
+                .WithType(Types.ImportUnmappedEntities)
+                .WithMessage($"Import activity with id = [{id}] is not mapped")
+                .WithProperty(Properties.ImportActivityId, id);
+        }
+
+        private static Error CreateImportUnmappedTag(ImportTagId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.ImportUnmappedEntities)
+                .WithMessage($"Import tag with id = [{id}] is not mapped")
+                .WithProperty(Properties.ImportTagId, id);
         }
     }
 }

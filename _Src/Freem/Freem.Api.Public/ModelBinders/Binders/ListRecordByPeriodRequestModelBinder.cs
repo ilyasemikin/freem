@@ -1,6 +1,6 @@
-﻿using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Records;
+﻿using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Api.Public.ModelBinders.Extensions;
+using Freem.Time;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Freem.Api.Public.ModelBinders.Binders;
@@ -12,8 +12,8 @@ internal sealed class ListRecordByPeriodRequestModelBinder : IModelBinder
 
     public ListRecordByPeriodRequestModelBinder()
     {
-        _periodName = nameof(ListRecordByPeriodRequest.Period).ToLowerInvariant();
-        _limitName = nameof(ListRecordByPeriodRequest.Limit).ToLowerInvariant();
+        _periodName = nameof(RecordListByPeriodRequest.Period).ToLowerInvariant();
+        _limitName = nameof(RecordListByPeriodRequest.Limit).ToLowerInvariant();
     }
     
     public Task BindModelAsync(ModelBindingContext context)
@@ -24,10 +24,10 @@ internal sealed class ListRecordByPeriodRequestModelBinder : IModelBinder
         var lr = context.ValueProvider.GetValue(_limitName);
         
         if (!pr.TryGetDateTimePeriodValue(DateTimePeriod.Empty, out var period) ||
-            !lr.TryGetIntValue(ListRecordByPeriodRequest.DefaultLimit, out var limit))
+            !lr.TryGetIntValue(RecordListByPeriodRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
         
-        var value = new ListRecordByPeriodRequest(period, limit.Value);
+        var value = new RecordListByPeriodRequest(period, limit.Value);
         context.Result = ModelBindingResult.Success(value);
 
         return Task.CompletedTask;

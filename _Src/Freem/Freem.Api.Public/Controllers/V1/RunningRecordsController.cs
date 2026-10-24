@@ -1,7 +1,7 @@
+using Freem.Api.Public.Contracts.V1.Records.Running.Dtos;
 using System.ComponentModel.DataAnnotations;
-using Freem.Api.Public.Constants;
-using Freem.Api.Public.Contracts.DTO;
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Freem.Api.Public.Extensions;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.RunningRecords;
@@ -12,25 +12,11 @@ namespace Freem.Api.Public.Controllers.V1;
 
 /// <summary>Manages the user's running record: the activity that is being tracked right now. A user has at most one.</summary>
 [Route("api/v1/records/running")]
-[Tags(ControllerTags.RunningRecords)]
 public sealed class RunningRecordsController : BaseController
 {
     public RunningRecordsController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)
         : base(mediator)
     {
-    }
-
-    /// <summary>Returns the running record.</summary>
-    [HttpGet]
-    [ProducesResponseType<RunningRecordResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
-    {
-        var context = HttpContext.ToAuthorizedHandlerContext();
-        var request = ApiGetRunningRecordRequest.Instance;
-        return await Mediator.ExecuteAsync<ApiGetRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 
     /// <summary>Discards the running record without saving it as a finished record.</summary>
@@ -57,7 +43,7 @@ public sealed class RunningRecordsController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync(
-        [Required] [FromBody] UpdateRunningRecordRequest body,
+        [Required] [FromBody] RunningRecordUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
@@ -75,7 +61,7 @@ public sealed class RunningRecordsController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> StartAsync(
-        [Required] [FromBody] StartRunningRecordRequest body,
+        [Required] [FromBody] RunningRecordStartRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
@@ -93,11 +79,24 @@ public sealed class RunningRecordsController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> StopAsync(
-        [Required] [FromBody] StopRunningRecordRequest body,
+        [Required] [FromBody] RunningRecordStopRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiStopRunningRecordRequest(body);
         return await Mediator.ExecuteAsync<ApiStopRunningRecordRequest, IActionResult>(context, request, cancellationToken);
+    }
+    
+    /// <summary>Returns the running record.</summary>
+    [HttpGet]
+    [ProducesResponseType<RunningRecordResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = ApiGetRunningRecordRequest.Instance;
+        return await Mediator.ExecuteAsync<ApiGetRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
 }

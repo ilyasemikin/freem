@@ -15,7 +15,7 @@ using Freem.Domain.Users.Models;
 using Freem.Domain.Serialization.Json.Events;
 using Freem.Domain.Serialization.Json.Relations;
 using Freem.Domain.Serialization.Json.Statistics;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Serialization.Json;
 
 namespace Freem.Domain.Serialization.Json;

@@ -1,6 +1,4 @@
-﻿using Freem.Domain;
-
-namespace Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
+﻿namespace Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
 
 internal sealed class DatabaseContextWriteContext
 {

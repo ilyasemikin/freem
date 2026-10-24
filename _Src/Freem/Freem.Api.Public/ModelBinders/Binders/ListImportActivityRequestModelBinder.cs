@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Api.Public.ModelBinders.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -11,8 +11,8 @@ internal sealed class ListImportActivityRequestModelBinder : IModelBinder
 
     public ListImportActivityRequestModelBinder()
     {
-        _offsetName = nameof(ListImportActivityRequest.Offset).ToLowerInvariant();
-        _limitName = nameof(ListImportActivityRequest.Limit).ToLowerInvariant();
+        _offsetName = nameof(ImportActivityListRequest.Offset).ToLowerInvariant();
+        _limitName = nameof(ImportActivityListRequest.Limit).ToLowerInvariant();
     }
 
     public Task BindModelAsync(ModelBindingContext context)
@@ -22,11 +22,11 @@ internal sealed class ListImportActivityRequestModelBinder : IModelBinder
         var or = context.ValueProvider.GetValue(_offsetName);
         var lr = context.ValueProvider.GetValue(_limitName);
 
-        if (!or.TryGetIntValue(ListImportActivityRequest.DefaultOffset, out var offset) ||
-            !lr.TryGetIntValue(ListImportActivityRequest.DefaultLimit, out var limit))
+        if (!or.TryGetIntValue(ImportActivityListRequest.DefaultOffset, out var offset) ||
+            !lr.TryGetIntValue(ImportActivityListRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
 
-        var value = new ListImportActivityRequest(offset.Value, limit.Value);
+        var value = new ImportActivityListRequest(offset.Value, limit.Value);
         context.Result = ModelBindingResult.Success(value);
 
         return Task.CompletedTask;

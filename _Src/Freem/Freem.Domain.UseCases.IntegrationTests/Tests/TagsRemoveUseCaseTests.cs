@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Tags;
+﻿using Freem.Domain.Tags;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Tags.Remove;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;

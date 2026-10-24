@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Freem.Domain;
 using Freem.Domain.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Domain.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Converters;
@@ -28,7 +27,7 @@ public sealed class TriggerConstraintErrorToErrorConverterTests
     public void Convert_ShouldNotThrowInvalidOperationException_WhenPassAnyOfTriggerErrorCode(string code)
     {
         var error = new TriggerConstraintError(code, "message");
-        var converter = new TriggerConstraintErrorToErrorConverter(new EntityIdFactory());
+        var converter = new TriggerConstraintErrorToErrorConverter();
         
         var exception = Record.Exception(() => converter.Convert(error));
         

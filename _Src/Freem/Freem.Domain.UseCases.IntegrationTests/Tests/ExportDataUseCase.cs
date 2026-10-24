@@ -5,11 +5,11 @@ using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Export;
 using Freem.Domain.UseCases.Contracts.Formats.List;
 using Freem.Domain.UseCases.Contracts.Records.Create;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 

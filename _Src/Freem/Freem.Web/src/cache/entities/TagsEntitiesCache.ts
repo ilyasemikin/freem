@@ -23,7 +23,8 @@ export class TagsEntitiesCache {
         throw new Error(response.statusText);
       }
 
-      fetched.push(await response.json());
+      const body = await response.json();
+      fetched.push(body.tag);
     }
 
     this.cache.append(fetched);
@@ -36,7 +37,8 @@ export class TagsEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const responses: TagResponse[] = await response.json();
+    const body = await response.json();
+    const responses: TagResponse[] = body.tags;
     this.cache.append(responses);
     return responses;
   }
@@ -47,7 +49,8 @@ export class TagsEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const responses: TagResponse[] = await response.json();
+    const body = await response.json();
+    const responses: TagResponse[] = [body.tag];
     this.cache.append(responses);
     return responses;
   }

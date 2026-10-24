@@ -1,4 +1,3 @@
-using Freem.Api.Public.Constants;
 using Freem.Api.Public.UseCases.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ namespace Freem.Api.Public.Controllers.Infrastructure;
 /// <summary>Service health probes for container orchestration. Anonymous.</summary>
 [AllowAnonymous]
 [Route("_health")]
-[Tags(ControllerTags.Infrastructure)]
 public sealed class HealthController : BaseController
 {
     public HealthController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)

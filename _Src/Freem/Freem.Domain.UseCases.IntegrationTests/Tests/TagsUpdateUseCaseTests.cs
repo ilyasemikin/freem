@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Tags;
+﻿using Freem.Domain.Entities.Tags;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.UseCases.Context;

@@ -1,4 +1,4 @@
-﻿using Freem.Api.Public.Contracts.DTO.Activities;
+﻿using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Api.Public.ModelBinders.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -11,8 +11,8 @@ internal sealed class ListActivityRequestModelBinder : IModelBinder
 
     public ListActivityRequestModelBinder()
     {
-        _offsetName = nameof(ListActivityRequest.Offset).ToLowerInvariant();
-        _limitName = nameof(ListActivityRequest.Limit).ToLowerInvariant();
+        _offsetName = nameof(ActivityListRequest.Offset).ToLowerInvariant();
+        _limitName = nameof(ActivityListRequest.Limit).ToLowerInvariant();
     }
     
     public Task BindModelAsync(ModelBindingContext context)
@@ -22,11 +22,11 @@ internal sealed class ListActivityRequestModelBinder : IModelBinder
         var or = context.ValueProvider.GetValue(_offsetName);
         var lr = context.ValueProvider.GetValue(_limitName);
         
-        if (!or.TryGetIntValue(ListActivityRequest.DefaultOffset, out var offset) || 
-            !lr.TryGetIntValue(ListActivityRequest.DefaultLimit, out var limit))
+        if (!or.TryGetIntValue(ActivityListRequest.DefaultOffset, out var offset) || 
+            !lr.TryGetIntValue(ActivityListRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
 
-        var value = new ListActivityRequest(offset.Value, limit.Value);
+        var value = new ActivityListRequest(offset.Value, limit.Value);
         context.Result = ModelBindingResult.Success(value);
         
         return Task.CompletedTask;

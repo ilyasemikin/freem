@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Statistics;
+using Freem.Api.Public.Contracts.V1.Statistics;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 

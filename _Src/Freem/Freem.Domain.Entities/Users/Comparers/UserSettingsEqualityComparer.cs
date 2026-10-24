@@ -2,7 +2,7 @@
 
 public sealed class UserSettingsEqualityComparer : IEqualityComparer<UserSettings>
 {
-    public static IEqualityComparer<UserSettings> Instance { get; } = new UserSettingsEqualityComparer();
+    public static UserSettingsEqualityComparer Instance { get; } = new();
     
     public bool Equals(UserSettings? x, UserSettings? y)
     {

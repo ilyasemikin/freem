@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Freem.Api.Public.Client.Implementations.Factories;
 using Freem.Api.Public.Contracts;
+using Freem.Api.Public.Contracts.V1;
 using Utilities.Http;
 using Utilities.Http.Content.Extensions;
 using Utilities.Http.Errors;

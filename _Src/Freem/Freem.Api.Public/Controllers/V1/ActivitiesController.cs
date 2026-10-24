@@ -1,11 +1,10 @@
+using Freem.Api.Public.Contracts.V1.Activities.Dtos;
 using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Activities;
-using Freem.Api.Public.Constants;
 using Freem.Api.Public.Contracts;
-using Freem.Api.Public.Contracts.DTO;
-using Freem.Api.Public.Contracts.DTO.Activities;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Api.Public.Extensions;
-using Freem.Api.Public.OpenApi.Headers;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Activities;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +14,6 @@ namespace Freem.Api.Public.Controllers.V1;
 
 /// <summary>Manages the current user's activities: what the user spends time on.</summary>
 [Route("api/v1/activities")]
-[Tags(ControllerTags.Activities)]
 public sealed class ActivitiesController : BaseController
 {
     public ActivitiesController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)
@@ -28,73 +26,17 @@ public sealed class ActivitiesController : BaseController
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The id of the created activity.</returns>
     [HttpPost]
-    [ProducesResponseType<CreateActivityResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ActivityCreateResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync(
-        [Required] [FromBody] CreateActivityRequest body,
+        [Required] [FromBody] ActivityCreateRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiCreateActivityRequest(body);
         return await Mediator.ExecuteAsync<ApiCreateActivityRequest, IActionResult>(context, request, cancellationToken);
-    }
-
-    /// <summary>Returns a page of the user's activities.</summary>
-    /// <param name="query">Paging: offset and limit.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
-    [HttpGet]
-    [ProducesResponseType<IReadOnlyList<ActivityResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
-    [ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListAsync(
-        [Required] [FromQuery] ListActivityRequest query,
-        CancellationToken cancellationToken = default)
-    {
-        var context = HttpContext.ToAuthorizedHandlerContext();
-        var request = new ApiListActivityRequest(query);
-        return await Mediator.ExecuteAsync<ApiListActivityRequest, IActionResult>(context, request, cancellationToken);
-    }
-
-    /// <summary>Searches the user's activities by a fragment of the name (case-sensitive).</summary>
-    /// <remarks>Returns at most the default page size, without paging. The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
-    /// <param name="query">Text to search for in activity names.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    [HttpGet("by-name")]
-    [ProducesResponseType<IReadOnlyList<ActivityResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
-    [ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
-    public async Task<IActionResult> FindByNameAsync(
-        [Required] [FromQuery] FindActivityByNameRequest query,
-        CancellationToken cancellationToken = default)
-    {
-        var context = HttpContext.ToAuthorizedHandlerContext();
-        var request = new ApiFindActivityByNameRequest(query);
-        return await Mediator.ExecuteAsync<ApiFindActivityByNameRequest, IActionResult>(context, request, cancellationToken);
-    }
-
-    /// <summary>Returns a single activity.</summary>
-    /// <param name="activityId">Activity id.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    [HttpGet("{activityId:required}")]
-    [ProducesResponseType<ActivityResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync(
-        [Required] [FromRoute] ActivityId activityId,
-        CancellationToken cancellationToken = default)
-    {
-        var context = HttpContext.ToAuthorizedHandlerContext();
-        var request = new ApiGetActivityRequest(activityId);
-        return await Mediator.ExecuteAsync<ApiGetActivityRequest, IActionResult>(context, request, cancellationToken);
     }
 
     /// <summary>Permanently removes an activity.</summary>
@@ -127,7 +69,7 @@ public sealed class ActivitiesController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync(
         [Required] [FromRoute] ActivityId activityId,
-        [Required] [FromBody] UpdateActivityRequest body,
+        [Required] [FromBody] ActivityUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
@@ -169,5 +111,57 @@ public sealed class ActivitiesController : BaseController
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiUnarchiveActivityRequest(activityId);
         return await Mediator.ExecuteAsync<ApiUnarchiveActivityRequest, IActionResult>(context, request, cancellationToken);
+    }
+    
+    /// <summary>Returns a page of the user's activities.</summary>
+    /// <param name="query">Paging: offset and limit.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    ///
+    [HttpGet]
+    [ProducesResponseType<ActivityListResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListAsync(
+        [Required] [FromQuery] ActivityListRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiListActivityRequest(query);
+        return await Mediator.ExecuteAsync<ApiListActivityRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Searches the user's activities by a fragment of the name (case-sensitive).</summary>
+    /// <remarks>Returns at most the default page size, without paging.</remarks>
+    /// <param name="query">Text to search for in activity names.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpGet("by-name")]
+    [ProducesResponseType<ActivityListResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchByNameAsync(
+        [Required] [FromQuery] ActivitySearchByNameRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiSearchActivityByNameRequest(query);
+        return await Mediator.ExecuteAsync<ApiSearchActivityByNameRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Returns a single activity.</summary>
+    /// <param name="activityId">Activity id.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpGet("{activityId:required}")]
+    [ProducesResponseType<ActivityResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetAsync(
+        [Required] [FromRoute] ActivityId activityId,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiGetActivityRequest(activityId);
+        return await Mediator.ExecuteAsync<ApiGetActivityRequest, IActionResult>(context, request, cancellationToken);
     }
 }

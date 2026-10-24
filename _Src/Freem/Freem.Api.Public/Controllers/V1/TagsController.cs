@@ -1,12 +1,11 @@
+using Freem.Api.Public.Contracts.V1.Tags.Dtos;
 using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Api.Public.Constants;
 using Freem.Api.Public.Contracts;
-using Freem.Api.Public.Contracts.DTO;
-using Freem.Api.Public.Contracts.DTO.Tags;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Api.Public.Extensions;
-using Freem.Api.Public.OpenApi.Headers;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Tags;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,6 @@ namespace Freem.Api.Public.Controllers.V1;
 
 /// <summary>Manages the current user's tags: labels attached to activities and records.</summary>
 [Route("api/v1/tags")]
-[Tags(ControllerTags.Tags)]
 public sealed class TagsController : BaseController
 {
     public TagsController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)
@@ -29,12 +27,12 @@ public sealed class TagsController : BaseController
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The id of the created tag.</returns>
     [HttpPost]
-    [ProducesResponseType<CreateTagResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<TagCreateResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateAsync(
-        [Required] [FromBody] CreateTagRequest body,
+        [Required] [FromBody] TagCreateRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
@@ -45,15 +43,13 @@ public sealed class TagsController : BaseController
     /// <summary>Returns a page of the user's tags.</summary>
     /// <param name="query">Paging: offset and limit.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
+    ///
     [HttpGet]
-    [ProducesResponseType<IReadOnlyList<TagResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<TagListResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
-    [ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
     public async Task<IActionResult> ListAsync(
-        [Required] [FromQuery] ListTagRequest query,
+        [Required] [FromQuery] TagListRequest query,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
@@ -70,13 +66,13 @@ public sealed class TagsController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> FindByNameAsync(
+    public async Task<IActionResult> SearchByNameAsync(
         [Required] [FromRoute] TagName tagName,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();
-        var request = new ApiFindTagByNameRequest(tagName);
-        return await Mediator.ExecuteAsync<ApiFindTagByNameRequest, IActionResult>(context, request, cancellationToken);
+        var request = new ApiSearchTagByNameRequest(tagName);
+        return await Mediator.ExecuteAsync<ApiSearchTagByNameRequest, IActionResult>(context, request, cancellationToken);
     }
 
     /// <summary>Returns a single tag.</summary>
@@ -126,7 +122,7 @@ public sealed class TagsController : BaseController
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateAsync(
         [Required] [FromRoute] TagId tagId,
-        [Required] [FromBody] UpdateTagRequest body,
+        [Required] [FromBody] TagUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         var context = HttpContext.ToAuthorizedHandlerContext();

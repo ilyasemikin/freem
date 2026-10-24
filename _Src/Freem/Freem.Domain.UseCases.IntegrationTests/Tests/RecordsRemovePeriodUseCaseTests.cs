@@ -1,15 +1,10 @@
-using Freem.Domain;
-using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
-using Freem.Domain.Records.Models;
 using Freem.Domain.UseCases.Context;
-using Freem.Domain.UseCases.Contracts;
 using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.RemovePeriod;
-using Freem.Domain.UseCases.Contracts.Records.UpdatePeriod;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 using Record = Freem.Domain.Entities.Records.Record;

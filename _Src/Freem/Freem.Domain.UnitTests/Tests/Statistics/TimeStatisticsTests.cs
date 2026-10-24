@@ -5,8 +5,8 @@ using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
+using Freem.Time;
 using Freem.Time.Extensions;
-using Freem.Time.Models;
 using Record = Freem.Domain.Entities.Records.Record;
 
 namespace Freem.Domain.UnitTests.Tests.Statistics;

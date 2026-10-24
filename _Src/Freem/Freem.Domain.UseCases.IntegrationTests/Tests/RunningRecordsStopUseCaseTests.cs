@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;

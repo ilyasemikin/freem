@@ -5,7 +5,7 @@ using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Mappers;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Records;
 

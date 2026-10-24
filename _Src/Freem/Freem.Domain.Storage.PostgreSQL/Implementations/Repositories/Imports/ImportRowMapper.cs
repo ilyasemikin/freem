@@ -3,7 +3,7 @@ using Freem.Domain.Import;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Imports;
 

@@ -2,7 +2,7 @@
 using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
 using Freem.Api.Public.Client;
-using Freem.Api.Public.Client.DependencyInjection.Microsoft.Extensions;
+using Freem.Api.Public.Client.DependencyInjection;
 using Freem.Api.Public.Client.Implementations;
 using Freem.Api.Public.IntegrationTests.Context.Preparers;
 using Freem.Api.Public.IntegrationTests.Infrastructure;

@@ -1,6 +1,6 @@
+using Freem.Api.Public.Contracts.V1.Auth;
+using Freem.Api.Public.Contracts.V1.Users;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.Contracts.DTO.Auth;
-using Freem.Api.Public.Contracts.DTO.Users;
 using Freem.Api.Public.IntegrationTests.Extensions;
 
 namespace Freem.Api.Public.IntegrationTests.Context.Preparers;
@@ -40,7 +40,7 @@ public sealed class UserPreparer
         await AuthenticateAsync();
         
         var nickname = Nickname.Parse(NicknameValue, null);
-        var request = new RegisterUserRequest(nickname);
+        var request = new UserRegisterRequest(nickname);
         var response = await _context.Client.Users.RegisterAsync(request);
         response.EnsureSuccess();
     }

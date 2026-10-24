@@ -1,5 +1,5 @@
 using System.Text;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users.Models;
 
 namespace Freem.Domain.UseCases.UnitTests.Import;

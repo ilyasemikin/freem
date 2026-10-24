@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Activities;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiCreateActivityRequest : IRequest
 {
     public RequestType Type => RequestTypes.Activities.Create;
 
-    public CreateActivityRequest Body { get; }
+    public ActivityCreateRequest Body { get; }
 
-    public ApiCreateActivityRequest(CreateActivityRequest body)
+    public ApiCreateActivityRequest(ActivityCreateRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

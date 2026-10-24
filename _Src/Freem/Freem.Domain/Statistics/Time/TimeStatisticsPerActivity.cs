@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.Activities;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Statistics.Time;
 

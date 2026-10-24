@@ -1,8 +1,8 @@
-﻿using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Records;
+﻿using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
+using Freem.Time;
 using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records;
@@ -22,7 +22,7 @@ public sealed class ListByPeriodRecordTests : RecordTestBase
 
         var period = new DateTimePeriod(startAt, endAt);
         
-        var request = new ListRecordByPeriodRequest(period, 100);
+        var request = new RecordListByPeriodRequest(period, 100);
 
         var response = await Context.Client.Records.ListByPeriodAsync(request);
 

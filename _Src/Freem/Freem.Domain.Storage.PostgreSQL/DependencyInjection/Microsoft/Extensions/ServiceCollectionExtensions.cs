@@ -1,6 +1,4 @@
-﻿using Freem.Domain.DependencyInjection;
-using Freem.Domain.Entities.DependencyInjection;
-using Freem.Domain.Storage.Repositories.Activities;
+﻿using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Domain.Storage.Repositories.Events;
 using Freem.Domain.Storage.Repositories.Imports;
 using Freem.Domain.Storage.Repositories.Records;
@@ -38,8 +36,6 @@ public static class ServiceCollectionExtensions
         StorageConfiguration configuration)
     {
         return services
-            .AddEntitiesEqualityComparers()
-            .AddEntityIdNameConverters()
             .AddDatabaseContext(configuration)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
@@ -77,7 +73,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddDatabaseContextErrorHandler(this IServiceCollection services)
     {
-        services.TryAddSingleton<DatabaseColumnToIdPossibleConverter>();
+        services.TryAddSingleton<DatabaseColumnToEntityNotFoundErrorConverter>();
 
         services.TryAddSingleton<DatabaseForeignKeyConstraintErrorToErrorConverter>();
         services.TryAddSingleton<TriggerConstraintErrorToErrorConverter>();

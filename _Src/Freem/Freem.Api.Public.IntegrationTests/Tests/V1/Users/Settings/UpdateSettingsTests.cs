@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Net.Mime;
 using System.Text;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Users.Settings.Base;
@@ -22,7 +22,7 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     public async Task Request_ShouldSuccess()
     {
         var value = new TimeZoneOffset(TimeSpan.FromHours(1));
-        var request = new UpdateUserSettingsRequest
+        var request = new UserSettingsUpdateRequest
         {
             TimeZoneOffset = new UpdateField<TimeZoneOffset>(value)
         };
@@ -36,7 +36,7 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenHasNoChanges()
     {
-        var request = new UpdateUserSettingsRequest();
+        var request = new UserSettingsUpdateRequest();
         
         var response = await Context.Client.Users.UpdateSettingsAsync(request);
 

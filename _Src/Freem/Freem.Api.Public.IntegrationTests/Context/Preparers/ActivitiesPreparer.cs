@@ -1,8 +1,8 @@
-﻿using Freem.Domain.Activities;
+﻿using Freem.Api.Public.Contracts.V1.Activities;
+using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Api.Public.Contracts.DTO.Activities;
 using Freem.Api.Public.IntegrationTests.Extensions;
 
 namespace Freem.Api.Public.IntegrationTests.Context.Preparers;
@@ -23,7 +23,7 @@ public sealed class ActivitiesPreparer
     public async Task<ActivityId> CreateAsync(string name = "name0")
     {
         var activityName = ActivityName.Parse(name, null);
-        var request = new CreateActivityRequest(activityName, DefaultColor);
+        var request = new ActivityCreateRequest(activityName, DefaultColor);
         var response = await _context.Client.Activities.CreateAsync(request);
 
         return response.Unwrap().Id;
@@ -41,7 +41,7 @@ public sealed class ActivitiesPreparer
             var name = $"name{i}";
             var activityName = ActivityName.Parse(name, null);
             
-            var request = new CreateActivityRequest(activityName, DefaultColor, tags);
+            var request = new ActivityCreateRequest(activityName, DefaultColor, tags);
             var response = await _context.Client.Activities.CreateAsync(request);
 
             ids[i] = response.Unwrap().Id;

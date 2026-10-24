@@ -43,7 +43,7 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
         Assert.NotNull(response.Value.Record);
         Assert.Null(response.Error);
 
-        Assert.Equal(_record, response.Value.Record, new RunningRecordEqualityComparer());
+        Assert.Equal(_record, response.Value.Record, RunningRecordEqualityComparer.Instance);
     }
     
 }

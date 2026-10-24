@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Domain.Import;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
@@ -10,9 +10,9 @@ public sealed class ApiListImportActivityRequest : IRequest
     public RequestType Type => RequestTypes.Imports.ListActivities;
 
     public ImportDocumentId Id { get; }
-    public ListImportActivityRequest Query { get; }
+    public ImportActivityListRequest Query { get; }
 
-    public ApiListImportActivityRequest(ImportDocumentId id, ListImportActivityRequest query)
+    public ApiListImportActivityRequest(ImportDocumentId id, ImportActivityListRequest query)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(query);

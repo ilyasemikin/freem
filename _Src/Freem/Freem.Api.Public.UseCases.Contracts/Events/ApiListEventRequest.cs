@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Events;
+using Freem.Api.Public.Contracts.V1.Events;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiListEventRequest : IRequest
 {
     public RequestType Type => RequestTypes.Events.List;
 
-    public ListEventRequest Query { get; }
+    public EventListRequest Query { get; }
 
-    public ApiListEventRequest(ListEventRequest query)
+    public ApiListEventRequest(EventListRequest query)
     {
         ArgumentNullException.ThrowIfNull(query);
 

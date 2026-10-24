@@ -50,7 +50,7 @@ public sealed class TagsListUseCaseTests : UseCaseTestBase
             .OrderBy(x => x.Id.ToString())
             .ToArray();
         
-        Assert.Equal(_tags, tags, new TagEqualityComparer());
+        Assert.Equal(_tags, tags, TagEqualityComparer.Instance);
     }
     
 }

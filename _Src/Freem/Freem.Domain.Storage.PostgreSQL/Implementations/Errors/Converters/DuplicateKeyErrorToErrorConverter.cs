@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain;
+using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;
+using Freem.Domain.Users;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Domain.Storage.PostgreSQL.Database.Errors.Implementations;
 using Utilities.Errors;
@@ -16,9 +17,11 @@ internal sealed class DuplicateKeyErrorToErrorConverter
     {
         switch (error.ConstraintName)
         {
-            case EntitiesNames.Users.Constraints.PrimaryKey:
-            case EntitiesNames.RunningRecords.Constraints.PrimaryKey:
-                output = DomainErrorCatalog.Factories.CreateEntityAlreadyExists(context.ProcessedId);
+            case EntitiesNames.Users.Constraints.PrimaryKey when context.ProcessedId is UserId userId:
+                output = DomainErrorCatalog.Factories.CreateUserAlreadyExists(userId);
+                return true;
+            case EntitiesNames.RunningRecords.Constraints.PrimaryKey when context.ProcessedId is RunningRecordId runningRecordId:
+                output = DomainErrorCatalog.Factories.CreateRunningRecordAlreadyExists(runningRecordId);
                 return true;
             case EntitiesNames.Tags.Constraints.NameUnique when context.ProcessedId is TagId tagId:
                 output = DomainErrorCatalog.Factories.CreateTagNameAlreadyExists(tagId);

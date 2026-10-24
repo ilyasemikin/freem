@@ -1,5 +1,5 @@
+using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Domain.Activities;
-using Freem.Api.Public.Contracts.DTO.Activities;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -10,9 +10,9 @@ public sealed class ApiUpdateActivityRequest : IRequest
     public RequestType Type => RequestTypes.Activities.Update;
 
     public ActivityId Id { get; }
-    public UpdateActivityRequest Body { get; }
+    public ActivityUpdateRequest Body { get; }
 
-    public ApiUpdateActivityRequest(ActivityId id, UpdateActivityRequest body)
+    public ApiUpdateActivityRequest(ActivityId id, ActivityUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(body);

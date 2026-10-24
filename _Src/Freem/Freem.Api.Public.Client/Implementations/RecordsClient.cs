@@ -1,8 +1,10 @@
-﻿using System.Text.Json;
+﻿using Freem.Api.Public.Contracts.V1.Records.Running.Dtos;
+using Freem.Api.Public.Contracts.V1.Records.Dtos;
+using System.Text.Json;
 using Freem.Domain.Records;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Records;
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1.Records;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Utilities.Http;
 using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
@@ -22,17 +24,17 @@ public sealed class RecordsClient : BaseClient
         _options = options;
     }
 
-    public Task<Result<CreateRecordResponse, IClientError>> CreateAsync(CreateRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<RecordCreateResponse, IClientError>> CreateAsync(RecordCreateRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records")
             .WithJsonBody(body, _options);
         
-        return SendForUserAsync<CreateRecordResponse>(request, cancellationToken);
+        return SendForUserAsync<RecordCreateResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> UpdateAsync(
         RecordId id, 
-        UpdateRecordRequest body,
+        RecordUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put($"api/v1/records/{id}")
@@ -48,21 +50,21 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<Result<AddRecordPeriodResponse, IClientError>> AddPeriodAsync(
+    public Task<Result<RecordPeriodAddResponse, IClientError>> AddPeriodAsync(
         RecordId recordId,
-        RecordPeriodRequest body,
+        RecordPeriodItem body,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post($"api/v1/records/{recordId}/periods")
             .WithJsonBody(body, _options);
 
-        return SendForUserAsync<AddRecordPeriodResponse>(request, cancellationToken);
+        return SendForUserAsync<RecordPeriodAddResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> UpdatePeriodAsync(
         RecordId recordId,
         RecordPeriodId periodId,
-        UpdateRecordPeriodRequest body,
+        RecordPeriodUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put($"api/v1/records/{recordId}/periods/{periodId}")
@@ -81,7 +83,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<Result<IClientError>> StartAsync(StartRunningRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> StartAsync(RunningRecordStartRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records/running/start")
             .WithJsonBody(body, _options);
@@ -89,7 +91,7 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<Result<IClientError>> StopAsync(StopRunningRecordRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<IClientError>> StopAsync(RunningRecordStopRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/records/running/stop")
             .WithJsonBody(body, _options);
@@ -98,7 +100,7 @@ public sealed class RecordsClient : BaseClient
     }
 
     public Task<Result<IClientError>> UpdateRunningAsync(
-        UpdateRunningRecordRequest body, CancellationToken cancellationToken = default)
+        RunningRecordUpdateRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put("api/v1/records/running")
             .WithJsonBody(body, _options);
@@ -128,23 +130,23 @@ public sealed class RecordsClient : BaseClient
         return SendForUserAsync<RecordResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<RecordResponse>, IClientError>> ListAsync(
-        ListRecordRequest query, CancellationToken cancellationToken = default)
+    public Task<Result<RecordListResponse, IClientError>> ListAsync(
+        RecordListRequest query, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendForUserAsync<IReadOnlyList<RecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<RecordListResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<RecordResponse>, IClientError>> ListByPeriodAsync(
-        ListRecordByPeriodRequest query, CancellationToken cancellationToken = default)
+    public Task<Result<RecordListResponse, IClientError>> ListByPeriodAsync(
+        RecordListByPeriodRequest query, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/records/by-period")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Period), query.Period.ToString());
         
-        return SendForUserAsync<IReadOnlyList<RecordResponse>>(request, cancellationToken);
+        return SendForUserAsync<RecordListResponse>(request, cancellationToken);
     }
 }

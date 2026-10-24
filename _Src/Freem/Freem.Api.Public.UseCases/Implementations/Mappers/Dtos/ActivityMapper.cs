@@ -1,12 +1,13 @@
+using Freem.Api.Public.Contracts.V1.Activities.Dtos;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Domain.Entities.Activities;
-using Freem.Api.Public.Contracts.DTO.Activities;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 
 internal static class ActivityMapper
 {
-    public static ActivityResponse Map(this Activity activity)
+    public static ActivityDto Map(this Activity activity)
     {
-        return new ActivityResponse(activity.Id, activity.Name, activity.Color, activity.Status, activity.Tags);
+        return new ActivityDto(activity.Id, activity.Name, activity.Color, activity.Status, activity.Tags);
     }
 }

@@ -1,7 +1,6 @@
 using System.Text;
 using Freem.Domain.Entities.Import;
-using Freem.Domain.Import;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users.Models;
 using Utilities.Errors;
 using Utilities.Primitives;

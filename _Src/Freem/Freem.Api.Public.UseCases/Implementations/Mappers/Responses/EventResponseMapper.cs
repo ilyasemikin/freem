@@ -1,12 +1,13 @@
+using Freem.Api.Public.Contracts.V1.Events;
+using Freem.Api.Public.Contracts.V1.Events.Dtos;
 using Freem.Domain.UseCases.Contracts.Events.Get;
 using Freem.Domain.UseCases.Contracts.Events.List;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
-using Freem.Api.Public.UseCases.Implementations.Results;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using EventResponse = Freem.Api.Public.Contracts.DTO.Events.EventResponse;
+using EventDto = Freem.Api.Public.Contracts.V1.Events.Dtos.EventDto;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 
@@ -17,7 +18,8 @@ internal static class EventResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Event.Map();
+        var @event = result.Value.Event.Map();
+        var response = new EventResponse(@event);
         return new OkObjectResult(response);
     }
 
@@ -29,6 +31,7 @@ internal static class EventResponseMapper
         var events = result.Value.Events
             .Select(@event => @event.Map())
             .ToArray();
-        return new ItemsListResult<EventResponse>(events, result.Value.TotalCount);
+        var response = new EventListResponse(result.Value.TotalCount, events);
+        return new OkObjectResult(response);
     }
 }

@@ -1,5 +1,5 @@
 using Freem.Domain.Formats;
-using Freem.Domain.UseCases.Export;
+using Freem.Domain.UseCases.Implementations.Export;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
 namespace Freem.Domain.UseCases.UnitTests.Export;

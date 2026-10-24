@@ -1,8 +1,8 @@
-﻿using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Statistics;
-using Freem.Api.Public.Contracts.DTO.Statistics.Periods;
-using Freem.Api.Public.Contracts.DTO.Statistics.Periods.Abstractions;
+﻿using Freem.Api.Public.Contracts.V1.Statistics;
+using Freem.Api.Public.Contracts.V1.Statistics.Periods;
+using Freem.Api.Public.Contracts.V1.Statistics.Periods.Abstractions;
 using Freem.Api.Public.ModelBinders.Extensions;
+using Freem.Time;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Freem.Api.Public.ModelBinders.Binders;

@@ -1,7 +1,7 @@
+using Freem.Api.Public.Contracts.V1.Imports.Dtos;
 using System.Net;
-using System.Net.Http.Json;
-using Freem.Api.Public.Contracts.DTO.Imports;
-using Freem.Api.Public.Contracts.DTO.Records;
+using Freem.Api.Public.Contracts.V1.Imports;
+using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
@@ -29,7 +29,7 @@ public sealed class ApplyImportTests : TestBase
         await Context.Preparer.Users.RegisterAsync();
     }
 
-    private async Task<ImportResponse> UploadSampleAsync()
+    private async Task<ImportDto> UploadSampleAsync()
     {
         var path = Path.Combine(AppContext.BaseDirectory, "Resources", "TimeTrackerSample.csv");
         await using var content = File.OpenRead(path);
@@ -40,13 +40,13 @@ public sealed class ApplyImportTests : TestBase
         return response.Value.Import;
     }
 
-    private async Task<IReadOnlyList<ImportActivityResponse>> ListActivitiesAsync(ImportDocumentId importId)
+    private async Task<IReadOnlyList<ImportActivityDto>> ListActivitiesAsync(ImportDocumentId importId)
     {
-        var response = await Context.Client.Imports.ListActivitiesAsync(importId, new ListImportActivityRequest(0, 100));
+        var response = await Context.Client.Imports.ListActivitiesAsync(importId, new ImportActivityListRequest(0, 100));
 
         response.ShouldSuccess();
         Assert.NotNull(response.Value);
-        return response.Value;
+        return response.Value.Activities;
     }
 
     [Fact]
@@ -57,21 +57,21 @@ public sealed class ApplyImportTests : TestBase
         foreach (var activity in importActivities)
         {
             var activityId = await Context.Preparer.Activities.CreateAsync();
-            var body = new UpdateImportActivityMappingRequest(activityId);
+            var body = new ImportActivityMappingUpdateRequest(activityId);
             var map = await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, activity.Id, body);
             map.ShouldSuccess();
         }
 
-        var apply = await Context.Client.Imports.ApplyAsync(import.Id, new ApplyImportRequest(true, null));
+        var apply = await Context.Client.Imports.ApplyAsync(import.Id, new ImportApplyRequest(true, null));
 
         apply.ShouldSuccess();
         Assert.NotNull(apply.Value);
         Assert.Equal(47, apply.Value.RecordsCreated);
         Assert.Empty(apply.Value.SkippedRowIds);
-        var records = await Context.Client.Records.ListAsync(new ListRecordRequest(0, 100));
+        var records = await Context.Client.Records.ListAsync(new RecordListRequest(0, 100));
         records.ShouldSuccess();
         Assert.NotNull(records.Value);
-        Assert.Equal(47, records.Value.Count);
+        Assert.Equal(47, records.Value.Records.Count);
         var stored = await ListActivitiesAsync(import.Id);
         Assert.All(stored, a => Assert.NotNull(a.MappedActivityId));
     }
@@ -81,7 +81,7 @@ public sealed class ApplyImportTests : TestBase
     {
         var import = await UploadSampleAsync();
 
-        var apply = await Context.Client.Imports.ApplyAsync(import.Id, new ApplyImportRequest(true, null));
+        var apply = await Context.Client.Imports.ApplyAsync(import.Id, new ImportApplyRequest(true, null));
 
         apply.ShouldHaveClientError(HttpStatusCode.UnprocessableEntity, DomainErrorCatalog.Types.ImportUnmappedEntities);
     }
@@ -92,8 +92,8 @@ public sealed class ApplyImportTests : TestBase
         var import = await UploadSampleAsync();
         ImportRowId[] rowIds = [ImportRowId.Generate()];
 
-        var both = await Context.Client.Imports.ApplyAsync(import.Id, new ApplyImportRequest(true, rowIds));
-        var none = await Context.Client.Imports.ApplyAsync(import.Id, new ApplyImportRequest(false, null));
+        var both = await Context.Client.Imports.ApplyAsync(import.Id, new ImportApplyRequest(true, rowIds));
+        var none = await Context.Client.Imports.ApplyAsync(import.Id, new ImportApplyRequest(false, null));
 
         both.ShouldHaveClientError(HttpStatusCode.BadRequest, DomainErrorCatalog.Types.InvalidRequest);
         none.ShouldHaveClientError(HttpStatusCode.BadRequest, DomainErrorCatalog.Types.InvalidRequest);
@@ -102,7 +102,7 @@ public sealed class ApplyImportTests : TestBase
     [Fact]
     public async Task Apply_ShouldReturnNotFound_WhenImportDoesNotExist()
     {
-        var apply = await Context.Client.Imports.ApplyAsync(ImportDocumentId.Generate(), new ApplyImportRequest(true, null));
+        var apply = await Context.Client.Imports.ApplyAsync(ImportDocumentId.Generate(), new ImportApplyRequest(true, null));
 
         apply.ShouldHaveStatusCode(HttpStatusCode.NotFound);
     }
@@ -113,7 +113,7 @@ public sealed class ApplyImportTests : TestBase
         var import = await UploadSampleAsync();
         var importActivities = await ListActivitiesAsync(import.Id);
         var importActivityId = importActivities[0].Id;
-        var body = new UpdateImportActivityMappingRequest(ActivityId.Generate());
+        var body = new ImportActivityMappingUpdateRequest(ActivityId.Generate());
 
         var response = await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, importActivityId, body);
 
@@ -127,9 +127,9 @@ public sealed class ApplyImportTests : TestBase
         var importActivities = await ListActivitiesAsync(import.Id);
         var importActivityId = importActivities[0].Id;
         var activityId = await Context.Preparer.Activities.CreateAsync();
-        await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, importActivityId, new UpdateImportActivityMappingRequest(activityId));
+        await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, importActivityId, new ImportActivityMappingUpdateRequest(activityId));
 
-        var remove = await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, importActivityId, new UpdateImportActivityMappingRequest(null));
+        var remove = await Context.Client.Imports.UpdateActivityMappingAsync(import.Id, importActivityId, new ImportActivityMappingUpdateRequest(null));
 
         remove.ShouldSuccess();
         var stored = await ListActivitiesAsync(import.Id);

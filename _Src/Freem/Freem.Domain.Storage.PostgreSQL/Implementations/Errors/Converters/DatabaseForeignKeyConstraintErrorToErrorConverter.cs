@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain;
 using Freem.Domain.Storage.PostgreSQL.Database.Errors.Implementations;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Converters;
 using Utilities.Errors;
@@ -8,21 +7,21 @@ namespace Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Converters;
 
 internal sealed class DatabaseForeignKeyConstraintErrorToErrorConverter
 {
-    private readonly DatabaseColumnToIdPossibleConverter _columnToIdConverter;
+    private readonly DatabaseColumnToEntityNotFoundErrorConverter _columnConverter;
 
     public DatabaseForeignKeyConstraintErrorToErrorConverter(
-        DatabaseColumnToIdPossibleConverter columnToIdConverter)
+        DatabaseColumnToEntityNotFoundErrorConverter columnConverter)
     {
-        _columnToIdConverter = columnToIdConverter;
+        _columnConverter = columnConverter;
     }
 
     public bool TryConvert(DatabaseForeignKeyConstraintError error, [NotNullWhen(true)] out Error? output)
     {
         output = null;
-        if (!_columnToIdConverter.TryConvert(error.Column, out var id))
+        if (!_columnConverter.TryConvert(error.Column, out var notFound))
             return false;
 
-        output = DomainErrorCatalog.Factories.CreateRelatedEntitiesNotFound([id]);
+        output = DomainErrorCatalog.Factories.CreateRelatedEntitiesNotFound([notFound]);
         return true;
     }
 }

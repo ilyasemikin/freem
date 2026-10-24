@@ -29,7 +29,8 @@ export class RecordsEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const responses: RecordResponse[] = await response.json();
+    const body = await response.json();
+    const responses: RecordResponse[] = body.records;
     return this.mapList(responses);
   }
 

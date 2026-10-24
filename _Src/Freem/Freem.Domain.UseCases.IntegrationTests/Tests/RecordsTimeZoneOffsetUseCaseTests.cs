@@ -12,7 +12,7 @@ using Freem.Domain.UseCases.Contracts.Records.UpdatePeriod;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 

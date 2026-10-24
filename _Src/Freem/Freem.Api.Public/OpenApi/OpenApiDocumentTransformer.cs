@@ -15,12 +15,9 @@ internal sealed class OpenApiDocumentTransformer : IOpenApiDocumentTransformer
         var info = configuration.GetOpenApiConfiguration();
         
         var environment = context.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-        if (environment.IsDevelopment())
+        if (environment.IsDevelopment() || info.ServerAddresses.Count == 0)
             return Task.CompletedTask;
 
-        if (info.ServerAddresses.Count == 0)
-            return Task.CompletedTask;
-        
         document.Servers ??= new List<OpenApiServer>();
         document.Servers.Clear();
         foreach (var address in info.ServerAddresses)

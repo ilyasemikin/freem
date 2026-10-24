@@ -75,7 +75,11 @@ internal sealed class EventsRepository : IEventRepository
         ArgumentNullException.ThrowIfNull(id);
 
         var idString = id.ToString();
-        return await _database.Events.FindAsync(id, e => e.Id == idString, _entityConverter.Convert, cancellationToken);
+        return await _database.Events.FindAsync(
+            () => DomainErrorCatalog.Factories.CreateEventNotFound(id),
+            e => e.Id == idString,
+            _entityConverter.Convert,
+            cancellationToken);
     }
 
     public async Task<Result<AsyncBatch<Event>, Error>> FindAsync(

@@ -1,4 +1,4 @@
-﻿using Freem.Api.Public.Contracts.DTO.Records;
+﻿using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Api.Public.ModelBinders.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -11,8 +11,8 @@ internal sealed class ListRecordRequestModelBinder : IModelBinder
 
     public ListRecordRequestModelBinder()
     {
-        _offsetName = nameof(ListRecordRequest.Offset).ToLowerInvariant();
-        _limitName = nameof(ListRecordRequest.Limit).ToLowerInvariant();
+        _offsetName = nameof(RecordListRequest.Offset).ToLowerInvariant();
+        _limitName = nameof(RecordListRequest.Limit).ToLowerInvariant();
     }
     
     public Task BindModelAsync(ModelBindingContext context)
@@ -22,11 +22,11 @@ internal sealed class ListRecordRequestModelBinder : IModelBinder
         var or = context.ValueProvider.GetValue(_offsetName);
         var lr = context.ValueProvider.GetValue(_limitName);
 
-        if (!or.TryGetIntValue(ListRecordRequest.DefaultOffset, out var offset) ||
-            !lr.TryGetIntValue(ListRecordRequest.DefaultLimit, out var limit))
+        if (!or.TryGetIntValue(RecordListRequest.DefaultOffset, out var offset) ||
+            !lr.TryGetIntValue(RecordListRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
 
-        var value = new ListRecordRequest(offset.Value, limit.Value);
+        var value = new RecordListRequest(offset.Value, limit.Value);
         context.Result = ModelBindingResult.Success(value);
         
         return Task.CompletedTask;

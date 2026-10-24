@@ -1,3 +1,4 @@
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Get;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Start;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
@@ -15,7 +16,8 @@ internal static class RunningRecordResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Record.Map();
+        var runningRecord = result.Value.Record.Map();
+        var response = new RunningRecordResponse(runningRecord);
         return new OkObjectResult(response);
     }
 

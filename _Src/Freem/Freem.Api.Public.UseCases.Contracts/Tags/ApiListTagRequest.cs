@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Tags;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiListTagRequest : IRequest
 {
     public RequestType Type => RequestTypes.Tags.List;
 
-    public ListTagRequest Query { get; }
+    public TagListRequest Query { get; }
 
-    public ApiListTagRequest(ListTagRequest query)
+    public ApiListTagRequest(TagListRequest query)
     {
         ArgumentNullException.ThrowIfNull(query);
 

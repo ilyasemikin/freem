@@ -1,5 +1,5 @@
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Records.Models;
 

@@ -10,44 +10,40 @@ namespace Freem.Domain.Entities.Activities;
 public sealed class Activity : 
     IEntity<ActivityId>
 {
-    private ActivityName _activityName = null!;
-    private ActivityColor _color = null!;
-    private ActivityStatus _status = null!;
-
     public ActivityId Id { get; }
     public UserId UserId { get; }
     public RelatedTagIdsCollection Tags { get; }
 
     public ActivityName Name
     {
-        get => _activityName;
+        get;
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            
-            _activityName = value;
+
+            field = value;
         }
     }
 
     public ActivityColor Color
     {
-        get => _color;
+        get;
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            
-            _color = value;
+
+            field = value;
         }
     }
 
     public ActivityStatus Status
     {
-        get => _status;
+        get;
         set
         {
             ArgumentNullException.ThrowIfNull(value);
-            
-            _status = value;
+
+            field = value;
         }
     }
 

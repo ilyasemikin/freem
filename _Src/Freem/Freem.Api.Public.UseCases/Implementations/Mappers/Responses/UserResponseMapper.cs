@@ -1,12 +1,12 @@
+using Freem.Api.Public.Contracts.V1.Users;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain.UseCases.Contracts.Users.Get;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
-using Freem.Api.Public.Contracts.DTO.Users;
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ApiRegisterUserResponse = Freem.Api.Public.Contracts.DTO.Users.RegisterUserResponse;
+using ApiUserRegisterResponse = Freem.Api.Public.Contracts.V1.Users.UserRegisterResponse;
 using RegisterUserResponse = Freem.Domain.UseCases.Contracts.Users.Register.RegisterUserResponse;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
@@ -19,7 +19,7 @@ internal static class UserResponseMapper
             return result.Error.MapError();
 
         var user = result.Value.User;
-        var response = new MeResponse(user.Id, user.Nickname);
+        var response = new UserResponse(user.Id, user.Nickname);
         return new OkObjectResult(response);
     }
 
@@ -28,7 +28,7 @@ internal static class UserResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new ApiRegisterUserResponse(result.Value.UserId);
+        var response = new ApiUserRegisterResponse(result.Value.UserId);
         return new OkObjectResult(response);
     }
 

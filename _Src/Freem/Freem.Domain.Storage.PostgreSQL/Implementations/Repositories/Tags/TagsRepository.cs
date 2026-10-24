@@ -1,5 +1,5 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Tags;
+﻿using Freem.Domain.Entities.Tags;
+using Freem.Domain.Entities.Tags.Comparers;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Domain.Tags;
@@ -18,20 +18,16 @@ internal sealed class TagsRepository : ITagRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IEqualityComparer<Tag> _equalityComparer;
 
     public TagsRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Tag> equalityComparer)
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
-        ArgumentNullException.ThrowIfNull(equalityComparer);
 
         _database = database;
         _exceptionHandler = exceptionHandler;
-        _equalityComparer = equalityComparer;
     }
 
     public async Task<Result<Error>> CreateAsync(Tag entity, CancellationToken cancellationToken = default)
@@ -52,10 +48,10 @@ internal sealed class TagsRepository : ITagRepository
 
         var dbEntity = await _database.Tags.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
+            return DomainErrorCatalog.Factories.CreateTagNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
-        if (_equalityComparer.Equals(actualEntity, entity))
+        if (TagEqualityComparer.Instance.Equals(actualEntity, entity))
             return Result<Error>.CreateSuccess();
 
         dbEntity.Name = entity.Name.ToString();
@@ -70,7 +66,7 @@ internal sealed class TagsRepository : ITagRepository
 
         var dbEntity = await _database.Tags.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return DomainErrorCatalog.Factories.CreateTagNotFound(id);
 
         _database.Remove(dbEntity);
 
@@ -85,7 +81,11 @@ internal sealed class TagsRepository : ITagRepository
         ArgumentNullException.ThrowIfNull(id);
 
         var idString = id.ToString();
-        return await _database.Tags.FindAsync(id, e => e.Id == idString, TagMapper.MapToDomainEntity, cancellationToken);
+        return await _database.Tags.FindAsync(
+            () => DomainErrorCatalog.Factories.CreateTagNotFound(id),
+            e => e.Id == idString,
+            TagMapper.MapToDomainEntity,
+            cancellationToken);
     }
 
     public async Task<Result<Tag, Error>> FindByMultipleIdAsync(
@@ -97,7 +97,7 @@ internal sealed class TagsRepository : ITagRepository
         var tagIdString = ids.TagId.ToString();
         var userIdString = ids.UserId.ToString();
         return await _database.Tags.FindAsync(
-            ids.TagId,
+            () => DomainErrorCatalog.Factories.CreateTagNotFound(ids.TagId),
             e => e.Id == tagIdString && e.UserId == userIdString,
             TagMapper.MapToDomainEntity,
             cancellationToken);

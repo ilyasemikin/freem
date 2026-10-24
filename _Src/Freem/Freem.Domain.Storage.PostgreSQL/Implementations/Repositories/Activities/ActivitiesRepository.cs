@@ -1,6 +1,6 @@
-﻿using Freem.Domain;
-using Freem.Domain.Activities;
+﻿using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
+using Freem.Domain.Entities.Activities.Comparers;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Domain.Storage.PostgreSQL.Database;
@@ -20,20 +20,16 @@ internal sealed class ActivitiesRepository : IActivityRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IEqualityComparer<Activity> _equalityComparer;
 
     public ActivitiesRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Activity> equalityComparer)
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
-        ArgumentNullException.ThrowIfNull(equalityComparer);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
-        _equalityComparer = equalityComparer;
     }
 
     public async Task<Result<Error>> CreateAsync(Activity entity, CancellationToken cancellationToken = default)
@@ -56,10 +52,10 @@ internal sealed class ActivitiesRepository : IActivityRepository
 
         var dbEntity = await _database.Activities.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
+            return DomainErrorCatalog.Factories.CreateActivityNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
-        if (_equalityComparer.Equals(entity, actualEntity))
+        if (ActivityEqualityComparer.Instance.Equals(entity, actualEntity))
             return Result<Error>.CreateSuccess();
         
         dbEntity.Name = entity.Name.ToString();
@@ -78,7 +74,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
         
         var dbEntity = await _database.Activities.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return DomainErrorCatalog.Factories.CreateActivityNotFound(id);
 
         _database.Remove(dbEntity);
 
@@ -95,7 +91,11 @@ internal sealed class ActivitiesRepository : IActivityRepository
         var idString = id.ToString();
         return await _database.Activities
             .Include(e => e.Tags)
-            .FindAsync(id, e => e.Id == idString, ActivityMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(
+                () => DomainErrorCatalog.Factories.CreateActivityNotFound(id),
+                e => e.Id == idString,
+                ActivityMapper.MapToDomainEntity,
+                cancellationToken);
     }
 
     public async Task<Result<Activity, Error>> FindByMultipleIdAsync(
@@ -109,7 +109,7 @@ internal sealed class ActivitiesRepository : IActivityRepository
         return await _database.Activities
             .Include(e => e.Tags)
             .FindAsync(
-                ids.ActivityId,
+                () => DomainErrorCatalog.Factories.CreateActivityNotFound(ids.ActivityId),
                 e => e.Id == activityIdString && e.UserId == userIdString,
                 ActivityMapper.MapToDomainEntity, 
                 cancellationToken);

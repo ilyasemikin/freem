@@ -1,6 +1,7 @@
+using Freem.Api.Public.Contracts.V1.Imports;
+using Freem.Api.Public.Contracts.V1.Imports.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
-using Freem.Api.Public.UseCases.Implementations.Results;
 using Freem.Domain.UseCases.Contracts.Imports.Apply;
 using Freem.Domain.UseCases.Contracts.Imports.Get;
 using Freem.Domain.UseCases.Contracts.Imports.List;
@@ -11,12 +12,12 @@ using Freem.Domain.UseCases.Contracts.Imports.Upload;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ApiApplyImportResponse = Freem.Api.Public.Contracts.DTO.Imports.ApplyImportResponse;
-using ApiUploadImportResponse = Freem.Api.Public.Contracts.DTO.Imports.UploadImportResponse;
-using ImportActivityResponse = Freem.Api.Public.Contracts.DTO.Imports.ImportActivityResponse;
-using ImportResponse = Freem.Api.Public.Contracts.DTO.Imports.ImportResponse;
-using ImportRowResponse = Freem.Api.Public.Contracts.DTO.Imports.ImportRowResponse;
-using ImportTagResponse = Freem.Api.Public.Contracts.DTO.Imports.ImportTagResponse;
+using ApiImportApplyResponse = Freem.Api.Public.Contracts.V1.Imports.ImportApplyResponse;
+using ApiImportUploadResponse = Freem.Api.Public.Contracts.V1.Imports.ImportUploadResponse;
+using ImportActivityDto = Freem.Api.Public.Contracts.V1.Imports.Dtos.ImportActivityDto;
+using ImportDto = Freem.Api.Public.Contracts.V1.Imports.Dtos.ImportDto;
+using ImportRowDto = Freem.Api.Public.Contracts.V1.Imports.Dtos.ImportRowDto;
+using ImportTagDto = Freem.Api.Public.Contracts.V1.Imports.Dtos.ImportTagDto;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 
@@ -31,7 +32,7 @@ internal static class ImportResponseMapper
         var warnings = result.Value.Warnings
             .Select(warning => warning.Map())
             .ToArray();
-        var response = new ApiUploadImportResponse(import, warnings);
+        var response = new ApiImportUploadResponse(import, warnings);
         return new CreatedResult
         {
             Value = response
@@ -44,7 +45,7 @@ internal static class ImportResponseMapper
             return result.Error.MapError();
 
         var value = result.Value;
-        var response = new ApiApplyImportResponse(value.RecordsCreated, value.SkippedRowIds);
+        var response = new ApiImportApplyResponse(value.RecordsCreated, value.SkippedRowIds);
         return new OkObjectResult(response);
     }
 
@@ -53,7 +54,8 @@ internal static class ImportResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Document.Map();
+        var import = result.Value.Document.Map();
+        var response = new ImportResponse(import);
         return new OkObjectResult(response);
     }
 
@@ -65,7 +67,8 @@ internal static class ImportResponseMapper
         var imports = result.Value.Documents
             .Select(document => document.Map())
             .ToArray();
-        return new ItemsListResult<ImportResponse>(imports, result.Value.TotalCount);
+        var response = new ImportListResponse(result.Value.TotalCount, imports);
+        return new OkObjectResult(response);
     }
 
     public static IActionResult Map(this Result<ListImportActivityResponse, Error> result)
@@ -76,7 +79,8 @@ internal static class ImportResponseMapper
         var activities = result.Value.Activities
             .Select(activity => activity.Map())
             .ToArray();
-        return new ItemsListResult<ImportActivityResponse>(activities, result.Value.TotalCount);
+        var response = new ImportActivityListResponse(result.Value.TotalCount, activities);
+        return new OkObjectResult(response);
     }
 
     public static IActionResult Map(this Result<ListImportTagResponse, Error> result)
@@ -87,7 +91,8 @@ internal static class ImportResponseMapper
         var tags = result.Value.Tags
             .Select(tag => tag.Map())
             .ToArray();
-        return new ItemsListResult<ImportTagResponse>(tags, result.Value.TotalCount);
+        var response = new ImportTagListResponse(result.Value.TotalCount, tags);
+        return new OkObjectResult(response);
     }
 
     public static IActionResult Map(this Result<ListImportRowResponse, Error> result)
@@ -98,6 +103,7 @@ internal static class ImportResponseMapper
         var rows = result.Value.Rows
             .Select(row => row.Map())
             .ToArray();
-        return new ItemsListResult<ImportRowResponse>(rows, result.Value.TotalCount);
+        var response = new ImportRowListResponse(result.Value.TotalCount, rows);
+        return new OkObjectResult(response);
     }
 }

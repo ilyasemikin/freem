@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Freem.Api.Public.Constants;
-using Freem.Api.Public.Contracts.DTO;
-using Freem.Api.Public.Contracts.DTO.Statistics;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Statistics;
 using Freem.Api.Public.Extensions;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Statistics;
@@ -12,7 +11,6 @@ namespace Freem.Api.Public.Controllers.V1;
 
 /// <summary>Aggregated time statistics over the user's records.</summary>
 [Route("api/v1/statistics")]
-[Tags(ControllerTags.Statistics)]
 public sealed class StatisticsController : BaseController
 {
     public StatisticsController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)

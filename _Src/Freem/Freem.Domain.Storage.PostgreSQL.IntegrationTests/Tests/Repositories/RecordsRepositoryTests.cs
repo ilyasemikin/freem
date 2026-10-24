@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Records;
+﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Storage.Models.Filters.Models;
@@ -13,7 +12,7 @@ using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.DataFactories;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure.Assertions;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
-using Freem.Time.Models;
+using Freem.Time;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Collections;
 using Xunit;

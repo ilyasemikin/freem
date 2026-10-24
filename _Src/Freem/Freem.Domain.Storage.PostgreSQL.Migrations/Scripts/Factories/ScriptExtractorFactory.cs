@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Relations.Collections;
+﻿using Freem.Domain.Relations.Collections;
 using Freem.Domain.Storage.PostgreSQL.Database.Constants;
 using Freem.Domain.Storage.PostgreSQL.Database.Errors.Constants;
 using Freem.Domain.Storage.PostgreSQL.Migrations.Constants.Collections.Builders;

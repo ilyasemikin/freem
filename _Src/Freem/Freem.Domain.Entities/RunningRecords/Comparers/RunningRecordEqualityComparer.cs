@@ -6,6 +6,8 @@ namespace Freem.Domain.Entities.RunningRecords.Comparers;
 
 public sealed class RunningRecordEqualityComparer : IEqualityComparer<RunningRecord>
 {
+    public static RunningRecordEqualityComparer Instance { get; } = new();
+
     public bool Equals(RunningRecord? x, RunningRecord? y)
     {
         if (ReferenceEquals(x, y)) 

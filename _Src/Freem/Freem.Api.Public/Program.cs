@@ -7,22 +7,21 @@ using EgoHub.Api.Public.Client.Implementations;
 using EgoHub.Authentication.AspNetCore;
 using EgoHub.Authentication.AspNetCore.DependencyInjection;
 using EgoHub.Domain.Services;
-using Freem.Domain.DependencyInjection;
 using Freem.Domain.Serialization.Json;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
-using Freem.Domain.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Authentication.EgoHub;
 using Freem.Api.Public.Build;
 using Freem.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Configuration.Extensions;
 using Freem.Api.Public.Contracts;
+using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.ErrorHandling;
 using Freem.Api.Public.Formatters;
 using Freem.Api.Public.ModelBinders.Providers;
 using Freem.Api.Public.OpenApi;
 using Freem.Api.Public.OpenApi.Errors;
-using Freem.Api.Public.OpenApi.Headers;
 using Freem.Api.Public.UseCases.DependencyInjection.Microsoft.Extensions;
+using Freem.Domain.UseCases.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -66,7 +65,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader()
                 .AllowCredentials()
                 .AllowAnyMethod()
-                .WithExposedHeaders([HeaderNames.ItemsCount, HeaderNames.TotalItemsCount, HeaderNames.ContentDisposition]);
+                .WithExposedHeaders([HeaderNames.ContentDisposition]);
         }
     });
 });
@@ -84,7 +83,6 @@ builder.Services
 builder.Services.AddRedisLocking(builder.Configuration.GetRedisConnectionString());
 
 builder.Services
-    .AddEntityIdNameConverters()
     .AddEntitiesUseCases()
     .AddApiUseCases();
 
@@ -138,7 +136,6 @@ builder.Services.AddTransient<IPostConfigureOptions<MvcOptions>, ArgumentValidat
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<OpenApiDocumentTransformer>();
-    options.AddOperationTransformer<HeadersOpenApiOperationTransformer>();
     options.AddSchemaTransformer<ErrorsSchemaTransformer>();
 });
 

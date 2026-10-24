@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Domain;
-using Freem.Api.Public.Contracts.DTO.Activities;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Activities.Base;
@@ -18,7 +18,7 @@ public sealed class ListActivityTests : ActivityTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var request = new ListActivityRequest(0, 100);
+        var request = new ActivityListRequest(0, 100);
         
         var response = await Context.Client.Activities.ListAsync(request);
         

@@ -1,8 +1,8 @@
 using System.Net;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
@@ -45,7 +45,7 @@ public sealed class UserNotRegisteredTests : TestBase
     {
         var offset = TimeSpan.FromHours(1);
         var timeZoneOffset = new TimeZoneOffset(offset);
-        var request = new UpdateUserSettingsRequest
+        var request = new UserSettingsUpdateRequest
         {
             TimeZoneOffset = new UpdateField<TimeZoneOffset>(timeZoneOffset)
         };

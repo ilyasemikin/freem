@@ -1,9 +1,9 @@
-﻿using Freem.Api.Public.Contracts.DTO.Activities;
-using Freem.Api.Public.Contracts.DTO.Events;
-using Freem.Api.Public.Contracts.DTO.Imports;
-using Freem.Api.Public.Contracts.DTO.Records;
-using Freem.Api.Public.Contracts.DTO.Statistics;
-using Freem.Api.Public.Contracts.DTO.Tags;
+﻿using Freem.Api.Public.Contracts.V1.Activities;
+using Freem.Api.Public.Contracts.V1.Events;
+using Freem.Api.Public.Contracts.V1.Imports;
+using Freem.Api.Public.Contracts.V1.Records;
+using Freem.Api.Public.Contracts.V1.Statistics;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Api.Public.ModelBinders.Binders;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -17,17 +17,17 @@ internal sealed class QueryListModelBinderProvider : IModelBinderProvider
     {
         _binders = new Dictionary<Type, IModelBinder>
         {
-            [typeof(ListActivityRequest)] = new ListActivityRequestModelBinder(),
-            [typeof(ListTagRequest)] = new ListTagRequestModelBinder(),
-            [typeof(ListRecordRequest)] = new ListRecordRequestModelBinder(),
-            [typeof(ListRecordByPeriodRequest)] = new ListRecordByPeriodRequestModelBinder(),
-            [typeof(ListImportRequest)] = new ListImportRequestModelBinder(),
-            [typeof(ListImportRowRequest)] = new ListImportRowRequestModelBinder(),
-            [typeof(ListImportActivityRequest)] = new ListImportActivityRequestModelBinder(),
-            [typeof(ListImportTagRequest)] = new ListImportTagRequestModelBinder(),
-            [typeof(ListEventRequest)] = new ListEventRequestModelBinder(),
+            [typeof(ActivityListRequest)] = new ListActivityRequestModelBinder(),
+            [typeof(TagListRequest)] = new ListTagRequestModelBinder(),
+            [typeof(RecordListRequest)] = new ListRecordRequestModelBinder(),
+            [typeof(RecordListByPeriodRequest)] = new ListRecordByPeriodRequestModelBinder(),
+            [typeof(ImportListRequest)] = new ListImportRequestModelBinder(),
+            [typeof(ImportRowListRequest)] = new ListImportRowRequestModelBinder(),
+            [typeof(ImportActivityListRequest)] = new ListImportActivityRequestModelBinder(),
+            [typeof(ImportTagListRequest)] = new ListImportTagRequestModelBinder(),
+            [typeof(EventListRequest)] = new ListEventRequestModelBinder(),
             [typeof(StatisticsPerDaysRequest)] = new StatisticsPerDaysRequestModelBinder(),
-            [typeof(FindActivityByNameRequest)] = new FindActivityByNameRequestModelBinder(),
+            [typeof(ActivitySearchByNameRequest)] = new ActivitySearchByNameRequestModelBinder(),
             [typeof(StatisticsPerPeriodRequest)] = new StatisticsPerPeriodRequestModelBinder(),
         };
     }

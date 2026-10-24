@@ -57,7 +57,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddHandler<ApiArchiveActivityRequest, ApiArchiveActivityRequestHandler>();
         services.AddHandler<ApiCreateActivityRequest, ApiCreateActivityRequestHandler>();
-        services.AddHandler<ApiFindActivityByNameRequest, ApiFindActivityByNameRequestHandler>();
+        services.AddHandler<ApiSearchActivityByNameRequest, ApiSearchActivityByNameRequestHandler>();
         services.AddHandler<ApiGetActivityRequest, ApiGetActivityRequestHandler>();
         services.AddHandler<ApiListActivityRequest, ApiListActivityRequestHandler>();
         services.AddHandler<ApiRemoveActivityRequest, ApiRemoveActivityRequestHandler>();
@@ -142,7 +142,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddTagsUseCases(this IServiceCollection services)
     {
         services.AddHandler<ApiCreateTagRequest, ApiCreateTagRequestHandler>();
-        services.AddHandler<ApiFindTagByNameRequest, ApiFindTagByNameRequestHandler>();
+        services.AddHandler<ApiSearchTagByNameRequest, ApiSearchTagByNameRequestHandler>();
         services.AddHandler<ApiGetTagRequest, ApiGetTagRequestHandler>();
         services.AddHandler<ApiListTagRequest, ApiListTagRequestHandler>();
         services.AddHandler<ApiRemoveTagRequest, ApiRemoveTagRequestHandler>();

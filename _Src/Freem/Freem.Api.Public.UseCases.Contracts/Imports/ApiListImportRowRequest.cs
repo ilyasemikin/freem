@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Domain.Import;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
@@ -10,9 +10,9 @@ public sealed class ApiListImportRowRequest : IRequest
     public RequestType Type => RequestTypes.Imports.ListRows;
 
     public ImportDocumentId Id { get; }
-    public ListImportRowRequest Query { get; }
+    public ImportRowListRequest Query { get; }
 
-    public ApiListImportRowRequest(ImportDocumentId id, ListImportRowRequest query)
+    public ApiListImportRowRequest(ImportDocumentId id, ImportRowListRequest query)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(query);

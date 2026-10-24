@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Api.Public.Contracts.DTO.Tags;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Tags.Base;
@@ -19,7 +19,7 @@ public sealed class CreateTagTests : TagTestBase
     public async Task Request_ShouldSuccess()
     {
         var name = TagName.Parse("name", null);
-        var request = new CreateTagRequest(name);
+        var request = new TagCreateRequest(name);
         
         var response = await Context.Client.Tags.CreateAsync(request);
         
@@ -36,7 +36,7 @@ public sealed class CreateTagTests : TagTestBase
         
         var name = TagName.Parse(nameValue, null);
         
-        var request = new CreateTagRequest(name);
+        var request = new TagCreateRequest(name);
         
         var response = await Context.Client.Tags.CreateAsync(request);
 

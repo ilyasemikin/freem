@@ -1,7 +1,8 @@
+using Freem.Api.Public.Contracts.V1.Events.Dtos;
 using System.Text.Json;
 using Freem.Domain.Events;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Events;
+using Freem.Api.Public.Contracts.V1.Events;
 using Utilities.Http;
 using Utilities.Http.Errors.Abstractions;
 using Utilities.Primitives;
@@ -24,8 +25,8 @@ public sealed class EventsClient : BaseClient
         return SendForUserAsync<EventResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<EventResponse>, IClientError>> ListAsync(
-        ListEventRequest query, 
+    public Task<Result<EventListResponse, IClientError>> ListAsync(
+        EventListRequest query, 
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/events")
@@ -54,6 +55,6 @@ public sealed class EventsClient : BaseClient
             request = request.WithQueryParameter(nameof(query.To), to);
         }
 
-        return SendForUserAsync<IReadOnlyList<EventResponse>>(request, cancellationToken);
+        return SendForUserAsync<EventListResponse>(request, cancellationToken);
     }
 }

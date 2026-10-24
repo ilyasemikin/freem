@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records;
+using Freem.Api.Public.Contracts.V1.Records;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiCreateRecordRequest : IRequest
 {
     public RequestType Type => RequestTypes.Records.Create;
 
-    public CreateRecordRequest Body { get; }
+    public RecordCreateRequest Body { get; }
 
-    public ApiCreateRecordRequest(CreateRecordRequest body)
+    public ApiCreateRecordRequest(RecordCreateRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

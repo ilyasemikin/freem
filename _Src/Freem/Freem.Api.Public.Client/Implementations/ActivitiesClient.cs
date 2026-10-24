@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
+﻿using Freem.Api.Public.Contracts.V1.Activities.Dtos;
+using System.Text.Json;
 using Freem.Domain.Activities;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Activities;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Utilities.Http;
 using Utilities.Http.Errors.Abstractions;
 using Utilities.Http.Extensions;
@@ -21,17 +22,17 @@ public sealed class ActivitiesClient : BaseClient
         _options = options;
     }
 
-    public Task<Result<CreateActivityResponse, IClientError>> CreateAsync(CreateActivityRequest body, CancellationToken cancellationToken = default)
+    public Task<Result<ActivityCreateResponse, IClientError>> CreateAsync(ActivityCreateRequest body, CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Post("api/v1/activities")
             .WithJsonBody(body, _options);
         
-        return SendForUserAsync<CreateActivityResponse>(request, cancellationToken);
+        return SendForUserAsync<ActivityCreateResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> UpdateAsync(
         ActivityId id,
-        UpdateActivityRequest body, 
+        ActivityUpdateRequest body, 
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Put($"api/v1/activities/{id}")
@@ -70,14 +71,14 @@ public sealed class ActivitiesClient : BaseClient
         return SendForUserAsync<ActivityResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<ActivityResponse>, IClientError>> ListAsync(
-        ListActivityRequest query, 
+    public Task<Result<ActivityListResponse, IClientError>> ListAsync(
+        ActivityListRequest query, 
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/activities")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
         
-        return SendForUserAsync<IReadOnlyList<ActivityResponse>>(request, cancellationToken);
+        return SendForUserAsync<ActivityListResponse>(request, cancellationToken);
     }
 }

@@ -2,7 +2,7 @@
 using Freem.Domain.Storage.Models.Filters.Abstractions;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Users;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Storage.Repositories.Records;
 

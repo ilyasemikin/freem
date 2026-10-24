@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
-using Freem.Api.Public.Constants;
-using Freem.Api.Public.Contracts.DTO;
-using Freem.Api.Public.Contracts.DTO.Auth;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Auth;
 using Freem.Api.Public.Extensions;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Auth;
@@ -16,7 +15,6 @@ namespace Freem.Api.Public.Controllers.V1;
 [ApiController]
 [AllowAnonymous]
 [Route("api/v1/auth")]
-[Tags(ControllerTags.Auth)]
 [Produces(MediaTypeNames.Application.Json)]
 public sealed class AuthController : ControllerBase
 {

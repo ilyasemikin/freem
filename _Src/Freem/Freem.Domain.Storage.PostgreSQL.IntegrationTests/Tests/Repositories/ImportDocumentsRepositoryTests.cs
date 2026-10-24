@@ -13,10 +13,9 @@ using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Utilities.Errors;
 using Xunit;
 using Xunit.Abstractions;
 

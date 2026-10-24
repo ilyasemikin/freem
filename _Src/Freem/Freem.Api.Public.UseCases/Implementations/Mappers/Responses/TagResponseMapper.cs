@@ -1,17 +1,18 @@
+using Freem.Api.Public.Contracts.V1.Tags;
+using Freem.Api.Public.Contracts.V1.Tags.Dtos;
 using Freem.Domain;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.UseCases.Contracts.Tags.Create;
 using Freem.Domain.UseCases.Contracts.Tags.Get;
-using Freem.Domain.UseCases.Contracts.Tags.GetByName;
+using Freem.Domain.UseCases.Contracts.Tags.Search;
 using Freem.Domain.UseCases.Contracts.Tags.List;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
-using Freem.Api.Public.UseCases.Implementations.Results;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ApiCreateTagResponse = Freem.Api.Public.Contracts.DTO.Tags.CreateTagResponse;
-using TagResponse = Freem.Api.Public.Contracts.DTO.Tags.TagResponse;
+using ApiTagCreateResponse = Freem.Api.Public.Contracts.V1.Tags.TagCreateResponse;
+using TagDto = Freem.Api.Public.Contracts.V1.Tags.Dtos.TagDto;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 
@@ -22,14 +23,14 @@ internal static class TagResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new ApiCreateTagResponse(result.Value.Tag.Id);
+        var response = new ApiTagCreateResponse(result.Value.Tag.Id);
         return new CreatedResult
         {
             Value = response
         };
     }
 
-    public static IActionResult Map(this Result<FindTagByNameResponse, Error> result, TagName name)
+    public static IActionResult Map(this Result<SearchTagByNameResponse, Error> result, TagName name)
     {
         if (!result.Success)
             return result.Error.MapError();
@@ -41,7 +42,8 @@ internal static class TagResponseMapper
             return error.MapError();
         }
 
-        var response = tag.Map();
+        var dto = tag.Map();
+        var response = new TagResponse(dto);
         return new OkObjectResult(response);
     }
 
@@ -50,7 +52,8 @@ internal static class TagResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Tag.Map();
+        var tag = result.Value.Tag.Map();
+        var response = new TagResponse(tag);
         return new OkObjectResult(response);
     }
 
@@ -62,6 +65,7 @@ internal static class TagResponseMapper
         var tags = result.Value.Tags
             .Select(tag => tag.Map())
             .ToArray();
-        return new ItemsListResult<TagResponse>(tags, result.Value.TotalCount);
+        var response = new TagListResponse(result.Value.TotalCount, tags);
+        return new OkObjectResult(response);
     }
 }

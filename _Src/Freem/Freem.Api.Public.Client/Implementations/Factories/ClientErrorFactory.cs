@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Freem.Api.Public.Client.Errors;
-using Freem.Api.Public.Contracts.DTO;
+using Freem.Api.Public.Contracts.V1;
 using Utilities.Http;
 using Utilities.Http.Content.Extensions;
 using Utilities.Http.Errors;

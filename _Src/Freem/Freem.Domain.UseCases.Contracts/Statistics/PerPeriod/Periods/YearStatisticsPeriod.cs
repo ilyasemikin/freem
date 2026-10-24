@@ -1,5 +1,5 @@
 ﻿using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
 

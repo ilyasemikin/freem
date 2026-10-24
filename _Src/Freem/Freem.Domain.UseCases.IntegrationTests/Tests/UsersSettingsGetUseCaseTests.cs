@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Users;
+﻿using Freem.Domain.Users;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Users.Settings.Get;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;

@@ -1,4 +1,4 @@
-﻿using Freem.Api.Public.Contracts.DTO.Records.Running;
+﻿using Freem.Api.Public.Contracts.V1.Records.Running;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Running.Base;
@@ -18,7 +18,7 @@ public sealed class StartRunningRecordTests : RunningRecordTestBase
     {
         var startAt = DateTimeOffset.UtcNow;
 
-        var request = new StartRunningRecordRequest(startAt, AddedRelatedActivities, AddedRelatedTags);
+        var request = new RunningRecordStartRequest(startAt, AddedRelatedActivities, AddedRelatedTags);
 
         var response = await Context.Client.Records.StartAsync(request);
 
@@ -33,7 +33,7 @@ public sealed class StartRunningRecordTests : RunningRecordTestBase
         await Context.Preparer.Records.StartRunningAsync(startAt, AddedRelatedActivities);
         
         startAt = DateTimeOffset.UtcNow;
-        var request = new StartRunningRecordRequest(startAt, AddedRelatedActivities, AddedRelatedTags);
+        var request = new RunningRecordStartRequest(startAt, AddedRelatedActivities, AddedRelatedTags);
         
         var response = await Context.Client.Records.StartAsync(request);
         

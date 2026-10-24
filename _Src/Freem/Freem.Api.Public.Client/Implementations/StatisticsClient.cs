@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Statistics;
+using Freem.Api.Public.Contracts.V1.Statistics;
 using Utilities.Http;
 using Utilities.Http.Errors.Abstractions;
 using Utilities.Primitives;

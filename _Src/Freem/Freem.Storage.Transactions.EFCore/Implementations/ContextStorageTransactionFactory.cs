@@ -1,4 +1,4 @@
-﻿using Freem.Storage.Transactions;
+﻿using Freem.Storage.Transactions.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freem.Storage.Transactions.EFCore.Implementations;

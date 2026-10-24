@@ -1,4 +1,8 @@
-﻿using Freem.Domain;
+﻿using Freem.Domain.Activities;
+using Freem.Domain.Records;
+using Freem.Domain.RunningRecords;
+using Freem.Domain.Tags;
+using Freem.Domain.Users;
 using Utilities.Errors;
 using Xunit;
 
@@ -29,8 +33,21 @@ internal static class ErrorAssert
     {
         Assert.NotNull(error.Properties);
 
-        var name = DomainErrorCatalog.Properties.GetId(id);
+        var name = GetIdProperty(id);
         Assert.True(error.Properties.TryGet(name, out var property));
         Assert.Equal(id.ToString(), property.Value);
+    }
+
+    private static string GetIdProperty(Id id)
+    {
+        return id switch
+        {
+            ActivityId => DomainErrorCatalog.Properties.ActivityId,
+            RecordId => DomainErrorCatalog.Properties.RecordId,
+            RunningRecordId => DomainErrorCatalog.Properties.RunningRecordId,
+            TagId => DomainErrorCatalog.Properties.TagId,
+            UserId => DomainErrorCatalog.Properties.UserId,
+            _ => throw new ArgumentOutOfRangeException(nameof(id), id.GetType(), null)
+        };
     }
 }

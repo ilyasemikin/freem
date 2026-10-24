@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Freem.Api.Public.Constants;
-using Freem.Api.Public.Contracts.DTO;
+using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.Extensions;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.DataTransfer;
@@ -8,12 +7,12 @@ using Freem.Domain.Formats;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Utilities.UseCases.Abstractions;
+using HeaderNames = Microsoft.Net.Http.Headers.HeaderNames;
 
 namespace Freem.Api.Public.Controllers.V1;
 
 /// <summary>Exports all of the current user's data to a file.</summary>
 [Route("api/v1/export")]
-[Tags(ControllerTags.DataTransfer)]
 public sealed class ExportController : BaseController
 {
     public ExportController(IRequestMediator<ApiAuthorizedHandlerContext> mediator)
@@ -45,19 +44,19 @@ public sealed class ExportController : BaseController
         }
 
         return result;
-    }
-
-    private Stream OpenOutput(FormatDescription format)
-    {
-        var timestamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss");
-        var disposition = new ContentDispositionHeaderValue("attachment")
+        
+        Stream OpenOutput(FormatDescription fd)
         {
-            FileName = $"freem-export-{timestamp}.{format.FileExtension}"
-        };
+            var timestamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss");
+            var disposition = new ContentDispositionHeaderValue("attachment")
+            {
+                FileName = $"freem-export-{timestamp}.{fd.FileExtension}"
+            };
 
-        Response.StatusCode = StatusCodes.Status200OK;
-        Response.ContentType = format.MediaType.ToString();
-        Response.Headers[HeaderNames.ContentDisposition] = disposition.ToString();
-        return Response.Body;
+            Response.StatusCode = StatusCodes.Status200OK;
+            Response.ContentType = fd.MediaType.ToString();
+            Response.Headers[HeaderNames.ContentDisposition] = disposition.ToString();
+            return Response.Body;
+        }
     }
 }

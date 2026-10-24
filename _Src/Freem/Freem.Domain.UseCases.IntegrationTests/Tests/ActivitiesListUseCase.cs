@@ -52,7 +52,7 @@ public sealed class ActivitiesListUseCase : UseCaseTestBase
             .ToArray();
         
         Assert.Equal(ActivitiesCount, (int)response.Value.TotalCount);
-        Assert.Equal(_activities, orderedActivities, new ActivityEqualityComparer());
+        Assert.Equal(_activities, orderedActivities, ActivityEqualityComparer.Instance);
     }
     
 }

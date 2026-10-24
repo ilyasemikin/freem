@@ -1,5 +1,5 @@
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Tags;
-using Freem.Api.Public.Contracts.DTO.Tags;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -10,9 +10,9 @@ public sealed class ApiUpdateTagRequest : IRequest
     public RequestType Type => RequestTypes.Tags.Update;
 
     public TagId Id { get; }
-    public UpdateTagRequest Body { get; }
+    public TagUpdateRequest Body { get; }
 
-    public ApiUpdateTagRequest(TagId id, UpdateTagRequest body)
+    public ApiUpdateTagRequest(TagId id, TagUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(body);

@@ -1,7 +1,7 @@
 using EgoHub.Api.Public.Client.Abstractions;
 using EgoHub.Api.Public.Contracts.V1.Identities;
+using Freem.Api.Public.Contracts.V1.Auth;
 using Freem.Domain.Users;
-using Freem.Api.Public.Contracts.DTO.Auth;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Auth;
 using Microsoft.AspNetCore.Mvc;

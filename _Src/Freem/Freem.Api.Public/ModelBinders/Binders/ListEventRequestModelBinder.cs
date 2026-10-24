@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Events;
+using Freem.Api.Public.Contracts.V1.Events;
 using Freem.Api.Public.ModelBinders.Extensions;
 using Freem.Domain.Events;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -16,12 +16,12 @@ internal sealed class ListEventRequestModelBinder : IModelBinder
 
     public ListEventRequestModelBinder()
     {
-        _offsetName = nameof(ListEventRequest.Offset).ToLowerInvariant();
-        _limitName = nameof(ListEventRequest.Limit).ToLowerInvariant();
-        _entityTypeName = nameof(ListEventRequest.EntityType).ToLowerInvariant();
-        _entityRefName = nameof(ListEventRequest.EntityRef).ToLowerInvariant();
-        _fromName = nameof(ListEventRequest.From).ToLowerInvariant();
-        _toName = nameof(ListEventRequest.To).ToLowerInvariant();
+        _offsetName = nameof(EventListRequest.Offset).ToLowerInvariant();
+        _limitName = nameof(EventListRequest.Limit).ToLowerInvariant();
+        _entityTypeName = nameof(EventListRequest.EntityType).ToLowerInvariant();
+        _entityRefName = nameof(EventListRequest.EntityRef).ToLowerInvariant();
+        _fromName = nameof(EventListRequest.From).ToLowerInvariant();
+        _toName = nameof(EventListRequest.To).ToLowerInvariant();
     }
 
     public Task BindModelAsync(ModelBindingContext context)
@@ -35,8 +35,8 @@ internal sealed class ListEventRequestModelBinder : IModelBinder
         var fr = context.ValueProvider.GetValue(_fromName);
         var dr = context.ValueProvider.GetValue(_toName);
 
-        if (!or.TryGetIntValue(ListEventRequest.DefaultOffset, out var offset) ||
-            !lr.TryGetIntValue(ListEventRequest.DefaultLimit, out var limit))
+        if (!or.TryGetIntValue(EventListRequest.DefaultOffset, out var offset) ||
+            !lr.TryGetIntValue(EventListRequest.DefaultLimit, out var limit))
             return Task.CompletedTask;
 
         if (!TryGetEntityType(tr.FirstValue, out var entityType))
@@ -49,7 +49,7 @@ internal sealed class ListEventRequestModelBinder : IModelBinder
             !dr.TryGetDateTimeOffsetValue(null, out var to) && dr.Length != 0)
             return Task.CompletedTask;
 
-        var value = new ListEventRequest(offset.Value, limit.Value, entityType, entityRef, from, to);
+        var value = new EventListRequest(offset.Value, limit.Value, entityType, entityRef, from, to);
         context.Result = ModelBindingResult.Success(value);
 
         return Task.CompletedTask;

@@ -1,15 +1,16 @@
+using Freem.Api.Public.Contracts.V1.Activities;
+using Freem.Api.Public.Contracts.V1.Activities.Dtos;
 using Freem.Domain.UseCases.Contracts.Activities.Create;
-using Freem.Domain.UseCases.Contracts.Activities.Find;
+using Freem.Domain.UseCases.Contracts.Activities.Search;
 using Freem.Domain.UseCases.Contracts.Activities.Get;
 using Freem.Domain.UseCases.Contracts.Activities.List;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
-using Freem.Api.Public.UseCases.Implementations.Results;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ActivityResponse = Freem.Api.Public.Contracts.DTO.Activities.ActivityResponse;
-using ApiCreateActivityResponse = Freem.Api.Public.Contracts.DTO.Activities.CreateActivityResponse;
+using ActivityDto = Freem.Api.Public.Contracts.V1.Activities.Dtos.ActivityDto;
+using ApiActivityCreateResponse = Freem.Api.Public.Contracts.V1.Activities.ActivityCreateResponse;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 
@@ -20,14 +21,14 @@ internal static class ActivityResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new ApiCreateActivityResponse(result.Value.Activity.Id);
+        var response = new ApiActivityCreateResponse(result.Value.Activity.Id);
         return new CreatedResult
         {
             Value = response
         };
     }
 
-    public static IActionResult Map(this Result<FindActivityResponse, Error> result)
+    public static IActionResult Map(this Result<SearchActivityByNameResponse, Error> result)
     {
         if (!result.Success)
             return result.Error.MapError();
@@ -35,7 +36,8 @@ internal static class ActivityResponseMapper
         var activities = result.Value.Activities
             .Select(activity => activity.Map())
             .ToArray();
-        return new ItemsListResult<ActivityResponse>(activities, result.Value.TotalCount);
+        var response = new ActivityListResponse(result.Value.TotalCount, activities);
+        return new OkObjectResult(response);
     }
 
     public static IActionResult Map(this Result<GetActivityResponse, Error> result)
@@ -43,7 +45,8 @@ internal static class ActivityResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Activity.Map();
+        var activity = result.Value.Activity.Map();
+        var response = new ActivityResponse(activity);
         return new OkObjectResult(response);
     }
 
@@ -55,6 +58,7 @@ internal static class ActivityResponseMapper
         var activities = result.Value.Activities
             .Select(activity => activity.Map())
             .ToArray();
-        return new ItemsListResult<ActivityResponse>(activities, result.Value.TotalCount);
+        var response = new ActivityListResponse(result.Value.TotalCount, activities);
+        return new OkObjectResult(response);
     }
 }

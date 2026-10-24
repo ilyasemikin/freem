@@ -5,7 +5,7 @@ using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
 using Freem.Domain.UseCases.Contracts.Records.List;
-using Freem.Domain.UseCases.Contracts.Records.PeriodList;
+using Freem.Domain.UseCases.Contracts.Records.ListByPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Remove;
 using Freem.Domain.UseCases.Contracts.Records.RemovePeriod;
 using Freem.Domain.UseCases.Contracts.Records.Update;
@@ -44,10 +44,10 @@ internal static class RecordRequestMapper
         return new ListRecordRequest(limit, offset);
     }
 
-    public static PeriodListRequest Map(this ApiListRecordByPeriodRequest request)
+    public static ListRecordByPeriodRequest Map(this ApiListRecordByPeriodRequest request)
     {
         var limit = new Limit(request.Query.Limit);
-        return new PeriodListRequest(request.Query.Period, limit);
+        return new ListRecordByPeriodRequest(request.Query.Period, limit);
     }
 
     public static RemoveRecordRequest Map(this ApiRemoveRecordRequest request)

@@ -41,7 +41,7 @@ public sealed class ActivitiesGetUseCase : UseCaseTestBase
         Assert.True(response.Success);
         Assert.NotNull(response.Value.Activity);
         
-        Assert.Equal(_activity, response.Value.Activity, new ActivityEqualityComparer());
+        Assert.Equal(_activity, response.Value.Activity, ActivityEqualityComparer.Instance);
     }
     
 }

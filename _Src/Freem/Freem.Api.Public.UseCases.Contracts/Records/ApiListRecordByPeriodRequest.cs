@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records;
+using Freem.Api.Public.Contracts.V1.Records;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiListRecordByPeriodRequest : IRequest
 {
     public RequestType Type => RequestTypes.Records.ListByPeriod;
 
-    public ListRecordByPeriodRequest Query { get; }
+    public RecordListByPeriodRequest Query { get; }
 
-    public ApiListRecordByPeriodRequest(ListRecordByPeriodRequest query)
+    public ApiListRecordByPeriodRequest(RecordListByPeriodRequest query)
     {
         ArgumentNullException.ThrowIfNull(query);
 

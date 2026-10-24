@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.Records.Comparers;
+﻿using Freem.Domain.Entities.Records.Comparers;
 using Freem.Domain.Records;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Get;
@@ -43,7 +42,7 @@ public sealed class RecordsGetUseCase : UseCaseTestBase
         Assert.True(response.Success);
         Assert.NotNull(response.Value.Record);
         
-        Assert.Equal(_record, response.Value.Record, new RecordEqualityComparer());
+        Assert.Equal(_record, response.Value.Record, RecordEqualityComparer.Instance);
     }
 
     [Fact]

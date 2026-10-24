@@ -1,6 +1,5 @@
-﻿using System.Linq.Expressions;
-using Freem.Domain;
-using Freem.Domain.Entities.Records;
+﻿using Freem.Domain.Entities.Records;
+using Freem.Domain.Entities.Records.Comparers;
 using Freem.Domain.Records;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
@@ -21,20 +20,16 @@ internal sealed class RecordsRepository : IRecordRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IEqualityComparer<Record> _equalityComparer;
 
     public RecordsRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<Record> equalityComparer)
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
-        ArgumentNullException.ThrowIfNull(equalityComparer);
 
         _database = database;
         _exceptionHandler = exceptionHandler;
-        _equalityComparer = equalityComparer;
     }
 
     public async Task<Result<Error>> CreateAsync(Record entity, CancellationToken cancellationToken = default)
@@ -83,10 +78,10 @@ internal sealed class RecordsRepository : IRecordRepository
 
         var dbEntity = await _database.Records.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
+            return DomainErrorCatalog.Factories.CreateRecordNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
-        if (_equalityComparer.Equals(entity, actualEntity))
+        if (RecordEqualityComparer.Instance.Equals(entity, actualEntity))
             return Result<Error>.CreateSuccess();
 
         dbEntity.Name = entity.Name?.ToString();
@@ -107,7 +102,7 @@ internal sealed class RecordsRepository : IRecordRepository
 
         var dbEntity = await _database.Records.FindEntityAsync(id, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return DomainErrorCatalog.Factories.CreateRecordNotFound(id);
 
         _database.Remove(dbEntity);
 
@@ -126,7 +121,11 @@ internal sealed class RecordsRepository : IRecordRepository
             .Include(e => e.Periods)
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(id, e => e.Id == idString, RecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(
+                () => DomainErrorCatalog.Factories.CreateRecordNotFound(id),
+                e => e.Id == idString,
+                RecordMapper.MapToDomainEntity,
+                cancellationToken);
     }
 
     public async Task<Result<Record, Error>> FindByMultipleIdAsync(
@@ -142,7 +141,7 @@ internal sealed class RecordsRepository : IRecordRepository
             .Include(e => e.Activities)
             .Include(e => e.Tags)
             .FindAsync(
-                ids.RecordId,
+                () => DomainErrorCatalog.Factories.CreateRecordNotFound(ids.RecordId),
                 e => e.Id == recordIdString && e.UserId == userIdString,
                 RecordMapper.MapToDomainEntity,
                 cancellationToken);
@@ -202,7 +201,7 @@ internal sealed class RecordsRepository : IRecordRepository
                 })
                 .FirstOrDefaultAsync(cancellationToken);
             if (cursor is null)
-                return DomainErrorCatalog.Factories.CreateEntityNotFound(filter.AfterRecordId);
+                return DomainErrorCatalog.Factories.CreateRecordNotFound(filter.AfterRecordId);
 
             var cursorStartAt = cursor.StartAt;
             var cursorEndAt = cursor.EndAt;

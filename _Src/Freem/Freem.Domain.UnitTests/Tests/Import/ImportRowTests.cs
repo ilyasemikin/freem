@@ -1,7 +1,7 @@
 using Freem.Domain.Entities.Import;
 using Freem.Domain.Import;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UnitTests.Tests.Import;
 

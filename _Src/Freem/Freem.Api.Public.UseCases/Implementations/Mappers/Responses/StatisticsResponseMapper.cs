@@ -4,8 +4,8 @@ using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ApiStatisticsPerDaysResponse = Freem.Api.Public.Contracts.DTO.Statistics.StatisticsPerDaysResponse;
-using ApiStatisticsPerPeriodResponse = Freem.Api.Public.Contracts.DTO.Statistics.StatisticsPerPeriodResponse;
+using ApiStatisticsPerDaysResponse = Freem.Api.Public.Contracts.V1.Statistics.StatisticsPerDaysResponse;
+using ApiStatisticsPerPeriodResponse = Freem.Api.Public.Contracts.V1.Statistics.StatisticsPerPeriodResponse;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 

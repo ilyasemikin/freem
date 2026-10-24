@@ -6,7 +6,7 @@ using Freem.Domain.Records.Models;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UseCases.UnitTests.Fixtures;
 

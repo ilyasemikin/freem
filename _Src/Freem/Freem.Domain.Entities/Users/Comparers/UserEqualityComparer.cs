@@ -2,6 +2,8 @@
 
 public sealed class UserEqualityComparer : IEqualityComparer<User>
 {
+    public static UserEqualityComparer Instance { get; } = new();
+
     public bool Equals(User? x, User? y)
     {
         if (ReferenceEquals(x, y)) 

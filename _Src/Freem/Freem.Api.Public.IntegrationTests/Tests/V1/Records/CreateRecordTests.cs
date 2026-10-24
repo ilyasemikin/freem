@@ -1,10 +1,10 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Domain.Records.Models;
-using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Records;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
+using Freem.Time;
 using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records;
@@ -23,7 +23,7 @@ public sealed class CreateRecordTests : RecordTestBase
         var endAt = startAt + TimeSpan.FromHours(1);
         var period = new DateTimePeriod(startAt, endAt);
         
-        var request = new CreateRecordRequest([new RecordPeriodRequest(period)], AddedRelatedActivities, AddedRelatedTags);
+        var request = new RecordCreateRequest([new RecordPeriodItem(period)], AddedRelatedActivities, AddedRelatedTags);
         
         var response = await Context.Client.Records.CreateAsync(request);
         
@@ -39,10 +39,10 @@ public sealed class CreateRecordTests : RecordTestBase
         var description = RecordPeriodDescription.Parse("second", null);
         var periods = new[]
         {
-            new RecordPeriodRequest(new DateTimePeriod(startAt, startAt.AddHours(1))),
-            new RecordPeriodRequest(new DateTimePeriod(startAt.AddHours(2), startAt.AddHours(3))) { Description = description }
+            new RecordPeriodItem(new DateTimePeriod(startAt, startAt.AddHours(1))),
+            new RecordPeriodItem(new DateTimePeriod(startAt.AddHours(2), startAt.AddHours(3))) { Description = description }
         };
-        var request = new CreateRecordRequest(periods, AddedRelatedActivities, AddedRelatedTags);
+        var request = new RecordCreateRequest(periods, AddedRelatedActivities, AddedRelatedTags);
 
         var response = await Context.Client.Records.CreateAsync(request);
 
@@ -50,7 +50,7 @@ public sealed class CreateRecordTests : RecordTestBase
         response.ShouldSuccess();
 
         var created = response.Unwrap();
-        var actual = (await Context.Client.Records.GetAsync(created.Id)).Unwrap();
+        var actual = (await Context.Client.Records.GetAsync(created.Id)).Unwrap().Record;
         Assert.Equal(2, actual.Periods.Count);
         Assert.Equal(periods[1].Period, actual.Periods[1].Period);
         Assert.Equal(description, actual.Periods[1].Description);
@@ -59,7 +59,7 @@ public sealed class CreateRecordTests : RecordTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenNoPeriods()
     {
-        var request = new CreateRecordRequest([], AddedRelatedActivities, AddedRelatedTags);
+        var request = new RecordCreateRequest([], AddedRelatedActivities, AddedRelatedTags);
 
         var response = await Context.Client.Records.CreateAsync(request);
 
@@ -73,10 +73,10 @@ public sealed class CreateRecordTests : RecordTestBase
         var startAt = DateTimeOffset.UtcNow - TimeSpan.FromHours(5);
         var periods = new[]
         {
-            new RecordPeriodRequest(new DateTimePeriod(startAt, startAt.AddHours(2))),
-            new RecordPeriodRequest(new DateTimePeriod(startAt.AddHours(1), startAt.AddHours(3)))
+            new RecordPeriodItem(new DateTimePeriod(startAt, startAt.AddHours(2))),
+            new RecordPeriodItem(new DateTimePeriod(startAt.AddHours(1), startAt.AddHours(3)))
         };
-        var request = new CreateRecordRequest(periods, AddedRelatedActivities, AddedRelatedTags);
+        var request = new RecordCreateRequest(periods, AddedRelatedActivities, AddedRelatedTags);
 
         var response = await Context.Client.Records.CreateAsync(request);
 

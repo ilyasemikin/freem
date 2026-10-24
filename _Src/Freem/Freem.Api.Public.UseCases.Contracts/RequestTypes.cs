@@ -8,10 +8,10 @@ public static class RequestTypes
     {
         public static readonly RequestType Archive = RequestType.Parse("api.activities.archive", null);
         public static readonly RequestType Create = RequestType.Parse("api.activities.create", null);
-        public static readonly RequestType FindByName = RequestType.Parse("api.activities.find-by-name", null);
         public static readonly RequestType Get = RequestType.Parse("api.activities.get", null);
         public static readonly RequestType List = RequestType.Parse("api.activities.list", null);
         public static readonly RequestType Remove = RequestType.Parse("api.activities.remove", null);
+        public static readonly RequestType SearchByName = RequestType.Parse("api.activities.search-by-name", null);
         public static readonly RequestType Unarchive = RequestType.Parse("api.activities.unarchive", null);
         public static readonly RequestType Update = RequestType.Parse("api.activities.update", null);
     }
@@ -81,10 +81,10 @@ public static class RequestTypes
     public static class Tags
     {
         public static readonly RequestType Create = RequestType.Parse("api.tags.create", null);
-        public static readonly RequestType FindByName = RequestType.Parse("api.tags.find-by-name", null);
         public static readonly RequestType Get = RequestType.Parse("api.tags.get", null);
         public static readonly RequestType List = RequestType.Parse("api.tags.list", null);
         public static readonly RequestType Remove = RequestType.Parse("api.tags.remove", null);
+        public static readonly RequestType SearchByName = RequestType.Parse("api.tags.search-by-name", null);
         public static readonly RequestType Update = RequestType.Parse("api.tags.update", null);
     }
 

@@ -1,5 +1,5 @@
 using Freem.Domain.Formats;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
 namespace Freem.Domain.UseCases.UnitTests.Import;

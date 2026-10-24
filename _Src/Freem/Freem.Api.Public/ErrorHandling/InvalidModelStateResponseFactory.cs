@@ -1,5 +1,5 @@
+using Freem.Api.Public.Contracts.V1;
 using Freem.Domain;
-using Freem.Api.Public.Contracts.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freem.Api.Public.ErrorHandling;

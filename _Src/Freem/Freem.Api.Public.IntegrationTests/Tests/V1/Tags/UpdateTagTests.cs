@@ -1,7 +1,7 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Api.Public.Contracts.DTO.Tags;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Tags.Base;
@@ -20,7 +20,7 @@ public sealed class UpdateTagTests : TagTestBase
     public async Task Request_ShouldSuccess()
     {
         var name = TagName.Parse("updated_name", null);
-        var request = new UpdateTagRequest
+        var request = new TagUpdateRequest
         {
             Name = new UpdateField<TagName>(name)
         };
@@ -34,7 +34,7 @@ public sealed class UpdateTagTests : TagTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenNothingToDo()
     {
-        var request = new UpdateTagRequest();
+        var request = new TagUpdateRequest();
         
         var response = await Context.Client.Tags.UpdateAsync(AddedTagIds[0], request);
         
@@ -49,7 +49,7 @@ public sealed class UpdateTagTests : TagTestBase
         await Context.Preparer.Tags.CreateAsync(name);
 
         var tagName = TagName.Parse(name, null);
-        var request = new UpdateTagRequest
+        var request = new TagUpdateRequest
         {
             Name = new UpdateField<TagName>(tagName)
         };

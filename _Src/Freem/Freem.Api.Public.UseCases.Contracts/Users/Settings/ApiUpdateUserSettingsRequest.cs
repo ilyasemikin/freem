@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiUpdateUserSettingsRequest : IRequest
 {
     public RequestType Type => RequestTypes.Users.Settings.Update;
 
-    public UpdateUserSettingsRequest Body { get; }
+    public UserSettingsUpdateRequest Body { get; }
 
-    public ApiUpdateUserSettingsRequest(UpdateUserSettingsRequest body)
+    public ApiUpdateUserSettingsRequest(UserSettingsUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

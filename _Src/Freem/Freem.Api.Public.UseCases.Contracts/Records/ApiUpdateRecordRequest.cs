@@ -1,5 +1,5 @@
+using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Domain.Records;
-using Freem.Api.Public.Contracts.DTO.Records;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -10,9 +10,9 @@ public sealed class ApiUpdateRecordRequest : IRequest
     public RequestType Type => RequestTypes.Records.Update;
 
     public RecordId Id { get; }
-    public UpdateRecordRequest Body { get; }
+    public RecordUpdateRequest Body { get; }
 
-    public ApiUpdateRecordRequest(RecordId id, UpdateRecordRequest body)
+    public ApiUpdateRecordRequest(RecordId id, RecordUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(body);

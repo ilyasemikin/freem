@@ -2,7 +2,6 @@
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Statistics.Time;
 using Freem.Time;
-using Freem.Time.Models;
 
 namespace Freem.Domain.Entities.Statistics.Time;
 

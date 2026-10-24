@@ -5,7 +5,6 @@ using Freem.Api.Public.UseCases.Contracts.Records;
 using Freem.Api.Public.UseCases.Implementations.Mappers;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Requests;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
-using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;

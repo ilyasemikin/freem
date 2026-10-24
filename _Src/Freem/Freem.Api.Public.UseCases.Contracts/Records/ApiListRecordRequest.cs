@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records;
+using Freem.Api.Public.Contracts.V1.Records;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiListRecordRequest : IRequest
 {
     public RequestType Type => RequestTypes.Records.List;
 
-    public ListRecordRequest Query { get; }
+    public RecordListRequest Query { get; }
 
-    public ApiListRecordRequest(ListRecordRequest query)
+    public ApiListRecordRequest(RecordListRequest query)
     {
         ArgumentNullException.ThrowIfNull(query);
 

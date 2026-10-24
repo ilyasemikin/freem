@@ -1,5 +1,4 @@
 using Freem.Api.Public.Build;
-using Freem.Api.Public.Constants;
 using Freem.Api.Public.Contracts;
 using Freem.Api.Public.UseCases.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ namespace Freem.Api.Public.Controllers.Infrastructure;
 /// <summary>Service metadata. Anonymous.</summary>
 [AllowAnonymous]
 [Route("_meta")]
-[Tags(ControllerTags.Infrastructure)]
 public sealed class MetaController : BaseController
 {
     private readonly BuildInfo _buildInfo;

@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiStartRunningRecordRequest : IRequest
 {
     public RequestType Type => RequestTypes.RunningRecords.Start;
 
-    public StartRunningRecordRequest Body { get; }
+    public RunningRecordStartRequest Body { get; }
 
-    public ApiStartRunningRecordRequest(StartRunningRecordRequest body)
+    public ApiStartRunningRecordRequest(RunningRecordStartRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

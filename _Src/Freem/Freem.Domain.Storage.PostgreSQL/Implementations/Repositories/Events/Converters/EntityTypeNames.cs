@@ -1,4 +1,3 @@
-using Freem.Domain;
 using Freem.Domain.Events;
 
 namespace Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;

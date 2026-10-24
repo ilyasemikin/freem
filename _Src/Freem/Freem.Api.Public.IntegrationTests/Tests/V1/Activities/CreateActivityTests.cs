@@ -1,5 +1,5 @@
-﻿using Freem.Domain.Activities.Models;
-using Freem.Api.Public.Contracts.DTO.Activities;
+﻿using Freem.Api.Public.Contracts.V1.Activities;
+using Freem.Domain.Activities.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Activities.Base;
@@ -19,7 +19,7 @@ public sealed class CreateActivityTests : ActivityTestBase
     {
         var name = ActivityName.Parse("name", null);
         var color = ActivityColor.Parse("#10b981", null);
-        var request = new CreateActivityRequest(name, color, AddedRelatedTags);
+        var request = new ActivityCreateRequest(name, color, AddedRelatedTags);
         
         var response = await Context.Client.Activities.CreateAsync(request);
 

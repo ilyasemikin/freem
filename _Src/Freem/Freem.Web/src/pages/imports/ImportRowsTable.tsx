@@ -57,7 +57,7 @@ export function ImportRowsTable(props: IImportRowsTableProps) {
         throw await ApiError.fromResponse(response);
       }
 
-      const value = await ListResponse.read<ImportRowResponse>(response);
+      const value = await ListResponse.read<ImportRowResponse>(response, "rows");
       if (current) {
         setPage(value);
         setError(undefined);

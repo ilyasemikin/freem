@@ -25,4 +25,8 @@
         <PackageReference Include="Utilities.UseCases" Version="0.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Implementations\" />
+    </ItemGroup>
+
 </Project>

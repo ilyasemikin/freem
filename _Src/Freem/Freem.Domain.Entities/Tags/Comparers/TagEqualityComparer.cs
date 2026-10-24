@@ -2,6 +2,8 @@
 
 public sealed class TagEqualityComparer : IEqualityComparer<Tag>
 {
+    public static TagEqualityComparer Instance { get; } = new();
+
     public bool Equals(Tag? x, Tag? y)
     {
         if (ReferenceEquals(x, y)) 

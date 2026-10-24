@@ -1,6 +1,7 @@
+using Freem.Api.Public.Contracts.V1.Imports.Dtos;
 using System.Text.Json;
 using Freem.Api.Public.Client.Implementations.Base;
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Domain.Formats;
 using Freem.Domain.Import;
 using Freem.Domain.Users.Models;
@@ -23,7 +24,7 @@ public sealed class ImportsClient : BaseClient
         _options = options;
     }
 
-    public Task<Result<UploadImportResponse, IClientError>> UploadAsync(
+    public Task<Result<ImportUploadResponse, IClientError>> UploadAsync(
         FormatKey format,
         string fileName,
         Stream content,
@@ -44,18 +45,18 @@ public sealed class ImportsClient : BaseClient
         var request = HttpRequest.Post("api/v1/imports")
             .WithBody(body);
 
-        return SendForUserAsync<UploadImportResponse>(request, cancellationToken);
+        return SendForUserAsync<ImportUploadResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<ImportResponse>, IClientError>> ListAsync(
-        ListImportRequest query,
+    public Task<Result<ImportListResponse, IClientError>> ListAsync(
+        ImportListRequest query,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get("api/v1/imports")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
 
-        return SendForUserAsync<IReadOnlyList<ImportResponse>>(request, cancellationToken);
+        return SendForUserAsync<ImportListResponse>(request, cancellationToken);
     }
 
     public Task<Result<ImportResponse, IClientError>> GetAsync(
@@ -67,46 +68,46 @@ public sealed class ImportsClient : BaseClient
         return SendForUserAsync<ImportResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<ImportActivityResponse>, IClientError>> ListActivitiesAsync(
+    public Task<Result<ImportActivityListResponse, IClientError>> ListActivitiesAsync(
         ImportDocumentId id,
-        ListImportActivityRequest query,
+        ImportActivityListRequest query,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/imports/{id}/activities")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
 
-        return SendForUserAsync<IReadOnlyList<ImportActivityResponse>>(request, cancellationToken);
+        return SendForUserAsync<ImportActivityListResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<ImportTagResponse>, IClientError>> ListTagsAsync(
+    public Task<Result<ImportTagListResponse, IClientError>> ListTagsAsync(
         ImportDocumentId id,
-        ListImportTagRequest query,
+        ImportTagListRequest query,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/imports/{id}/tags")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
 
-        return SendForUserAsync<IReadOnlyList<ImportTagResponse>>(request, cancellationToken);
+        return SendForUserAsync<ImportTagListResponse>(request, cancellationToken);
     }
 
-    public Task<Result<IReadOnlyList<ImportRowResponse>, IClientError>> ListRowsAsync(
+    public Task<Result<ImportRowListResponse, IClientError>> ListRowsAsync(
         ImportDocumentId id,
-        ListImportRowRequest query,
+        ImportRowListRequest query,
         CancellationToken cancellationToken = default)
     {
         var request = HttpRequest.Get($"api/v1/imports/{id}/rows")
             .WithQueryParameter(nameof(query.Limit), query.Limit.ToString())
             .WithQueryParameter(nameof(query.Offset), query.Offset.ToString());
 
-        return SendForUserAsync<IReadOnlyList<ImportRowResponse>>(request, cancellationToken);
+        return SendForUserAsync<ImportRowListResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> UpdateActivityMappingAsync(
         ImportDocumentId id,
         ImportActivityId importActivityId,
-        UpdateImportActivityMappingRequest body,
+        ImportActivityMappingUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(body);
@@ -120,7 +121,7 @@ public sealed class ImportsClient : BaseClient
     public Task<Result<IClientError>> UpdateTagMappingAsync(
         ImportDocumentId id,
         ImportTagId importTagId,
-        UpdateImportTagMappingRequest body,
+        ImportTagMappingUpdateRequest body,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(body);
@@ -131,9 +132,9 @@ public sealed class ImportsClient : BaseClient
         return SendForUserAsync(request, cancellationToken);
     }
 
-    public Task<Result<ApplyImportResponse, IClientError>> ApplyAsync(
+    public Task<Result<ImportApplyResponse, IClientError>> ApplyAsync(
         ImportDocumentId id,
-        ApplyImportRequest body,
+        ImportApplyRequest body,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(body);
@@ -141,7 +142,7 @@ public sealed class ImportsClient : BaseClient
         var request = HttpRequest.Post($"api/v1/imports/{id}/apply")
             .WithJsonBody(body, _options);
 
-        return SendForUserAsync<ApplyImportResponse>(request, cancellationToken);
+        return SendForUserAsync<ImportApplyResponse>(request, cancellationToken);
     }
 
     public Task<Result<IClientError>> RemoveAsync(

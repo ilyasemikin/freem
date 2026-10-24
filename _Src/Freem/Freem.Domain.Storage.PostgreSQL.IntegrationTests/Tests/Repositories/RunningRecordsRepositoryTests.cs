@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.RunningRecords;
+﻿using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.Users;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;

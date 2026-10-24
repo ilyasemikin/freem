@@ -58,7 +58,8 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
         throw new Error(response.statusText);
       }
 
-      const body: RunningRecordResponse = await response.json();
+      const payload = await response.json();
+      const body: RunningRecordResponse = response.ok ? payload.runningRecord : payload;
 
       if (response.ok) {
         const record = new RunningRecordEntity(

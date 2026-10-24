@@ -52,7 +52,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
             .ExecuteDeleteAsync(cancellationToken);
 
         return count == 0
-            ? DomainErrorCatalog.Factories.CreateEntityNotFound(id)
+            ? DomainErrorCatalog.Factories.CreateImportDocumentNotFound(id)
             : Result<Error>.CreateSuccess();
     }
 
@@ -64,7 +64,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
 
         var idString = id.ToString();
         return await QueryDocuments().FindAsync(
-            id,
+            () => DomainErrorCatalog.Factories.CreateImportDocumentNotFound(id),
             e => e.Id == idString,
             ImportDocumentMapper.MapToDomainEntity,
             cancellationToken);
@@ -79,7 +79,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
         var documentIdString = ids.DocumentId.ToString();
         var userIdString = ids.UserId.ToString();
         return await QueryDocuments().FindAsync(
-            ids.DocumentId,
+            () => DomainErrorCatalog.Factories.CreateImportDocumentNotFound(ids.DocumentId),
             e => e.Id == documentIdString && e.UserId == userIdString,
             ImportDocumentMapper.MapToDomainEntity,
             cancellationToken);
@@ -133,7 +133,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
             .Select(e => e.Status)
             .FirstOrDefaultAsync(cancellationToken);
         if (actual is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return DomainErrorCatalog.Factories.CreateImportDocumentNotFound(id);
 
         return DomainErrorCatalog.Factories.CreateImportInvalidStatus(id, actual, next);
     }
@@ -222,7 +222,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
             return result;
 
         return count == 0
-            ? DomainErrorCatalog.Factories.CreateEntityNotFound(importActivityId)
+            ? DomainErrorCatalog.Factories.CreateImportActivityNotFound(importActivityId)
             : Result<Error>.CreateSuccess();
     }
 
@@ -254,7 +254,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
             return result;
 
         return count == 0
-            ? DomainErrorCatalog.Factories.CreateEntityNotFound(importTagId)
+            ? DomainErrorCatalog.Factories.CreateImportTagNotFound(importTagId)
             : Result<Error>.CreateSuccess();
     }
 
@@ -284,7 +284,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
 
         var idString = id.ToString();
         return await QueryRows().FindAsync(
-            id,
+            () => DomainErrorCatalog.Factories.CreateImportRowNotFound(id),
             e => e.Id == idString,
             ImportRowMapper.MapToDomainEntity,
             cancellationToken);

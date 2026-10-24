@@ -1,6 +1,6 @@
 using EgoHub.Api.Public.Contracts.V1.Sessions;
+using Freem.Api.Public.Contracts.V1.Auth;
 using Freem.Domain;
-using Freem.Api.Public.Contracts.DTO.Auth;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

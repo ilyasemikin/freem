@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Running.Base;
@@ -25,7 +25,7 @@ public sealed class StopRunningRecordTests : RunningRecordTestBase
     public async Task Request_ShouldSuccess()
     {
         var endAt = DateTimeOffset.UtcNow;
-        var request = new StopRunningRecordRequest(endAt);
+        var request = new RunningRecordStopRequest(endAt);
 
         var response = await Context.Client.Records.StopAsync(request);
 
@@ -36,7 +36,7 @@ public sealed class StopRunningRecordTests : RunningRecordTestBase
     [Fact]
     public async Task Request_ShouldSuccess_WhenEndAtIsNull()
     {
-        var request = new StopRunningRecordRequest();
+        var request = new RunningRecordStopRequest();
         
         var response = await Context.Client.Records.StopAsync(request);
 
@@ -48,7 +48,7 @@ public sealed class StopRunningRecordTests : RunningRecordTestBase
     public async Task Request_ShouldFail_WhenEndAtIsBefore()
     {
         var endAt = DateTimeOffset.UtcNow.AddHours(-1);
-        var request = new StopRunningRecordRequest(endAt);
+        var request = new RunningRecordStopRequest(endAt);
         
         var response = await Context.Client.Records.StopAsync(request);
         
@@ -61,7 +61,7 @@ public sealed class StopRunningRecordTests : RunningRecordTestBase
     {
         await Context.Preparer.Records.StopRunningAsync();
 
-        var request = new StopRunningRecordRequest();
+        var request = new RunningRecordStopRequest();
         var response = await Context.Client.Records.StopAsync(request);
         
         Assert.NotNull(response);

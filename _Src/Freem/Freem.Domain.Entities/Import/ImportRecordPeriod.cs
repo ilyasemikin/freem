@@ -1,6 +1,6 @@
 using Freem.Domain.Records.Models;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.Entities.Import;
 

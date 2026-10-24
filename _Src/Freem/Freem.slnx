@@ -1,0 +1,31 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Freem.Api.Public.Client/Freem.Api.Public.Client.csproj" />
+  <Project Path="Freem.Api.Public.Contracts/Freem.Api.Public.Contracts.csproj" />
+  <Project Path="Freem.Api.Public.IntegrationTests/Freem.Api.Public.IntegrationTests.csproj" />
+  <Project Path="Freem.Api.Public.UseCases.Contracts/Freem.Api.Public.UseCases.Contracts.csproj" />
+  <Project Path="Freem.Api.Public.UseCases/Freem.Api.Public.UseCases.csproj" />
+  <Project Path="Freem.Api.Public/Freem.Api.Public.csproj" />
+  <Project Path="Freem.Domain.Entities/Freem.Domain.Entities.csproj" />
+  <Project Path="Freem.Domain.Serialization.Json/Freem.Domain.Serialization.Json.csproj" />
+  <Project Path="Freem.Domain.Storage.PostgreSQL.IntegrationTests/Freem.Domain.Storage.PostgreSQL.IntegrationTests.csproj" />
+  <Project Path="Freem.Domain.Storage.PostgreSQL.Migrations.UnitTests/Freem.Domain.Storage.PostgreSQL.Migrations.UnitTests.csproj" />
+  <Project Path="Freem.Domain.Storage.PostgreSQL.Migrations/Freem.Domain.Storage.PostgreSQL.Migrations.csproj" />
+  <Project Path="Freem.Domain.Storage.PostgreSQL.UnitTests/Freem.Domain.Storage.PostgreSQL.UnitTests.csproj" />
+  <Project Path="Freem.Domain.Storage.PostgreSQL/Freem.Domain.Storage.PostgreSQL.csproj" />
+  <Project Path="Freem.Domain.Storage/Freem.Domain.Storage.csproj" />
+  <Project Path="Freem.Domain.UnitTests/Freem.Domain.UnitTests.csproj" />
+  <Project Path="Freem.Domain.UseCases.Contracts/Freem.Domain.UseCases.Contracts.csproj" />
+  <Project Path="Freem.Domain.UseCases.IntegrationTests/Freem.Domain.UseCases.IntegrationTests.csproj" />
+  <Project Path="Freem.Domain.UseCases.UnitTests/Freem.Domain.UseCases.UnitTests.csproj" />
+  <Project Path="Freem.Domain.UseCases/Freem.Domain.UseCases.csproj" />
+  <Project Path="Freem.Domain/Freem.Domain.csproj" />
+  <Project Path="Freem.Storage.Transactions.EFCore/Freem.Storage.Transactions.EFCore.csproj" />
+  <Project Path="Freem.Storage.Transactions/Freem.Storage.Transactions.csproj" />
+  <Project Path="Freem.Time.UnitTests/Freem.Time.UnitTests.csproj" />
+  <Project Path="Freem.Time/Freem.Time.csproj" />
+</Solution>

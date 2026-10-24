@@ -5,10 +5,10 @@ using Freem.Domain.Import;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UseCases.UnitTests.Import;
 
@@ -83,8 +83,10 @@ public sealed class ImportApplyMappingTests
 
         mappingCheck.Add(CreateRow(["a1", "a2"], ["t1"], period));
 
-        var actual = mappingCheck.FindUnmapped().Select(id => id.ToString()).ToArray();
-        Assert.Equal(["a2", "t1"], actual);
+        var actualActivities = mappingCheck.FindUnmappedActivities().Select(id => id.ToString()).ToArray();
+        var actualTags = mappingCheck.FindUnmappedTags().Select(id => id.ToString()).ToArray();
+        Assert.Equal(["a2"], actualActivities);
+        Assert.Equal(["t1"], actualTags);
     }
 
     [Fact]
@@ -94,7 +96,7 @@ public sealed class ImportApplyMappingTests
 
         mappingCheck.Add(CreateRow("missing"));
 
-        var actual = mappingCheck.FindUnmapped().Select(id => id.ToString()).ToArray();
+        var actual = mappingCheck.FindUnmappedActivities().Select(id => id.ToString()).ToArray();
         Assert.Equal(["missing"], actual);
     }
 
@@ -106,7 +108,8 @@ public sealed class ImportApplyMappingTests
 
         mappingCheck.Add(CreateRow("a1"));
 
-        Assert.Empty(mappingCheck.FindUnmapped());
+        Assert.Empty(mappingCheck.FindUnmappedActivities());
+        Assert.Empty(mappingCheck.FindUnmappedTags());
     }
 
     [Fact]

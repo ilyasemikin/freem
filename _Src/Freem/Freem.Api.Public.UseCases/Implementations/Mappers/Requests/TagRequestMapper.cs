@@ -1,7 +1,7 @@
 using Freem.Domain.UseCases.Contracts.Filter;
 using Freem.Domain.UseCases.Contracts.Tags.Create;
 using Freem.Domain.UseCases.Contracts.Tags.Get;
-using Freem.Domain.UseCases.Contracts.Tags.GetByName;
+using Freem.Domain.UseCases.Contracts.Tags.Search;
 using Freem.Domain.UseCases.Contracts.Tags.List;
 using Freem.Domain.UseCases.Contracts.Tags.Remove;
 using Freem.Domain.UseCases.Contracts.Tags.Update;
@@ -16,10 +16,10 @@ internal static class TagRequestMapper
         return new CreateTagRequest(request.Body.Name);
     }
 
-    public static FindTagByNameRequest Map(this ApiFindTagByNameRequest request)
+    public static SearchTagByNameRequest Map(this ApiSearchTagByNameRequest request)
     {
         var searchText = request.Name.ToString();
-        return new FindTagByNameRequest(searchText);
+        return new SearchTagByNameRequest(searchText);
     }
 
     public static GetTagRequest Map(this ApiGetTagRequest request)

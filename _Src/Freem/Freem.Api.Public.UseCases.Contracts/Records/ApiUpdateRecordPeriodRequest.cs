@@ -1,5 +1,5 @@
+using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Domain.Records;
-using Freem.Api.Public.Contracts.DTO.Records;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -11,9 +11,9 @@ public sealed class ApiUpdateRecordPeriodRequest : IRequest
 
     public RecordId RecordId { get; }
     public RecordPeriodId PeriodId { get; }
-    public UpdateRecordPeriodRequest Body { get; }
+    public RecordPeriodUpdateRequest Body { get; }
 
-    public ApiUpdateRecordPeriodRequest(RecordId recordId, RecordPeriodId periodId, UpdateRecordPeriodRequest body)
+    public ApiUpdateRecordPeriodRequest(RecordId recordId, RecordPeriodId periodId, RecordPeriodUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(recordId);
         ArgumentNullException.ThrowIfNull(periodId);

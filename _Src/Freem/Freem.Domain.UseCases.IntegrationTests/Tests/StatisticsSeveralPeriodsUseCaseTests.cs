@@ -4,7 +4,7 @@ using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 

@@ -1,5 +1,5 @@
 using Freem.Domain.UseCases.Context;
-using Freem.Domain.UseCases.Contracts.Records.PeriodList;
+using Freem.Domain.UseCases.Contracts.Records.ListByPeriod;
 using Freem.Api.Public.UseCases.Context;
 using Freem.Api.Public.UseCases.Contracts.Records;
 using Freem.Api.Public.UseCases.Implementations.Mappers;
@@ -25,7 +25,7 @@ internal sealed class ApiListRecordByPeriodRequestHandler : BaseAuthorizedReques
     {
         var domainContext = context.Map();
         var domainRequest = request.Map();
-        var response = await Mediator.ExecuteAsync<PeriodListRequest, Result<PeriodListResponse, Error>>(domainContext, domainRequest, cancellationToken);
+        var response = await Mediator.ExecuteAsync<ListRecordByPeriodRequest, Result<ListRecordByPeriodResponse, Error>>(domainContext, domainRequest, cancellationToken);
         return response.Map();
     }
 }

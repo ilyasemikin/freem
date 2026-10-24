@@ -1,4 +1,4 @@
-﻿using Freem.Time.Models;
+﻿using Freem.Time;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 

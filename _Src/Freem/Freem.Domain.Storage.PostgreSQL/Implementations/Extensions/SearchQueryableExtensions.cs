@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Freem.Domain;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -10,7 +9,7 @@ internal static class SearchQueryableExtensions
 {
     public static async Task<Result<TEntity, Error>> FindAsync<TDatabaseEntity, TEntity>(
         this IQueryable<TDatabaseEntity> queryable,
-        Id id,
+        Func<Error> notFoundFactory,
         Expression<Func<TDatabaseEntity, bool>> predicate,
         Func<TDatabaseEntity, TEntity?> mapper,
         CancellationToken cancellationToken = default)
@@ -21,11 +20,11 @@ internal static class SearchQueryableExtensions
             .FirstOrDefaultAsync(predicate, cancellationToken);
 
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return notFoundFactory();
 
         var entity = mapper(dbEntity);
         if (entity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return notFoundFactory();
         
         return Result<TEntity, Error>.CreateSuccess(entity);
     }

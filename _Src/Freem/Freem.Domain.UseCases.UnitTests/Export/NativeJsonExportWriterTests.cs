@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Freem.Domain.Entities.Export;
-using Freem.Domain.UseCases.Export;
+using Freem.Domain.UseCases.Implementations.Export;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
 namespace Freem.Domain.UseCases.UnitTests.Export;

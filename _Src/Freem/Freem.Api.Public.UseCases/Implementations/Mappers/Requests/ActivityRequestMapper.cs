@@ -2,7 +2,7 @@ using Freem.Domain.Relations.Collections;
 using Freem.Domain.UseCases.Contracts;
 using Freem.Domain.UseCases.Contracts.Activities.Archive;
 using Freem.Domain.UseCases.Contracts.Activities.Create;
-using Freem.Domain.UseCases.Contracts.Activities.Find;
+using Freem.Domain.UseCases.Contracts.Activities.Search;
 using Freem.Domain.UseCases.Contracts.Activities.Get;
 using Freem.Domain.UseCases.Contracts.Activities.List;
 using Freem.Domain.UseCases.Contracts.Activities.Remove;
@@ -29,9 +29,9 @@ internal static class ActivityRequestMapper
         };
     }
 
-    public static FindActivityRequest Map(this ApiFindActivityByNameRequest request)
+    public static SearchActivityByNameRequest Map(this ApiSearchActivityByNameRequest request)
     {
-        return new FindActivityRequest(request.Query.SearchText);
+        return new SearchActivityByNameRequest(request.Query.SearchText);
     }
 
     public static GetActivityRequest Map(this ApiGetActivityRequest request)

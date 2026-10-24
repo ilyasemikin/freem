@@ -33,7 +33,7 @@ public abstract class Id
 
     public static bool operator ==(Id? left, Id? right)
     {
-        return Equals(left, right);
+        return left?.Equals(right) ?? false;
     }
 
     public static bool operator !=(Id? left, Id? right)

@@ -1,6 +1,5 @@
 using Freem.Domain.Activities;
 using Freem.Domain.Entities.Activities;
-using Freem.Domain.Entities.Records;
 using RecordEntity = Freem.Domain.Entities.Records.Record;
 using Freem.Domain.Entities.Tags;
 using Freem.Domain.Records;

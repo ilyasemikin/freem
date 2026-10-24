@@ -1,17 +1,18 @@
+using Freem.Api.Public.Contracts.V1.Records;
+using Freem.Api.Public.Contracts.V1.Records.Dtos;
 using Freem.Domain.UseCases.Contracts.Records.AddPeriod;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
 using Freem.Domain.UseCases.Contracts.Records.List;
-using Freem.Domain.UseCases.Contracts.Records.PeriodList;
+using Freem.Domain.UseCases.Contracts.Records.ListByPeriod;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos;
 using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
-using Freem.Api.Public.UseCases.Implementations.Results;
 using Microsoft.AspNetCore.Mvc;
 using Utilities.Errors;
 using Utilities.Primitives;
-using ApiCreateRecordResponse = Freem.Api.Public.Contracts.DTO.Records.CreateRecordResponse;
-using ApiAddRecordPeriodResponse = Freem.Api.Public.Contracts.DTO.Records.AddRecordPeriodResponse;
-using RecordResponse = Freem.Api.Public.Contracts.DTO.Records.RecordResponse;
+using ApiRecordCreateResponse = Freem.Api.Public.Contracts.V1.Records.RecordCreateResponse;
+using ApiRecordPeriodAddResponse = Freem.Api.Public.Contracts.V1.Records.RecordPeriodAddResponse;
+using RecordDto = Freem.Api.Public.Contracts.V1.Records.Dtos.RecordDto;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses;
 
@@ -22,7 +23,7 @@ internal static class RecordResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new ApiCreateRecordResponse(result.Value.Record.Id);
+        var response = new ApiRecordCreateResponse(result.Value.Record.Id);
         return new CreatedResult
         {
             Value = response
@@ -34,7 +35,7 @@ internal static class RecordResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = new ApiAddRecordPeriodResponse(result.Value.Id);
+        var response = new ApiRecordPeriodAddResponse(result.Value.Id);
         return new CreatedResult
         {
             Value = response
@@ -46,7 +47,8 @@ internal static class RecordResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var response = result.Value.Record.Map();
+        var record = result.Value.Record.Map();
+        var response = new RecordResponse(record);
         return new OkObjectResult(response);
     }
 
@@ -58,10 +60,11 @@ internal static class RecordResponseMapper
         var records = result.Value.Records
             .Select(record => record.Map())
             .ToArray();
-        return new ItemsListResult<RecordResponse>(records, result.Value.TotalCount);
+        var response = new RecordListResponse(result.Value.TotalCount, records);
+        return new OkObjectResult(response);
     }
 
-    public static IActionResult Map(this Result<PeriodListResponse, Error> result)
+    public static IActionResult Map(this Result<ListRecordByPeriodResponse, Error> result)
     {
         if (!result.Success)
             return result.Error.MapError();
@@ -69,6 +72,7 @@ internal static class RecordResponseMapper
         var records = result.Value.Records
             .Select(record => record.Map())
             .ToArray();
-        return new ItemsListResult<RecordResponse>(records, result.Value.TotalCount);
+        var response = new RecordListResponse(result.Value.TotalCount, records);
+        return new OkObjectResult(response);
     }
 }

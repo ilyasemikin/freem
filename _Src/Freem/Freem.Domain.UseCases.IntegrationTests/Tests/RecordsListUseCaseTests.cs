@@ -53,7 +53,7 @@ public sealed class RecordsListUseCaseTests : UseCaseTestBase
         
         Assert.Equal(RecordsCount, (int)response.Value.TotalCount);
         Assert.Equal(RecordsCount, orderedRecords.Length);
-        Assert.Equal(_records, orderedRecords, new RecordEqualityComparer());
+        Assert.Equal(_records, orderedRecords, RecordEqualityComparer.Instance);
     }
     
 }

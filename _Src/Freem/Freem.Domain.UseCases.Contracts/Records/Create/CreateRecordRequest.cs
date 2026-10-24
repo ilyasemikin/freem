@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Records.Models;
 using Freem.Domain.Relations.Collections;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 

@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Auth;
+using Freem.Api.Public.Contracts.V1.Auth;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 

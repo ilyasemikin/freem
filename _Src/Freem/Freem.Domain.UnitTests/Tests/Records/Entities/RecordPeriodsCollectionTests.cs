@@ -1,7 +1,7 @@
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
+using Freem.Time;
 
 namespace Freem.Domain.UnitTests.Tests.Records.Entities;
 

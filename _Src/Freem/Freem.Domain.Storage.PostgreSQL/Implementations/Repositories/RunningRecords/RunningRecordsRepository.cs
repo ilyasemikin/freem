@@ -1,5 +1,5 @@
-﻿using Freem.Domain;
-using Freem.Domain.Entities.RunningRecords;
+﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Entities.RunningRecords.Comparers;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.Storage.PostgreSQL.Database;
@@ -18,20 +18,16 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
 {
     private readonly DatabaseContext _database;
     private readonly DatabaseContextWriteExceptionHandler _exceptionHandler;
-    private readonly IEqualityComparer<RunningRecord> _equalityComparer;
 
     public RunningRecordsRepository(
         DatabaseContext database,
-        DatabaseContextWriteExceptionHandler exceptionHandler,
-        IEqualityComparer<RunningRecord> equalityComparer)
+        DatabaseContextWriteExceptionHandler exceptionHandler)
     {
         ArgumentNullException.ThrowIfNull(database);
         ArgumentNullException.ThrowIfNull(exceptionHandler);
-        ArgumentNullException.ThrowIfNull(equalityComparer);
         
         _database = database;
         _exceptionHandler = exceptionHandler;
-        _equalityComparer = equalityComparer;
     }
 
     public async Task<Result<Error>> CreateAsync(RunningRecord entity, CancellationToken cancellationToken = default)
@@ -56,10 +52,10 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         
         var dbEntity = await _database.RunningRecords.FindEntityAsync(entity, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(entity.Id);
+            return DomainErrorCatalog.Factories.CreateRunningRecordNotFound(entity.Id);
 
         var actualEntity = dbEntity.MapToDomainEntity();
-        if (_equalityComparer.Equals(entity, actualEntity))
+        if (RunningRecordEqualityComparer.Instance.Equals(entity, actualEntity))
             return Result<Error>.CreateSuccess();
         
         dbEntity.Name = entity.Name?.ToString();
@@ -81,7 +77,7 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         var userId = id.ToUserId();
         var dbEntity = await _database.RunningRecords.FindEntityAsync(userId, cancellationToken);
         if (dbEntity is null)
-            return DomainErrorCatalog.Factories.CreateEntityNotFound(id);
+            return DomainErrorCatalog.Factories.CreateRunningRecordNotFound(id);
 
         _database.Remove(dbEntity);
 
@@ -99,6 +95,10 @@ internal sealed class RunningRecordsRepository : IRunningRecordRepository
         return await _database.RunningRecords
             .Include(e => e.Activities)
             .Include(e => e.Tags)
-            .FindAsync(id, e => e.UserId == idString, RunningRecordMapper.MapToDomainEntity, cancellationToken);
+            .FindAsync(
+                () => DomainErrorCatalog.Factories.CreateRunningRecordNotFound(id),
+                e => e.UserId == idString,
+                RunningRecordMapper.MapToDomainEntity,
+                cancellationToken);
     }
 }

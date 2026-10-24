@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Imports;
+using Freem.Api.Public.Contracts.V1.Imports;
 using Freem.Domain.Import;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
@@ -11,9 +11,9 @@ public sealed class ApiUpdateImportTagMappingRequest : IRequest
 
     public ImportDocumentId Id { get; }
     public ImportTagId ImportTagId { get; }
-    public UpdateImportTagMappingRequest Body { get; }
+    public ImportTagMappingUpdateRequest Body { get; }
 
-    public ApiUpdateImportTagMappingRequest(ImportDocumentId id, ImportTagId importTagId, UpdateImportTagMappingRequest body)
+    public ApiUpdateImportTagMappingRequest(ImportDocumentId id, ImportTagId importTagId, ImportTagMappingUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(importTagId);

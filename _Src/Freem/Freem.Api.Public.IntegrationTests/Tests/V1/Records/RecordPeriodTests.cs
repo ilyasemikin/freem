@@ -1,14 +1,15 @@
+using Freem.Api.Public.Contracts.V1.Records.Dtos;
 using System.Net;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Records;
+using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Users.Models;
-using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Records;
-using Freem.Api.Public.Contracts.DTO.Users.Settings;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
+using Freem.Time;
 using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records;
@@ -26,17 +27,17 @@ public sealed class RecordPeriodTests : RecordTestBase
         return new DateTimePeriod(startAt, startAt.AddHours(durationHours));
     }
 
-    private async Task<RecordResponse> GetRecordAsync(RecordId id)
+    private async Task<RecordDto> GetRecordAsync(RecordId id)
     {
         var response = await Context.Client.Records.GetAsync(id);
-        return response.Unwrap();
+        return response.Unwrap().Record;
     }
 
     [Fact]
     public async Task Add_ShouldReturnCurrentTimeZoneOffset()
     {
         var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
-        var settings = new UpdateUserSettingsRequest
+        var settings = new UserSettingsUpdateRequest
         {
             TimeZoneOffset = new UpdateField<TimeZoneOffset>(offset)
         };
@@ -44,7 +45,7 @@ public sealed class RecordPeriodTests : RecordTestBase
         settingsResponse.ShouldSuccess();
 
         var period = CreateAfterAddedPeriods(1, 2);
-        var body = new RecordPeriodRequest(period);
+        var body = new RecordPeriodItem(period);
         var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], body);
         response.ShouldSuccess();
 
@@ -61,7 +62,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     {
         var period = CreateAfterAddedPeriods(1, 2);
         var description = RecordPeriodDescription.Parse("added", null);
-        var body = new RecordPeriodRequest(period) { Description = description };
+        var body = new RecordPeriodItem(period) { Description = description };
 
         var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], body);
 
@@ -83,7 +84,7 @@ public sealed class RecordPeriodTests : RecordTestBase
         var existing = record.Periods[0].Period;
         var period = new DateTimePeriod(existing.StartAt, existing.EndAt.AddHours(1));
 
-        var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], new RecordPeriodRequest(period));
+        var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], new RecordPeriodItem(period));
 
         Assert.NotNull(response);
         response.ShouldHaveStatusCode(HttpStatusCode.UnprocessableContent);
@@ -92,7 +93,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     [Fact]
     public async Task Add_ShouldFail_WhenRecordNotExists()
     {
-        var body = new RecordPeriodRequest(CreateAfterAddedPeriods(1, 1));
+        var body = new RecordPeriodItem(CreateAfterAddedPeriods(1, 1));
 
         var response = await Context.Client.Records.AddPeriodAsync(RecordId.Generate(), body);
 
@@ -107,7 +108,7 @@ public sealed class RecordPeriodTests : RecordTestBase
         var current = record.Periods[0];
         var period = new DateTimePeriod(current.Period.StartAt, current.Period.EndAt.AddMinutes(-1));
         var description = RecordPeriodDescription.Parse("changed", null);
-        var body = new UpdateRecordPeriodRequest
+        var body = new RecordPeriodUpdateRequest
         {
             Period = new UpdateField<DateTimePeriod>(period),
             Description = new UpdateField<RecordPeriodDescription?>(description)
@@ -129,13 +130,13 @@ public sealed class RecordPeriodTests : RecordTestBase
     {
         var record = await GetRecordAsync(AddedRecordIds[0]);
         var current = record.Periods[0];
-        var setBody = new UpdateRecordPeriodRequest
+        var setBody = new RecordPeriodUpdateRequest
         {
             Description = new UpdateField<RecordPeriodDescription?>(RecordPeriodDescription.Parse("temp", null))
         };
         (await Context.Client.Records.UpdatePeriodAsync(AddedRecordIds[0], current.Id, setBody)).ShouldSuccess();
 
-        var clearBody = new UpdateRecordPeriodRequest
+        var clearBody = new RecordPeriodUpdateRequest
         {
             Description = new UpdateField<RecordPeriodDescription?>(null)
         };
@@ -150,9 +151,9 @@ public sealed class RecordPeriodTests : RecordTestBase
     public async Task Update_ShouldFail_WhenPeriodOverlaps()
     {
         var added = (await Context.Client.Records.AddPeriodAsync(
-            AddedRecordIds[0], new RecordPeriodRequest(CreateAfterAddedPeriods(2, 1)))).Unwrap();
+            AddedRecordIds[0], new RecordPeriodItem(CreateAfterAddedPeriods(2, 1)))).Unwrap();
         var first = (await GetRecordAsync(AddedRecordIds[0])).Periods[0].Period;
-        var body = new UpdateRecordPeriodRequest
+        var body = new RecordPeriodUpdateRequest
         {
             Period = new UpdateField<DateTimePeriod>(new DateTimePeriod(first.EndAt.AddMinutes(-1), first.EndAt.AddHours(4)))
         };
@@ -167,7 +168,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     public async Task Update_ShouldFail_WhenPeriodHasZeroDuration()
     {
         var current = (await GetRecordAsync(AddedRecordIds[0])).Periods[0];
-        var body = new UpdateRecordPeriodRequest
+        var body = new RecordPeriodUpdateRequest
         {
             Period = new UpdateField<DateTimePeriod>(new DateTimePeriod(current.Period.StartAt, current.Period.StartAt))
         };
@@ -182,7 +183,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     public async Task Add_ShouldFail_WhenPeriodHasZeroDuration()
     {
         var startAt = CreateAfterAddedPeriods(1, 1).StartAt;
-        var body = new RecordPeriodRequest(new DateTimePeriod(startAt, startAt));
+        var body = new RecordPeriodItem(new DateTimePeriod(startAt, startAt));
 
         var response = await Context.Client.Records.AddPeriodAsync(AddedRecordIds[0], body);
 
@@ -195,8 +196,8 @@ public sealed class RecordPeriodTests : RecordTestBase
     {
         var record = await GetRecordAsync(AddedRecordIds[0]);
         var periodId = record.Periods[0].Id;
-        var body = new RecordPeriodRequest(CreateAfterAddedPeriods(1, 1));
-        var updateBody = new UpdateRecordPeriodRequest
+        var body = new RecordPeriodItem(CreateAfterAddedPeriods(1, 1));
+        var updateBody = new RecordPeriodUpdateRequest
         {
             Description = new UpdateField<RecordPeriodDescription?>(RecordPeriodDescription.Parse("foreign", null))
         };
@@ -218,7 +219,7 @@ public sealed class RecordPeriodTests : RecordTestBase
         var record = await GetRecordAsync(AddedRecordIds[0]);
 
         var response = await Context.Client.Records.UpdatePeriodAsync(
-            AddedRecordIds[0], record.Periods[0].Id, new UpdateRecordPeriodRequest());
+            AddedRecordIds[0], record.Periods[0].Id, new RecordPeriodUpdateRequest());
 
         Assert.NotNull(response);
         response.ShouldHaveStatusCode(HttpStatusCode.BadRequest);
@@ -227,7 +228,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     [Fact]
     public async Task Update_ShouldFail_WhenPeriodNotExists()
     {
-        var body = new UpdateRecordPeriodRequest
+        var body = new RecordPeriodUpdateRequest
         {
             Period = new UpdateField<DateTimePeriod>(CreateAfterAddedPeriods(1, 1))
         };
@@ -242,7 +243,7 @@ public sealed class RecordPeriodTests : RecordTestBase
     public async Task Remove_ShouldSuccess()
     {
         var added = (await Context.Client.Records.AddPeriodAsync(
-            AddedRecordIds[0], new RecordPeriodRequest(CreateAfterAddedPeriods(1, 1)))).Unwrap();
+            AddedRecordIds[0], new RecordPeriodItem(CreateAfterAddedPeriods(1, 1)))).Unwrap();
 
         var response = await Context.Client.Records.RemovePeriodAsync(AddedRecordIds[0], added.Id);
 

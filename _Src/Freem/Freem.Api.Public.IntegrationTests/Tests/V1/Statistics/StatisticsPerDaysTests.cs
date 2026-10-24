@@ -1,9 +1,9 @@
-﻿using Freem.Time.Extensions;
-using Freem.Time.Models;
-using Freem.Api.Public.Contracts.DTO.Statistics;
+﻿using Freem.Api.Public.Contracts.V1.Statistics;
+using Freem.Time.Extensions;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Statistics.Base;
+using Freem.Time;
 using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Statistics;

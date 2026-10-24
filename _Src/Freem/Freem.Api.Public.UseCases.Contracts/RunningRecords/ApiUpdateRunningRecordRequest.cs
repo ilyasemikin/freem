@@ -1,4 +1,4 @@
-using Freem.Api.Public.Contracts.DTO.Records.Running;
+using Freem.Api.Public.Contracts.V1.Records.Running;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -8,9 +8,9 @@ public sealed class ApiUpdateRunningRecordRequest : IRequest
 {
     public RequestType Type => RequestTypes.RunningRecords.Update;
 
-    public UpdateRunningRecordRequest Body { get; }
+    public RunningRecordUpdateRequest Body { get; }
 
-    public ApiUpdateRunningRecordRequest(UpdateRunningRecordRequest body)
+    public ApiUpdateRunningRecordRequest(RunningRecordUpdateRequest body)
     {
         ArgumentNullException.ThrowIfNull(body);
 

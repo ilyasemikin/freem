@@ -1,5 +1,4 @@
-﻿using System;
-using Freem.Domain.Storage.PostgreSQL.Migrations.Scripts.Extensions;
+﻿using Freem.Domain.Storage.PostgreSQL.Migrations.Scripts.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Migrations.Scripts.Models;
 using Microsoft.EntityFrameworkCore.Migrations;
 

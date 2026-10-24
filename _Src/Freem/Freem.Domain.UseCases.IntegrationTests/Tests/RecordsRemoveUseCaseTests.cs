@@ -1,5 +1,4 @@
-﻿using Freem.Domain;
-using Freem.Domain.Records;
+﻿using Freem.Domain.Records;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Remove;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;

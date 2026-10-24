@@ -1,7 +1,7 @@
 using System.Net;
+using Freem.Api.Public.Contracts.V1.Events;
 using Freem.Domain;
 using EventId = Freem.Domain.Events.EventId;
-using Freem.Api.Public.Contracts.DTO.Events;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Events.Base;
@@ -18,14 +18,14 @@ public sealed class GetEventTests : EventTestBase
     [Fact]
     public async Task Request_ShouldSuccess()
     {
-        var query = new ListEventRequest(ListEventRequest.DefaultOffset, ListEventRequest.DefaultLimit);
+        var query = new EventListRequest(EventListRequest.DefaultOffset, EventListRequest.DefaultLimit);
         var events = await Context.Client.Events.ListAsync(query);
-        var id = events.Unwrap()[0].Id;
+        var id = events.Unwrap().Events[0].Id;
 
         var response = await Context.Client.Events.GetAsync(id);
 
         response.ShouldSuccess();
-        Assert.Equal(id, response.Value.Id);
+        Assert.Equal(id, response.Value.Event.Id);
     }
 
     [Fact]

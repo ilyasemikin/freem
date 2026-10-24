@@ -4,7 +4,7 @@ using Freem.Domain.Relations.Collections;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
 using Freem.Domain.UseCases.Contracts.Records.Get;
-using Freem.Time.Models;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 using Utilities.UseCases.Abstractions;

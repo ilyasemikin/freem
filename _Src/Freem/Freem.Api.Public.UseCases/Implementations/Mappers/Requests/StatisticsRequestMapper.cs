@@ -1,8 +1,8 @@
+using Freem.Api.Public.Contracts.V1.Statistics.Periods;
 using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
-using Freem.Api.Public.Contracts.DTO.Statistics.Periods;
 using Freem.Api.Public.UseCases.Contracts.Statistics;
 
 namespace Freem.Api.Public.UseCases.Implementations.Mappers.Requests;

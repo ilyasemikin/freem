@@ -1,10 +1,10 @@
 ﻿using System.Net;
+using Freem.Api.Public.Contracts.V1;
+using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Api.Public.Contracts.DTO.Activities;
-using Freem.Api.Public.Contracts.Models;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Activities.Base;
@@ -24,7 +24,7 @@ public sealed class UpdateActivityTests : ActivityTestBase
     {
         var activityId = AddedActivityIds[0];
         var name = ActivityName.Parse("name", null);
-        var request = new UpdateActivityRequest
+        var request = new ActivityUpdateRequest
         {
             Name = new UpdateField<ActivityName>(name)
         };
@@ -40,7 +40,7 @@ public sealed class UpdateActivityTests : ActivityTestBase
     {
         var tagId = await Context.Preparer.Tags.CreateAsync("name");
         var tags = new RelatedTagIdsCollection(tagId);
-        var request = new UpdateActivityRequest
+        var request = new ActivityUpdateRequest
         {
             Tags = new UpdateField<IReadOnlyRelatedIdsCollection<TagId>>(tags)
         };
@@ -56,7 +56,7 @@ public sealed class UpdateActivityTests : ActivityTestBase
     {
         var activityId = ActivityId.Generate();
         var name = ActivityName.Parse("name", null);
-        var request = new UpdateActivityRequest
+        var request = new ActivityUpdateRequest
         {
             Name = new UpdateField<ActivityName>(name)
         };
@@ -70,7 +70,7 @@ public sealed class UpdateActivityTests : ActivityTestBase
     [Fact]
     public async Task Request_ShouldFail_WhenNothingToDo()
     {
-        var request = new UpdateActivityRequest();
+        var request = new ActivityUpdateRequest();
         
         var response = await Context.Client.Activities.UpdateAsync(AddedActivityIds[0], request);
         

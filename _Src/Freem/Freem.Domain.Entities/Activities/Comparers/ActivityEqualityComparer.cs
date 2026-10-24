@@ -5,6 +5,8 @@ namespace Freem.Domain.Entities.Activities.Comparers;
 
 public sealed class ActivityEqualityComparer : IEqualityComparer<Activity>
 {
+    public static ActivityEqualityComparer Instance { get; } = new();
+
     public bool Equals(Activity? x, Activity? y)
     {
         if (ReferenceEquals(x, y)) 

@@ -9,11 +9,10 @@ export class ListResponse<T> {
     this.totalCount = totalCount;
   }
 
-  // A page of a list endpoint: items in the body, counts in the X-ITEMS-COUNT and X-TOTAL-ITEMS-COUNT headers.
-  public static async read<T>(response: Response): Promise<ListResponse<T>> {
-    const items: T[] = await response.json();
-    const count = Number(response.headers.get("X-ITEMS-COUNT") ?? items.length);
-    const totalCount = Number(response.headers.get("X-TOTAL-ITEMS-COUNT") ?? items.length);
-    return new ListResponse(items, count, totalCount);
+  // A page of a list endpoint: the body holds the total count and the items under the given property.
+  public static async read<T>(response: Response, property: string): Promise<ListResponse<T>> {
+    const body = await response.json();
+    const items: T[] = body[property];
+    return new ListResponse(items, items.length, body.totalCount);
   }
 }

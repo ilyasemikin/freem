@@ -32,9 +32,10 @@ export class ActivitiesEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const body: ActivityResponse = await response.json();
-    this.cache.append([body]);
-    return this.map(body);
+    const body = await response.json();
+    const activity: ActivityResponse = body.activity;
+    this.cache.append([activity]);
+    return this.map(activity);
   }
 
   public async list(ids: string[]): Promise<ActivityEntity[]> {
@@ -47,7 +48,8 @@ export class ActivitiesEntitiesCache {
         throw new Error(response.statusText);
       }
 
-      fetched.push(await response.json());
+      const body = await response.json();
+      fetched.push(body.activity);
     }
 
     this.cache.append(fetched);
@@ -61,7 +63,8 @@ export class ActivitiesEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const responses: ActivityResponse[] = await response.json();
+    const body = await response.json();
+    const responses: ActivityResponse[] = body.activities;
     this.cache.append(responses);
 
     return this.mapList(responses);
@@ -73,7 +76,8 @@ export class ActivitiesEntitiesCache {
       throw new Error(response.statusText);
     }
 
-    const responses: ActivityResponse[] = await response.json();
+    const body = await response.json();
+    const responses: ActivityResponse[] = body.activities;
     this.cache.append(responses);
 
     return this.mapList(responses);

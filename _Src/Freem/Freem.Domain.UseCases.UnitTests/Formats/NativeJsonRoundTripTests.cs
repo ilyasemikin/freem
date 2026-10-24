@@ -1,6 +1,6 @@
 using Freem.Domain.Entities.Export;
-using Freem.Domain.UseCases.Export;
-using Freem.Domain.UseCases.Import;
+using Freem.Domain.UseCases.Implementations.Export;
+using Freem.Domain.UseCases.Implementations.Import;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
