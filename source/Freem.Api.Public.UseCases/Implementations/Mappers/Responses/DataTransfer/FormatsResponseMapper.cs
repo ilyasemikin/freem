@@ -1,0 +1,27 @@
+﻿using Freem.Api.Public.UseCases.Implementations.Mappers.Dtos.DataTransfer;
+using Freem.Api.Public.UseCases.Implementations.Mappers.Responses.Common;
+using Freem.Domain.UseCases.Contracts.DataTransfer.Formats.List;
+using Microsoft.AspNetCore.Mvc;
+using Utilities.Errors;
+using Utilities.Primitives;
+using ApiFormatListResponse = Freem.Api.Public.Contracts.V1.DataTransfer.Formats.FormatListResponse;
+
+namespace Freem.Api.Public.UseCases.Implementations.Mappers.Responses.DataTransfer;
+
+internal static class FormatsResponseMapper
+{
+    public static IActionResult Map(this Result<ListFormatsResponse, Error> result)
+    {
+        if (!result.Success)
+            return result.Error.MapError();
+
+        var exportFormats = result.Value.ExportFormats
+            .Select(format => format.Map())
+            .ToArray();
+        var importFormats = result.Value.ImportFormats
+            .Select(format => format.Map())
+            .ToArray();
+        var response = new ApiFormatListResponse(exportFormats, importFormats);
+        return new OkObjectResult(response);
+    }
+}

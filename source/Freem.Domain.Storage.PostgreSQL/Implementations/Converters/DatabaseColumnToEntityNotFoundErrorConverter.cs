@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Freem.Domain.Activities;
-using Freem.Domain.Import;
+using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records;
 using Freem.Domain.Tags;
 using Freem.Domain.Users;

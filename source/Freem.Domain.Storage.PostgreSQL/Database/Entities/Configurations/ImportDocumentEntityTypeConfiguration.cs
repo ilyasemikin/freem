@@ -1,5 +1,5 @@
-using Freem.Domain.Formats;
-using Freem.Domain.Import;
+using Freem.Domain.DataTransfer.Formats;
+using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

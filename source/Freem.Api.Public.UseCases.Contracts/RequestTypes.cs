@@ -24,24 +24,31 @@ public static class RequestTypes
         public static readonly RequestType Register = RequestType.Parse("api.auth.register", null);
     }
 
-    public static class Imports
-    {
-        public static readonly RequestType Apply = RequestType.Parse("api.imports.apply", null);
-        public static readonly RequestType Get = RequestType.Parse("api.imports.get", null);
-        public static readonly RequestType List = RequestType.Parse("api.imports.list", null);
-        public static readonly RequestType ListActivities = RequestType.Parse("api.imports.list-activities", null);
-        public static readonly RequestType ListRows = RequestType.Parse("api.imports.list-rows", null);
-        public static readonly RequestType ListTags = RequestType.Parse("api.imports.list-tags", null);
-        public static readonly RequestType Remove = RequestType.Parse("api.imports.remove", null);
-        public static readonly RequestType UpdateActivityMapping = RequestType.Parse("api.imports.update-activity-mapping", null);
-        public static readonly RequestType UpdateTagMapping = RequestType.Parse("api.imports.update-tag-mapping", null);
-        public static readonly RequestType Upload = RequestType.Parse("api.imports.upload", null);
-    }
-
     public static class DataTransfer
     {
-        public static readonly RequestType Export = RequestType.Parse("api.data-transfer.export", null);
-        public static readonly RequestType ListFormats = RequestType.Parse("api.data-transfer.list-formats", null);
+        public static class Export
+        {
+            public static readonly RequestType Data = RequestType.Parse("api.data-transfer.exports.data", null);
+        }
+
+        public static class Formats
+        {
+            public static readonly RequestType List = RequestType.Parse("api.data-transfer.formats.list", null);
+        }
+
+        public static class Import
+        {
+            public static readonly RequestType Apply = RequestType.Parse("api.data-transfer.imports.apply", null);
+            public static readonly RequestType Get = RequestType.Parse("api.data-transfer.imports.get", null);
+            public static readonly RequestType List = RequestType.Parse("api.data-transfer.imports.list", null);
+            public static readonly RequestType ListActivities = RequestType.Parse("api.data-transfer.imports.list-activities", null);
+            public static readonly RequestType ListRows = RequestType.Parse("api.data-transfer.imports.list-rows", null);
+            public static readonly RequestType ListTags = RequestType.Parse("api.data-transfer.imports.list-tags", null);
+            public static readonly RequestType Remove = RequestType.Parse("api.data-transfer.imports.remove", null);
+            public static readonly RequestType UpdateActivityMapping = RequestType.Parse("api.data-transfer.imports.update-activity-mapping", null);
+            public static readonly RequestType UpdateTagMapping = RequestType.Parse("api.data-transfer.imports.update-tag-mapping", null);
+            public static readonly RequestType Upload = RequestType.Parse("api.data-transfer.imports.upload", null);
+        }
     }
 
     public static class Events

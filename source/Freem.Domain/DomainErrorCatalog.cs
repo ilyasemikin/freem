@@ -1,8 +1,8 @@
 ﻿using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Events;
-using Freem.Domain.Formats;
-using Freem.Domain.Import;
+using Freem.Domain.DataTransfer.Formats;
+using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;

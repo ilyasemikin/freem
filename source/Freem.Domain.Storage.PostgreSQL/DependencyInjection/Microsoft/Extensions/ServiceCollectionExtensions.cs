@@ -1,6 +1,6 @@
 ﻿using Freem.Domain.Storage.Repositories.Activities;
 using Freem.Domain.Storage.Repositories.Events;
-using Freem.Domain.Storage.Repositories.Imports;
+using Freem.Domain.Storage.Repositories.DataTransfer.Import;
 using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.Storage.Repositories.Tags;
@@ -15,7 +15,7 @@ using Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Converters;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Activities;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Events;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Events.Converters;
-using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Imports;
+using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.DataTransfer.Import;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Records;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.RunningRecords;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Repositories.Tags;

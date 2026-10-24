@@ -63,9 +63,9 @@ export function AppHeader() {
             <hr className="divider"/>
             <Button text size="small" severity="secondary" icon="pi pi-cog" label="Settings" onClick={() => open("/settings")}
                     style={{width: "100%", justifyContent: "flex-start"}}/>
-            <Button text size="small" severity="secondary" icon="pi pi-upload" label="Imports" onClick={() => open("/imports")}
+            <Button text size="small" severity="secondary" icon="pi pi-upload" label="Imports" onClick={() => open("/data-transfer/imports")}
                     style={{width: "100%", justifyContent: "flex-start"}}/>
-            <Button text size="small" severity="secondary" icon="pi pi-download" label="Export" onClick={() => open("/export")}
+            <Button text size="small" severity="secondary" icon="pi pi-download" label="Export" onClick={() => open("/data-transfer/exports")}
                     style={{width: "100%", justifyContent: "flex-start"}}/>
             <Button text size="small" severity="secondary" icon="pi pi-sign-out" label="Log out" onClick={signOut}
                     style={{width: "100%", justifyContent: "flex-start"}}/>

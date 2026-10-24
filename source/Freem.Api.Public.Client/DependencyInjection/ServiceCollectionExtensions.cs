@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Freem.Api.Public.Client.Configuration;
 using Freem.Api.Public.Client.Implementations;
+using Freem.Api.Public.Client.Implementations.DataTransfer;
 using Freem.Domain.Serialization.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,9 +38,10 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<ClientSession>();
         
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ActivitiesClient>(provider, jso));
-        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<DataTransferClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ExportClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<FormatsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<EventsClient>(provider, jso));
-        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ImportsClient>(provider, jso));
+        services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<ImportClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<RecordsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<StatisticsClient>(provider, jso));
         services.TryAddSingleton(provider => ActivatorUtilities.CreateInstance<TagsClient>(provider, jso));

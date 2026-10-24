@@ -1,6 +1,6 @@
 using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
-using Freem.Domain.Entities.Export;
+using Freem.Domain.Entities.DataTransfer.Export;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Tags;

@@ -1,4 +1,6 @@
-﻿namespace Freem.Api.Public.Client.Implementations;
+﻿using Freem.Api.Public.Client.Implementations.DataTransfer;
+
+namespace Freem.Api.Public.Client.Implementations;
 
 public sealed class CompositeClient
 {
@@ -8,8 +10,9 @@ public sealed class CompositeClient
     
     public EventsClient Events { get; }
     public StatisticsClient Statistics { get; }
-    public DataTransferClient DataTransfer { get; }
-    public ImportsClient Imports { get; }
+    public ExportClient Export { get; }
+    public FormatsClient Formats { get; }
+    public ImportClient Import { get; }
     
     public UsersClient Users { get; }
     public AuthClient Auth { get; }
@@ -23,8 +26,9 @@ public sealed class CompositeClient
         TagsClient tags, 
         EventsClient events, 
         StatisticsClient statistics, 
-        DataTransferClient dataTransfer,
-        ImportsClient imports,
+        ExportClient export,
+        FormatsClient formats,
+        ImportClient import,
         UsersClient users,
         AuthClient auth,
         HealthClient health,
@@ -35,8 +39,9 @@ public sealed class CompositeClient
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(events);
         ArgumentNullException.ThrowIfNull(statistics);
-        ArgumentNullException.ThrowIfNull(dataTransfer);
-        ArgumentNullException.ThrowIfNull(imports);
+        ArgumentNullException.ThrowIfNull(export);
+        ArgumentNullException.ThrowIfNull(formats);
+        ArgumentNullException.ThrowIfNull(import);
         ArgumentNullException.ThrowIfNull(users);
         ArgumentNullException.ThrowIfNull(auth);
         ArgumentNullException.ThrowIfNull(health);
@@ -47,8 +52,9 @@ public sealed class CompositeClient
         Tags = tags;
         Events = events;
         Statistics = statistics;
-        DataTransfer = dataTransfer;
-        Imports = imports;
+        Export = export;
+        Formats = formats;
+        Import = import;
         Users = users;
         Auth = auth;
         Health = health;

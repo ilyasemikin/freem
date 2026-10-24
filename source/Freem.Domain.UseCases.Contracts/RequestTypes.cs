@@ -16,34 +16,37 @@ public static class RequestTypes
         public static readonly RequestType Update = RequestType.Parse("activities.update", null);
     }
 
+    public static class DataTransfer
+    {
+        public static class Export
+        {
+            public static readonly RequestType Data = RequestType.Parse("data-transfer.exports.data", null);
+        }
+
+        public static class Formats
+        {
+            public static readonly RequestType List = RequestType.Parse("data-transfer.formats.list", null);
+        }
+
+        public static class Import
+        {
+            public static readonly RequestType Apply = RequestType.Parse("data-transfer.imports.apply", null);
+            public static readonly RequestType Get = RequestType.Parse("data-transfer.imports.get", null);
+            public static readonly RequestType List = RequestType.Parse("data-transfer.imports.list", null);
+            public static readonly RequestType ListActivities = RequestType.Parse("data-transfer.imports.list-activities", null);
+            public static readonly RequestType ListRows = RequestType.Parse("data-transfer.imports.list-rows", null);
+            public static readonly RequestType ListTags = RequestType.Parse("data-transfer.imports.list-tags", null);
+            public static readonly RequestType Remove = RequestType.Parse("data-transfer.imports.remove", null);
+            public static readonly RequestType UpdateActivityMapping = RequestType.Parse("data-transfer.imports.update-activity-mapping", null);
+            public static readonly RequestType UpdateTagMapping = RequestType.Parse("data-transfer.imports.update-tag-mapping", null);
+            public static readonly RequestType Upload = RequestType.Parse("data-transfer.imports.upload", null);
+        }
+    }
+
     public static class Events
     {
         public static readonly RequestType Get = RequestType.Parse("events.get", null);
         public static readonly RequestType List = RequestType.Parse("events.list", null);
-    }
-
-    public static class Export
-    {
-        public static readonly RequestType Data = RequestType.Parse("export.data", null);
-    }
-
-    public static class Formats
-    {
-        public static readonly RequestType List = RequestType.Parse("formats.list", null);
-    }
-
-    public static class Imports
-    {
-        public static readonly RequestType Apply = RequestType.Parse("imports.apply", null);
-        public static readonly RequestType Get = RequestType.Parse("imports.get", null);
-        public static readonly RequestType List = RequestType.Parse("imports.list", null);
-        public static readonly RequestType ListActivities = RequestType.Parse("imports.list-activities", null);
-        public static readonly RequestType ListRows = RequestType.Parse("imports.list-rows", null);
-        public static readonly RequestType ListTags = RequestType.Parse("imports.list-tags", null);
-        public static readonly RequestType Remove = RequestType.Parse("imports.remove", null);
-        public static readonly RequestType UpdateActivityMapping = RequestType.Parse("imports.update-activity-mapping", null);
-        public static readonly RequestType UpdateTagMapping = RequestType.Parse("imports.update-tag-mapping", null);
-        public static readonly RequestType Upload = RequestType.Parse("imports.upload", null);
     }
 
     public static class Records

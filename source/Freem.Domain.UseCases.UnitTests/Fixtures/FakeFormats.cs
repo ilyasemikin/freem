@@ -1,8 +1,8 @@
-using Freem.Domain.Entities.Export;
-using Freem.Domain.Formats;
-using Freem.Domain.Entities.Import;
-using Freem.Domain.UseCases.Implementations.Export;
-using Freem.Domain.UseCases.Implementations.Import;
+using Freem.Domain.Entities.DataTransfer.Export;
+using Freem.Domain.DataTransfer.Formats;
+using Freem.Domain.Entities.DataTransfer.Import;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Export;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Utilities.Errors;
 using Utilities.Primitives;
 

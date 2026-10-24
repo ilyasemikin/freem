@@ -6,8 +6,9 @@ import {UserClient} from "../UserClient.ts";
 import {StatisticsClient} from "../StatisticsClient.ts";
 import {AuthClient} from "../AuthClient.ts";
 import {AuthSession} from "../AuthSession.ts";
-import {DataTransferClient} from "../DataTransferClient.ts";
-import {ImportsClient} from "../ImportsClient.ts";
+import {ExportClient} from "../dataTransfer/ExportClient.ts";
+import {FormatsClient} from "../dataTransfer/FormatsClient.ts";
+import {ImportClient} from "../dataTransfer/ImportClient.ts";
 
 export interface IBackendClientsContext {
   activities: ActivitiesClient;
@@ -16,8 +17,9 @@ export interface IBackendClientsContext {
 
   statistics: StatisticsClient;
 
-  dataTransfer: DataTransferClient;
-  imports: ImportsClient;
+  exports: ExportClient;
+  formats: FormatsClient;
+  imports: ImportClient;
 
   user: UserClient;
 

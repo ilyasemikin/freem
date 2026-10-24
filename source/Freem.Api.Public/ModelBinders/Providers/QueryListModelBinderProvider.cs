@@ -1,10 +1,11 @@
 ﻿using Freem.Api.Public.Contracts.V1.Activities;
 using Freem.Api.Public.Contracts.V1.Events;
-using Freem.Api.Public.Contracts.V1.Imports;
+using Freem.Api.Public.Contracts.V1.DataTransfer.Import;
 using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Api.Public.Contracts.V1.Statistics;
 using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Api.Public.ModelBinders.Binders;
+using Freem.Api.Public.ModelBinders.Binders.DataTransfer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Freem.Api.Public.ModelBinders.Providers;

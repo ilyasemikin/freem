@@ -1,11 +1,11 @@
 using Freem.Domain.Activities.Models;
-using Freem.Domain.Formats;
+using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.UseCases.Context;
-using Freem.Domain.UseCases.Contracts.Export;
-using Freem.Domain.UseCases.Contracts.Formats.List;
+using Freem.Domain.UseCases.Contracts.DataTransfer.Export;
+using Freem.Domain.UseCases.Contracts.DataTransfer.Formats.List;
 using Freem.Domain.UseCases.Contracts.Records.Create;
-using Freem.Domain.UseCases.Implementations.Import;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
