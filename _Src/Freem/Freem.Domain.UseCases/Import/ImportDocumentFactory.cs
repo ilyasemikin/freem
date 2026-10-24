@@ -18,12 +18,6 @@ public static class ImportDocumentFactory
         ArgumentNullException.ThrowIfNull(result);
 
         var id = ImportDocumentId.Generate();
-        var tags = result.Tags
-            .Select(tag => new ImportDocumentTag(tag))
-            .ToArray();
-        var activities = result.Activities
-            .Select(activity => new ImportDocumentActivity(activity))
-            .ToArray();
         return new ImportDocument(
             id,
             userId,
@@ -32,9 +26,25 @@ public static class ImportDocumentFactory
             timeZoneOffset,
             ImportDocumentStatus.Parsed,
             result.RowsInFile,
-            result.Records.Count,
-            tags,
-            activities);
+            result.Records.Count);
+    }
+
+    public static IReadOnlyList<ImportDocumentTag> CreateTags(ImportParseResult result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+
+        return result.Tags
+            .Select(tag => new ImportDocumentTag(tag))
+            .ToArray();
+    }
+
+    public static IReadOnlyList<ImportDocumentActivity> CreateActivities(ImportParseResult result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+
+        return result.Activities
+            .Select(activity => new ImportDocumentActivity(activity))
+            .ToArray();
     }
 
     public static IReadOnlyList<ImportRow> CreateRows(ImportDocumentId documentId, ImportParseResult result)

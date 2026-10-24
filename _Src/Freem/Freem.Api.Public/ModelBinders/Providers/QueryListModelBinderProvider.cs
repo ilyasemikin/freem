@@ -23,6 +23,8 @@ internal sealed class QueryListModelBinderProvider : IModelBinderProvider
             [typeof(ListRecordByPeriodRequest)] = new ListRecordByPeriodRequestModelBinder(),
             [typeof(ListImportRequest)] = new ListImportRequestModelBinder(),
             [typeof(ListImportRowRequest)] = new ListImportRowRequestModelBinder(),
+            [typeof(ListImportActivityRequest)] = new ListImportActivityRequestModelBinder(),
+            [typeof(ListImportTagRequest)] = new ListImportTagRequestModelBinder(),
             [typeof(ListEventRequest)] = new ListEventRequestModelBinder(),
             [typeof(StatisticsPerDaysRequest)] = new StatisticsPerDaysRequestModelBinder(),
             [typeof(FindActivityByNameRequest)] = new FindActivityByNameRequestModelBinder(),

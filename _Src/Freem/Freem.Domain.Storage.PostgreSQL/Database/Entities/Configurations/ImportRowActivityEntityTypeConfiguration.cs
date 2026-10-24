@@ -17,8 +17,8 @@ internal sealed class ImportRowActivityEntityTypeConfiguration : IEntityTypeConf
             .IsRequired();
 
         builder
-            .Property(e => e.SourceActivityId)
-            .HasColumnName(EntitiesNames.ImportRowActivities.Properties.SourceActivityId)
+            .Property(e => e.ImportActivityId)
+            .HasColumnName(EntitiesNames.ImportRowActivities.Properties.ImportActivityId)
             .IsRequired();
 
         builder
@@ -27,7 +27,7 @@ internal sealed class ImportRowActivityEntityTypeConfiguration : IEntityTypeConf
             .IsRequired();
 
         builder
-            .HasKey(e => new { e.RowId, e.SourceActivityId })
+            .HasKey(e => new { e.RowId, e.ImportActivityId })
             .HasName(EntitiesNames.ImportRowActivities.Constraints.PrimaryKey);
 
         builder

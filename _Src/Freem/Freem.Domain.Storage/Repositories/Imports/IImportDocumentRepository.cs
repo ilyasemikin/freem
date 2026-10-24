@@ -1,5 +1,7 @@
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Import;
 using Freem.Domain.Import;
+using Freem.Domain.Tags;
 using Utilities.Errors;
 using Utilities.Primitives;
 
@@ -30,21 +32,34 @@ public interface IImportDocumentRepository
         ImportDocumentStatus next,
         CancellationToken cancellationToken = default);
 
-    Task<Result<Error>> AddSourceAsync(
+    Task<Result<Error>> AddTagsAndActivitiesAsync(
         ImportDocumentId id,
         IReadOnlyList<ImportDocumentTag> tags,
         IReadOnlyList<ImportDocumentActivity> activities,
         CancellationToken cancellationToken = default);
 
-    Task<Result<Error>> SetActivityResolutionAsync(
-        ImportDocumentId id,
-        ImportActivityId sourceId,
-        ImportActivityResolution? resolution,
+    Task<Result<AsyncBatch<ImportDocumentActivity>, Error>> FindActivitiesAsync(
+        ImportDocumentActivityByDocumentFilter filter,
         CancellationToken cancellationToken = default);
-    Task<Result<Error>> SetTagResolutionAsync(
+    Task<Result<AsyncBatch<ImportDocumentTag>, Error>> FindTagsAsync(
+        ImportDocumentTagByDocumentFilter filter,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates the mapping of an import activity to an existing Freem activity; null removes the mapping.
+    /// </summary>
+    Task<Result<Error>> UpdateActivityMappingAsync(
         ImportDocumentId id,
-        ImportTagId sourceId,
-        ImportTagResolution? resolution,
+        ImportActivityId importActivityId,
+        ActivityId? activityId,
+        CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Updates the mapping of an import tag to an existing Freem tag; null removes the mapping.
+    /// </summary>
+    Task<Result<Error>> UpdateTagMappingAsync(
+        ImportDocumentId id,
+        ImportTagId importTagId,
+        TagId? tagId,
         CancellationToken cancellationToken = default);
 
     Task<Result<Error>> AddRowsAsync(

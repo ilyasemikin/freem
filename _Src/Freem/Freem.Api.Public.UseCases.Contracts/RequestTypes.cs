@@ -26,10 +26,15 @@ public static class RequestTypes
 
     public static class Imports
     {
+        public static readonly RequestType Apply = RequestType.Parse("api.imports.apply", null);
         public static readonly RequestType Get = RequestType.Parse("api.imports.get", null);
         public static readonly RequestType List = RequestType.Parse("api.imports.list", null);
+        public static readonly RequestType ListActivities = RequestType.Parse("api.imports.list-activities", null);
         public static readonly RequestType ListRows = RequestType.Parse("api.imports.list-rows", null);
+        public static readonly RequestType ListTags = RequestType.Parse("api.imports.list-tags", null);
         public static readonly RequestType Remove = RequestType.Parse("api.imports.remove", null);
+        public static readonly RequestType UpdateActivityMapping = RequestType.Parse("api.imports.update-activity-mapping", null);
+        public static readonly RequestType UpdateTagMapping = RequestType.Parse("api.imports.update-tag-mapping", null);
         public static readonly RequestType Upload = RequestType.Parse("api.imports.upload", null);
     }
 

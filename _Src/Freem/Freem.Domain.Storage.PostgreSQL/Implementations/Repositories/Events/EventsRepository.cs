@@ -49,6 +49,25 @@ internal sealed class EventsRepository : IEventRepository
         return await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
     }
 
+    public async Task<Result<Error>> CreateManyAsync(
+        IReadOnlyList<EventEnvelope> envelopes,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(envelopes);
+
+        if (envelopes.Count == 0)
+            return Result<Error>.CreateSuccess();
+
+        var dbEntities = envelopes
+            .Select(_dbConverter.Convert)
+            .ToList();
+
+        await _database.Events.AddRangeAsync(dbEntities, cancellationToken);
+
+        var context = new DatabaseContextWriteContext(envelopes[0].Event.Id);
+        return await _exceptionHandler.Handle(context, () => _database.SaveChangesAsync(cancellationToken));
+    }
+
     public async Task<Result<Event, Error>> FindByIdAsync(
         EventId id,
         CancellationToken cancellationToken = default)

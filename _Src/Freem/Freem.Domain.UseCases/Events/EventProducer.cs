@@ -38,4 +38,24 @@ internal sealed class EventProducer
 
         return await _repository.CreateAsync(envelope, cancellationToken);
     }
+
+    public async Task<Result<Error>> PublishManyAsync(
+        UserId userId, IReadOnlyList<EventFactory> factories,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(userId);
+        ArgumentNullException.ThrowIfNull(factories);
+
+        var occurredAt = _clock.Get();
+        var envelopes = new List<EventEnvelope>(factories.Count);
+        foreach (var factory in factories)
+        {
+            var eventId = EventId.Generate();
+            var @event = factory(eventId);
+            var envelope = new EventEnvelope(userId, occurredAt, @event);
+            envelopes.Add(envelope);
+        }
+
+        return await _repository.CreateManyAsync(envelopes, cancellationToken);
+    }
 }

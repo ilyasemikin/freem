@@ -31,6 +31,8 @@ public static class DomainErrorCatalog
         public static readonly ErrorType ActivityInvalidStatus = ErrorType.Create(Scope, "activity:invalid_status");
         public static readonly ErrorType TagNameAlreadyExists = ErrorType.Create(Scope, "tag:name_already_exists");
         public static readonly ErrorType ImportInvalidStatus = ErrorType.Create(Scope, "import:invalid_status");
+        public static readonly ErrorType ImportUnmappedEntities = ErrorType.Create(Scope, "import:unmapped_entities");
+        public static readonly ErrorType ImportTooManyRows = ErrorType.Create(Scope, "import:too_many_rows");
         public static readonly ErrorType FormatNotFound = ErrorType.Create(Scope, "format:not_found");
 
         public static readonly ErrorType InternalServerError = ErrorType.Create(Scope, "internal_server_error");
@@ -41,8 +43,10 @@ public static class DomainErrorCatalog
         public const string ActivityId = $"{Scope}:activity_id";
         public const string EventId = $"{Scope}:event_id";
         public const string EventType = $"{Scope}:event_type";
+        public const string ImportActivityId = $"{Scope}:import_activity_id";
         public const string ImportDocumentId = $"{Scope}:import_document_id";
         public const string ImportRowId = $"{Scope}:import_row_id";
+        public const string ImportTagId = $"{Scope}:import_tag_id";
         public const string RecordId = $"{Scope}:record_id";
         public const string RecordPeriodId = $"{Scope}:record_period_id";
         public const string RunningRecordId = $"{Scope}:running_record_id";
@@ -52,6 +56,7 @@ public static class DomainErrorCatalog
         public const string ActivityStatus = $"{Scope}:activity_status";
         public const string TagName = $"{Scope}:tag_name";
         public const string FormatKey = $"{Scope}:format_key";
+        public const string RowsLimit = $"{Scope}:rows_limit";
 
         public static string GetId(Id id)
         {
@@ -59,8 +64,10 @@ public static class DomainErrorCatalog
             {
                 Activities.ActivityId => ActivityId,
                 Events.EventId => EventId,
+                Import.ImportActivityId => ImportActivityId,
                 Import.ImportDocumentId => ImportDocumentId,
                 Import.ImportRowId => ImportRowId,
+                Import.ImportTagId => ImportTagId,
                 Records.RecordId => RecordId,
                 Records.RecordPeriodId => RecordPeriodId,
                 RunningRecords.RunningRecordId => RunningRecordId,
@@ -188,6 +195,33 @@ public static class DomainErrorCatalog
                 .WithType(Types.ImportInvalidStatus)
                 .WithMessage($"Entity with id = [{id}] cannot change status from \"{current}\" to \"{requested}\"")
                 .WithProperty(property, id);
+        }
+
+        public static Error CreateImportUnmappedEntities(IEnumerable<Id> ids)
+        {
+            var details = ids.Select(CreateImportUnmappedEntity);
+            return new Error.Builder()
+                .WithType(Types.ImportUnmappedEntities)
+                .WithMessage("Import activities and tags used by selected rows are not mapped")
+                .WithDetails(details);
+        }
+
+        private static Error CreateImportUnmappedEntity(Id id)
+        {
+            var name = GetEntityName(id);
+            var property = Properties.GetId(id);
+            return new Error.Builder()
+                .WithType(Types.ImportUnmappedEntities)
+                .WithMessage($"Entity \"{name}\" with id = [{id}] is not mapped")
+                .WithProperty(property, id);
+        }
+
+        public static Error CreateImportTooManyRows(int limit)
+        {
+            return new Error.Builder()
+                .WithType(Types.ImportTooManyRows)
+                .WithMessage($"Too many rows selected, limit is {limit}")
+                .WithProperty(Properties.RowsLimit, limit);
         }
 
         public static Error CreateFormatNotFound(FormatKey key)

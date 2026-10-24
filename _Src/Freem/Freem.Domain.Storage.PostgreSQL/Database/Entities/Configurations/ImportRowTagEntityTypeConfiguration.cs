@@ -17,8 +17,8 @@ internal sealed class ImportRowTagEntityTypeConfiguration : IEntityTypeConfigura
             .IsRequired();
 
         builder
-            .Property(e => e.SourceTagId)
-            .HasColumnName(EntitiesNames.ImportRowTags.Properties.SourceTagId)
+            .Property(e => e.ImportTagId)
+            .HasColumnName(EntitiesNames.ImportRowTags.Properties.ImportTagId)
             .IsRequired();
 
         builder
@@ -27,7 +27,7 @@ internal sealed class ImportRowTagEntityTypeConfiguration : IEntityTypeConfigura
             .IsRequired();
 
         builder
-            .HasKey(e => new { e.RowId, e.SourceTagId })
+            .HasKey(e => new { e.RowId, e.ImportTagId })
             .HasName(EntitiesNames.ImportRowTags.Constraints.PrimaryKey);
 
         builder

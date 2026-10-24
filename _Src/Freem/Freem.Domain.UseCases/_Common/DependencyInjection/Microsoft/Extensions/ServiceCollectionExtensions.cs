@@ -40,7 +40,12 @@ using Freem.Domain.UseCases.Contracts.Export;
 using Freem.Domain.UseCases.Contracts.Formats.List;
 using Freem.Domain.UseCases.Contracts.Imports.Get;
 using Freem.Domain.UseCases.Contracts.Imports.List;
+using Freem.Domain.UseCases.Contracts.Imports.ListActivities;
 using Freem.Domain.UseCases.Contracts.Imports.ListRows;
+using Freem.Domain.UseCases.Contracts.Imports.ListTags;
+using Freem.Domain.UseCases.Contracts.Imports.Apply;
+using Freem.Domain.UseCases.Contracts.Imports.UpdateActivityMapping;
+using Freem.Domain.UseCases.Contracts.Imports.UpdateTagMapping;
 using Freem.Domain.UseCases.Contracts.Imports.Remove;
 using Freem.Domain.UseCases.Contracts.Imports.Upload;
 using Freem.Domain.UseCases.Events;
@@ -193,8 +198,13 @@ public static class ServiceCollectionExtensions
         services.AddHandler<UploadImportRequest, Result<UploadImportResponse, Error>, UploadImportUseCase>();
         services.AddHandler<GetImportRequest, Result<GetImportResponse, Error>, GetImportUseCase>();
         services.AddHandler<ListImportRequest, Result<ListImportResponse, Error>, ListImportUseCase>();
+        services.AddHandler<ListImportActivityRequest, Result<ListImportActivityResponse, Error>, ListImportActivityUseCase>();
         services.AddHandler<ListImportRowRequest, Result<ListImportRowResponse, Error>, ListImportRowUseCase>();
+        services.AddHandler<ListImportTagRequest, Result<ListImportTagResponse, Error>, ListImportTagUseCase>();
+        services.AddHandler<ApplyImportRequest, Result<ApplyImportResponse, Error>, ApplyImportUseCase>();
         services.AddHandler<RemoveImportRequest, Result<Error>, RemoveImportUseCase>();
+        services.AddHandler<UpdateImportActivityMappingRequest, Result<Error>, UpdateImportActivityMappingUseCase>();
+        services.AddHandler<UpdateImportTagMappingRequest, Result<Error>, UpdateImportTagMappingUseCase>();
 
         return services;
     }

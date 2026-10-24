@@ -23,8 +23,8 @@ internal sealed class ImportRowEntityTypeConfiguration : IEntityTypeConfiguratio
             .IsRequired();
 
         builder
-            .Property(e => e.SourceId)
-            .HasColumnName(EntitiesNames.ImportRows.Properties.SourceId)
+            .Property(e => e.ImportRecordId)
+            .HasColumnName(EntitiesNames.ImportRows.Properties.ImportRecordId)
             .IsRequired();
 
         builder

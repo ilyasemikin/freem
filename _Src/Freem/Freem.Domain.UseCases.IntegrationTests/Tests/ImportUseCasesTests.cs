@@ -7,7 +7,9 @@ using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Export;
 using Freem.Domain.UseCases.Contracts.Imports.Get;
 using Freem.Domain.UseCases.Contracts.Imports.List;
+using Freem.Domain.UseCases.Contracts.Imports.ListActivities;
 using Freem.Domain.UseCases.Contracts.Imports.ListRows;
+using Freem.Domain.UseCases.Contracts.Imports.ListTags;
 using Freem.Domain.UseCases.Contracts.Imports.Remove;
 using Freem.Domain.UseCases.Contracts.Imports.Upload;
 using Freem.Domain.UseCases.Contracts.Records.Create;
@@ -83,14 +85,18 @@ public sealed class ImportUseCasesTests : UseCaseTestBase
         Assert.Equal(47, document.RowsInFile);
         Assert.Equal(47, document.RowsParsed);
         Assert.Equal(offset, document.TimeZoneOffset);
-        Assert.Equal(5, document.Activities.Count);
-        Assert.All(document.Activities, a => Assert.Null(a.Resolution));
         Assert.Empty(response.Value.Warnings);
 
         var getRequest = new GetImportRequest(document.Id);
         var stored = await Context.ExecuteAsync<GetImportRequest, Result<GetImportResponse, Error>>(_context, getRequest);
         Assert.True(stored.Success);
-        Assert.Equal(5, stored.Value.Document.Activities.Count);
+        Assert.Equal(47, stored.Value.Document.RowsParsed);
+
+        var activitiesRequest = new ListImportActivityRequest(document.Id);
+        var activities = await Context.ExecuteAsync<ListImportActivityRequest, Result<ListImportActivityResponse, Error>>(_context, activitiesRequest);
+        Assert.True(activities.Success);
+        Assert.Equal(5, (int)activities.Value.TotalCount);
+        Assert.All(activities.Value.Activities, a => Assert.Null(a.MappedActivityId));
 
         var rowsRequest = new ListImportRowRequest(document.Id);
         var rows = await Context.ExecuteAsync<ListImportRowRequest, Result<ListImportRowResponse, Error>>(_context, rowsRequest);
@@ -153,8 +159,14 @@ public sealed class ImportUseCasesTests : UseCaseTestBase
 
         Assert.True(response.Success);
         var document = response.Value.Document;
-        Assert.Equal(2, document.Tags.Count);
-        Assert.Equal(2, document.Activities.Count);
+        var tagsRequest = new ListImportTagRequest(document.Id);
+        var importTags = await Context.ExecuteAsync<ListImportTagRequest, Result<ListImportTagResponse, Error>>(_context, tagsRequest);
+        Assert.True(importTags.Success);
+        Assert.Equal(2, (int)importTags.Value.TotalCount);
+        var activitiesRequest = new ListImportActivityRequest(document.Id);
+        var importActivities = await Context.ExecuteAsync<ListImportActivityRequest, Result<ListImportActivityResponse, Error>>(_context, activitiesRequest);
+        Assert.True(importActivities.Success);
+        Assert.Equal(2, (int)importActivities.Value.TotalCount);
         Assert.Equal(1, document.RowsInFile);
         var rowsRequest = new ListImportRowRequest(document.Id);
         var rows = await Context.ExecuteAsync<ListImportRowRequest, Result<ListImportRowResponse, Error>>(_context, rowsRequest);
@@ -226,7 +238,7 @@ public sealed class ImportUseCasesTests : UseCaseTestBase
     }
 
     [Fact]
-    public async Task Get_ListRows_Remove_ShouldNotAllowAccessToAnotherUsersImport()
+    public async Task Get_ListRows_ListActivities_ListTags_Remove_ShouldNotAllowAccessToAnotherUsersImport()
     {
         var response = await UploadSampleAsync(_context);
         Assert.True(response.Success);
@@ -235,12 +247,18 @@ public sealed class ImportUseCasesTests : UseCaseTestBase
 
         var get = await Context.ExecuteAsync<GetImportRequest, Result<GetImportResponse, Error>>(other, new GetImportRequest(id));
         var rows = await Context.ExecuteAsync<ListImportRowRequest, Result<ListImportRowResponse, Error>>(other, new ListImportRowRequest(id));
+        var activities = await Context.ExecuteAsync<ListImportActivityRequest, Result<ListImportActivityResponse, Error>>(other, new ListImportActivityRequest(id));
+        var tags = await Context.ExecuteAsync<ListImportTagRequest, Result<ListImportTagResponse, Error>>(other, new ListImportTagRequest(id));
         var remove = await Context.ExecuteAsync<RemoveImportRequest, Result<Error>>(other, new RemoveImportRequest(id));
 
         Assert.False(get.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, get.Error.Type);
         Assert.False(rows.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, rows.Error.Type);
+        Assert.False(activities.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, activities.Error.Type);
+        Assert.False(tags.Success);
+        Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, tags.Error.Type);
         Assert.False(remove.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, remove.Error.Type);
         var mine = await ListAsync(_context);

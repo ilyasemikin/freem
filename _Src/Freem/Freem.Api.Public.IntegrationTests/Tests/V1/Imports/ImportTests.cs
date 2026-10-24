@@ -56,7 +56,6 @@ public sealed class ImportTests : TestBase
         Assert.Equal(47, uploaded.Import.RowsInFile);
         Assert.Equal(47, uploaded.Import.RowsParsed);
         Assert.Equal(offset, uploaded.Import.TimeZoneOffset);
-        Assert.Equal(5, uploaded.Import.Activities.Count);
         Assert.Empty(uploaded.Warnings);
 
         var rows = await Context.Client.Imports.ListRowsAsync(uploaded.Import.Id, new ListImportRowRequest(0, 100));
@@ -78,7 +77,46 @@ public sealed class ImportTests : TestBase
         Assert.Equal(uploaded.Import.Id, Assert.Single(list.Value).Id);
         get.ShouldSuccess();
         Assert.NotNull(get.Value);
-        Assert.Equal(5, get.Value.Activities.Count);
+        Assert.Equal(47, get.Value.RowsParsed);
+    }
+
+    [Fact]
+    public async Task ListActivities_ShouldPageActivitiesOfImport()
+    {
+        var uploaded = await UploadSampleAsync();
+
+        var all = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ListImportActivityRequest(0, 100));
+        var page = await Context.Client.Imports.ListActivitiesAsync(uploaded.Import.Id, new ListImportActivityRequest(3, 10));
+
+        all.ShouldSuccess();
+        Assert.NotNull(all.Value);
+        Assert.Equal(5, all.Value.Count);
+        Assert.All(all.Value, a => Assert.Null(a.MappedActivityId));
+        page.ShouldSuccess();
+        Assert.NotNull(page.Value);
+        Assert.Equal(2, page.Value.Count);
+    }
+
+    [Fact]
+    public async Task ListTags_ShouldReturnEmpty_WhenFileHasNoTags()
+    {
+        var uploaded = await UploadSampleAsync();
+
+        var tags = await Context.Client.Imports.ListTagsAsync(uploaded.Import.Id, new ListImportTagRequest(0, 100));
+
+        tags.ShouldSuccess();
+        Assert.NotNull(tags.Value);
+        Assert.Empty(tags.Value);
+    }
+
+    [Fact]
+    public async Task ListActivities_ShouldReturnNotFound_WhenImportDoesNotExist()
+    {
+        var activities = await Context.Client.Imports.ListActivitiesAsync(ImportDocumentId.Generate(), new ListImportActivityRequest(0, 100));
+        var tags = await Context.Client.Imports.ListTagsAsync(ImportDocumentId.Generate(), new ListImportTagRequest(0, 100));
+
+        activities.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+        tags.ShouldHaveStatusCode(HttpStatusCode.NotFound);
     }
 
     [Fact]

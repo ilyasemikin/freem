@@ -60,6 +60,74 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
     }
 
     [Fact]
+    public async Task CreateManyAsync_ShouldCreateAllRecords_WhenPassValid()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(2);
+        var dbTags = EntitiesFactory.CreateTags(2);
+
+        await Database.AddRangeAsync(dbUser);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.AddRangeAsync(dbTags);
+        await Database.SaveChangesAsync();
+
+        var dbRecords = EntitiesFactory.CreateRecords(3);
+        foreach (var dbRecord in dbRecords)
+        {
+            dbRecord.Activities = dbActivities.ToList();
+            dbRecord.Tags = dbTags.ToList();
+        }
+
+        var records = dbRecords
+            .Select(r => r.MapToDomainEntity())
+            .ToArray();
+
+        // Act
+        var writeResult = await Repository.CreateManyAsync(records);
+
+        // Assert
+        Assert.True(writeResult.Success);
+
+        foreach (var dbRecord in dbRecords)
+        {
+            var record = dbRecord.MapToDomainEntity();
+            var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
+
+            Assert.Equal(dbRecord, dbRecordActual);
+        }
+    }
+
+    [Fact]
+    public async Task CreateManyAsync_ShouldReturnError_WhenRelatedActivityNotExists()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivity = EntitiesFactory.CreateActivity();
+
+        await Database.AddRangeAsync(dbUser, dbActivity);
+        await Database.SaveChangesAsync();
+
+        var validDbRecord = EntitiesFactory.CreateRecord();
+        validDbRecord.Activities = [dbActivity];
+        var invalidDbRecord = EntitiesFactory.CreateRecord();
+        invalidDbRecord.Activities = [EntitiesFactory.CreateActivity()];
+
+        var validRecord = validDbRecord.MapToDomainEntity();
+        var invalidRecord = invalidDbRecord.MapToDomainEntity();
+
+        // Act
+        var writeResult = await Repository.CreateManyAsync([validRecord, invalidRecord]);
+
+        // Assert
+        Assert.False(writeResult.Success);
+
+        Database.ChangeTracker.Clear();
+        var count = await Database.Records.CountAsync();
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
     public async Task UpdateAsync_ShouldNotUpdateCreatedEntity_WhenEntityIsNotUpdatedActually()
     {
         // Arrange

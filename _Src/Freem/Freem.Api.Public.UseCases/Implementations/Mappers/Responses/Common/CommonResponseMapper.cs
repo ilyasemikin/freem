@@ -28,6 +28,8 @@ internal static class CommonResponseMapper
         if (type == DomainErrorCatalog.Types.RelatedEntitiesNotFound ||
             type == DomainErrorCatalog.Types.ActivityInvalidStatus ||
             type == DomainErrorCatalog.Types.TagNameAlreadyExists ||
+            type == DomainErrorCatalog.Types.ImportUnmappedEntities ||
+            type == DomainErrorCatalog.Types.ImportTooManyRows ||
             type == DomainErrorCatalog.Types.PeriodIsInvalid)
             return StatusCodes.Status422UnprocessableEntity;
         if (type == DomainErrorCatalog.Types.FailedDependency)

@@ -17,24 +17,24 @@ internal sealed class ImportDocumentActivityTagEntityTypeConfiguration : IEntity
             .IsRequired();
 
         builder
-            .Property(e => e.ActivitySourceId)
-            .HasColumnName(EntitiesNames.ImportDocumentActivityTags.Properties.ActivitySourceId)
+            .Property(e => e.ImportActivityId)
+            .HasColumnName(EntitiesNames.ImportDocumentActivityTags.Properties.ImportActivityId)
             .IsRequired();
 
         builder
-            .Property(e => e.TagSourceId)
-            .HasColumnName(EntitiesNames.ImportDocumentActivityTags.Properties.TagSourceId)
+            .Property(e => e.ImportTagId)
+            .HasColumnName(EntitiesNames.ImportDocumentActivityTags.Properties.ImportTagId)
             .IsRequired();
 
         builder
-            .HasKey(e => new { e.DocumentId, e.ActivitySourceId, e.TagSourceId })
+            .HasKey(e => new { e.DocumentId, e.ImportActivityId, e.ImportTagId })
             .HasName(EntitiesNames.ImportDocumentActivityTags.Constraints.PrimaryKey);
 
         builder
             .HasOne(e => e.Activity)
             .WithMany(e => e.Tags)
-            .HasForeignKey(e => new { e.DocumentId, e.ActivitySourceId })
-            .HasPrincipalKey(e => new { e.DocumentId, e.SourceId })
+            .HasForeignKey(e => new { e.DocumentId, e.ImportActivityId })
+            .HasPrincipalKey(e => new { e.DocumentId, e.ImportActivityId })
             .HasConstraintName(EntitiesNames.ImportDocumentActivityTags.Constraints.ActivitiesForeignKey)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();

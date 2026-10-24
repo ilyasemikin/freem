@@ -35,7 +35,7 @@ public sealed class ImportDocumentFactoryTests
     }
 
     [Fact]
-    public void CreateDocument_ShouldCreateParsedDocumentWithSourceAndCounts()
+    public void CreateDocument_ShouldCreateParsedDocumentWithActivitiesTagsAndCounts()
     {
         var result = CreateResult(rowsInFile: 5);
         var userId = UserId.Generate();
@@ -52,10 +52,13 @@ public sealed class ImportDocumentFactoryTests
         Assert.Equal(offset, document.TimeZoneOffset);
         Assert.Equal(5, document.RowsInFile);
         Assert.Equal(2, document.RowsParsed);
-        Assert.Single(document.Tags);
-        Assert.Null(document.Tags[0].Resolution);
-        Assert.Single(document.Activities);
-        Assert.Null(document.Activities[0].Resolution);
+
+        var tags = ImportDocumentFactory.CreateTags(result);
+        var activities = ImportDocumentFactory.CreateActivities(result);
+        var tag = Assert.Single(tags);
+        Assert.Null(tag.MappedTagId);
+        var activity = Assert.Single(activities);
+        Assert.Null(activity.MappedActivityId);
     }
 
     [Fact]

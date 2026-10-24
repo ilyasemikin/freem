@@ -236,6 +236,43 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
         Assert.Equal([middle], events.Select(e => e.Id));
     }
 
+    [Fact]
+    public async Task CreateManyAsync_ShouldCreateAllEvents()
+    {
+        // Arrange
+        var factory = DatabaseEntitiesFactory.CreateFirstUserEntitiesFactory();
+        var tag = factory.CreateTag();
+
+        await Database.AddRangeAsync(factory.User, tag);
+        await Database.SaveChangesAsync();
+
+        var userId = UserId.Parse(factory.User.Id, null);
+        var tagId = TagId.Parse(tag.Id, null);
+        var tagName = TagName.Parse("tag", null);
+
+        var envelopes = Enumerable
+            .Range(0, 3)
+            .Select(_ =>
+            {
+                var @event = new TagUpdatedEvent(EventId.Generate()) { TagId = tagId, Name = tagName };
+                return new EventEnvelope(userId, OccurredAt, @event);
+            })
+            .ToArray();
+
+        // Act
+        var writeResult = await Repository.CreateManyAsync(envelopes);
+
+        // Assert
+        Assert.True(writeResult.Success);
+
+        var result = await Repository.FindAsync(new EventByUserFilter(userId) { Limit = 100, Offset = 0 });
+        Assert.True(result.Success);
+        var events = await result.Value.ToArrayAsync();
+        var expected = envelopes.Select(e => e.Event.Id.ToString()).Order();
+        var actual = events.Select(e => e.Id.ToString()).Order();
+        Assert.Equal(expected, actual);
+    }
+
     private async Task<EventId> CreateTagEventAsync(UserId userId, string tagId, DateTimeOffset occurredAt)
     {
         var id = EventId.Generate();

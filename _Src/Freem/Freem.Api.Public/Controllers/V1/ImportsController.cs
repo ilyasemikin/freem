@@ -14,7 +14,7 @@ using Utilities.UseCases.Abstractions;
 
 namespace Freem.Api.Public.Controllers.V1;
 
-/// <summary>Manages imports: uploaded files parsed into rows that can be reviewed.</summary>
+/// <summary>Manages imports: uploaded files parsed into rows that can be reviewed and applied as records.</summary>
 [Route("api/v1/imports")]
 [Tags(ControllerTags.Imports)]
 public sealed class ImportsController : BaseController
@@ -70,7 +70,7 @@ public sealed class ImportsController : BaseController
         return await Mediator.ExecuteAsync<ApiListImportRequest, IActionResult>(context, request, cancellationToken);
     }
 
-    /// <summary>Returns a single import with the activities and tags found in the file.</summary>
+    /// <summary>Returns a single import.</summary>
     /// <param name="importId">Import id.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     [HttpGet("{importId:required}")]
@@ -85,6 +85,50 @@ public sealed class ImportsController : BaseController
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiGetImportRequest(importId);
         return await Mediator.ExecuteAsync<ApiGetImportRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Returns a page of the activities found in the file of an import, with their mappings.</summary>
+    /// <param name="importId">Import id.</param>
+    /// <param name="query">Paging: offset and limit.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
+    [HttpGet("{importId:required}/activities")]
+    [ProducesResponseType<IReadOnlyList<ImportActivityResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
+    [ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
+    public async Task<IActionResult> ListActivitiesAsync(
+        [Required] [FromRoute] ImportDocumentId importId,
+        [Required] [FromQuery] ListImportActivityRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiListImportActivityRequest(importId, query);
+        return await Mediator.ExecuteAsync<ApiListImportActivityRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Returns a page of the tags found in the file of an import, with their mappings.</summary>
+    /// <param name="importId">Import id.</param>
+    /// <param name="query">Paging: offset and limit.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>The page size and the total count are returned in the <c>X-ITEMS-COUNT</c> and <c>X-TOTAL-ITEMS-COUNT</c> headers.</remarks>
+    [HttpGet("{importId:required}/tags")]
+    [ProducesResponseType<IReadOnlyList<ImportTagResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    [ProducesHeader(HeaderNames.ItemsCount, StatusCode = StatusCodes.Status200OK)]
+    [ProducesHeader(HeaderNames.TotalItemsCount, StatusCode = StatusCodes.Status200OK)]
+    public async Task<IActionResult> ListTagsAsync(
+        [Required] [FromRoute] ImportDocumentId importId,
+        [Required] [FromQuery] ListImportTagRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiListImportTagRequest(importId, query);
+        return await Mediator.ExecuteAsync<ApiListImportTagRequest, IActionResult>(context, request, cancellationToken);
     }
 
     /// <summary>Returns a page of the rows of an import in ascending order of start time.</summary>
@@ -107,6 +151,78 @@ public sealed class ImportsController : BaseController
         var context = HttpContext.ToAuthorizedHandlerContext();
         var request = new ApiListImportRowRequest(importId, query);
         return await Mediator.ExecuteAsync<ApiListImportRowRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Updates the mapping of an import activity to an existing activity of the user.</summary>
+    /// <param name="importId">Import id.</param>
+    /// <param name="importActivityId">Key of the activity in the imported file.</param>
+    /// <param name="body">Existing activity id; null removes the mapping.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpPut("{importId:required}/activities/{importActivityId:required}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateActivityMappingAsync(
+        [Required] [FromRoute] ImportDocumentId importId,
+        [Required] [FromRoute] ImportActivityId importActivityId,
+        [Required] [FromBody] UpdateImportActivityMappingRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiUpdateImportActivityMappingRequest(importId, importActivityId, body);
+        return await Mediator.ExecuteAsync<ApiUpdateImportActivityMappingRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Updates the mapping of an import tag to an existing tag of the user.</summary>
+    /// <param name="importId">Import id.</param>
+    /// <param name="importTagId">Key of the tag in the imported file.</param>
+    /// <param name="body">Existing tag id; null removes the mapping.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    [HttpPut("{importId:required}/tags/{importTagId:required}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdateTagMappingAsync(
+        [Required] [FromRoute] ImportDocumentId importId,
+        [Required] [FromRoute] ImportTagId importTagId,
+        [Required] [FromBody] UpdateImportTagMappingRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiUpdateImportTagMappingRequest(importId, importTagId, body);
+        return await Mediator.ExecuteAsync<ApiUpdateImportTagMappingRequest, IActionResult>(context, request, cancellationToken);
+    }
+
+    /// <summary>Creates records from all or the selected rows of the import.</summary>
+    /// <param name="importId">Import id.</param>
+    /// <param name="body">Exactly one of <c>all</c> and <c>rowIds</c>.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <remarks>
+    /// Every import activity and tag used by the selected rows must be mapped to an existing one, otherwise nothing is
+    /// written (422 <c>import:unmapped_entities</c>). All records are written in one transaction. Rows from which a record
+    /// cannot be created are skipped and listed in the response. Rows are not marked as applied: applying them again
+    /// creates duplicates.
+    /// </remarks>
+    [HttpPost("{importId:required}/apply")]
+    [ProducesResponseType<ApplyImportResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ApplyAsync(
+        [Required] [FromRoute] ImportDocumentId importId,
+        [Required] [FromBody] ApplyImportRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        var context = HttpContext.ToAuthorizedHandlerContext();
+        var request = new ApiApplyImportRequest(importId, body);
+        return await Mediator.ExecuteAsync<ApiApplyImportRequest, IActionResult>(context, request, cancellationToken);
     }
 
     /// <summary>Permanently removes an import together with its rows.</summary>

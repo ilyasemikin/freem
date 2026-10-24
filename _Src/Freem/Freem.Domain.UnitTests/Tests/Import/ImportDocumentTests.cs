@@ -14,8 +14,6 @@ public sealed class ImportDocumentTests
         var userId = UserId.Generate();
         var format = FormatKey.Parse("time-tracker", null);
         var fileName = ImportFileName.Parse("All.csv", null);
-        ImportDocumentTag[] tags = [];
-        ImportDocumentActivity[] activities = [];
         return new ImportDocument(
             id,
             userId,
@@ -24,9 +22,7 @@ public sealed class ImportDocumentTests
             TimeZoneOffset.Default,
             ImportDocumentStatus.Parsed,
             rowsInFile,
-            rowsParsed,
-            tags,
-            activities);
+            rowsParsed);
     }
 
     [Theory]

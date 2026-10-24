@@ -9,10 +9,7 @@ internal sealed class ImportDocumentActivityEntityTypeConfiguration : IEntityTyp
 {
     public void Configure(EntityTypeBuilder<ImportDocumentActivityEntity> builder)
     {
-        builder.ToTable(EntitiesNames.ImportDocumentActivities.Table, table =>
-            table.HasCheckConstraint(
-                EntitiesNames.ImportDocumentActivities.Constraints.ResolutionCheck,
-                $"NOT ({EntitiesNames.ImportDocumentActivities.Properties.CreateNew} AND {EntitiesNames.ImportDocumentActivities.Properties.ResolvedActivityId} IS NOT NULL)"));
+        builder.ToTable(EntitiesNames.ImportDocumentActivities.Table);
 
         builder
             .Property(e => e.DocumentId)
@@ -21,8 +18,8 @@ internal sealed class ImportDocumentActivityEntityTypeConfiguration : IEntityTyp
             .IsRequired();
 
         builder
-            .Property(e => e.SourceId)
-            .HasColumnName(EntitiesNames.ImportDocumentActivities.Properties.SourceId)
+            .Property(e => e.ImportActivityId)
+            .HasColumnName(EntitiesNames.ImportDocumentActivities.Properties.ImportActivityId)
             .IsRequired();
 
         builder
@@ -43,22 +40,16 @@ internal sealed class ImportDocumentActivityEntityTypeConfiguration : IEntityTyp
             .IsRequired();
 
         builder
-            .Property(e => e.CreateNew)
-            .HasColumnName(EntitiesNames.ImportDocumentActivities.Properties.CreateNew)
-            .HasDefaultValue(false)
-            .IsRequired();
+            .Property(e => e.MappedActivityId)
+            .HasColumnName(EntitiesNames.ImportDocumentActivities.Properties.MappedActivityId);
 
         builder
-            .Property(e => e.ResolvedActivityId)
-            .HasColumnName(EntitiesNames.ImportDocumentActivities.Properties.ResolvedActivityId);
-
-        builder
-            .HasKey(e => new { e.DocumentId, e.SourceId })
+            .HasKey(e => new { e.DocumentId, e.ImportActivityId })
             .HasName(EntitiesNames.ImportDocumentActivities.Constraints.PrimaryKey);
 
         builder
-            .HasIndex(e => e.ResolvedActivityId)
-            .HasDatabaseName(EntitiesNames.ImportDocumentActivities.Constraints.ResolvedActivityIdIndex);
+            .HasIndex(e => e.MappedActivityId)
+            .HasDatabaseName(EntitiesNames.ImportDocumentActivities.Constraints.MappedActivityIdIndex);
 
         builder
             .HasOne(e => e.Document)
@@ -69,9 +60,9 @@ internal sealed class ImportDocumentActivityEntityTypeConfiguration : IEntityTyp
             .IsRequired();
 
         builder
-            .HasOne(e => e.ResolvedActivity)
+            .HasOne(e => e.MappedActivity)
             .WithMany()
-            .HasForeignKey(e => e.ResolvedActivityId)
+            .HasForeignKey(e => e.MappedActivityId)
             .HasConstraintName(EntitiesNames.ImportDocumentActivities.Constraints.ActivitiesForeignKey)
             .OnDelete(DeleteBehavior.SetNull);
     }

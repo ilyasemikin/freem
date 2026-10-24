@@ -4,24 +4,24 @@ using Freem.Domain.Tags.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Imports;
 
-/// <summary>A tag found in the imported file.</summary>
+/// <summary>An import tag: a tag found in the imported file.</summary>
 public sealed class ImportTagResponse
 {
-    /// <summary>Key of the tag in the source file.</summary>
-    public ImportTagId SourceId { get; }
+    /// <summary>Key of the tag in the imported file.</summary>
+    public ImportTagId Id { get; }
 
     /// <summary>Tag name.</summary>
     public TagName Name { get; }
 
-    /// <summary>Decision on the matching Freem tag, absent while not made.</summary>
-    public ImportResolutionResponse<TagId>? Resolution { get; init; }
+    /// <summary>Existing Freem tag the import tag is mapped to, absent while not mapped.</summary>
+    public TagId? MappedTagId { get; init; }
 
-    public ImportTagResponse(ImportTagId sourceId, TagName name)
+    public ImportTagResponse(ImportTagId id, TagName name)
     {
-        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(name);
 
-        SourceId = sourceId;
+        Id = id;
         Name = name;
     }
 }

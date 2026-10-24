@@ -22,7 +22,7 @@ internal static class ImportRowMapper
             .Select((a, position) => new ImportRowActivityEntity
             {
                 RowId = id,
-                SourceActivityId = a.ToString(),
+                ImportActivityId = a.ToString(),
                 Position = position
             })
             .ToList();
@@ -30,7 +30,7 @@ internal static class ImportRowMapper
             .Select((t, position) => new ImportRowTagEntity
             {
                 RowId = id,
-                SourceTagId = t.ToString(),
+                ImportTagId = t.ToString(),
                 Position = position
             })
             .ToList();
@@ -39,7 +39,7 @@ internal static class ImportRowMapper
         {
             Id = id,
             DocumentId = documentId,
-            SourceId = record.Id.ToString(),
+            ImportRecordId = record.Id.ToString(),
             Name = record.Name?.ToString(),
             Description = record.Description?.ToString(),
             FirstStartAt = record.Periods.Min(p => p.Period.StartAt),
@@ -81,7 +81,7 @@ internal static class ImportRowMapper
         var id = ImportRowId.Parse(entity.Id, null);
         var documentId = ImportDocumentId.Parse(entity.DocumentId, null);
 
-        var recordId = ImportRecordId.Parse(entity.SourceId, null);
+        var recordId = ImportRecordId.Parse(entity.ImportRecordId, null);
         var name = entity.Name is null
             ? null
             : RecordName.Parse(entity.Name, null);
@@ -90,11 +90,11 @@ internal static class ImportRowMapper
             : RecordDescription.Parse(entity.Description, null);
         var activityIds = (entity.Activities ?? [])
             .OrderBy(a => a.Position)
-            .Select(a => ImportActivityId.Parse(a.SourceActivityId, null))
+            .Select(a => ImportActivityId.Parse(a.ImportActivityId, null))
             .ToList();
         var tagIds = (entity.Tags ?? [])
             .OrderBy(t => t.Position)
-            .Select(t => ImportTagId.Parse(t.SourceTagId, null))
+            .Select(t => ImportTagId.Parse(t.ImportTagId, null))
             .ToList();
         var periods = (entity.Periods ?? [])
             .OrderBy(p => p.Position)

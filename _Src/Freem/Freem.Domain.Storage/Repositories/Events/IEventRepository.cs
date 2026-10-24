@@ -10,6 +10,9 @@ public interface IEventRepository
     Task<Result<Error>> CreateAsync(
         EventEnvelope envelope,
         CancellationToken cancellationToken = default);
+    Task<Result<Error>> CreateManyAsync(
+        IReadOnlyList<EventEnvelope> envelopes,
+        CancellationToken cancellationToken = default);
 
     Task<Result<Event, Error>> FindByIdAsync(
         EventId id,

@@ -16,8 +16,6 @@ public sealed class ImportDocument :
     public ImportDocumentStatus Status { get; }
     public int RowsInFile { get; }
     public int RowsParsed { get; }
-    public IReadOnlyList<ImportDocumentTag> Tags { get; }
-    public IReadOnlyList<ImportDocumentActivity> Activities { get; }
 
     public ImportDocument(
         ImportDocumentId id,
@@ -27,9 +25,7 @@ public sealed class ImportDocument :
         TimeZoneOffset timeZoneOffset,
         ImportDocumentStatus status,
         int rowsInFile,
-        int rowsParsed,
-        IReadOnlyList<ImportDocumentTag> tags,
-        IReadOnlyList<ImportDocumentActivity> activities)
+        int rowsParsed)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(userId);
@@ -40,8 +36,6 @@ public sealed class ImportDocument :
         ArgumentOutOfRangeException.ThrowIfNegative(rowsInFile);
         ArgumentOutOfRangeException.ThrowIfNegative(rowsParsed);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(rowsParsed, rowsInFile);
-        ArgumentNullException.ThrowIfNull(tags);
-        ArgumentNullException.ThrowIfNull(activities);
 
         Id = id;
         UserId = userId;
@@ -51,7 +45,5 @@ public sealed class ImportDocument :
         Status = status;
         RowsInFile = rowsInFile;
         RowsParsed = rowsParsed;
-        Tags = tags;
-        Activities = activities;
     }
 }

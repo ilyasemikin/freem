@@ -223,10 +223,9 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string DocumentId = "document_id";
-            public const string SourceId = "source_id";
+            public const string ImportTagId = "import_tag_id";
             public const string Name = "name";
-            public const string CreateNew = "create_new";
-            public const string ResolvedTagId = "resolved_tag_id";
+            public const string MappedTagId = "mapped_tag_id";
         }
 
         public static class Constraints
@@ -234,8 +233,7 @@ internal static class EntitiesNames
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string DocumentsForeignKey = $"{Table}_{ImportDocuments.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string TagsForeignKey = $"{Table}_{Tags.Table}_{NamingConvention.ForeignKeySuffix}";
-            public const string ResolutionCheck = $"{Table}_resolution_{NamingConvention.CheckSuffix}";
-            public const string ResolvedTagIdIndex = $"{Table}_{Properties.ResolvedTagId}_{NamingConvention.IndexSuffix}";
+            public const string MappedTagIdIndex = $"{Table}_{Properties.MappedTagId}_{NamingConvention.IndexSuffix}";
         }
     }
 
@@ -246,12 +244,11 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string DocumentId = "document_id";
-            public const string SourceId = "source_id";
+            public const string ImportActivityId = "import_activity_id";
             public const string Name = "name";
             public const string Color = "color";
             public const string Status = "status";
-            public const string CreateNew = "create_new";
-            public const string ResolvedActivityId = "resolved_activity_id";
+            public const string MappedActivityId = "mapped_activity_id";
         }
 
         public static class Constraints
@@ -259,8 +256,7 @@ internal static class EntitiesNames
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string DocumentsForeignKey = $"{Table}_{ImportDocuments.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string ActivitiesForeignKey = $"{Table}_{Activities.Table}_{NamingConvention.ForeignKeySuffix}";
-            public const string ResolutionCheck = $"{Table}_resolution_{NamingConvention.CheckSuffix}";
-            public const string ResolvedActivityIdIndex = $"{Table}_{Properties.ResolvedActivityId}_{NamingConvention.IndexSuffix}";
+            public const string MappedActivityIdIndex = $"{Table}_{Properties.MappedActivityId}_{NamingConvention.IndexSuffix}";
         }
     }
 
@@ -271,8 +267,8 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string DocumentId = "document_id";
-            public const string ActivitySourceId = "activity_source_id";
-            public const string TagSourceId = "tag_source_id";
+            public const string ImportActivityId = "import_activity_id";
+            public const string ImportTagId = "import_tag_id";
         }
 
         public static class Constraints
@@ -290,7 +286,7 @@ internal static class EntitiesNames
         {
             public const string Id = "id";
             public const string DocumentId = "document_id";
-            public const string SourceId = "source_id";
+            public const string ImportRecordId = "import_record_id";
             public const string Name = "name";
             public const string Description = "description";
             public const string FirstStartAt = "first_start_at";
@@ -336,7 +332,7 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string RowId = "row_id";
-            public const string SourceActivityId = "source_activity_id";
+            public const string ImportActivityId = "import_activity_id";
             public const string Position = "position";
         }
 
@@ -354,7 +350,7 @@ internal static class EntitiesNames
         public static class Properties
         {
             public const string RowId = "row_id";
-            public const string SourceTagId = "source_tag_id";
+            public const string ImportTagId = "import_tag_id";
             public const string Position = "position";
         }
 

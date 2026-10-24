@@ -137,20 +137,18 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("document_id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("SourceId")
+                    b.Property<string>("ImportActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("source_id");
+                        .HasColumnName("import_activity_id");
 
                     b.Property<string>("Color")
                         .HasMaxLength(7)
                         .HasColumnType("character varying(7)")
                         .HasColumnName("color");
 
-                    b.Property<bool>("CreateNew")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("create_new");
+                    b.Property<string>("MappedActivityId")
+                        .HasColumnType("text")
+                        .HasColumnName("mapped_activity_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -158,26 +156,19 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("character varying(128)")
                         .HasColumnName("name");
 
-                    b.Property<string>("ResolvedActivityId")
-                        .HasColumnType("text")
-                        .HasColumnName("resolved_activity_id");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("status");
 
-                    b.HasKey("DocumentId", "SourceId")
+                    b.HasKey("DocumentId", "ImportActivityId")
                         .HasName("import_document_activities_pk");
 
-                    b.HasIndex("ResolvedActivityId")
-                        .HasDatabaseName("import_document_activities_resolved_activity_id_idx");
+                    b.HasIndex("MappedActivityId")
+                        .HasDatabaseName("import_document_activities_mapped_activity_id_idx");
 
-                    b.ToTable("import_document_activities", "core_entities", t =>
-                        {
-                            t.HasCheckConstraint("import_document_activities_resolution_check", "NOT (create_new AND resolved_activity_id IS NOT NULL)");
-                        });
+                    b.ToTable("import_document_activities", "core_entities");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityTagEntity", b =>
@@ -187,15 +178,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("document_id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("ActivitySourceId")
+                    b.Property<string>("ImportActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("activity_source_id");
+                        .HasColumnName("import_activity_id");
 
-                    b.Property<string>("TagSourceId")
+                    b.Property<string>("ImportTagId")
                         .HasColumnType("text")
-                        .HasColumnName("tag_source_id");
+                        .HasColumnName("import_tag_id");
 
-                    b.HasKey("DocumentId", "ActivitySourceId", "TagSourceId")
+                    b.HasKey("DocumentId", "ImportActivityId", "ImportTagId")
                         .HasName("import_document_activity_tags_pk");
 
                     b.ToTable("import_document_activity_tags", "core_entities");
@@ -272,15 +263,13 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("document_id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("SourceId")
+                    b.Property<string>("ImportTagId")
                         .HasColumnType("text")
-                        .HasColumnName("source_id");
+                        .HasColumnName("import_tag_id");
 
-                    b.Property<bool>("CreateNew")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("create_new");
+                    b.Property<string>("MappedTagId")
+                        .HasColumnType("text")
+                        .HasColumnName("mapped_tag_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -288,20 +277,13 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("character varying(128)")
                         .HasColumnName("name");
 
-                    b.Property<string>("ResolvedTagId")
-                        .HasColumnType("text")
-                        .HasColumnName("resolved_tag_id");
-
-                    b.HasKey("DocumentId", "SourceId")
+                    b.HasKey("DocumentId", "ImportTagId")
                         .HasName("import_document_tags_pk");
 
-                    b.HasIndex("ResolvedTagId")
-                        .HasDatabaseName("import_document_tags_resolved_tag_id_idx");
+                    b.HasIndex("MappedTagId")
+                        .HasDatabaseName("import_document_tags_mapped_tag_id_idx");
 
-                    b.ToTable("import_document_tags", "core_entities", t =>
-                        {
-                            t.HasCheckConstraint("import_document_tags_resolution_check", "NOT (create_new AND resolved_tag_id IS NOT NULL)");
-                        });
+                    b.ToTable("import_document_tags", "core_entities");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowActivityEntity", b =>
@@ -311,15 +293,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("row_id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("SourceActivityId")
+                    b.Property<string>("ImportActivityId")
                         .HasColumnType("text")
-                        .HasColumnName("source_activity_id");
+                        .HasColumnName("import_activity_id");
 
                     b.Property<int>("Position")
                         .HasColumnType("integer")
                         .HasColumnName("position");
 
-                    b.HasKey("RowId", "SourceActivityId")
+                    b.HasKey("RowId", "ImportActivityId")
                         .HasName("import_row_activities_pk");
 
                     b.ToTable("import_row_activities", "core_entities");
@@ -350,15 +332,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("first_start_at");
 
+                    b.Property<string>("ImportRecordId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("import_record_id");
+
                     b.Property<string>("Name")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("name");
-
-                    b.Property<string>("SourceId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("source_id");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -420,15 +402,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnName("row_id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("SourceTagId")
+                    b.Property<string>("ImportTagId")
                         .HasColumnType("text")
-                        .HasColumnName("source_tag_id");
+                        .HasColumnName("import_tag_id");
 
                     b.Property<int>("Position")
                         .HasColumnType("integer")
                         .HasColumnName("position");
 
-                    b.HasKey("RowId", "SourceTagId")
+                    b.HasKey("RowId", "ImportTagId")
                         .HasName("import_row_tags_pk");
 
                     b.ToTable("import_row_tags", "core_entities");
@@ -802,22 +784,22 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .IsRequired()
                         .HasConstraintName("import_document_activities_import_documents_fk");
 
-                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ActivityEntity", "ResolvedActivity")
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ActivityEntity", "MappedActivity")
                         .WithMany()
-                        .HasForeignKey("ResolvedActivityId")
+                        .HasForeignKey("MappedActivityId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("import_document_activities_activities_fk");
 
                     b.Navigation("Document");
 
-                    b.Navigation("ResolvedActivity");
+                    b.Navigation("MappedActivity");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityTagEntity", b =>
                 {
                     b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportDocumentActivityEntity", "Activity")
                         .WithMany("Tags")
-                        .HasForeignKey("DocumentId", "ActivitySourceId")
+                        .HasForeignKey("DocumentId", "ImportActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("import_document_activity_tags_import_document_activities_fk");
@@ -846,15 +828,15 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .IsRequired()
                         .HasConstraintName("import_document_tags_import_documents_fk");
 
-                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.TagEntity", "ResolvedTag")
+                    b.HasOne("Freem.Domain.Storage.PostgreSQL.Database.Entities.TagEntity", "MappedTag")
                         .WithMany()
-                        .HasForeignKey("ResolvedTagId")
+                        .HasForeignKey("MappedTagId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("import_document_tags_tags_fk");
 
                     b.Navigation("Document");
 
-                    b.Navigation("ResolvedTag");
+                    b.Navigation("MappedTag");
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ImportRowActivityEntity", b =>

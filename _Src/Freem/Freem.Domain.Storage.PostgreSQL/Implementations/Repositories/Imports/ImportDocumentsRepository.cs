@@ -1,3 +1,4 @@
+using Freem.Domain.Activities;
 using Freem.Domain.Entities.Import;
 using Freem.Domain.Import;
 using Freem.Domain.Storage.PostgreSQL.Database;
@@ -6,6 +7,7 @@ using Freem.Domain.Storage.PostgreSQL.Implementations.Errors;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Errors.Extensions;
 using Freem.Domain.Storage.PostgreSQL.Implementations.Extensions;
 using Freem.Domain.Storage.Repositories.Imports;
+using Freem.Domain.Tags;
 using Microsoft.EntityFrameworkCore;
 using Utilities.Errors;
 using Utilities.Primitives;
@@ -136,7 +138,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
         return DomainErrorCatalog.Factories.CreateImportInvalidStatus(id, actual, next);
     }
 
-    public async Task<Result<Error>> AddSourceAsync(
+    public async Task<Result<Error>> AddTagsAndActivitiesAsync(
         ImportDocumentId id,
         IReadOnlyList<ImportDocumentTag> tags,
         IReadOnlyList<ImportDocumentActivity> activities,
@@ -163,71 +165,96 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
         return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
-    public async Task<Result<Error>> SetActivityResolutionAsync(
+    public async Task<Result<AsyncBatch<ImportDocumentActivity>, Error>> FindActivitiesAsync(
+        ImportDocumentActivityByDocumentFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var documentIdString = filter.DocumentId.ToString();
+        return await _database.ImportDocumentActivities
+            .Include(e => e.Tags)
+            .AsNoTracking()
+            .Where(e => e.DocumentId == documentIdString)
+            .OrderBy(e => e.ImportActivityId)
+            .CountAndMapAsync(filter, ImportDocumentMapper.MapToDomainEntity, cancellationToken);
+    }
+
+    public async Task<Result<AsyncBatch<ImportDocumentTag>, Error>> FindTagsAsync(
+        ImportDocumentTagByDocumentFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+
+        var documentIdString = filter.DocumentId.ToString();
+        return await _database.ImportDocumentTags
+            .AsNoTracking()
+            .Where(e => e.DocumentId == documentIdString)
+            .OrderBy(e => e.ImportTagId)
+            .CountAndMapAsync(filter, ImportDocumentMapper.MapToDomainEntity, cancellationToken);
+    }
+
+    public async Task<Result<Error>> UpdateActivityMappingAsync(
         ImportDocumentId id,
-        ImportActivityId sourceId,
-        ImportActivityResolution? resolution,
+        ImportActivityId importActivityId,
+        ActivityId? activityId,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
-        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(importActivityId);
 
         var idString = id.ToString();
-        var sourceIdString = sourceId.ToString();
-        var createNew = resolution is not null && resolution.IsCreateNew;
-        var resolvedId = resolution?.ExistingId?.ToString();
+        var importActivityIdString = importActivityId.ToString();
+        var mappedIdString = activityId?.ToString();
 
         var count = 0;
         var context = new DatabaseContextWriteContext(id);
         var result = await _exceptionHandler.Handle(context, async () =>
         {
             count = await _database.ImportDocumentActivities
-                .Where(e => e.DocumentId == idString && e.SourceId == sourceIdString)
+                .Where(e => e.DocumentId == idString && e.ImportActivityId == importActivityIdString)
                 .ExecuteUpdateAsync(
                     s => s
-                        .SetProperty(e => e.CreateNew, createNew)
-                        .SetProperty(e => e.ResolvedActivityId, resolvedId),
+                        .SetProperty(e => e.MappedActivityId, mappedIdString),
                     cancellationToken);
         });
         if (!result.Success)
             return result;
 
         return count == 0
-            ? DomainErrorCatalog.Factories.CreateEntityNotFound(id)
+            ? DomainErrorCatalog.Factories.CreateEntityNotFound(importActivityId)
             : Result<Error>.CreateSuccess();
     }
 
-    public async Task<Result<Error>> SetTagResolutionAsync(
+    public async Task<Result<Error>> UpdateTagMappingAsync(
         ImportDocumentId id,
-        ImportTagId sourceId,
-        ImportTagResolution? resolution,
+        ImportTagId importTagId,
+        TagId? tagId,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(id);
-        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(importTagId);
 
         var idString = id.ToString();
-        var sourceIdString = sourceId.ToString();
-        var createNew = resolution is not null && resolution.IsCreateNew;
-        var resolvedId = resolution?.ExistingId?.ToString();
+        var importTagIdString = importTagId.ToString();
+        var mappedIdString = tagId?.ToString();
 
         var count = 0;
         var context = new DatabaseContextWriteContext(id);
         var result = await _exceptionHandler.Handle(context, async () =>
         {
             count = await _database.ImportDocumentTags
-                .Where(e => e.DocumentId == idString && e.SourceId == sourceIdString)
+                .Where(e => e.DocumentId == idString && e.ImportTagId == importTagIdString)
                 .ExecuteUpdateAsync(
                     s => s
-                        .SetProperty(e => e.CreateNew, createNew)
-                        .SetProperty(e => e.ResolvedTagId, resolvedId),
+                        .SetProperty(e => e.MappedTagId, mappedIdString),
                     cancellationToken);
         });
         if (!result.Success)
             return result;
 
         return count == 0
-            ? DomainErrorCatalog.Factories.CreateEntityNotFound(id)
+            ? DomainErrorCatalog.Factories.CreateEntityNotFound(importTagId)
             : Result<Error>.CreateSuccess();
     }
 
@@ -270,9 +297,13 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
         ArgumentNullException.ThrowIfNull(filter);
 
         var documentIdString = filter.DocumentId.ToString();
+        var idStrings = filter.Ids?
+            .Select(id => id.ToString())
+            .ToArray();
         return await QueryRows()
             .AsNoTracking()
             .Where(e => e.DocumentId == documentIdString)
+            .Where(e => idStrings == null || idStrings.Contains(e.Id))
             .OrderBy(e => e.FirstStartAt)
             .ThenBy(e => e.Id)
             .CountAndMapAsync(filter, ImportRowMapper.MapToDomainEntity, cancellationToken);
@@ -280,11 +311,7 @@ internal sealed class ImportDocumentsRepository : IImportDocumentRepository
 
     private IQueryable<ImportDocumentEntity> QueryDocuments()
     {
-        return _database.ImportDocuments
-            .Include(e => e.Tags)
-            .Include(e => e.Activities)
-            .Include($"{nameof(ImportDocumentEntity.Activities)}.{nameof(ImportDocumentActivityEntity.Tags)}")
-            .AsSplitQuery();
+        return _database.ImportDocuments;
     }
 
     private IQueryable<ImportRowEntity> QueryRows()

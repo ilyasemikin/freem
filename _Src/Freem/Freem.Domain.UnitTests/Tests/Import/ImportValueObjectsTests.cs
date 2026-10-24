@@ -113,49 +113,4 @@ public sealed class ImportValueObjectsTests
 
         Assert.IsType<FormatException>(exception);
     }
-
-    [Fact]
-    public void ActivityResolution_CreateNew_ShouldHaveNoExistingId()
-    {
-        var resolution = ImportActivityResolution.CreateNew;
-
-        Assert.True(resolution.IsCreateNew);
-        Assert.Null(resolution.ExistingId);
-    }
-
-    [Fact]
-    public void ActivityResolution_Existing_ShouldKeepIdAndBeEqualBySameId()
-    {
-        var id = ActivityId.Generate();
-
-        var first = ImportActivityResolution.Existing(id);
-        var second = ImportActivityResolution.Existing(id);
-
-        Assert.False(first.IsCreateNew);
-        Assert.Equal(id, first.ExistingId);
-        Assert.Equal(first, second);
-        Assert.NotEqual(first, ImportActivityResolution.CreateNew);
-    }
-
-    [Fact]
-    public void TagResolution_Existing_ShouldKeepIdAndBeEqualBySameId()
-    {
-        var id = TagId.Generate();
-
-        var first = ImportTagResolution.Existing(id);
-        var second = ImportTagResolution.Existing(id);
-
-        Assert.False(first.IsCreateNew);
-        Assert.Equal(id, first.ExistingId);
-        Assert.Equal(first, second);
-        Assert.NotEqual(first, ImportTagResolution.CreateNew);
-    }
-
-    [Fact]
-    public void Resolution_Existing_ShouldThrow_WhenIdIsNull()
-    {
-        var exception = Record.Exception(() => ImportTagResolution.Existing(null!));
-
-        Assert.IsType<ArgumentNullException>(exception);
-    }
 }

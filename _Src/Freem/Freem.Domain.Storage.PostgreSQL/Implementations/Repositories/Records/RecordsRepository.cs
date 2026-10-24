@@ -53,6 +53,30 @@ internal sealed class RecordsRepository : IRecordRepository
         return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
     }
 
+    public async Task<Result<Error>> CreateManyAsync(
+        IReadOnlyList<Record> entities,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(entities);
+
+        if (entities.Count == 0)
+            return Result<Error>.CreateSuccess();
+
+        foreach (var entity in entities)
+        {
+            var dbEntity = entity.MapToDatabaseEntity();
+            var dbActivityRelations = entity.CreateDatabaseRecordActivityRelations();
+            var dbTagRelations = entity.CreateDatabaseRecordTagRelations();
+
+            await _database.Records.AddAsync(dbEntity, cancellationToken);
+            await _database.AddRangeAsync(dbActivityRelations, cancellationToken);
+            await _database.AddRangeAsync(dbTagRelations, cancellationToken);
+        }
+
+        var context = new DatabaseContextWriteContext(entities[0].Id);
+        return await _exceptionHandler.HandleSaveChangesAsync(context, _database, cancellationToken);
+    }
+
     public async Task<Result<Error>> UpdateAsync(Record entity, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);

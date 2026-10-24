@@ -4,41 +4,41 @@ using Freem.Domain.Import;
 
 namespace Freem.Api.Public.Contracts.DTO.Imports;
 
-/// <summary>An activity found in the imported file.</summary>
+/// <summary>An import activity: an activity found in the imported file.</summary>
 public sealed class ImportActivityResponse
 {
-    /// <summary>Key of the activity in the source file.</summary>
-    public ImportActivityId SourceId { get; }
+    /// <summary>Key of the activity in the imported file.</summary>
+    public ImportActivityId Id { get; }
 
     /// <summary>Activity name.</summary>
     public ActivityName Name { get; }
 
-    /// <summary>Activity color, if the source has one.</summary>
+    /// <summary>Activity color, if the imported file has one.</summary>
     public ActivityColor? Color { get; init; }
 
-    /// <summary>Activity status in the source.</summary>
+    /// <summary>Activity status in the imported file.</summary>
     public ActivityStatus Status { get; }
 
-    /// <summary>Keys of the tags related to the activity in the source file.</summary>
-    public IReadOnlyList<ImportTagId> TagSourceIds { get; }
+    /// <summary>Keys of the import tags related to the activity.</summary>
+    public IReadOnlyList<ImportTagId> TagIds { get; }
 
-    /// <summary>Decision on the matching Freem activity, absent while not made.</summary>
-    public ImportResolutionResponse<ActivityId>? Resolution { get; init; }
+    /// <summary>Existing Freem activity the import activity is mapped to, absent while not mapped.</summary>
+    public ActivityId? MappedActivityId { get; init; }
 
     public ImportActivityResponse(
-        ImportActivityId sourceId,
+        ImportActivityId id,
         ActivityName name,
         ActivityStatus status,
-        IReadOnlyList<ImportTagId> tagSourceIds)
+        IReadOnlyList<ImportTagId> tagIds)
     {
-        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(status);
-        ArgumentNullException.ThrowIfNull(tagSourceIds);
+        ArgumentNullException.ThrowIfNull(tagIds);
 
-        SourceId = sourceId;
+        Id = id;
         Name = name;
         Status = status;
-        TagSourceIds = tagSourceIds;
+        TagIds = tagIds;
     }
 }

@@ -1,17 +1,21 @@
-using Freem.Domain.Import;
+using Freem.Domain.Tags;
 
 namespace Freem.Domain.Entities.Import;
 
 public sealed class ImportDocumentTag
 {
-    public ImportTag Source { get; }
-    public ImportTagResolution? Resolution { get; }
+    public ImportTag Tag { get; }
 
-    public ImportDocumentTag(ImportTag source, ImportTagResolution? resolution = null)
+    /// <summary>
+    /// Existing Freem tag the import tag is mapped to; null when not mapped yet.
+    /// </summary>
+    public TagId? MappedTagId { get; }
+
+    public ImportDocumentTag(ImportTag tag, TagId? mappedTagId = null)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(tag);
 
-        Source = source;
-        Resolution = resolution;
+        Tag = tag;
+        MappedTagId = mappedTagId;
     }
 }

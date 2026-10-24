@@ -67,10 +67,12 @@ internal sealed class UploadImportUseCase
             request.Format,
             request.FileName,
             timeZoneOffset);
+        var tags = ImportDocumentFactory.CreateTags(parsed);
+        var activities = ImportDocumentFactory.CreateActivities(parsed);
         var rows = ImportDocumentFactory.CreateRows(document.Id, parsed);
 
         var writeResult = await _transactionRunner.RunAsync(
-            _ => WriteAsync(document, rows, cancellationToken),
+            _ => WriteAsync(document, tags, activities, rows, cancellationToken),
             cancellationToken);
         if (!writeResult.Success)
             return writeResult.Error;
@@ -80,6 +82,8 @@ internal sealed class UploadImportUseCase
 
     private async Task<Result<Error>> WriteAsync(
         ImportDocument document,
+        IReadOnlyList<ImportDocumentTag> tags,
+        IReadOnlyList<ImportDocumentActivity> activities,
         IReadOnlyList<ImportRow> rows,
         CancellationToken cancellationToken)
     {
@@ -87,11 +91,15 @@ internal sealed class UploadImportUseCase
         if (!createResult.Success)
             return createResult;
 
+        var addResult = await _repository.AddTagsAndActivitiesAsync(document.Id, tags, activities, cancellationToken);
+        if (!addResult.Success)
+            return addResult;
+
         foreach (var batch in rows.Chunk(RowsBatchSize))
         {
-            var addResult = await _repository.AddRowsAsync(batch, cancellationToken);
-            if (!addResult.Success)
-                return addResult;
+            var addRowsResult = await _repository.AddRowsAsync(batch, cancellationToken);
+            if (!addRowsResult.Success)
+                return addRowsResult;
         }
 
         return Result<Error>.CreateSuccess();

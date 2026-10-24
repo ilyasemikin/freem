@@ -120,8 +120,13 @@ public static class ServiceCollectionExtensions
         services.AddHandler<ApiUploadImportRequest, ApiUploadImportRequestHandler>();
         services.AddHandler<ApiGetImportRequest, ApiGetImportRequestHandler>();
         services.AddHandler<ApiListImportRequest, ApiListImportRequestHandler>();
+        services.AddHandler<ApiListImportActivityRequest, ApiListImportActivityRequestHandler>();
         services.AddHandler<ApiListImportRowRequest, ApiListImportRowRequestHandler>();
+        services.AddHandler<ApiListImportTagRequest, ApiListImportTagRequestHandler>();
         services.AddHandler<ApiRemoveImportRequest, ApiRemoveImportRequestHandler>();
+        services.AddHandler<ApiUpdateImportActivityMappingRequest, ApiUpdateImportActivityMappingRequestHandler>();
+        services.AddHandler<ApiUpdateImportTagMappingRequest, ApiUpdateImportTagMappingRequestHandler>();
+        services.AddHandler<ApiApplyImportRequest, ApiApplyImportRequestHandler>();
 
         return services;
     }

@@ -6,7 +6,7 @@ internal sealed class ImportRowEntity : IAuditableEntity
 {
     public required string Id { get; init; }
     public required string DocumentId { get; set; }
-    public required string SourceId { get; set; }
+    public required string ImportRecordId { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public DateTimeOffset FirstStartAt { get; set; }

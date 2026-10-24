@@ -9,6 +9,7 @@ namespace Freem.Domain.Storage.Repositories.Records;
 public interface IRecordRepository
 {
     Task<Result<Error>> CreateAsync(Record entity, CancellationToken cancellationToken = default);
+    Task<Result<Error>> CreateManyAsync(IReadOnlyList<Record> entities, CancellationToken cancellationToken = default);
     Task<Result<Error>> UpdateAsync(Record entity, CancellationToken cancellationToken = default);
     Task<Result<Error>> DeleteAsync(RecordId id, CancellationToken cancellationToken = default);
 

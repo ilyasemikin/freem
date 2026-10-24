@@ -158,6 +158,11 @@ internal sealed class FakeRecordRepository : IRecordRepository
         throw new NotSupportedException();
     }
 
+    public Task<Result<Error>> CreateManyAsync(IReadOnlyList<RecordEntity> entities, CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException();
+    }
+
     public Task<Result<Error>> UpdateAsync(RecordEntity entity, CancellationToken cancellationToken = default)
     {
         throw new NotSupportedException();

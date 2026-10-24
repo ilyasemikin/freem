@@ -45,8 +45,6 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
     private static ImportDocument CreateDocument(
         UserId userId,
         ImportDocumentStatus? status = null,
-        IReadOnlyList<ImportDocumentTag>? tags = null,
-        IReadOnlyList<ImportDocumentActivity>? activities = null,
         int rowsInFile = 12,
         int rowsParsed = 10)
     {
@@ -63,19 +61,46 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
             timeZoneOffset,
             status ?? ImportDocumentStatus.Created,
             rowsInFile,
-            rowsParsed,
-            tags ?? [],
-            activities ?? []);
+            rowsParsed);
     }
 
-    private static ImportTag CreateSourceTag(string key, string name)
+    private async Task<ImportDocument> CreateDocumentAsync(
+        UserId userId,
+        IReadOnlyList<ImportDocumentTag>? tags = null,
+        IReadOnlyList<ImportDocumentActivity>? activities = null)
+    {
+        var document = CreateDocument(userId);
+        var createResult = await Repository.CreateAsync(document);
+        Assert.True(createResult.Success);
+        var addResult = await Repository.AddTagsAndActivitiesAsync(document.Id, tags ?? [], activities ?? []);
+        Assert.True(addResult.Success);
+        return document;
+    }
+
+    private async Task<ImportDocumentActivity[]> FindActivitiesAsync(ImportDocumentId documentId)
+    {
+        var filter = new ImportDocumentActivityByDocumentFilter(documentId) { Limit = 100, Offset = 0 };
+        var result = await Repository.FindActivitiesAsync(filter);
+        Assert.True(result.Success);
+        return await result.Value.ToArrayAsync();
+    }
+
+    private async Task<ImportDocumentTag[]> FindTagsAsync(ImportDocumentId documentId)
+    {
+        var filter = new ImportDocumentTagByDocumentFilter(documentId) { Limit = 100, Offset = 0 };
+        var result = await Repository.FindTagsAsync(filter);
+        Assert.True(result.Success);
+        return await result.Value.ToArrayAsync();
+    }
+
+    private static ImportTag CreateImportTag(string key, string name)
     {
         var id = ImportTagId.Parse(key, null);
         var tagName = TagName.Parse(name, null);
         return new ImportTag(id, tagName);
     }
 
-    private static ImportActivity CreateSourceActivity(string key, string name, params string[] tagKeys)
+    private static ImportActivity CreateImportActivity(string key, string name, params string[] tagKeys)
     {
         var id = ImportActivityId.Parse(key, null);
         var activityName = ActivityName.Parse(name, null);
@@ -121,14 +146,10 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
     }
 
     [Fact]
-    public async Task CreateAsync_ShouldSaveDocumentWithSource_WhenPassValid()
+    public async Task CreateAsync_ShouldSaveDocument_WhenPassValid()
     {
         var userId = await CreateUserAsync();
-        var tagSource = CreateSourceTag("t1", "Work");
-        ImportDocumentTag[] tags = [new(tagSource)];
-        var activitySource = CreateSourceActivity("a1", "Coding", "t1");
-        ImportDocumentActivity[] activities = [new(activitySource, ImportActivityResolution.CreateNew)];
-        var document = CreateDocument(userId, tags: tags, activities: activities);
+        var document = CreateDocument(userId);
 
         var writeResult = await Repository.CreateAsync(document);
         var readResult = await Repository.FindByIdAsync(document.Id);
@@ -143,12 +164,54 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         Assert.Equal(ImportDocumentStatus.Created, actual.Status);
         Assert.Equal(12, actual.RowsInFile);
         Assert.Equal(10, actual.RowsParsed);
-        Assert.Single(actual.Tags);
-        Assert.Null(actual.Tags[0].Resolution);
-        Assert.Single(actual.Activities);
-        Assert.Equal(activitySource.Id, actual.Activities[0].Source.Id);
-        Assert.Equal(activitySource.TagIds, actual.Activities[0].Source.TagIds);
-        Assert.Equal(ImportActivityResolution.CreateNew, actual.Activities[0].Resolution);
+    }
+
+    [Fact]
+    public async Task FindActivitiesAsync_ShouldReturnActivitiesWithTagsAndMappings()
+    {
+        var userId = await CreateUserAsync();
+        var dbActivity = EntitiesFactory.CreateActivity();
+        await Database.Activities.AddAsync(dbActivity);
+        await Database.SaveChangesAsync();
+        var activityId = ActivityId.Parse(dbActivity.Id, null);
+        var importTag = CreateImportTag("t1", "Work");
+        ImportDocumentTag[] tags = [new(importTag)];
+        var importActivity = CreateImportActivity("a1", "Coding", "t1");
+        ImportDocumentActivity[] activities = [new(importActivity, activityId)];
+        var document = await CreateDocumentAsync(userId, tags, activities);
+
+        var actualActivities = await FindActivitiesAsync(document.Id);
+        var actualTags = await FindTagsAsync(document.Id);
+
+        var actualTag = Assert.Single(actualTags);
+        Assert.Null(actualTag.MappedTagId);
+        var actualActivity = Assert.Single(actualActivities);
+        Assert.Equal(importActivity.Id, actualActivity.Activity.Id);
+        Assert.Equal(importActivity.TagIds, actualActivity.Activity.TagIds);
+        Assert.Equal(activityId, actualActivity.MappedActivityId);
+    }
+
+    [Fact]
+    public async Task FindActivitiesAsync_ShouldPageAndReturnOnlyActivitiesOfDocument()
+    {
+        var userId = await CreateUserAsync();
+        ImportDocumentActivity[] activities =
+        [
+            new(CreateImportActivity("a1", "First")),
+            new(CreateImportActivity("a2", "Second")),
+            new(CreateImportActivity("a3", "Third"))
+        ];
+        var document = await CreateDocumentAsync(userId, activities: activities);
+        var otherActivities = new ImportDocumentActivity[] { new(CreateImportActivity("a1", "Other")) };
+        await CreateDocumentAsync(userId, activities: otherActivities);
+        var filter = new ImportDocumentActivityByDocumentFilter(document.Id) { Limit = 2, Offset = 1 };
+
+        var result = await Repository.FindActivitiesAsync(filter);
+
+        Assert.True(result.Success);
+        Assert.Equal(3, result.Value.Count);
+        var items = await result.Value.ToArrayAsync();
+        Assert.Equal(["a2", "a3"], items.Select(i => i.Activity.Id.ToString()).ToArray());
     }
 
     [Fact]
@@ -287,29 +350,29 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
     }
 
     [Fact]
-    public async Task AddSourceAsync_ShouldSaveTagsAndActivities()
+    public async Task AddTagsAndActivitiesAsync_ShouldSaveTagsAndActivities()
     {
         var userId = await CreateUserAsync();
         var document = CreateDocument(userId, ImportDocumentStatus.Parsing);
         await Repository.CreateAsync(document);
-        var tagSource = CreateSourceTag("t1", "Work");
-        ImportDocumentTag[] tags = [new(tagSource)];
-        var firstSource = CreateSourceActivity("a1", "Coding", "t1");
-        var secondSource = CreateSourceActivity("a2", "Reading");
-        ImportDocumentActivity[] activities = [new(firstSource), new(secondSource)];
+        var importTag = CreateImportTag("t1", "Work");
+        ImportDocumentTag[] tags = [new(importTag)];
+        var firstImportActivity = CreateImportActivity("a1", "Coding", "t1");
+        var secondImportActivity = CreateImportActivity("a2", "Reading");
+        ImportDocumentActivity[] activities = [new(firstImportActivity), new(secondImportActivity)];
 
-        var result = await Repository.AddSourceAsync(document.Id, tags, activities);
+        var result = await Repository.AddTagsAndActivitiesAsync(document.Id, tags, activities);
 
         Assert.True(result.Success);
-        var actual = await Repository.FindByIdAsync(document.Id);
-        Assert.True(actual.Success);
-        Assert.Single(actual.Value.Tags);
-        Assert.Equal(2, actual.Value.Activities.Count);
-        Assert.Equal(firstSource.TagIds, actual.Value.Activities[0].Source.TagIds);
+        var actualTags = await FindTagsAsync(document.Id);
+        var actualActivities = await FindActivitiesAsync(document.Id);
+        Assert.Single(actualTags);
+        Assert.Equal(2, actualActivities.Length);
+        Assert.Equal(firstImportActivity.TagIds, actualActivities[0].Activity.TagIds);
     }
 
     [Fact]
-    public async Task SetActivityResolutionAsync_ShouldSaveExistingCreateNewAndReset()
+    public async Task UpdateActivityMappingAsync_ShouldSaveAndRemoveMapping()
     {
         var userId = await CreateUserAsync();
         var dbActivity = EntitiesFactory.CreateActivity();
@@ -317,93 +380,73 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         await Database.SaveChangesAsync();
         var activityId = ActivityId.Parse(dbActivity.Id, null);
 
-        var source = CreateSourceActivity("a1", "Coding");
-        ImportDocumentActivity[] activities = [new(source)];
-        var document = CreateDocument(userId, activities: activities);
-        await Repository.CreateAsync(document);
+        var importActivity = CreateImportActivity("a1", "Coding");
+        ImportDocumentActivity[] activities = [new(importActivity)];
+        var document = await CreateDocumentAsync(userId, activities: activities);
 
-        var existingResolution = ImportActivityResolution.Existing(activityId);
-        var existingResult = await Repository.SetActivityResolutionAsync(document.Id, source.Id, existingResolution);
-        var afterExisting = await Repository.FindByIdAsync(document.Id);
-        var createNewResult = await Repository.SetActivityResolutionAsync(
-            document.Id,
-            source.Id,
-            ImportActivityResolution.CreateNew);
-        var afterCreateNew = await Repository.FindByIdAsync(document.Id);
-        var resetResult = await Repository.SetActivityResolutionAsync(document.Id, source.Id, null);
-        var afterReset = await Repository.FindByIdAsync(document.Id);
+        var mapResult = await Repository.UpdateActivityMappingAsync(document.Id, importActivity.Id, activityId);
+        var afterMap = await FindActivitiesAsync(document.Id);
+        var removeResult = await Repository.UpdateActivityMappingAsync(document.Id, importActivity.Id, null);
+        var afterRemove = await FindActivitiesAsync(document.Id);
 
-        Assert.True(existingResult.Success);
-        Assert.True(afterExisting.Success);
-        Assert.Equal(existingResolution, afterExisting.Value.Activities[0].Resolution);
-        Assert.True(createNewResult.Success);
-        Assert.True(afterCreateNew.Success);
-        Assert.Equal(ImportActivityResolution.CreateNew, afterCreateNew.Value.Activities[0].Resolution);
-        Assert.True(resetResult.Success);
-        Assert.True(afterReset.Success);
-        Assert.Null(afterReset.Value.Activities[0].Resolution);
+        Assert.True(mapResult.Success);
+        Assert.Equal(activityId, afterMap[0].MappedActivityId);
+        Assert.True(removeResult.Success);
+        Assert.Null(afterRemove[0].MappedActivityId);
     }
 
     [Fact]
-    public async Task SetActivityResolutionAsync_ShouldFail_WhenActivityDoesNotExist()
+    public async Task UpdateActivityMappingAsync_ShouldFail_WhenActivityDoesNotExist()
     {
         var userId = await CreateUserAsync();
-        var source = CreateSourceActivity("a1", "Coding");
-        ImportDocumentActivity[] activities = [new(source)];
-        var document = CreateDocument(userId, activities: activities);
-        await Repository.CreateAsync(document);
+        var importActivity = CreateImportActivity("a1", "Coding");
+        ImportDocumentActivity[] activities = [new(importActivity)];
+        var document = await CreateDocumentAsync(userId, activities: activities);
         var missingId = ActivityId.Generate();
-        var resolution = ImportActivityResolution.Existing(missingId);
 
-        var result = await Repository.SetActivityResolutionAsync(document.Id, source.Id, resolution);
+        var result = await Repository.UpdateActivityMappingAsync(document.Id, importActivity.Id, missingId);
 
         Assert.False(result.Success);
         Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, result.Error.Type);
     }
 
     [Fact]
-    public async Task SetActivityResolutionAsync_ShouldResetResolution_WhenExistingActivityIsRemoved()
+    public async Task UpdateActivityMappingAsync_ShouldRemoveMapping_WhenMappedActivityIsRemoved()
     {
         var userId = await CreateUserAsync();
         var dbActivity = EntitiesFactory.CreateActivity();
         await Database.Activities.AddAsync(dbActivity);
         await Database.SaveChangesAsync();
         var activityId = ActivityId.Parse(dbActivity.Id, null);
-        var source = CreateSourceActivity("a1", "Coding");
-        var resolution = ImportActivityResolution.Existing(activityId);
-        ImportDocumentActivity[] activities = [new(source, resolution)];
-        var document = CreateDocument(userId, activities: activities);
-        await Repository.CreateAsync(document);
+        var importActivity = CreateImportActivity("a1", "Coding");
+        ImportDocumentActivity[] activities = [new(importActivity, activityId)];
+        var document = await CreateDocumentAsync(userId, activities: activities);
 
         await Database.Activities.ExecuteDeleteAsync();
 
-        var actual = await Repository.FindByIdAsync(document.Id);
-        Assert.True(actual.Success);
-        Assert.Null(actual.Value.Activities[0].Resolution);
+        var actual = await FindActivitiesAsync(document.Id);
+        Assert.Null(actual[0].MappedActivityId);
     }
 
     [Fact]
-    public async Task SetTagResolutionAsync_ShouldSaveExistingAndFailForUnknownSource()
+    public async Task UpdateTagMappingAsync_ShouldSaveMappingAndFailForUnknownImportTag()
     {
         var userId = await CreateUserAsync();
         var dbTag = EntitiesFactory.CreateTag();
         await Database.Tags.AddAsync(dbTag);
         await Database.SaveChangesAsync();
         var tagId = TagId.Parse(dbTag.Id, null);
-        var source = CreateSourceTag("t1", "Work");
-        ImportDocumentTag[] tags = [new(source)];
-        var document = CreateDocument(userId, tags: tags);
-        await Repository.CreateAsync(document);
-        var resolution = ImportTagResolution.Existing(tagId);
-        var unknownSourceId = ImportTagId.Parse("unknown", null);
+        var importTag = CreateImportTag("t1", "Work");
+        ImportDocumentTag[] tags = [new(importTag)];
+        var document = await CreateDocumentAsync(userId, tags: tags);
+        var unknownImportTagId = ImportTagId.Parse("unknown", null);
 
-        var result = await Repository.SetTagResolutionAsync(document.Id, source.Id, resolution);
-        var unknownResult = await Repository.SetTagResolutionAsync(document.Id, unknownSourceId, resolution);
+        var result = await Repository.UpdateTagMappingAsync(document.Id, importTag.Id, tagId);
+        var unknownResult = await Repository.UpdateTagMappingAsync(document.Id, unknownImportTagId, tagId);
 
         Assert.True(result.Success);
-        var actual = await Repository.FindByIdAsync(document.Id);
-        Assert.True(actual.Success);
-        Assert.Equal(resolution, actual.Value.Tags[0].Resolution);
+        var actual = await FindTagsAsync(document.Id);
+        Assert.Equal(tagId, actual[0].MappedTagId);
         Assert.False(unknownResult.Success);
         Assert.Equal(DomainErrorCatalog.Types.EntityNotFound, unknownResult.Error.Type);
     }
@@ -475,6 +518,32 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         Assert.All(items, i => Assert.Equal(2, i.Record.Periods.Count));
         Assert.True(otherPage.Success);
         Assert.Equal(0, otherPage.Value.Count);
+    }
+
+    [Fact]
+    public async Task FindRowsAsync_ShouldReturnOnlyRowsWithGivenIds_WhenIdsAreSet()
+    {
+        var userId = await CreateUserAsync();
+        var document = CreateDocument(userId);
+        var otherDocument = CreateDocument(userId);
+        await Repository.CreateAsync(document);
+        await Repository.CreateAsync(otherDocument);
+        var rows = Enumerable
+            .Range(0, 5)
+            .Select(i => CreateRow(document.Id, i))
+            .ToArray();
+        var otherRow = CreateRow(otherDocument.Id, 10);
+        await Repository.AddRowsAsync(rows);
+        await Repository.AddRowsAsync([otherRow]);
+        ImportRowId[] ids = [rows[3].Id, rows[1].Id, otherRow.Id];
+        var filter = new ImportRowByDocumentFilter(document.Id) { Limit = 100, Offset = 0, Ids = ids };
+
+        var result = await Repository.FindRowsAsync(filter);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.Value.Count);
+        var items = await result.Value.ToArrayAsync();
+        Assert.Equal(["r1", "r3"], items.Select(i => i.Record.Id.ToString()).ToArray());
     }
 
     [Fact]

@@ -11,6 +11,11 @@ public sealed class ImportRowByDocumentFilter : ILimitFilter, IOffsetFilter
 
     public ImportDocumentId DocumentId { get; }
 
+    /// <summary>
+    /// When set, only rows with these ids are returned.
+    /// </summary>
+    public IReadOnlyList<ImportRowId>? Ids { get; init; }
+
     public ImportRowByDocumentFilter(ImportDocumentId documentId)
     {
         ArgumentNullException.ThrowIfNull(documentId);

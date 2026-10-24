@@ -16,8 +16,10 @@ public sealed class EntityIdNameProvider
         return id switch
         {
             ActivityId => EntityNames.Activity,
+            ImportActivityId => EntityNames.ImportActivity,
             ImportDocumentId => EntityNames.ImportDocument,
             ImportRowId => EntityNames.ImportRow,
+            ImportTagId => EntityNames.ImportTag,
             RecordId => EntityNames.Record,
             RecordPeriodId => EntityNames.RecordPeriod,
             RunningRecordId => EntityNames.RunningRecord,

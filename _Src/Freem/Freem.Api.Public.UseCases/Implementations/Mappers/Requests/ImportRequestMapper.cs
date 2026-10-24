@@ -3,9 +3,14 @@ using Freem.Domain;
 using Freem.Domain.Formats;
 using Freem.Domain.Import;
 using Freem.Domain.UseCases.Contracts.Filter;
+using Freem.Domain.UseCases.Contracts.Imports.Apply;
 using Freem.Domain.UseCases.Contracts.Imports.Get;
 using Freem.Domain.UseCases.Contracts.Imports.List;
+using Freem.Domain.UseCases.Contracts.Imports.ListActivities;
 using Freem.Domain.UseCases.Contracts.Imports.ListRows;
+using Freem.Domain.UseCases.Contracts.Imports.ListTags;
+using Freem.Domain.UseCases.Contracts.Imports.UpdateActivityMapping;
+using Freem.Domain.UseCases.Contracts.Imports.UpdateTagMapping;
 using Freem.Domain.UseCases.Contracts.Imports.Remove;
 using Freem.Domain.UseCases.Contracts.Imports.Upload;
 using Freem.Domain.Users.Models;
@@ -46,11 +51,46 @@ internal static class ImportRequestMapper
         return new RemoveImportRequest(request.Id);
     }
 
+    public static UpdateImportActivityMappingRequest Map(this ApiUpdateImportActivityMappingRequest request)
+    {
+        return new UpdateImportActivityMappingRequest(request.Id, request.ImportActivityId, request.Body.ActivityId);
+    }
+
+    public static UpdateImportTagMappingRequest Map(this ApiUpdateImportTagMappingRequest request)
+    {
+        return new UpdateImportTagMappingRequest(request.Id, request.ImportTagId, request.Body.TagId);
+    }
+
+    public static Result<ApplyImportRequest, Error> Map(this ApiApplyImportRequest request)
+    {
+        var rowIds = request.Body.RowIds;
+        if (request.Body.All == rowIds is not null)
+            return DomainErrorCatalog.Factories.CreateInvalidRequest("Exactly one of all and rowIds must be set");
+
+        return rowIds is null
+            ? ApplyImportRequest.ForAllRows(request.Id)
+            : ApplyImportRequest.ForRows(request.Id, rowIds);
+    }
+
     public static ListImportRequest Map(this ApiListImportRequest request)
     {
         var limit = new Limit(request.Query.Limit);
         var offset = new Offset(request.Query.Offset);
         return new ListImportRequest(limit, offset);
+    }
+
+    public static ListImportActivityRequest Map(this ApiListImportActivityRequest request)
+    {
+        var limit = new Limit(request.Query.Limit);
+        var offset = new Offset(request.Query.Offset);
+        return new ListImportActivityRequest(request.Id, limit, offset);
+    }
+
+    public static ListImportTagRequest Map(this ApiListImportTagRequest request)
+    {
+        var limit = new Limit(request.Query.Limit);
+        var offset = new Offset(request.Query.Offset);
+        return new ListImportTagRequest(request.Id, limit, offset);
     }
 
     public static ListImportRowRequest Map(this ApiListImportRowRequest request)

@@ -8,12 +8,6 @@ internal static class ImportMapper
 {
     public static ImportResponse Map(this ImportDocument document)
     {
-        var tags = document.Tags
-            .Select(tag => tag.Map())
-            .ToArray();
-        var activities = document.Activities
-            .Select(activity => activity.Map())
-            .ToArray();
         return new ImportResponse(
             document.Id,
             document.Format,
@@ -21,30 +15,24 @@ internal static class ImportMapper
             document.TimeZoneOffset,
             document.Status,
             document.RowsInFile,
-            document.RowsParsed,
-            tags,
-            activities);
+            document.RowsParsed);
     }
 
     public static ImportTagResponse Map(this ImportDocumentTag tag)
     {
-        var resolution = tag.Resolution;
-        var response = new ImportResolutionResponse<Domain.Tags.TagId>(resolution?.IsCreateNew ?? false, resolution?.ExistingId);
-        return new ImportTagResponse(tag.Source.Id, tag.Source.Name)
+        return new ImportTagResponse(tag.Tag.Id, tag.Tag.Name)
         {
-            Resolution = resolution is null ? null : response
+            MappedTagId = tag.MappedTagId
         };
     }
 
     public static ImportActivityResponse Map(this ImportDocumentActivity activity)
     {
-        var source = activity.Source;
-        var resolution = activity.Resolution;
-        var response = new ImportResolutionResponse<Domain.Activities.ActivityId>(resolution?.IsCreateNew ?? false, resolution?.ExistingId);
-        return new ImportActivityResponse(source.Id, source.Name, source.Status, source.TagIds)
+        var importActivity = activity.Activity;
+        return new ImportActivityResponse(importActivity.Id, importActivity.Name, importActivity.Status, importActivity.TagIds)
         {
-            Color = source.Color,
-            Resolution = resolution is null ? null : response
+            Color = importActivity.Color,
+            MappedActivityId = activity.MappedActivityId
         };
     }
 

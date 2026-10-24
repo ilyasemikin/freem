@@ -4,7 +4,7 @@ using Freem.Domain.Users.Models;
 
 namespace Freem.Api.Public.Contracts.DTO.Imports;
 
-/// <summary>An import: an uploaded and parsed file whose rows can be reviewed.</summary>
+/// <summary>An import: an uploaded and parsed file whose rows can be reviewed. Its activities and tags are listed by separate endpoints.</summary>
 public sealed class ImportResponse
 {
     /// <summary>Import id.</summary>
@@ -28,12 +28,6 @@ public sealed class ImportResponse
     /// <summary>Number of rows that were parsed and saved.</summary>
     public int RowsParsed { get; }
 
-    /// <summary>Tags found in the file.</summary>
-    public IReadOnlyList<ImportTagResponse> Tags { get; }
-
-    /// <summary>Activities found in the file.</summary>
-    public IReadOnlyList<ImportActivityResponse> Activities { get; }
-
     public ImportResponse(
         ImportDocumentId id,
         FormatKey format,
@@ -41,17 +35,13 @@ public sealed class ImportResponse
         TimeZoneOffset timeZoneOffset,
         ImportDocumentStatus status,
         int rowsInFile,
-        int rowsParsed,
-        IReadOnlyList<ImportTagResponse> tags,
-        IReadOnlyList<ImportActivityResponse> activities)
+        int rowsParsed)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(format);
         ArgumentNullException.ThrowIfNull(fileName);
         ArgumentNullException.ThrowIfNull(timeZoneOffset);
         ArgumentNullException.ThrowIfNull(status);
-        ArgumentNullException.ThrowIfNull(tags);
-        ArgumentNullException.ThrowIfNull(activities);
 
         Id = id;
         Format = format;
@@ -60,7 +50,5 @@ public sealed class ImportResponse
         Status = status;
         RowsInFile = rowsInFile;
         RowsParsed = rowsParsed;
-        Tags = tags;
-        Activities = activities;
     }
 }

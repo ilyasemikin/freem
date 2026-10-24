@@ -9,10 +9,7 @@ internal sealed class ImportDocumentTagEntityTypeConfiguration : IEntityTypeConf
 {
     public void Configure(EntityTypeBuilder<ImportDocumentTagEntity> builder)
     {
-        builder.ToTable(EntitiesNames.ImportDocumentTags.Table, table =>
-            table.HasCheckConstraint(
-                EntitiesNames.ImportDocumentTags.Constraints.ResolutionCheck,
-                $"NOT ({EntitiesNames.ImportDocumentTags.Properties.CreateNew} AND {EntitiesNames.ImportDocumentTags.Properties.ResolvedTagId} IS NOT NULL)"));
+        builder.ToTable(EntitiesNames.ImportDocumentTags.Table);
 
         builder
             .Property(e => e.DocumentId)
@@ -21,8 +18,8 @@ internal sealed class ImportDocumentTagEntityTypeConfiguration : IEntityTypeConf
             .IsRequired();
 
         builder
-            .Property(e => e.SourceId)
-            .HasColumnName(EntitiesNames.ImportDocumentTags.Properties.SourceId)
+            .Property(e => e.ImportTagId)
+            .HasColumnName(EntitiesNames.ImportDocumentTags.Properties.ImportTagId)
             .IsRequired();
 
         builder
@@ -32,22 +29,16 @@ internal sealed class ImportDocumentTagEntityTypeConfiguration : IEntityTypeConf
             .IsRequired();
 
         builder
-            .Property(e => e.CreateNew)
-            .HasColumnName(EntitiesNames.ImportDocumentTags.Properties.CreateNew)
-            .HasDefaultValue(false)
-            .IsRequired();
+            .Property(e => e.MappedTagId)
+            .HasColumnName(EntitiesNames.ImportDocumentTags.Properties.MappedTagId);
 
         builder
-            .Property(e => e.ResolvedTagId)
-            .HasColumnName(EntitiesNames.ImportDocumentTags.Properties.ResolvedTagId);
-
-        builder
-            .HasKey(e => new { e.DocumentId, e.SourceId })
+            .HasKey(e => new { e.DocumentId, e.ImportTagId })
             .HasName(EntitiesNames.ImportDocumentTags.Constraints.PrimaryKey);
 
         builder
-            .HasIndex(e => e.ResolvedTagId)
-            .HasDatabaseName(EntitiesNames.ImportDocumentTags.Constraints.ResolvedTagIdIndex);
+            .HasIndex(e => e.MappedTagId)
+            .HasDatabaseName(EntitiesNames.ImportDocumentTags.Constraints.MappedTagIdIndex);
 
         builder
             .HasOne(e => e.Document)
@@ -58,9 +49,9 @@ internal sealed class ImportDocumentTagEntityTypeConfiguration : IEntityTypeConf
             .IsRequired();
 
         builder
-            .HasOne(e => e.ResolvedTag)
+            .HasOne(e => e.MappedTag)
             .WithMany()
-            .HasForeignKey(e => e.ResolvedTagId)
+            .HasForeignKey(e => e.MappedTagId)
             .HasConstraintName(EntitiesNames.ImportDocumentTags.Constraints.TagsForeignKey)
             .OnDelete(DeleteBehavior.SetNull);
     }

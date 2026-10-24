@@ -1,17 +1,21 @@
-using Freem.Domain.Import;
+using Freem.Domain.Activities;
 
 namespace Freem.Domain.Entities.Import;
 
 public sealed class ImportDocumentActivity
 {
-    public ImportActivity Source { get; }
-    public ImportActivityResolution? Resolution { get; }
+    public ImportActivity Activity { get; }
 
-    public ImportDocumentActivity(ImportActivity source, ImportActivityResolution? resolution = null)
+    /// <summary>
+    /// Existing Freem activity the import activity is mapped to; null when not mapped yet.
+    /// </summary>
+    public ActivityId? MappedActivityId { get; }
+
+    public ImportDocumentActivity(ImportActivity activity, ActivityId? mappedActivityId = null)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(activity);
 
-        Source = source;
-        Resolution = resolution;
+        Activity = activity;
+        MappedActivityId = mappedActivityId;
     }
 }
