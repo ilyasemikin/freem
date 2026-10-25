@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Freem.DataTransfer.NativeJson\Freem.DataTransfer.NativeJson.csproj"/>
+        <ProjectReference Include="..\Freem.DataTransfer.ZaferErtas.TimeTracker\Freem.DataTransfer.ZaferErtas.TimeTracker.csproj"/>
         <ProjectReference Include="..\Freem.Domain\Freem.Domain.csproj"/>
         <ProjectReference Include="..\Freem.Domain.Storage\Freem.Domain.Storage.csproj"/>
         <ProjectReference Include="..\Freem.Domain.UseCases.Contracts\Freem.Domain.UseCases.Contracts.csproj"/>

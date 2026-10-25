@@ -97,6 +97,7 @@ Freem.Domain.UseCases(.Contracts)          # use cases (Utilities.UseCases handl
 Freem.Domain.Storage                       # one repository interface per aggregate + its filters
 Freem.Domain.Storage.PostgreSQL(.Migrations)  # EF Core + Npgsql implementation
 Freem.Storage.Transactions(.EFCore)        # storage transactions + EF Core implementation
+Freem.DataTransfer.*                       # import/export file formats without domain (NativeJson, <Author>.<App>, StashIt `Banks.*`); adapters in Domain.UseCases
 Freem.*                                    # small shared libraries (Time, Sorting, ...)
 ```
 

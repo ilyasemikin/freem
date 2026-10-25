@@ -1,10 +1,10 @@
 using Freem.Domain.Entities.DataTransfer.Export;
-using Freem.Domain.UseCases.Implementations.DataTransfer.Export;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Formats.NativeJson;
 using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.UnitTests.Fixtures;
 
-namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Formats;
+namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Formats.NativeJson;
 
 public sealed class NativeJsonRoundTripTests
 {

@@ -5,6 +5,7 @@ using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.DataTransfer.Export;
 using Freem.Domain.UseCases.Contracts.DataTransfer.Formats.List;
 using Freem.Domain.UseCases.Contracts.Records.Create;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Formats.NativeJson;
 using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;

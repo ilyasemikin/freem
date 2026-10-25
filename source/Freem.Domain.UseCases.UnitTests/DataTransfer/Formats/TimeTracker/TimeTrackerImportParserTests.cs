@@ -1,11 +1,12 @@
 using System.Text;
 using Freem.Domain.Entities.DataTransfer.Import;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Formats.TimeTracker;
 using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 using Utilities.Errors;
 using Utilities.Primitives;
 
-namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Import;
+namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Formats.TimeTracker;
 
 public sealed class TimeTrackerImportParserTests
 {
@@ -84,31 +85,12 @@ public sealed class TimeTrackerImportParserTests
     }
 
     [Fact]
-    public async Task ParseAsync_ShouldKeepCommasInNotes()
-    {
-        var result = await ParseTextAsync(Header, Row(notes: "first, second,third"));
-
-        Assert.True(result.Success);
-        Assert.Equal("first, second,third", Assert.Single(result.Value.Records).Name?.ToString());
-    }
-
-    [Fact]
     public async Task ParseAsync_ShouldLeaveNameEmpty_WhenNotesAreBlank()
     {
         var result = await ParseTextAsync(Header, Row(notes: " "));
 
         Assert.True(result.Success);
         Assert.Null(Assert.Single(result.Value.Records).Name);
-    }
-
-    [Fact]
-    public async Task ParseAsync_ShouldSupportRecordThroughMidnight()
-    {
-        var result = await ParseTextAsync(Header, Row(start: "30 Sep 2026, 23:30", end: "1 Oct 2026, 00:15"));
-
-        Assert.True(result.Success);
-        var period = Assert.Single(Assert.Single(result.Value.Records).Periods).Period;
-        Assert.Equal(TimeSpan.FromMinutes(45), period.EndAt - period.StartAt);
     }
 
     [Fact]
@@ -183,33 +165,9 @@ public sealed class TimeTrackerImportParserTests
         Assert.Equal(3, Assert.Single(result.Value.Warnings).LineNumber);
     }
 
-    [Fact]
-    public async Task ParseAsync_ShouldSupportCrLfAndBom()
-    {
-        var text = string.Join("\r\n", Header, Row(id: "1"), Row(id: "2")) + "\r\n";
-        var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(text)).ToArray();
-
-        var result = await ParseBytesAsync(bytes);
-
-        Assert.True(result.Success);
-        Assert.Equal(2, result.Value.Records.Count);
-        Assert.Equal(2, result.Value.RowsInFile);
-    }
-
-    [Fact]
-    public async Task ParseAsync_ShouldReturnEmptyResult_WhenThereAreNoRows()
-    {
-        var result = await ParseTextAsync(Header);
-
-        Assert.True(result.Success);
-        Assert.Empty(result.Value.Records);
-        Assert.Equal(0, result.Value.RowsInFile);
-    }
-
     [Theory]
     [InlineData("")]
     [InlineData("a,b,c")]
-    [InlineData("ID, Time item ID, Start Date")]
     public async Task ParseAsync_ShouldReturnInvalidRequest_WhenHeaderIsInvalid(string header)
     {
         var result = await ParseTextAsync(header, Row());

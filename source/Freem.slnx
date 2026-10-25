@@ -10,6 +10,10 @@
   <Project Path="Freem.Api.Public.UseCases.Contracts/Freem.Api.Public.UseCases.Contracts.csproj" />
   <Project Path="Freem.Api.Public.UseCases/Freem.Api.Public.UseCases.csproj" />
   <Project Path="Freem.Api.Public/Freem.Api.Public.csproj" />
+  <Project Path="Freem.DataTransfer.NativeJson.UnitTests/Freem.DataTransfer.NativeJson.UnitTests.csproj" />
+  <Project Path="Freem.DataTransfer.NativeJson/Freem.DataTransfer.NativeJson.csproj" />
+  <Project Path="Freem.DataTransfer.ZaferErtas.TimeTracker.UnitTests/Freem.DataTransfer.ZaferErtas.TimeTracker.UnitTests.csproj" />
+  <Project Path="Freem.DataTransfer.ZaferErtas.TimeTracker/Freem.DataTransfer.ZaferErtas.TimeTracker.csproj" />
   <Project Path="Freem.Domain.Entities/Freem.Domain.Entities.csproj" />
   <Project Path="Freem.Domain.Serialization.Json/Freem.Domain.Serialization.Json.csproj" />
   <Project Path="Freem.Domain.Storage.PostgreSQL.IntegrationTests/Freem.Domain.Storage.PostgreSQL.IntegrationTests.csproj" />

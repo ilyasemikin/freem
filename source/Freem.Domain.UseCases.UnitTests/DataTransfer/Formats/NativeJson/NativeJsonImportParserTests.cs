@@ -1,8 +1,9 @@
 using System.Text;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Formats.NativeJson;
 using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 
-namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Import;
+namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Formats.NativeJson;
 
 public sealed class NativeJsonImportParserTests
 {
@@ -46,10 +47,7 @@ public sealed class NativeJsonImportParserTests
 
     [Theory]
     [InlineData("not a json")]
-    [InlineData("null")]
-    [InlineData("""{ "format": "other", "version": 1 }""")]
     [InlineData("""{ "format": "freem", "version": 2 }""")]
-    [InlineData("""{ "format": "freem" }""")]
     [InlineData("""{ "format": "freem", "version": 1, "tags": [{ "id": "t1" }] }""")]
     [InlineData("""{ "format": "freem", "version": 1, "tags": [{ "id": "t1", "name": "a" }, { "id": "t1", "name": "b" }] }""")]
     [InlineData("""{ "format": "freem", "version": 1, "activities": [{ "id": "a1", "name": "x", "status": "Unknown" }] }""")]

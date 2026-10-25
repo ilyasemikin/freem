@@ -1,22 +1,22 @@
-using System.Text.Json;
+using Freem.DataTransfer.NativeJson;
+using Freem.DataTransfer.NativeJson.Models;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Entities.DataTransfer.Import;
 using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Tags.Models;
-using Freem.Domain.UseCases.Implementations.DataTransfer.Formats;
-using Freem.Domain.UseCases.Implementations.DataTransfer.Import.NativeJson;
+using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
 using Freem.Domain.Users.Models;
 using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 
-namespace Freem.Domain.UseCases.Implementations.DataTransfer.Import;
+namespace Freem.Domain.UseCases.Implementations.DataTransfer.Formats.NativeJson;
 
 public sealed class NativeJsonImportParser : IImportParser
 {
-    private static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
+    private readonly NativeJsonReader _reader = new();
 
     public FormatDescription Format => NativeJsonFormat.Description;
 
@@ -28,22 +28,13 @@ public sealed class NativeJsonImportParser : IImportParser
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(options);
 
-        NativeJsonFile? file;
-        try
-        {
-            file = await JsonSerializer.DeserializeAsync<NativeJsonFile>(input, SerializerOptions, cancellationToken);
-        }
-        catch (JsonException exception)
-        {
-            return CreateError($"File is not a valid JSON: {exception.Message}");
-        }
-
-        if (file is null)
-            return CreateError("File is empty");
+        var fileResult = await _reader.ReadAsync(input, cancellationToken);
+        if (!fileResult.Success)
+            return DomainErrorCatalog.Factories.CreateInvalidRequest(fileResult.Error.Message);
 
         try
         {
-            return Map(file);
+            return Map(fileResult.Value);
         }
         catch (NativeJsonParseException exception)
         {
@@ -53,11 +44,6 @@ public sealed class NativeJsonImportParser : IImportParser
 
     private static ImportParseResult Map(NativeJsonFile file)
     {
-        if (file.Format != NativeJsonFormat.FormatMarker)
-            throw new NativeJsonParseException($"Unexpected format \"{file.Format}\", expected \"{NativeJsonFormat.FormatMarker}\"");
-        if (file.Version != NativeJsonFormat.CurrentVersion)
-            throw new NativeJsonParseException($"Unsupported version \"{file.Version}\", supported version is {NativeJsonFormat.CurrentVersion}");
-
         var tags = (file.Tags ?? []).Select(MapTag).ToArray();
         var tagIds = CreateIdSet(tags.Select(tag => tag.Id), "tag");
 
@@ -193,14 +179,6 @@ public sealed class NativeJsonImportParser : IImportParser
     private static Error CreateError(string message)
     {
         return DomainErrorCatalog.Factories.CreateInvalidRequest(message);
-    }
-
-    private static JsonSerializerOptions CreateSerializerOptions()
-    {
-        return new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-        };
     }
 
     private sealed class NativeJsonParseException : Exception
