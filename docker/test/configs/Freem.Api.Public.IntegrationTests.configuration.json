@@ -1,21 +1,18 @@
 {
-  "WebApiApplication": {
-    "Api": {
-      "Ports": []
+  "Cors": {
+    "Origins": []
+  },
+  "Postgres": {
+    "ConnectionString": "Host=postgres; Port=5432; UserID=test; Password=test; Database=freem_api_test; Include Error Detail=true",
+    "EnableSensitiveDataLogging": true
+  },
+  "Redis": {
+    "ConnectionString": "redis:6379,allowAdmin=true"
+  },
+  "Integrations": {
+    "EgoHubClient": {
+      "Address": ""
     },
-    "OpenApi": {
-      "ServerAddresses": []
-    },
-    "Postgres": {
-      "ConnectionString": "Host=postgres; Port=5432; UserID=test; Password=test; Database=freem_api_test; Include Error Detail=true",
-      "EnableSensitiveDataLogging": true
-    },
-    "Redis": {
-      "ConnectionString": "redis:6379,allowAdmin=true"
-    },
-    "EgoHubIntegration": {
-      "Url": "",
-      "Token": ""
-    }
+    "EgoHubApiKey": ""
   }
 }

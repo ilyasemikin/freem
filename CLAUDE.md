@@ -107,7 +107,7 @@ Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`,
 
 There is no own authentication: the API validates EgoHub access tokens (`EgoHub.Authentication.AspNetCore`, bearer) and
 takes the Freem user id from the token `sub` claim (`UseCaseContextProvider`). EgoHub is an external service configured
-by `EgoHubIntegration:Url/Token` (service token `<KeyId>:<Value>`); the web client signs in through the Freem API
+by `Integrations:EgoHubClient:Address` and `Integrations:EgoHubApiKey` (service token `<KeyId>:<Value>`); the web client signs in through the Freem API
 (`api/v1/auth/{register,login,refresh,logout}`, refresh token in an HttpOnly cookie), which proxies to EgoHub. A Freem
 user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `Freem.Api.Public.IntegrationTests` need a
 running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid token in the local test config.

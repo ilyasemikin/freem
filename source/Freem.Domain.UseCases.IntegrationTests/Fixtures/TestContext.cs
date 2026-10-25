@@ -1,10 +1,9 @@
 ﻿using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
-using Freem.Domain.Storage.PostgreSQL.DependencyInjection;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.DependencyInjection;
-using Freem.Domain.UseCases.IntegrationTests.Infrastructure;
+using Freem.Domain.UseCases.IntegrationTests.Configuration;
 using Utilities.Locking.InMemory.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,12 +16,12 @@ namespace Freem.Domain.UseCases.IntegrationTests.Fixtures;
 
 public sealed class TestContext
 {
-    private readonly TestsConfiguration _configuration;
+    private readonly ConfigurationProperties _configuration;
     private readonly IServiceProvider _services;
     
     public TestContext()
     {
-        _configuration = TestsConfiguration.Read();
+        _configuration = ConfigurationProperties.Read();
         _services = BuildServiceProvider(_configuration);
     }
 
@@ -60,18 +59,13 @@ public sealed class TestContext
 
     }
     
-    private static IServiceProvider BuildServiceProvider(TestsConfiguration configuration)
+    private static IServiceProvider BuildServiceProvider(ConfigurationProperties configuration)
     {
         var services = new ServiceCollection();
 
-        var storageConfiguration = new StorageConfiguration(configuration.PostgresConnectionString)
-        {
-            SensitiveDataLogging = true
-        };
-
         services
             .AddUtcTruncatedToSecondsClock()
-            .AddPostgreSqlStorage(storageConfiguration)
+            .AddPostgreSqlStorage(configuration)
             .AddEntitiesUseCases()
             .AddLogging(builder => builder.AddProvider(NullLoggerProvider.Instance));
         

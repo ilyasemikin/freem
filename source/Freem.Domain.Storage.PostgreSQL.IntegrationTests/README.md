@@ -7,6 +7,9 @@ git update-index --skip-worktree configuration.json
 
 ```JSON
 {
-	"ConnectionString": "Your PostgreSQL connection string"
+	"Postgres": {
+		"ConnectionString": "Your PostgreSQL connection string",
+		"EnableSensitiveDataLogging": true
+	}
 }
 ```

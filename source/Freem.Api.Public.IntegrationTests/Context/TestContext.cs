@@ -6,7 +6,6 @@ using Freem.Api.Public.Client.DependencyInjection;
 using Freem.Api.Public.Client.Implementations;
 using Freem.Api.Public.IntegrationTests.Context.Preparers;
 using Freem.Api.Public.IntegrationTests.Infrastructure;
-using Freem.Api.Public.IntegrationTests.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit.Abstractions;
 
@@ -62,7 +61,6 @@ public sealed class TestContext
 
     private WebApplicationFactory<Program> BuildApplication(IConfiguration configuration)
     {
-        configuration = configuration.GetSection(nameof(TestsConfiguration.WebApiApplication));
         return new WebApiApplication(configuration, () => Output);
     }
     

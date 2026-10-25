@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Freem.Api.Public.Client.Configuration;
+using Freem.Api.Public.Client.Configuration.Abstractions;
 using Freem.Api.Public.Client.Implementations;
 using Freem.Api.Public.Client.Implementations.DataTransfer;
 using Freem.Domain.Serialization.Json;
@@ -13,10 +14,19 @@ namespace Freem.Api.Public.Client.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddWebClient(
+        this IServiceCollection services,
+        IFreemClientConfigurationProperties properties)
+    {
+        return services.AddWebClient(properties.FreemClient);
+    }
+
     public static IServiceCollection AddWebClient(this IServiceCollection services, ClientConfiguration configuration)
     {
+        var address = configuration.Address.ToString();
+
         return services
-            .AddSystemNetHttpClient(configuration.BaseAddress)
+            .AddSystemNetHttpClient(address)
             .AddWebClientSpecific();
     }
 

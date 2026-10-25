@@ -2,12 +2,12 @@
 
 public sealed class ClientConfiguration
 {
-    public string BaseAddress { get; }
+    public Uri Address { get; }
 
-    public ClientConfiguration(string baseAddress)
+    public ClientConfiguration(Uri address)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(baseAddress);
+        ArgumentNullException.ThrowIfNull(address);
         
-        BaseAddress = baseAddress;
+        Address = address;
     }
 }

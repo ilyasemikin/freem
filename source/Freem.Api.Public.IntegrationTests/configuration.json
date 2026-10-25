@@ -1,21 +1,18 @@
 {
-  "WebApiApplication": {
-    "Api": {
-      "Ports": []
+  "Cors": {
+    "Origins": []
+  },
+  "Postgres": {
+    "ConnectionString": "",
+    "EnableSensitiveDataLogging": true
+  },
+  "Redis": {
+    "ConnectionString": ""
+  },
+  "Integrations": {
+    "EgoHubClient": {
+      "Address": ""
     },
-    "OpenApi": {
-      "ServerAddresses": []
-    },
-    "Postgres": {
-      "ConnectionString": "",
-      "EnableSensitiveDataLogging": true
-    },
-    "Redis": {
-      "ConnectionString": ""
-    },
-    "EgoHubIntegration": {
-      "Url": "",
-      "Token": ""
-    }
+    "EgoHubApiKey": ""
   }
 }

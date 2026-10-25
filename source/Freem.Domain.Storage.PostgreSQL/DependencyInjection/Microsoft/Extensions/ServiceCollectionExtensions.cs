@@ -5,6 +5,8 @@ using Freem.Domain.Storage.Repositories.Records;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.Storage.Repositories.Tags;
 using Freem.Domain.Storage.Repositories.Users;
+using Freem.Domain.Storage.PostgreSQL.Configuration;
+using Freem.Domain.Storage.PostgreSQL.Configuration.Abstractions;
 using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Database.Constants;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
@@ -32,11 +34,22 @@ namespace Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensio
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddPostgreSqlStorage(
-        this IServiceCollection services, 
-        StorageConfiguration configuration)
+        this IServiceCollection services,
+        IPostgresConfigurationProperties properties,
+        StorageOptions? options = null)
     {
+        return services.AddPostgreSqlStorage(properties.Postgres, options);
+    }
+
+    public static IServiceCollection AddPostgreSqlStorage(
+        this IServiceCollection services,
+        PostgresConfiguration configuration,
+        StorageOptions? options = null)
+    {
+        options ??= new StorageOptions();
+
         return services
-            .AddDatabaseContext(configuration)
+            .AddDatabaseContext(configuration, options)
             .AddDatabaseContextErrorHandler()
             .AddEventsConverters()
             .AddStorageTransactions<DatabaseContext>()
@@ -44,30 +57,30 @@ public static class ServiceCollectionExtensions
     }
     
     public static IServiceCollection AddDatabaseContext(
-        this IServiceCollection services, StorageConfiguration configuration)
+        this IServiceCollection services, PostgresConfiguration configuration, StorageOptions options)
     {
-        services.TryAddSingleton(_ => NpgsqlDataSourceFactory.Create(configuration));
+        services.TryAddSingleton(_ => NpgsqlDataSourceFactory.Create(configuration, options));
         
         return services.AddDbContext<DatabaseContext>((provider, builder) =>
         {
             var ds = provider.GetRequiredService<NpgsqlDataSource>();
             
             builder
-                .UseNpgsql(ds, options =>
+                .UseNpgsql(ds, npgsql =>
                 {
-                    options.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
-                    options.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
-                    options.MapEnum<ActivityStatusDb>(EntitiesNames.Activities.Models.Status, EnvironmentNames.Schema);
+                    npgsql.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
+                    npgsql.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
+                    npgsql.MapEnum<ActivityStatusDb>(EntitiesNames.Activities.Models.Status, EnvironmentNames.Schema);
                 })
-                .EnableServiceProviderCaching(configuration.EnableServiceProviderCaching);
+                .EnableServiceProviderCaching(options.EnableServiceProviderCaching);
 
-            if (configuration.SensitiveDataLogging)
+            if (configuration.EnableSensitiveDataLogging)
                 builder
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             
-            if (configuration.Logger is not null)
-                builder.LogTo(message => configuration.Logger(message));
+            if (options.Logger is not null)
+                builder.LogTo(message => options.Logger(message));
         });
     }
 

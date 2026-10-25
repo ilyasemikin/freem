@@ -3,8 +3,8 @@ using Freem.Domain.Storage.PostgreSQL.Database;
 using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.DataFactories;
+using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Configuration;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure;
-using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -27,12 +27,11 @@ public abstract class BaseRepositoryTests<TRepository> : IDisposable
     {
         EntitiesFactory = new DatabaseEntitiesFactory(DefaultEntitiesUserId);
         
-        var configuration = TestsConfiguration
-            .Read()
-            .ToStorageConfiguration(output.WriteLine);
+        var configuration = ConfigurationProperties.Read();
+        var storageOptions = StorageOptionsFactory.Create(output.WriteLine);
         
         var services = new ServiceCollection();
-        services.AddPostgreSqlStorage(configuration);
+        services.AddPostgreSqlStorage(configuration, storageOptions);
 
         var options = new ServiceProviderOptions { ValidateOnBuild = true };
 

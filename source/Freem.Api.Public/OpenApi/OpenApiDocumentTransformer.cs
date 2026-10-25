@@ -1,4 +1,4 @@
-﻿using Freem.Api.Public.Configuration.Extensions;
+﻿using Freem.Api.Public.Configuration.Subsystems;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
@@ -6,29 +6,28 @@ namespace Freem.Api.Public.OpenApi;
 
 internal sealed class OpenApiDocumentTransformer : IOpenApiDocumentTransformer
 {
+    private readonly OpenApiConfigurationProperties _configuration;
+
+    public OpenApiDocumentTransformer(OpenApiConfigurationProperties configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        _configuration = configuration;
+    }
+
     public Task TransformAsync(
         OpenApiDocument document, 
         OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
-        var configuration = context.ApplicationServices.GetRequiredService<IConfiguration>();
-        var info = configuration.GetOpenApiConfiguration();
-        
-        var environment = context.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-        if (environment.IsDevelopment() || info.ServerAddresses.Count == 0)
+        if (string.IsNullOrWhiteSpace(_configuration.ServerUrl))
             return Task.CompletedTask;
 
-        document.Servers ??= new List<OpenApiServer>();
-        document.Servers.Clear();
-        foreach (var address in info.ServerAddresses)
+        var server = new OpenApiServer
         {
-            var server = new OpenApiServer
-            {
-                Url = address
-            };
-            
-            document.Servers.Add(server);
-        }
+            Url = _configuration.ServerUrl
+        };
+        document.Servers = [server];
         
         return Task.CompletedTask;
     }

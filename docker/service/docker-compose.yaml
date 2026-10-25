@@ -52,12 +52,12 @@ services:
       args:
         GIT_COMMIT: ${GIT_COMMIT:-}
     environment:
-      Api__Ports__0: 8080
-      Api__CorsOrigins__0: ${WEB_PUBLIC_URL}
+      ASPNETCORE_HTTP_PORTS: 8080
+      Cors__Origins__0: ${WEB_PUBLIC_URL}
       Postgres__ConnectionString: Host=postgres; Port=5432; UserID=${POSTGRES_USER}; Password=${POSTGRES_PASSWORD}; Database=freem
       Redis__ConnectionString: redis:6379
-      EgoHubIntegration__Url: ${EGOHUB_INTEGRATION_URL}
-      EgoHubIntegration__Token: ${EGOHUB_INTEGRATION_TOKEN}
+      Integrations__EgoHubClient__Address: ${EGOHUB_INTEGRATION_URL}
+      Integrations__EgoHubApiKey: ${EGOHUB_INTEGRATION_TOKEN}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:

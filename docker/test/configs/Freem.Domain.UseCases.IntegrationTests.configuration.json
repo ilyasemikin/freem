@@ -1,3 +1,6 @@
 {
-  "PostgresConnectionString": "Host=postgres; Port=5432; UserID=test; Password=test; Database=freem_usecases_test; Include Error Detail=true"
+  "Postgres": {
+    "ConnectionString": "Host=postgres; Port=5432; UserID=test; Password=test; Database=freem_usecases_test; Include Error Detail=true",
+    "EnableSensitiveDataLogging": true
+  }
 }

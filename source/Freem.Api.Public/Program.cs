@@ -1,4 +1,3 @@
-using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 using EgoHub.Api.Public.Client.Abstractions;
@@ -11,8 +10,8 @@ using Freem.Domain.Serialization.Json;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Authentication.EgoHub;
 using Freem.Api.Public.Build;
-using Freem.Api.Public.Configuration.DependencyInjection.Microsoft.Extensions;
-using Freem.Api.Public.Configuration.Extensions;
+using Freem.Api.Public.Configuration;
+using Freem.Api.Public.Configuration.Subsystems;
 using Freem.Api.Public.Contracts;
 using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.ErrorHandling;
@@ -37,18 +36,9 @@ builder.Host.UseDefaultServiceProvider(options =>
     options.ValidateOnBuild = true;
 });
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    var configuration = builder.Configuration.GetApiConfiguration();
-
-    if (configuration.Ports is null || configuration.Ports.Count == 0)
-        return;
-
-    foreach (var port in configuration.Ports)
-        options.Listen(IPAddress.Any, port);
-});
-
-builder.Services.AddConfiguration(builder.Configuration);
+var configuration = builder.Configuration.Get<ConfigurationProperties>();
+if (configuration is null)
+    throw new InvalidOperationException("configuration is null");
 
 builder.Services.AddHttpLogging(o => {});
 
@@ -56,17 +46,14 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        var configuration = builder.Configuration.GetApiConfiguration();
+        var origins = configuration.Cors.Origins.ToArray();
 
-        if (configuration.CorsOrigins is not null)
-        {
-            policy
-                .WithOrigins(configuration.CorsOrigins.ToArray())
-                .AllowAnyHeader()
-                .AllowCredentials()
-                .AllowAnyMethod()
-                .WithExposedHeaders([HeaderNames.ContentDisposition]);
-        }
+        policy
+            .WithOrigins(origins)
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .AllowAnyMethod()
+            .WithExposedHeaders([HeaderNames.ContentDisposition]);
     });
 });
 
@@ -78,18 +65,18 @@ builder.Services
     .AddLogging();
 
 builder.Services
-    .AddPostgreSqlStorage(builder.Configuration.GetStorageConfiguration());
+    .AddPostgreSqlStorage(configuration);
 
-builder.Services.AddRedisLocking(builder.Configuration.GetRedisConnectionString());
+builder.Services.AddRedisLocking(configuration.Redis.ConnectionString);
 
 builder.Services
     .AddEntitiesUseCases()
     .AddApiUseCases();
 
-var egoHubConfiguration = builder.Configuration.GetEgoHubIntegrationConfiguration();
-var egoHubToken = TokenCredential.Parse(egoHubConfiguration.Token, null);
-builder.Services.AddTransient<ITokenCredentialLoader>(_ => new StaticTokenCredentialLoader(egoHubToken));
-builder.Services.AddPublicClient(egoHubConfiguration.Url);
+var egoHubApiKey = TokenCredential.Parse(configuration.Integrations.EgoHubApiKey, null);
+builder.Services.AddTransient<ITokenCredentialLoader>(_ => new StaticTokenCredentialLoader(egoHubApiKey));
+var egoHubAddress = configuration.Integrations.EgoHubClient.Address.ToString();
+builder.Services.AddPublicClient(egoHubAddress);
 
 builder.Services
     .AddAuthentication(EgoHubBearerAuthenticationDefaults.SchemeName)
@@ -133,6 +120,7 @@ builder.Services
 
 builder.Services.AddTransient<IPostConfigureOptions<MvcOptions>, ArgumentValidationMvcOptionsSetup>();
 
+builder.Services.AddSingleton(configuration.OpenApi ?? new OpenApiConfigurationProperties());
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<OpenApiDocumentTransformer>();

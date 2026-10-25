@@ -5,8 +5,8 @@ using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
+using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Configuration;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure;
-using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Infrastructure.Extensions;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.Tests.Repositories.Base;
 using Freem.Domain.Storage.Repositories.DataTransfer.Import;
 using Freem.Domain.Tags;
@@ -606,11 +606,10 @@ public sealed class ImportDocumentsRepositoryTests : BaseRepositoryTests<IImport
         var document = CreateDocument(userId);
         await Repository.CreateAsync(document);
 
-        var configuration = TestsConfiguration
-            .Read()
-            .ToStorageConfiguration(_output.WriteLine);
+        var configuration = ConfigurationProperties.Read();
+        var storageOptions = StorageOptionsFactory.Create(_output.WriteLine);
         var services = new ServiceCollection();
-        services.AddPostgreSqlStorage(configuration);
+        services.AddPostgreSqlStorage(configuration, storageOptions);
         await using var provider = services.BuildServiceProvider();
         var otherRepository = provider.GetRequiredService<IImportDocumentRepository>();
 

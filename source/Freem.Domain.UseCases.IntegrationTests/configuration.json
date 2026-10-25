@@ -1,3 +1,6 @@
-﻿{
-  "PostgresConnectionString": ""
+{
+  "Postgres": {
+    "ConnectionString": "",
+    "EnableSensitiveDataLogging": true
+  }
 }
