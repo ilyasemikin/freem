@@ -31,6 +31,7 @@
       <PackageReference Include="Scalar.AspNetCore" Version="2.11.1" />
       <PackageReference Include="EgoHub.Api.Public.Client" Version="0.0.10"/>
       <PackageReference Include="EgoHub.Authentication.AspNetCore" Version="0.0.1"/>
+      <PackageReference Include="Utilities.App" Version="0.1.0"/>
       <PackageReference Include="Utilities.Clock" Version="0.1.0"/>
       <PackageReference Include="Utilities.Errors" Version="0.0.1"/>
       <PackageReference Include="Utilities.Locking.Redis" Version="0.1.0"/>

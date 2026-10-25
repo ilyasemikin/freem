@@ -9,7 +9,6 @@ using EgoHub.Domain.Services;
 using Freem.Domain.Serialization.Json;
 using Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 using Freem.Api.Public.Authentication.EgoHub;
-using Freem.Api.Public.Build;
 using Freem.Api.Public.Configuration;
 using Freem.Api.Public.Configuration.Subsystems;
 using Freem.Api.Public.Contracts;
@@ -24,6 +23,7 @@ using Freem.Domain.UseCases.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
+using Utilities.App.DependencyInjection;
 using Utilities.Clock.DependencyInjection.Microsoft;
 using Utilities.Errors.Serialization.Json.Extensions;
 using Utilities.Locking.Redis.DependencyInjection;
@@ -57,7 +57,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton(BuildInfo.FromEntryAssembly());
+builder.Services.AddBuildInfo();
 
 builder.Services
     .AddUtcTruncatedToSecondsClock()

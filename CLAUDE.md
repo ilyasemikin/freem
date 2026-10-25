@@ -101,7 +101,7 @@ Freem.DataTransfer.*                       # import/export file formats without 
 Freem.*                                    # small shared libraries (Time, Sorting, ...)
 ```
 
-Shared `Utilities.*` packages (`Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`, `Locking`, `Locking.Redis`, `Locking.InMemory`) come from a local NuGet feed:
+Shared `Utilities.*` packages (`App`, `Collections`, `Clock`, `Http`, `Http.SystemNet`, `Serialization.Json`, `Primitives`, `UseCases`, `Errors`, `Errors.Serialization.Json`, `Http.Errors`, `Locking`, `Locking.Redis`, `Locking.InMemory`) come from a local NuGet feed:
 `source/Directory.Build.props` registers `source/packages/`, whose `.nupkg` files are not in git (only
 `.gitkeep`). Build them in `~/Sources/CSharpUtilities` (`docker/out/packages/`) and copy the needed versions into
 `packages/` before `dotnet restore`; a clean clone does not restore without them. Versions are pinned in the `.csproj`.
