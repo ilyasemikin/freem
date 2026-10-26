@@ -11,6 +11,8 @@ export class DatePeriodHelper {
     switch (unit) {
       case DateUnit.Day:
         return {unit: "day", day: `${year}-${month}-${day}`};
+      case DateUnit.Week:
+        return {unit: "week", week: `${year}-${month}-${day}`};
       case DateUnit.Month:
         return {unit: "month", month: `${month}.${year}`};
       case DateUnit.Year:

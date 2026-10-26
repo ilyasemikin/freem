@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
+using Freem.Domain.Users.Models;
 using Freem.Time;
 
 namespace Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
@@ -14,7 +15,7 @@ public sealed class DayStatisticsPeriod : IStatisticsPeriod
         Date = date;
     }
     
-    public DatePeriod ToDatePeriod()
+    public DatePeriod ToDatePeriod(WeekStart weekStart)
     {
         var start = Date;
         var end = Date.AddDays(1);

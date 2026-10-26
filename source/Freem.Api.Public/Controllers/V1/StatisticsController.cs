@@ -35,10 +35,10 @@ public sealed class StatisticsController : BaseController
         return await Mediator.ExecuteAsync<ApiStatisticsPerDaysRequest, IActionResult>(context, request, cancellationToken);
     }
 
-    /// <summary>Returns statistics summed over a single day, month or year.</summary>
-    /// <param name="query">The day, month or year to aggregate.</param>
+    /// <summary>Returns statistics summed over a single day, week, month or year.</summary>
+    /// <param name="query">The day, week, month or year to aggregate.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <remarks>Day boundaries follow the user's day UTC offset setting.</remarks>
+    /// <remarks>Day boundaries follow the user's day UTC offset setting, a week starts on the user's first day of the week.</remarks>
     [HttpGet("per-period")]
     [ProducesResponseType<StatisticsPerPeriodResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]

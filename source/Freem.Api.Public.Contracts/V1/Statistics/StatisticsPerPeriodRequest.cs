@@ -2,10 +2,10 @@
 
 namespace Freem.Api.Public.Contracts.V1.Statistics;
 
-/// <summary>Query for statistics over a single day, month or year.</summary>
+/// <summary>Query for statistics over a single day, week, month or year.</summary>
 public class StatisticsPerPeriodRequest
 {
-    /// <summary>The day, month or year to aggregate.</summary>
+    /// <summary>The day, week, month or year to aggregate.</summary>
     public IUnitPeriod Period { get; }
     
     public StatisticsPerPeriodRequest(IUnitPeriod period)

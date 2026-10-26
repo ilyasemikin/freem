@@ -3,6 +3,7 @@
 public enum DateUnit
 {
     Day,
+    Week,
     Month,
     Year
 }

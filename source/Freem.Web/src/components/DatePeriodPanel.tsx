@@ -7,10 +7,12 @@ import {DatePeriod} from "../data/DatePeriod.ts";
 import {Calendar} from "primereact/calendar";
 import {FormEvent} from "primereact/ts-helpers";
 import {TimeZoneHelper} from "../helpers/TimeZoneHelper.ts";
+import {CalendarHelper} from "../helpers/CalendarHelper.ts";
+import {useUserSettings} from "../settings/context/useUserSettings.ts";
 
 export interface IDatePeriodProps {
   unit: DateUnit;
-  // Date without time (00:00 UTC of the user's day)
+  // Date without time (00:00 UTC of the user's day): the start of the period
   date: Date;
 
   onChange?: (period: DatePeriod) => void;
@@ -18,6 +20,8 @@ export interface IDatePeriodProps {
 
 export function DatePeriodPanel(props: IDatePeriodProps) {
   const {unit, date, onChange} = props;
+
+  const {weekStart} = useUserSettings();
 
   const panelRef = useRef<IPopoverPanelHandle>(null);
 
@@ -40,7 +44,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
     }
 
     if (onChange) {
-      const period = DateHelper.getPeriod(unit, value);
+      const period = DateHelper.getPeriod(unit, value, weekStart);
       onChange(period);
     }
   }
@@ -72,6 +76,14 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
     switch (unit) {
       case DateUnit.Day:
         return `${day}/${month}/${year}`;
+      case DateUnit.Week: {
+        // The end of the period is exclusive: the label shows the last day of the week
+        const period = DateHelper.getPeriod(unit, date, weekStart);
+        const last = DateHelper.addUnits(DateUnit.Day, period.end, -1);
+        const first = TimeZoneHelper.formatDayMonth(period.start);
+        const lastDate = TimeZoneHelper.formatDate(last);
+        return `${first} - ${lastDate}`;
+      }
       case DateUnit.Month:
         return `${month}/${year}`;
       case DateUnit.Year:
@@ -82,6 +94,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
   function view() {
     switch (unit) {
       case DateUnit.Day:
+      case DateUnit.Week:
         return "date";
       case DateUnit.Month:
         return "month";
@@ -101,7 +114,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
               tabIndex={0}
               aria-label="Select date"
               title="Select date"
-              className="numeric" style={{width: "10ch", margin: "0 8px", textAlign: "center", cursor: "pointer", fontWeight: 500}}
+              className="numeric" style={{width: unit === DateUnit.Week ? "18ch" : "10ch", margin: "0 8px", textAlign: "center", cursor: "pointer", fontWeight: 500}}
               onClick={toggle}
               onKeyDown={handleKeyDown}>
             {current()}
@@ -113,6 +126,7 @@ export function DatePeriodPanel(props: IDatePeriodProps) {
         <PopoverPanel ref={panelRef}>
           <Calendar
               view={view()}
+              locale={CalendarHelper.locale(weekStart)}
               value={TimeZoneHelper.dateToCalendarValue(date)}
               onChange={changeByCalendar}
               inline/>
