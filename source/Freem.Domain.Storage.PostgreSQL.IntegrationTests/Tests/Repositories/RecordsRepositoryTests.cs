@@ -1,6 +1,7 @@
 ﻿using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Models.Ids;
 using Freem.Domain.Storage.Repositories.Records;
@@ -56,6 +57,36 @@ public sealed class RecordsRepositoryTests : BaseRepositoryTests<IRecordReposito
         var dbRecordActual = await Database.Records.FindEntityAsync(record.Id);
         
         Assert.Equal(dbRecord, dbRecordActual);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ShouldStoreImportSource()
+    {
+        // Arrange
+        var dbUser = EntitiesFactory.User;
+        var dbActivities = EntitiesFactory.CreateActivities(1);
+
+        await Database.AddRangeAsync(dbUser);
+        await Database.AddRangeAsync(dbActivities);
+        await Database.SaveChangesAsync();
+
+        // Act
+        var dbRecord = EntitiesFactory.CreateImportRecord();
+        dbRecord.Activities = dbActivities.ToList();
+        dbRecord.Tags = [];
+
+        var record = dbRecord.MapToDomainEntity();
+
+        var writeResult = await Repository.CreateAsync(record);
+
+        // Assert
+        Assert.True(writeResult.Success);
+
+        var actual = await Repository.FindByIdAsync(record.Id);
+
+        Assert.True(actual.Success);
+        Assert.IsType<ImportRecordSource>(actual.Value.Source);
+        Assert.Equal(record.Source, actual.Value.Source);
     }
 
     [Fact]

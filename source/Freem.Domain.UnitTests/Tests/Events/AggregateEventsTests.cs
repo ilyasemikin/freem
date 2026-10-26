@@ -15,6 +15,7 @@ using Freem.Domain.Tags.Models;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
 using Freem.Time;
+using Freem.Domain.Records.Sources;
 
 namespace Freem.Domain.UnitTests.Tests.Events;
 
@@ -93,7 +94,7 @@ public sealed class AggregateEventsTests
         var period = new DateTimePeriod(DateTimeOffset.UtcNow.AddHours(-1), TimeSpan.FromHours(1));
         var recordPeriod = new RecordPeriod(RecordPeriodId.Generate(), period, TimeZoneOffset.Default);
         var periods = new RecordPeriodsCollection(recordPeriod);
-        var record = new EntityRecord(recordId, _userId, activities, tags, periods)
+        var record = new EntityRecord(recordId, _userId, activities, tags, periods, ManualRecordSource.Instance)
         {
             Name = RecordName.Parse("name", null)
         };

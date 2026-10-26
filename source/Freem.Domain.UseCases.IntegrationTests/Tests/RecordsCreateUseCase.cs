@@ -1,5 +1,6 @@
 ﻿using Freem.Domain.Activities;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
 using Freem.Domain.UseCases.Context;
@@ -61,6 +62,19 @@ public sealed class RecordsCreateUseCase : UseCaseTestBase
         Assert.Equal(RecordName, response.Value.Record.Name);
         Assert.Equal(RecordDescription, response.Value.Record.Description);
         Assert.Equal(_activities, response.Value.Record.Activities, IReadOnlyRelatedIdsCollection<ActivityId>.Equals);
+    }
+
+    [Fact]
+    public async Task ShouldStoreManualSource()
+    {
+        var request = new CreateRecordRequest(_period, _activities);
+
+        var response = await Context.ExecuteAsync<CreateRecordRequest, Result<CreateRecordResponse, Error>>(_context, request);
+
+        Assert.True(response.Success);
+        using var executor = Context.CreateExecutor();
+        var stored = await executor.Records.RequiredGetAsync(_context, response.Value.Record.Id);
+        Assert.Equal(ManualRecordSource.Instance, stored.Source);
     }
 
     [Fact]

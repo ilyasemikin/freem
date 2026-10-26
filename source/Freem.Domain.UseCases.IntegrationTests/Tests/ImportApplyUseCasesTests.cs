@@ -2,6 +2,7 @@ using System.Text;
 using Freem.Domain.Activities;
 using Freem.Domain.Entities.DataTransfer.Import;
 using Freem.Domain.Events;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Relations.Collections;
@@ -230,6 +231,13 @@ public sealed class ImportApplyUseCasesTests : UseCaseTestBase
         var expectedPeriods = selected.Select(r => r.Record.Periods[0].Period).OrderBy(p => p.StartAt);
         var actualPeriods = records.Records.Select(r => r.Periods[0].Period).OrderBy(p => p.StartAt);
         Assert.Equal(expectedPeriods, actualPeriods);
+        var expectedSources = selected
+            .Select(r => new ImportRecordSource(document.Id, r.Id, document.Format, r.Record.Id))
+            .OrderBy(s => s.RowId.ToString());
+        var actualSources = records.Records
+            .Select(r => Assert.IsType<ImportRecordSource>(r.Source))
+            .OrderBy(s => s.RowId.ToString());
+        Assert.Equal(expectedSources, actualSources);
     }
 
     [Fact]

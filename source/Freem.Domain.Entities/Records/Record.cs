@@ -2,6 +2,7 @@
 using Freem.Domain.Records;
 using Freem.Domain.Records.Events;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users;
 
@@ -20,16 +21,20 @@ public sealed class Record :
 
     public RecordPeriodsCollection Periods { get; }
 
+    public RecordSource Source { get; }
+
     public Record(
         RecordId id,
         UserId userId,
         RelatedActivityIdsCollection activities,
         RelatedTagIdsCollection tags,
-        RecordPeriodsCollection periods)
+        RecordPeriodsCollection periods,
+        RecordSource source)
     {
         ArgumentNullException.ThrowIfNull(activities);
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(periods);
+        ArgumentNullException.ThrowIfNull(source);
 
         Id = id;
         UserId = userId;
@@ -38,6 +43,7 @@ public sealed class Record :
         Tags = tags;
         
         Periods = periods;
+        Source = source;
     }
 
     public RecordCreatedEvent BuildCreatedEvent(EventId eventId)

@@ -24,6 +24,7 @@ public sealed class RecordEqualityComparer : IEqualityComparer<Record>
             x.Periods.Equals(y.Periods) &&
             x.Name == y.Name &&
             x.Description == y.Description &&
+            x.Source.Equals(y.Source) &&
             IReadOnlyRelatedIdsCollection<ActivityId>.Equals(x.Activities, y.Activities) &&
             IReadOnlyRelatedIdsCollection<TagId>.Equals(x.Tags, y.Tags);
     }

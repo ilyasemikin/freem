@@ -7,6 +7,7 @@ using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
@@ -77,6 +78,7 @@ public static class EntitiesJsonSerialization
         yield return new ParsableJsonConverter<RecordName>();
         yield return new ParsableJsonConverter<RecordPeriodId>();
         yield return new ParsableJsonConverter<RecordPeriodDescription>();
+        yield return new JsonStringEnumConverter<RecordSourceType>(JsonNamingPolicy.SnakeCaseLower);
 
         yield return new ParsableJsonConverter<RunningRecordId>();
 

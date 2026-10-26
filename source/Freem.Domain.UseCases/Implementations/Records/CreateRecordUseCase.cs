@@ -51,7 +51,7 @@ internal sealed class CreateRecordUseCase
             return periodsResult.Error;
 
         var id = RecordId.Generate();
-        var record = new Record(id, context.UserId, request.Activities, request.Tags, periodsResult.Value)
+        var record = new Record(id, context.UserId, request.Activities, request.Tags, periodsResult.Value, request.Source)
         {
             Name = request.Name,
             Description = request.Description

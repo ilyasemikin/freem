@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Storage.Repositories.RunningRecords;
 using Freem.Domain.UseCases.Context;
@@ -95,6 +96,7 @@ internal sealed class StopRunningRecordUseCase
             Description = record.Description,
             
             Tags = record.Tags,
+            Source = RunningRecordSource.Instance
         };
     }
 }

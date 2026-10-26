@@ -14,6 +14,7 @@ using Freem.Domain.UseCases.UnitTests.Fixtures;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
 using Freem.Time;
+using Freem.Domain.Records.Sources;
 
 namespace Freem.Domain.UseCases.UnitTests.DataTransfer.Export;
 
@@ -150,7 +151,7 @@ public sealed class ExportItemReaderTests
             ? new RelatedTagIdsCollection()
             : new RelatedTagIdsCollection([tagId]);
         var periods = new RecordPeriodsCollection(CreatePeriod(index * 10, index * 10 + 5));
-        return new RecordEntity(RecordId.Generate(), _userId, activities, tags, periods);
+        return new RecordEntity(RecordId.Generate(), _userId, activities, tags, periods, ManualRecordSource.Instance);
     }
 
     private static RecordPeriod CreatePeriod(int startMinutes, int endMinutes)

@@ -1,8 +1,10 @@
 using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
+using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.Entities.DataTransfer.Import;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Tags;
 using Freem.Domain.Tags.Models;
 using Freem.Domain.UseCases.Implementations.DataTransfer.Import;
@@ -16,6 +18,7 @@ public sealed class ImportApplyMappingTests
 {
     private static readonly DateTimeOffset Start = new(2026, 10, 1, 8, 0, 0, TimeSpan.Zero);
     private static readonly UserId UserId = UserId.Generate();
+    private static readonly FormatKey Format = FormatKey.Parse("time-tracker", null);
 
     private static ImportActivityId ActivityKey(string value)
     {
@@ -128,7 +131,7 @@ public sealed class ImportApplyMappingTests
         var second = CreatePeriod(20, 10, TimeSpan.FromHours(-5));
         var row = CreateRow(["a1", "a2"], ["t1"], first, second);
 
-        var record = ImportRecordFactory.TryCreate(row, UserId, mappings);
+        var record = ImportRecordFactory.TryCreate(row, Format, UserId, mappings);
 
         Assert.NotNull(record);
         Assert.Equal(UserId, record.UserId);
@@ -140,6 +143,11 @@ public sealed class ImportApplyMappingTests
         Assert.Equal(first.TimeZoneOffset, record.Periods[0].TimeZoneOffset);
         Assert.Equal(second.Period, record.Periods[1].Period);
         Assert.Equal(second.TimeZoneOffset, record.Periods[1].TimeZoneOffset);
+        var source = Assert.IsType<ImportRecordSource>(record.Source);
+        Assert.Equal(row.DocumentId, source.DocumentId);
+        Assert.Equal(row.Id, source.RowId);
+        Assert.Equal(Format, source.Format);
+        Assert.Equal(row.Record.Id, source.ImportRecordId);
     }
 
     [Fact]
@@ -149,7 +157,7 @@ public sealed class ImportApplyMappingTests
         var period = CreatePeriod(0, 0, TimeSpan.Zero);
         var row = CreateRow(["a1"], [], period);
 
-        var record = ImportRecordFactory.TryCreate(row, UserId, mappings);
+        var record = ImportRecordFactory.TryCreate(row, Format, UserId, mappings);
 
         Assert.Null(record);
     }
@@ -162,7 +170,7 @@ public sealed class ImportApplyMappingTests
         var second = CreatePeriod(10, 30, TimeSpan.Zero);
         var row = CreateRow(["a1"], [], first, second);
 
-        var record = ImportRecordFactory.TryCreate(row, UserId, mappings);
+        var record = ImportRecordFactory.TryCreate(row, Format, UserId, mappings);
 
         Assert.Null(record);
     }
@@ -173,7 +181,7 @@ public sealed class ImportApplyMappingTests
         var mappings = new ImportMappings([CreateImportActivity("a1", null)], []);
         var row = CreateRow("a1");
 
-        var exception = Record.Exception(() => ImportRecordFactory.TryCreate(row, UserId, mappings));
+        var exception = Record.Exception(() => ImportRecordFactory.TryCreate(row, Format, UserId, mappings));
 
         Assert.IsType<InvalidOperationException>(exception);
     }

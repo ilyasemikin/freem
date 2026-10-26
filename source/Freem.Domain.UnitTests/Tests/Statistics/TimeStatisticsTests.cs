@@ -8,6 +8,7 @@ using Freem.Domain.Users.Models;
 using Freem.Time;
 using Freem.Time.Extensions;
 using Record = Freem.Domain.Entities.Records.Record;
+using Freem.Domain.Records.Sources;
 
 namespace Freem.Domain.UnitTests.Tests.Statistics;
 
@@ -232,7 +233,8 @@ public class TimeStatisticsTests
             DefaultUserId,
             DefaultRelatedActivities,
             RelatedTagIdsCollection.Empty,
-            new RecordPeriodsCollection(secondPeriods));
+            new RecordPeriodsCollection(secondPeriods),
+            ManualRecordSource.Instance);
 
         var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
 
@@ -259,7 +261,8 @@ public class TimeStatisticsTests
             DefaultUserId,
             DefaultRelatedActivities,
             RelatedTagIdsCollection.Empty,
-            new RecordPeriodsCollection(periods));
+            new RecordPeriodsCollection(periods),
+            ManualRecordSource.Instance);
 
         var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
 
@@ -304,6 +307,6 @@ public class TimeStatisticsTests
         var periodId = RecordPeriodId.Generate();
         var recordPeriod = new RecordPeriod(periodId, period, TimeZoneOffset.Default);
         var periods = new RecordPeriodsCollection(recordPeriod);
-        return new Record(id, DefaultUserId, activities, RelatedTagIdsCollection.Empty, periods);
+        return new Record(id, DefaultUserId, activities, RelatedTagIdsCollection.Empty, periods, ManualRecordSource.Instance);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Relations.Collections;
 using Freem.Time;
 using Utilities.UseCases.Abstractions;
@@ -11,6 +12,7 @@ public sealed class CreateRecordRequest : IRequest
     public RequestType Type => RequestTypes.Records.Create;
 
     private readonly RelatedTagIdsCollection _tags = RelatedTagIdsCollection.Empty;
+    private readonly RecordSource _source = ManualRecordSource.Instance;
     
     public IReadOnlyList<NewRecordPeriod> Periods { get; }
 
@@ -29,6 +31,17 @@ public sealed class CreateRecordRequest : IRequest
             _tags = value;
         }
     } 
+
+    public RecordSource Source
+    {
+        get => _source;
+        init
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            _source = value;
+        }
+    }
     
     public CreateRecordRequest(DateTimePeriod period, RelatedActivityIdsCollection activities)
         : this([new NewRecordPeriod(period)], activities)

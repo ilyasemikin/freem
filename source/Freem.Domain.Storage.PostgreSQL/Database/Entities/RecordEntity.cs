@@ -15,6 +15,12 @@ internal sealed class RecordEntity :
     public string? Name { get; set; }
     public string? Description { get; set; }
 
+    public required string SourceType { get; init; }
+    public string? SourceImportDocumentId { get; init; }
+    public string? SourceImportRowId { get; init; }
+    public string? SourceImportFormat { get; init; }
+    public string? SourceImportRecordId { get; init; }
+
     public UserEntity? User { get; set; }
     public ICollection<RecordPeriodEntity>? Periods { get; set; }
     public ICollection<ActivityEntity>? Activities { get; set; }
@@ -37,6 +43,11 @@ internal sealed class RecordEntity :
             UserId == other.UserId && 
             Name == other.Name && 
             Description == other.Description && 
+            SourceType == other.SourceType &&
+            SourceImportDocumentId == other.SourceImportDocumentId &&
+            SourceImportRowId == other.SourceImportRowId &&
+            SourceImportFormat == other.SourceImportFormat &&
+            SourceImportRecordId == other.SourceImportRecordId &&
             Periods.NullableUnorderedEquals(other.Periods) && 
             Activities.NullableUnorderedEquals(other.Activities) && 
             Tags.NullableUnorderedEquals(other.Tags) &&
