@@ -8,7 +8,8 @@ export class TimeDuration {
   }
 
   public toString(): string {
-    const total = Math.floor(this.seconds);
+    const sign = this.seconds < 0 ? "-" : "";
+    const total = Math.floor(Math.abs(this.seconds));
     const days = Math.floor(total / 60 / 60 / 24).toString();
     const hours = DateHelper.padPart(Math.floor(total / 60 / 60) % 24);
     const minutes = DateHelper.padPart(Math.floor(total / 60) % 60);
@@ -16,22 +17,25 @@ export class TimeDuration {
 
     const result = `${hours}:${minutes}:${seconds}`;
     return days !== "0"
-        ? `${days}.${result}`
-        : result;
+        ? `${sign}${days}.${result}`
+        : `${sign}${result}`;
   }
 
+  // Format of .NET TimeSpan: [-][d.]hh:mm:ss[.fffffff]
   public static parse(input: string): TimeDuration {
-    const parts = input.split(":").map(s => s.trim());
+    const negative = input.trim().startsWith("-");
+    const unsigned = negative ? input.trim().substring(1) : input;
+    const parts = unsigned.split(":").map(s => s.trim());
 
     if (parts.length !== 3) {
-      throw new Error();
+      throw new Error(`Invalid duration "${input}"`);
     }
 
     let total = 0;
     if (parts[0].length !== 2) {
       const sparts = parts[0].split(".").map(s => s.trim());
       if (sparts.length !== 2) {
-        throw new Error();
+        throw new Error(`Invalid duration "${input}"`);
       }
 
       const days = +sparts[0];
@@ -49,6 +53,10 @@ export class TimeDuration {
         minutes * 60 +
         seconds;
 
-    return new TimeDuration(total);
+    if (isNaN(total)) {
+      throw new Error(`Invalid duration "${input}"`);
+    }
+
+    return new TimeDuration(negative ? -total : total);
   }
 }

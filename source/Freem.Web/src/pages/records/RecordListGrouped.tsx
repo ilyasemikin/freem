@@ -4,6 +4,7 @@ import {RecordList} from "./RecordList.tsx";
 import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
 import {TimeZoneOffset} from "../../data/TimeZoneOffset.ts";
 import {useUserSettings} from "../../settings/context/useUserSettings.ts";
+import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 
 // ISO date of the user's day: sorts chronologically
 function getDayKey(moment: Date, offset: TimeZoneOffset): string {
@@ -35,13 +36,14 @@ function group(groupRecords: boolean, records: RecordEntity[], offset: TimeZoneO
 export interface IRecordListGroupedProps {
   groupRecords: boolean;
   records: RecordEntity[];
+  visiblePeriod?: DateTimePeriod;
 
   onUpdate: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
 export function RecordListGrouped(props: IRecordListGroupedProps) {
-  const {groupRecords, records, onUpdate, onDelete} = props;
+  const {groupRecords, records, visiblePeriod, onUpdate, onDelete} = props;
 
   const {timeZoneOffset} = useUserSettings();
 
@@ -62,6 +64,7 @@ export function RecordListGrouped(props: IRecordListGroupedProps) {
             key={key}
             date={date}
             records={group}
+            visiblePeriod={visiblePeriod}
             onUpdate={onUpdate}
             onDelete={onDelete}/>
     );

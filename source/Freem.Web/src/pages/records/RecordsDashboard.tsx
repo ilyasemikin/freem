@@ -19,6 +19,7 @@ import {Divider} from "../../components/Divider.tsx";
 import {RecordListGrouped} from "./RecordListGrouped.tsx";
 import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
 import {useUserSettings} from "../../settings/context/useUserSettings.ts";
+import {ErrorHelper} from "../../helpers/ErrorHelper.ts";
 
 export interface IRecordsDashboardProps {
   version?: number;
@@ -59,7 +60,9 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
 
     load().catch(error => {
       if (current) {
-        setError(error instanceof Error ? error.message : "Failed to load data");
+        // Records of the previous period must not stay under the new date
+        setRecords(undefined);
+        setError(ErrorHelper.getMessage(error, "Failed to load data"));
       }
     }).finally(() => {
       if (current) {
@@ -91,13 +94,10 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
         data.tagIds);
 
     const response = await clients.records.create(request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      closeDialog();
-      setUpdate(value => !value);
-    } else {
-      throw new Error(response.statusText)
-    }
+    closeDialog();
+    setUpdate(value => !value);
   }
 
   function changePeriod(unit: DateUnit, value: DatePeriod) {
@@ -119,6 +119,7 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
   }
 
   const group = period.getDurationInDays() > 1;
+  const visiblePeriod = TimeZoneHelper.toDateTimePeriod(period, timeZoneOffset);
 
   return (
       <div style={{display: "flex", flexDirection: "column", flex: "1"}}>
@@ -131,6 +132,7 @@ export function RecordsDashboard(props: IRecordsDashboardProps) {
             <RecordListGrouped
                 groupRecords={group}
                 records={records}
+                visiblePeriod={visiblePeriod}
                 onUpdate={reload}
                 onDelete={reload}/>}
       </div>

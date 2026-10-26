@@ -1,4 +1,6 @@
 ﻿import {RecordEntity} from "../../entities/RecordEntity.ts";
+import {ErrorHelper} from "../../helpers/ErrorHelper.ts";
+import {ValidationError} from "../../components/ValidationError.tsx";
 import {IRecordEditorData, IRecordEditorHandle, RecordEditor} from "./RecordEditor.tsx";
 import {useCallback, useRef, useState} from "react";
 import {CustomButton} from "../../components/inputs/CustomButton.tsx";
@@ -8,8 +10,8 @@ import {RecordPeriodsPanel} from "./RecordPeriodsPanel.tsx";
 export interface IRecordUpdateModalProps {
   record: RecordEntity;
 
-  onUpdate?: (data: IRecordEditorData) => void;
-  onDelete?: () => void;
+  onUpdate?: (data: IRecordEditorData) => Promise<void>;
+  onDelete?: () => Promise<void>;
   onPeriodsChanged?: () => void;
   onCancel?: () => void;
 }
@@ -18,6 +20,7 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
   const {record, onUpdate, onDelete, onPeriodsChanged, onCancel} = props;
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
   const editorRef = useRef<IRecordEditorHandle>(null);
   const periodsDirtyRef = useRef(false);
@@ -38,7 +41,22 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
     }
   }
 
-  function update() {
+  async function remove() {
+    if (onDelete === undefined || !window.confirm("Delete this record?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onDelete();
+    } catch (error) {
+      setError(ErrorHelper.getMessage(error, "Failed to delete the record"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function update() {
     if (editorRef.current === null || !confirmDiscardPeriods()) {
       return;
     }
@@ -49,9 +67,16 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
     }
 
     const data = editorRef.current.data();
-    if (onUpdate !== undefined) {
-      setLoading(true);
-      onUpdate(data);
+    if (onUpdate === undefined) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onUpdate(data);
+    } catch (error) {
+      setError(ErrorHelper.getMessage(error, "Failed to save the record"));
+    } finally {
       setLoading(false);
     }
   }
@@ -59,7 +84,7 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
   return (
       <>
         <div style={{display: "flex", justifyContent: "end", marginBottom: "5px"}}>
-          <CustomButton label="Delete record" onClick={onDelete}>
+          <CustomButton label="Delete record" onClick={remove}>
             <span style={{marginLeft: "5px", fontSize: "20px"}} className="pi pi-trash"/>
           </CustomButton>
         </div>
@@ -70,6 +95,7 @@ export function RecordUpdateModal(props: IRecordUpdateModalProps) {
             record={record}
             onChanged={onPeriodsChanged}
             onDirtyChange={changePeriodsDirty}/>
+        <ValidationError error={error}/>
         <DialogFooter
             loading={loading}
             actionText="Save"

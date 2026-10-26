@@ -90,13 +90,18 @@ export class TimeZoneHelper {
     return `${day}/${month}`;
   }
 
-  // "17:00 - 08:00 22/10" when the end falls on another day of the user
-  public static formatRange(startAt: Date, endAt: Date, offset: TimeZoneOffset): string {
-    const start = TimeZoneHelper.formatTime(startAt, offset);
-    const end = TimeZoneHelper.formatTime(endAt, offset);
-
+  // "17:00 - 08:00 22/10" when the end falls on another day of the user; the start gets its date
+  // ("26/10 13:00 - 14:00") when it is not on the given day
+  public static formatRange(startAt: Date, endAt: Date, offset: TimeZoneOffset, day?: Date): string {
     const startDate = TimeZoneHelper.toDate(startAt, offset);
     const endDate = TimeZoneHelper.toDate(endAt, offset);
+
+    const startTime = TimeZoneHelper.formatTime(startAt, offset);
+    const start = day !== undefined && startDate.getTime() !== day.getTime()
+        ? `${TimeZoneHelper.formatDayMonth(startDate)} ${startTime}`
+        : startTime;
+    const end = TimeZoneHelper.formatTime(endAt, offset);
+
     if (startDate.getTime() === endDate.getTime()) {
       return `${start} - ${end}`;
     }

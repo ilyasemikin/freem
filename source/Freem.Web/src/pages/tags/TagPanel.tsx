@@ -8,8 +8,8 @@ import {useDialog} from "../../dialog/context/useDialog.ts";
 export interface ITagPanelProps {
   tag: TagEntity;
 
-  onUpdate: (data: ITagEditorData) => void;
-  onDelete: () => void;
+  onUpdate: (data: ITagEditorData) => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
 export function TagPanel(props: ITagPanelProps) {
@@ -17,13 +17,13 @@ export function TagPanel(props: ITagPanelProps) {
 
   const {openDialog, closeDialog} = useDialog();
 
-  function update(data: ITagEditorData) {
-    onUpdate(data);
+  async function update(data: ITagEditorData) {
+    await onUpdate(data);
     closeDialog();
   }
 
-  function remove() {
-    onDelete();
+  async function remove() {
+    await onDelete();
     closeDialog();
   }
 

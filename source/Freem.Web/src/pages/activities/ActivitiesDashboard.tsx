@@ -20,6 +20,7 @@ import {RunningRecordResponse} from "../../clients/models/records/running/Runnin
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
+import {ErrorHelper} from "../../helpers/ErrorHelper.ts";
 
 export interface IActivitiesDashboardProps {
   onRecordsChanged?: () => void;
@@ -113,11 +114,10 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
   async function addActivity(data: IActivityEditorData) {
     const request = new CreateActivityRequest(data.name, data.color, data.tagIds);
     const response = await clients.activities.create(request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      closeDialog();
-      setUpdate(value => !value);
-    }
+    closeDialog();
+    setUpdate(value => !value);
   }
 
   async function updateActivity(id: string, data: IActivityEditorData) {
@@ -127,19 +127,16 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
 
     const request = new UpdateActivityRequest(nameUpdateField, colorUpdateField, tagsUpdateField);
     const response = await clients.activities.update(id, request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      setUpdate(value => !value);
-    }
+    setUpdate(value => !value);
   }
 
   async function deleteActivity(id: string) {
     const response = await clients.activities.remove(id);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      closeDialog();
-      setUpdate(value => !value);
-    }
+    setUpdate(value => !value);
   }
 
   async function startRunningRecord(ids: string[]) {
@@ -159,15 +156,14 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
     const description = data.description !== undefined ? new UpdateField(data.description) : undefined;
     const activities = new UpdateField(data.activityIds);
     const tags = new UpdateField(data.tagIds);
+    const startAtChanged = running === undefined || data.startAt.getTime() !== running.startAt.getTime();
+    const startAt = startAtChanged ? new UpdateField(data.startAt.toISOString()) : undefined;
 
-    const request = new UpdateRunningRecordRequest(name, description, activities, tags);
+    const request = new UpdateRunningRecordRequest(name, description, activities, tags, startAt);
     const response = await clients.records.updateRunning(request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      setUpdate(value => !value);
-    } else {
-      throw new Error(response.statusText);
-    }
+    setUpdate(value => !value);
   }
 
   async function stopRunningRecord() {

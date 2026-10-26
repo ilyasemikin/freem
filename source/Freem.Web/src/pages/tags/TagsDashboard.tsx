@@ -13,6 +13,7 @@ import {UpdateField} from "../../clients/models/UpdateField.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {useEntitiesCache} from "../../cache/context/useEntitiesCache.ts";
 import {useDialog} from "../../dialog/context/useDialog.ts";
+import {ErrorHelper} from "../../helpers/ErrorHelper.ts";
 
 export function TagsDashboard() {
   const [loading, setLoading] = useState(true);
@@ -63,29 +64,26 @@ export function TagsDashboard() {
   async function addTag(data: ITagEditorData) {
     const request = new CreateTagRequest(data.name);
     const response = await clients.tags.create(request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      closeDialog();
-      setUpdate(value => !value);
-    }
+    closeDialog();
+    setUpdate(value => !value);
   }
 
   async function updateTag(id: string, data: ITagEditorData) {
     const name = new UpdateField(data.name);
     const request = new UpdateTagRequest(name);
     const response = await clients.tags.update(id, request);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      setUpdate(value => !value);
-    }
+    setUpdate(value => !value);
   }
 
   async function deleteTag(id: string) {
     const response = await clients.tags.remove(id);
+    await ErrorHelper.throwIfFailed(response);
 
-    if (response.ok) {
-      setUpdate(value => !value);
-    }
+    setUpdate(value => !value);
   }
 
   if (loading) {

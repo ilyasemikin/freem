@@ -15,6 +15,15 @@
     this.duration = Math.floor((+this.endAt - +this.startAt) / 1000);
   }
 
+  // Seconds of this period inside the other one
+  public getOverlapDuration(other: DateTimePeriod): number {
+    const startAt = Math.max(+this.startAt, +other.startAt);
+    const endAt = Math.min(+this.endAt, +other.endAt);
+    return endAt > startAt
+        ? Math.floor((endAt - startAt) / 1000)
+        : 0;
+  }
+
   public toString(): string {
     return `${this.startAt.toISOString()}, ${this.endAt.toISOString()}`;
   }

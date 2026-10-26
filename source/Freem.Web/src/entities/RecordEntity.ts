@@ -2,6 +2,7 @@ import {ActivityEntity} from "./ActivityEntity.ts";
 import {TagEntity} from "./TagEntity.ts";
 import {RecordPeriodEntity} from "./RecordPeriodEntity.ts";
 import {TimeDuration} from "../data/TimeDuration.ts";
+import {DateTimePeriod} from "../data/DateTimePeriod.ts";
 
 export class RecordEntity {
   public readonly id: string;
@@ -38,6 +39,12 @@ export class RecordEntity {
 
   public get duration(): TimeDuration {
     const seconds = this.periods.reduce((sum, item) => sum + item.period.duration, 0);
+    return new TimeDuration(seconds);
+  }
+
+  // Time of the record inside the period: periods of a record may lie on other days
+  public getDurationIn(period: DateTimePeriod): TimeDuration {
+    const seconds = this.periods.reduce((sum, item) => sum + item.period.getOverlapDuration(period), 0);
     return new TimeDuration(seconds);
   }
 }

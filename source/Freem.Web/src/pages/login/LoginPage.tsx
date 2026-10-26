@@ -19,8 +19,33 @@ export function LoginPage() {
 
   const unregistered = status === "unregistered";
 
+  function validate(): string | undefined {
+    const needsCredentials = !unregistered;
+    const needsNickname = unregistered || mode === "register";
+
+    if (needsCredentials && username.trim() === "") {
+      return "Enter the username";
+    }
+
+    if (needsCredentials && password === "") {
+      return "Enter the password";
+    }
+
+    if (needsNickname && nickname.trim() === "") {
+      return "Enter the nickname";
+    }
+
+    return undefined;
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault();
+
+    const validationError = validate();
+    if (validationError !== undefined) {
+      setError(validationError);
+      return;
+    }
 
     setBusy(true);
     setError(undefined);
@@ -57,6 +82,11 @@ export function LoginPage() {
     );
   }
 
+  function switchMode() {
+    setMode(mode === "login" ? "register" : "login");
+    setError(undefined);
+  }
+
   function title() {
     if (unregistered) {
       return "Finish registration";
@@ -82,7 +112,7 @@ export function LoginPage() {
               ? <Button type="button" text label="Log out" onClick={logout}/>
               : <Button type="button" text
                         label={mode === "login" ? "Create an account" : "I already have an account"}
-                        onClick={() => setMode(mode === "login" ? "register" : "login")}/>}
+                        onClick={switchMode}/>}
         </form>
       </div>
   );

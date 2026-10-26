@@ -250,6 +250,18 @@ body {
     flex: none;
     min-height: 60vh;
   }
+
+  /* The activities list is short: a fixed height leaves an empty gap above the next panel */
+  .dashboard > .panel:first-child {
+    min-height: 0;
+  }
+}
+
+/* No room for the time range next to the name: it stays in the expanded details */
+@media (max-width: 480px) {
+  .record-range {
+    display: none;
+  }
 }
 
 .user-menu {

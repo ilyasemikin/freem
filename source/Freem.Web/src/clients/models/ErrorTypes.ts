@@ -1,6 +1,8 @@
 export class ErrorTypes {
   public static readonly ImportUnmappedEntities = "freem:import:unmapped_entities";
   public static readonly ImportTooManyRows = "freem:import:too_many_rows";
+  public static readonly ActivityNameAlreadyExists = "freem:activity:name_already_exists";
+  public static readonly TagNameAlreadyExists = "freem:tag:name_already_exists";
 }
 
 export class ErrorProperties {

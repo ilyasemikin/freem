@@ -10,8 +10,8 @@ export interface IActivityPanelProps {
   activity: ActivityEntity;
 
   onStart: () => void;
-  onUpdate: (data: IActivityEditorData) => void;
-  onDelete: () => void;
+  onUpdate: (data: IActivityEditorData) => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
 export function ActivityPanel(props: IActivityPanelProps) {
@@ -23,8 +23,13 @@ export function ActivityPanel(props: IActivityPanelProps) {
     onStart()
   }
 
-  function update(data: IActivityEditorData) {
-    onUpdate(data)
+  async function update(data: IActivityEditorData) {
+    await onUpdate(data);
+    closeDialog();
+  }
+
+  async function remove() {
+    await onDelete();
     closeDialog();
   }
 
@@ -34,7 +39,7 @@ export function ActivityPanel(props: IActivityPanelProps) {
           activity={activity}
           onUpdate={update}
           onCancel={closeDialog}
-          onDelete={onDelete}/>
+          onDelete={remove}/>
     })
   }
 

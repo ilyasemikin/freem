@@ -52,7 +52,9 @@ export function StatisticsDashboard(props: IStatisticsDashboardProps) {
 
     load().catch(error => {
       if (current) {
-        setError(error instanceof Error ? error.message : "Failed to load data");
+        // Data of the previous period must not stay under the new date
+        setEntity(undefined);
+        setError(error instanceof Error && error.message !== "" ? error.message : "Failed to load data");
       }
     }).finally(() => {
       if (current) {
@@ -85,7 +87,8 @@ export function StatisticsDashboard(props: IStatisticsDashboardProps) {
         <DatePeriodPicker onChange={changePeriod}/>
         <Divider/>
         <ValidationError error={error}/>
-        {(!entity || entity.perActivities.length === 0) && <div className="empty">No data for this period</div>}
+        {error === undefined && (!entity || entity.perActivities.length === 0) &&
+            <div className="empty">No data for this period</div>}
         {entity && entity.perActivities.length > 0 &&
             <>
                 <StatisticsPerActivityChart total={entity.recordedTime} entities={entity.perActivities}/>

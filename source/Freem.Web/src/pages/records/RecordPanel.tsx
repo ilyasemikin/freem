@@ -8,9 +8,12 @@ import {IRecordEditorData} from "./RecordEditor.tsx";
 import {ExpandableItemPanel} from "../../components/ExpandableItemPanel.tsx";
 import {ActivitiesListPanel} from "../activities/ActivitiesListPanel.tsx";
 import {TimeDurationPanel} from "../../components/TimeDurationPanel.tsx";
+import {DateTimePeriod} from "../../data/DateTimePeriod.ts";
 
 export interface IRecordPanelProps {
   record: RecordEntity;
+  // Shown period: the duration counts only the time inside it
+  visiblePeriod?: DateTimePeriod;
 
   onUpdate: (data: IRecordEditorData) => Promise<void>
   onDelete: () => Promise<void>
@@ -18,7 +21,7 @@ export interface IRecordPanelProps {
 }
 
 export function RecordPanel(props: IRecordPanelProps) {
-  const {record, onUpdate, onDelete, onPeriodsChanged} = props;
+  const {record, visiblePeriod, onUpdate, onDelete, onPeriodsChanged} = props;
 
   const {openDialog, closeDialog} = useDialog();
   const {timeZoneOffset} = useUserSettings();
@@ -37,6 +40,13 @@ export function RecordPanel(props: IRecordPanelProps) {
   const range = TimeZoneHelper.formatRange(record.startAt, record.endAt, timeZoneOffset);
   const periodsCount = record.periods.length;
 
+  const startDay = TimeZoneHelper.toDate(record.startAt, timeZoneOffset);
+  const startsBefore = visiblePeriod !== undefined && record.startAt < visiblePeriod.startAt;
+  const duration = visiblePeriod !== undefined
+      ? record.getDurationIn(visiblePeriod)
+      : record.duration;
+  const clipped = duration.seconds !== record.duration.seconds;
+
   function renderContent() {
     return (
         <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -45,13 +55,14 @@ export function RecordPanel(props: IRecordPanelProps) {
             <span className="item-subtitle">
               {record.name}
               {periodsCount > 1 && ` (${periodsCount} periods)`}
+              {startsBefore && ` · from ${TimeZoneHelper.formatDayMonth(startDay)}`}
             </span>
           </div>
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-            <span className="numeric muted" style={{fontSize: "13px", marginRight: "10px"}}>
+            <span className="numeric muted record-range" style={{fontSize: "13px", marginRight: "10px", whiteSpace: "nowrap"}}>
               {range}
             </span>
-            <TimeDurationPanel duration={record.duration}/>
+            <TimeDurationPanel duration={duration}/>
             <CustomButton label="Edit record" onClick={openEdit}>
               <span style={{fontSize: "25px"}} className="pi pi-ellipsis-v"/>
             </CustomButton>
@@ -64,12 +75,16 @@ export function RecordPanel(props: IRecordPanelProps) {
     return (
         <div style={{display: "flex", flexDirection: "column", gap: "4px"}}>
           {record.description && <span>{record.description}</span>}
+          {clipped &&
+              <span className="item-subtitle">
+                {`Whole record: ${record.duration.toString()}, in this period: ${duration.toString()}`}
+              </span>}
           {record.periods.map(item =>
               <div
                   key={item.id}
                   style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <span className="numeric muted" style={{fontSize: "13px", marginRight: "10px"}}>
-                  {TimeZoneHelper.formatRange(item.period.startAt, item.period.endAt, timeZoneOffset)}
+                  {TimeZoneHelper.formatRange(item.period.startAt, item.period.endAt, timeZoneOffset, startDay)}
                 </span>
                 <span className="item-subtitle" style={{flex: 1}}>{item.description}</span>
                 <span className="numeric muted">{item.period.getDurationFormatted()}</span>

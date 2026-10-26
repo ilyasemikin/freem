@@ -15,7 +15,7 @@ export class TagsClient {
   }
 
   public async update(id: string, request: UpdateTagRequest): Promise<Response> {
-    return await this.client.post({url: `api/v1/tags/${id}`, body: request});
+    return await this.client.put({url: `api/v1/tags/${id}`, body: request});
   }
 
   public async remove(id: string): Promise<Response> {
