@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
 using Freem.Domain.Storage.PostgreSQL.IntegrationTests.DataFactories.SpecimenBuilders;
 using Freem.Time;
@@ -48,6 +49,11 @@ internal sealed class DatabaseEntitiesFactory
 
         _fixture.Customize<RecordEntity>(builder => builder
             .With(e => e.UserId, userId)
+            .With(e => e.SourceType, RecordSourceType.Manual.ToString("G"))
+            .Without(e => e.SourceImportDocumentId)
+            .Without(e => e.SourceImportRowId)
+            .Without(e => e.SourceImportFormat)
+            .Without(e => e.SourceImportRecordId)
             .Without(e => e.User)
             .Without(e => e.Periods)
             .Without(e => e.Activities)
@@ -117,6 +123,25 @@ internal sealed class DatabaseEntitiesFactory
         var record = _fixture.Create<RecordEntity>();
         record.Periods = [CreatePeriod(record.Id, _now.AddHours(-10), _now)];
         return record;
+    }
+
+    public RecordEntity CreateImportRecord()
+    {
+        var record = CreateRecord();
+        return new RecordEntity
+        {
+            Id = record.Id,
+            UserId = record.UserId,
+            Name = record.Name,
+            Description = record.Description,
+            Periods = record.Periods,
+            CreatedAt = record.CreatedAt,
+            SourceType = RecordSourceType.Import.ToString("G"),
+            SourceImportDocumentId = _fixture.Create<string>(),
+            SourceImportRowId = _fixture.Create<string>(),
+            SourceImportFormat = "time-tracker",
+            SourceImportRecordId = _fixture.Create<string>()
+        };
     }
 
     public static DatabaseEntitiesFactory CreateFirstUserEntitiesFactory() => new("user1");

@@ -447,6 +447,28 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
+                    b.Property<string>("SourceImportDocumentId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_import_document_id");
+
+                    b.Property<string>("SourceImportFormat")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("source_import_format");
+
+                    b.Property<string>("SourceImportRecordId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_import_record_id");
+
+                    b.Property<string>("SourceImportRowId")
+                        .HasColumnType("text")
+                        .HasColumnName("source_import_row_id");
+
+                    b.Property<string>("SourceType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("source_type");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -462,7 +484,12 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.HasIndex("UserId")
                         .HasDatabaseName("records_user_id_idx");
 
-                    b.ToTable("records", "core_entities");
+                    b.ToTable("records", "core_entities", t =>
+                        {
+                            t.HasCheckConstraint("records_source_import_check", "(source_type = 'Import' AND source_import_document_id IS NOT NULL AND source_import_row_id IS NOT NULL AND source_import_format IS NOT NULL AND source_import_record_id IS NOT NULL) OR (source_type <> 'Import' AND source_import_document_id IS NULL AND source_import_row_id IS NULL AND source_import_format IS NULL AND source_import_record_id IS NULL)");
+
+                            t.HasCheckConstraint("records_source_type_check", "source_type IN ('Manual', 'RunningRecord', 'Import')");
+                        });
                 });
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.RecordPeriodEntity", b =>

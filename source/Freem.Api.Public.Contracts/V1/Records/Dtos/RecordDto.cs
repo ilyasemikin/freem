@@ -25,19 +25,25 @@ public sealed class RecordDto
     /// <summary>Ids of the attached tags.</summary>
     public IReadOnlyRelatedIdsCollection<TagId> Tags { get; }
 
+    /// <summary>How the record came to exist; never changes.</summary>
+    public RecordSourceDto Source { get; }
+
     public RecordDto(
         RecordId id,
         IReadOnlyList<RecordPeriodDto> periods,
         IReadOnlyRelatedIdsCollection<ActivityId> activities,
+        RecordSourceDto source,
         IReadOnlyRelatedIdsCollection<TagId>? tags = null)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(periods);
         ArgumentNullException.ThrowIfNull(activities);
+        ArgumentNullException.ThrowIfNull(source);
         
         Id = id;
         Periods = periods;
         Activities = activities;
+        Source = source;
         Tags = tags ?? RelatedTagIdsCollection.Empty;
     }
 }

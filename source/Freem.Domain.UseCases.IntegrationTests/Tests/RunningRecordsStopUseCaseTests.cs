@@ -1,5 +1,8 @@
 ﻿using Freem.Domain.Entities.RunningRecords;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.UseCases.Context;
+using Freem.Domain.UseCases.Contracts.Filter;
+using Freem.Domain.UseCases.Contracts.Records.List;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
@@ -46,6 +49,22 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
         var result = await executor.RunningRecords.GetAsync(_context);
         
         Assert.False(result.Success);
+    }
+
+    [Fact]
+    public async Task ShouldCreateRecordWithRunningRecordSource()
+    {
+        var endAt = _record.StartAt.AddHours(1);
+        var request = new StopRunningRecordRequest(endAt);
+
+        var response = await Context.ExecuteAsync<StopRunningRecordRequest, Result<Error>>(_context, request);
+
+        Assert.True(response.Success);
+        var listRequest = new ListRecordRequest(Limit.MaxValue, Offset.DefaultValue);
+        var records = await Context.ExecuteAsync<ListRecordRequest, Result<ListRecordResponse, Error>>(_context, listRequest);
+        Assert.True(records.Success);
+        var record = Assert.Single(records.Value.Records);
+        Assert.Equal(RunningRecordSource.Instance, record.Source);
     }
 
     [Fact]

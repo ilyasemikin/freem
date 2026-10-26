@@ -106,6 +106,11 @@ internal static class EntitiesNames
             public const string UserId = "user_id";
             public const string Name = "name";
             public const string Description = "description";
+            public const string SourceType = "source_type";
+            public const string SourceImportDocumentId = "source_import_document_id";
+            public const string SourceImportRowId = "source_import_row_id";
+            public const string SourceImportFormat = "source_import_format";
+            public const string SourceImportRecordId = "source_import_record_id";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";
         }
@@ -115,6 +120,8 @@ internal static class EntitiesNames
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string UserIdIndex = $"{Table}_{Properties.UserId}_{NamingConvention.IndexSuffix}";
+            public const string SourceTypeCheck = $"{Table}_{Properties.SourceType}_{NamingConvention.CheckSuffix}";
+            public const string SourceImportCheck = $"{Table}_source_import_{NamingConvention.CheckSuffix}";
         }
     }
 

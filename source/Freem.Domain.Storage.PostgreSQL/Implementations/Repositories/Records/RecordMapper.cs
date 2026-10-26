@@ -1,6 +1,9 @@
-﻿using Freem.Domain.Entities.Records;
+﻿using Freem.Domain.DataTransfer.Formats;
+using Freem.Domain.DataTransfer.Import;
+using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Users;
 using Freem.Domain.Users.Models;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities;
@@ -17,13 +20,19 @@ internal static class RecordMapper
         var periods = entity.Periods
             .Select(p => p.MapToDatabaseEntity(id))
             .ToList();
+        var importSource = entity.Source as ImportRecordSource;
         return new RecordEntity
         {
             Id = id,
             Name = entity.Name?.ToString(),
             Description = entity.Description?.ToString(),
             UserId = entity.UserId.ToString(),
-            Periods = periods
+            Periods = periods,
+            SourceType = entity.Source.Type.ToString("G"),
+            SourceImportDocumentId = importSource?.DocumentId.ToString(),
+            SourceImportRowId = importSource?.RowId.ToString(),
+            SourceImportFormat = importSource?.Format.ToString(),
+            SourceImportRecordId = importSource?.ImportRecordId.ToString()
         };
     }
 
@@ -63,13 +72,35 @@ internal static class RecordMapper
         var recordPeriods = (entity.Periods ?? [])
             .Select(p => p.MapToDomainEntity());
         var periods = new RecordPeriodsCollection(recordPeriods);
+        var source = entity.MapToRecordSource();
 
-        var record = new Record(id, userId, activities, tags, periods);
+        var record = new Record(id, userId, activities, tags, periods, source);
         if (entity.Name is not null)
             record.Name = RecordName.Parse(entity.Name, null);
         if (entity.Description is not null)
             record.Description = RecordDescription.Parse(entity.Description, null);
 
         return record;
+    }
+
+    private static RecordSource MapToRecordSource(this RecordEntity entity)
+    {
+        var type = Enum.Parse<RecordSourceType>(entity.SourceType);
+        return type switch
+        {
+            RecordSourceType.Manual => ManualRecordSource.Instance,
+            RecordSourceType.RunningRecord => RunningRecordSource.Instance,
+            RecordSourceType.Import => MapToImportRecordSource(entity),
+            _ => throw new ArgumentOutOfRangeException(nameof(entity), type, "Unknown record source type")
+        };
+    }
+
+    private static ImportRecordSource MapToImportRecordSource(RecordEntity entity)
+    {
+        var documentId = ImportDocumentId.Parse(entity.SourceImportDocumentId!, null);
+        var rowId = ImportRowId.Parse(entity.SourceImportRowId!, null);
+        var format = FormatKey.Parse(entity.SourceImportFormat!, null);
+        var importRecordId = ImportRecordId.Parse(entity.SourceImportRecordId!, null);
+        return new ImportRecordSource(documentId, rowId, format, importRecordId);
     }
 }

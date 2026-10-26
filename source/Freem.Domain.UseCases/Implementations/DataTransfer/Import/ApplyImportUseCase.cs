@@ -1,5 +1,6 @@
 using Freem.Domain.Entities.DataTransfer.Import;
 using Freem.Domain.Entities.Records;
+using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Storage.Models.Filters.Models;
 using Freem.Domain.Storage.Repositories.DataTransfer.Import;
@@ -94,7 +95,7 @@ internal sealed class ApplyImportUseCase
             return DomainErrorCatalog.Factories.CreateImportUnmappedEntities(unmappedActivities, unmappedTags);
 
         return await _transactionRunner.RunAsync(
-            () => WriteAsync(context.UserId, activities, tags, rows, cancellationToken),
+            () => WriteAsync(context.UserId, document.Format, activities, tags, rows, cancellationToken),
             cancellationToken);
     }
 
@@ -220,6 +221,7 @@ internal sealed class ApplyImportUseCase
 
     private async Task<Result<ApplyImportResponse, Error>> WriteAsync(
         UserId userId,
+        FormatKey format,
         IReadOnlyList<ImportDocumentActivity> activities,
         IReadOnlyList<ImportDocumentTag> tags,
         IReadOnlyList<ImportRow> rows,
@@ -231,7 +233,7 @@ internal sealed class ApplyImportUseCase
         var skippedRowIds = new List<ImportRowId>();
         foreach (var row in rows)
         {
-            var record = ImportRecordFactory.TryCreate(row, userId, mappings);
+            var record = ImportRecordFactory.TryCreate(row, format, userId, mappings);
             if (record is null)
                 skippedRowIds.Add(row.Id);
             else

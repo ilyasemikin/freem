@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Domain.Records.Models;
+using Freem.Domain.Records.Sources;
 using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
@@ -30,6 +31,23 @@ public sealed class CreateRecordTests : RecordTestBase
         Assert.NotNull(response);
         response.ShouldSuccess();
         Assert.NotNull(response.Value);
+    }
+
+    [Fact]
+    public async Task Request_ShouldReturnManualSource()
+    {
+        var startAt = DateTimeOffset.UtcNow - TimeSpan.FromHours(1);
+        var period = new DateTimePeriod(startAt, TimeSpan.FromHours(1));
+        var request = new RecordCreateRequest([new RecordPeriodItem(period)], AddedRelatedActivities, AddedRelatedTags);
+
+        var created = (await Context.Client.Records.CreateAsync(request)).Unwrap();
+
+        var actual = (await Context.Client.Records.GetAsync(created.Id)).Unwrap().Record;
+        Assert.Equal(RecordSourceType.Manual, actual.Source.Type);
+        Assert.Null(actual.Source.ImportId);
+        Assert.Null(actual.Source.ImportRowId);
+        Assert.Null(actual.Source.Format);
+        Assert.Null(actual.Source.ImportRecordId);
     }
 
     [Fact]

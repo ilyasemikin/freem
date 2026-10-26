@@ -1,6 +1,8 @@
+using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.Entities.DataTransfer.Import;
 using Freem.Domain.Entities.Records;
 using Freem.Domain.Records;
+using Freem.Domain.Records.Sources;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users;
 
@@ -15,9 +17,10 @@ public static class ImportRecordFactory
     /// Returns null when the row breaks record invariants (non-positive duration, overlapping periods,
     /// too many activities or tags): such rows are skipped.
     /// </summary>
-    public static Record? TryCreate(ImportRow row, UserId userId, ImportMappings mappings)
+    public static Record? TryCreate(ImportRow row, FormatKey format, UserId userId, ImportMappings mappings)
     {
         ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(format);
         ArgumentNullException.ThrowIfNull(userId);
         ArgumentNullException.ThrowIfNull(mappings);
 
@@ -47,7 +50,8 @@ public static class ImportRecordFactory
         var id = RecordId.Generate();
         var activities = new RelatedActivityIdsCollection(activityIds);
         var tags = new RelatedTagIdsCollection(tagIds);
-        return new Record(id, userId, activities, tags, collection)
+        var source = new ImportRecordSource(row.DocumentId, row.Id, format, importRecord.Id);
+        return new Record(id, userId, activities, tags, collection, source)
         {
             Name = importRecord.Name,
             Description = importRecord.Description
