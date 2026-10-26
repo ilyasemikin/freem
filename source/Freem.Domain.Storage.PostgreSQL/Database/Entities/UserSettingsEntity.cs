@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Abstractions;
+using Freem.Domain.Storage.PostgreSQL.Database.Entities.Models;
 
 namespace Freem.Domain.Storage.PostgreSQL.Database.Entities;
 
@@ -10,6 +11,7 @@ internal sealed class UserSettingsEntity :
     public required string UserId { get; init; }
 
     public required long TimeZoneOffsetTicks { get; set; }
+    public required WeekStart WeekStart { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -28,6 +30,7 @@ internal sealed class UserSettingsEntity :
         return
             UserId == other.UserId &&
             TimeZoneOffsetTicks == other.TimeZoneOffsetTicks &&
+            WeekStart == other.WeekStart &&
             CreatedAt == other.CreatedAt &&
             UpdatedAt.HasValue == other.UpdatedAt.HasValue;
     }

@@ -28,6 +28,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
 using ActivityStatusDb = Freem.Domain.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
+using WeekStartDb = Freem.Domain.Storage.PostgreSQL.Database.Entities.Models.WeekStart;
 
 namespace Freem.Domain.Storage.PostgreSQL.DependencyInjection.Microsoft.Extensions;
 
@@ -71,6 +72,7 @@ public static class ServiceCollectionExtensions
                     npgsql.MigrationsAssembly(EnvironmentNames.Migrations.Assembly);
                     npgsql.MigrationsHistoryTable(EnvironmentNames.Migrations.HistoryTable, EnvironmentNames.Schema);
                     npgsql.MapEnum<ActivityStatusDb>(EntitiesNames.Activities.Models.Status, EnvironmentNames.Schema);
+                    npgsql.MapEnum<WeekStartDb>(EntitiesNames.UserSettings.Models.WeekStart, EnvironmentNames.Schema);
                 })
                 .EnableServiceProviderCaching(options.EnableServiceProviderCaching);
 

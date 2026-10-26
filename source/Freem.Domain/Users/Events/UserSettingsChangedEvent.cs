@@ -15,4 +15,5 @@ public sealed class UserSettingsChangedEvent : EntityEvent
 
     public required UserId UserId { get; init; }
     public required TimeZoneOffset TimeZoneOffset { get; init; }
+    public required WeekStart WeekStart { get; init; }
 }

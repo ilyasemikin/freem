@@ -14,7 +14,7 @@ export interface IDatePeriodPickerProps {
 export function DatePeriodPicker(props: IDatePeriodPickerProps) {
   const {onChange} = props;
 
-  const {timeZoneOffset} = useUserSettings();
+  const {timeZoneOffset, weekStart} = useUserSettings();
 
   const [unit, setUnit] = useState<DateUnit>(DateUnit.Day);
   const [start, setStart] = useState<Date>(() => TimeZoneHelper.today(timeZoneOffset));
@@ -23,14 +23,19 @@ export function DatePeriodPicker(props: IDatePeriodPickerProps) {
     setUnit(value);
 
     const today = TimeZoneHelper.today(timeZoneOffset);
-    setStart(today);
+    const period = DateHelper.getPeriod(value, today, weekStart);
+    setStart(period.start);
     if (onChange) {
-      const period = DateHelper.getPeriod(value, today);
       onChange(value, period);
     }
   }
 
   function change(period: DatePeriod) {
+    // Within a unit the start defines the period: picking another day of the shown week must not reload data
+    if (period.start.getTime() === start.getTime()) {
+      return;
+    }
+
     setStart(period.start);
     if (onChange) {
       onChange(unit, period);

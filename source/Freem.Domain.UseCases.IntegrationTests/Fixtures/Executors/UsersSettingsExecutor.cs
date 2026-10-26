@@ -38,4 +38,14 @@ public sealed class UsersSettingsExecutor
         var result = await _mediator.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(context, request);
         result.EnsureSuccess();
     }
+
+    public async Task UpdateWeekStartAsync(HandlerContext context, WeekStart weekStart)
+    {
+        var request = new UpdateUserSettingsRequest
+        {
+            WeekStart = new UpdateField<WeekStart>(weekStart)
+        };
+        var result = await _mediator.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(context, request);
+        result.EnsureSuccess();
+    }
 }

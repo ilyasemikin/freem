@@ -4,6 +4,7 @@ import {ValidationError} from "../ValidationError.tsx";
 import {CSSProperties} from "react";
 import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 import {TimeZoneHelper} from "../../helpers/TimeZoneHelper.ts";
+import {CalendarHelper} from "../../helpers/CalendarHelper.ts";
 
 // Values are moments; the calendar shows and takes them in the user's time zone
 export interface IDatePickerProps {
@@ -21,7 +22,7 @@ export interface IDatePickerProps {
 export function DatePicker(props: IDatePickerProps) {
   const {style, placeholder, value, error, showTime, disabled, minValue, maxValue, onChange} = props;
 
-  const {timeZoneOffset} = useUserSettings();
+  const {timeZoneOffset, weekStart} = useUserSettings();
 
   function toCalendarValue(moment?: Date) {
     return moment === undefined
@@ -46,6 +47,7 @@ export function DatePicker(props: IDatePickerProps) {
             showTime={showTime}
             disabled={disabled}
             dateFormat="dd/mm/yy"
+            locale={CalendarHelper.locale(weekStart)}
             showSeconds
             hourFormat="24"
             minDate={toCalendarValue(minValue)}

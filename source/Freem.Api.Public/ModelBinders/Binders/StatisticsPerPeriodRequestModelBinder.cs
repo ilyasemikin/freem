@@ -12,6 +12,7 @@ public sealed class StatisticsPerPeriodRequestModelBinder : IModelBinder
     private readonly string _unitName;
 
     private readonly string _dayName;
+    private readonly string _weekName;
     private readonly string _monthName;
     private readonly string _yearName;
 
@@ -20,6 +21,7 @@ public sealed class StatisticsPerPeriodRequestModelBinder : IModelBinder
         _unitName = nameof(IUnitPeriod.Unit).ToLowerInvariant();
 
         _dayName = nameof(DayUnitPeriod.Day).ToLowerInvariant();
+        _weekName = nameof(WeekUnitPeriod.Week).ToLowerInvariant();
         _monthName = nameof(MonthUnitPeriod.Month).ToLowerInvariant();
         _yearName = nameof(YearUnitPeriod.Year).ToLowerInvariant();
     }
@@ -42,6 +44,14 @@ public sealed class StatisticsPerPeriodRequestModelBinder : IModelBinder
                 if (!vpr.TryGetDateOnlyValue(out var day))
                     return Task.CompletedTask;
                 period = new DayUnitPeriod(day.Value);
+                break;
+            }
+            case DateUnit.Week:
+            {
+                var vpr = context.ValueProvider.GetValue(_weekName);
+                if (!vpr.TryGetDateOnlyValue(out var day))
+                    return Task.CompletedTask;
+                period = new WeekUnitPeriod(day.Value);
                 break;
             }
             case DateUnit.Month:

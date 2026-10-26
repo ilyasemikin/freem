@@ -26,11 +26,11 @@ export function StatisticsDashboard(props: IStatisticsDashboardProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
 
-  const {timeZoneOffset} = useUserSettings();
+  const {timeZoneOffset, weekStart} = useUserSettings();
 
   const [unit, setUnit] = useState<DateUnit>(DateUnit.Day);
   const [period, setPeriod] = useState<DatePeriod>(
-      () => DateHelper.getPeriod(DateUnit.Day, TimeZoneHelper.today(timeZoneOffset)));
+      () => DateHelper.getPeriod(DateUnit.Day, TimeZoneHelper.today(timeZoneOffset), weekStart));
   const [entity, setEntity] = useState<StatisticsPerPeriodEntity | undefined>();
 
   const cache = useEntitiesCache();

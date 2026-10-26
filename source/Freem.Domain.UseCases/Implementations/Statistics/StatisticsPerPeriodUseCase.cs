@@ -41,7 +41,7 @@ internal sealed class StatisticsPerPeriodUseCase :
 
         var settings = settingsResult.Value;
 
-        var datePeriod = request.Period.ToDatePeriod();
+        var datePeriod = request.Period.ToDatePeriod(settings.WeekStart);
         
         var start = settings.TimeZoneOffset.GetDayStartUtc(datePeriod.StartAt);
         var end = settings.TimeZoneOffset.GetDayStartUtc(datePeriod.EndAt);

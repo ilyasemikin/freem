@@ -22,6 +22,7 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "activity_status", new[] { "active", "archived" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "core_entities", "week_start", new[] { "monday", "sunday" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Freem.Domain.Storage.PostgreSQL.Database.Entities.ActivityEntity", b =>
@@ -787,6 +788,10 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<int>("WeekStart")
+                        .HasColumnType("core_entities.week_start")
+                        .HasColumnName("week_start");
 
                     b.HasKey("UserId")
                         .HasName("user_settings_pk");

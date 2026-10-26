@@ -34,6 +34,31 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     }
 
     [Fact]
+    public async Task Request_ShouldKeepOffset_WhenUpdateWeekStart()
+    {
+        var offset = new TimeZoneOffset(TimeSpan.FromHours(2));
+        var offsetRequest = new UserSettingsUpdateRequest
+        {
+            TimeZoneOffset = new UpdateField<TimeZoneOffset>(offset)
+        };
+        var weekStartRequest = new UserSettingsUpdateRequest
+        {
+            WeekStart = new UpdateField<WeekStart>(WeekStart.Sunday)
+        };
+
+        var offsetResponse = await Context.Client.Users.UpdateSettingsAsync(offsetRequest);
+        offsetResponse.ShouldSuccess();
+        var weekStartResponse = await Context.Client.Users.UpdateSettingsAsync(weekStartRequest);
+        weekStartResponse.ShouldSuccess();
+
+        var response = await Context.Client.Users.GetSettingsAsync();
+
+        response.ShouldSuccess();
+        Assert.Equal(offset, response.Value.TimeZoneOffset);
+        Assert.Equal(WeekStart.Sunday, response.Value.WeekStart);
+    }
+
+    [Fact]
     public async Task Request_ShouldFail_WhenHasNoChanges()
     {
         var request = new UserSettingsUpdateRequest();
@@ -52,6 +77,20 @@ public sealed class UpdateSettingsTests : SettingsTestBase
     {
         using var client = Context.CreateHttpClient();
         var body = $$$"""{"timeZoneOffset":{"value":"{{{offset}}}"}}""";
+        using var content = new StringContent(body, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+        using var response = await client.PutAsync("api/v1/user/settings", content);
+
+        await response.ShouldHaveErrorAsync(HttpStatusCode.BadRequest, DomainErrorCatalog.Types.InvalidRequest);
+    }
+
+    [Theory]
+    [InlineData("Tuesday")]
+    [InlineData("1")]
+    public async Task Request_ShouldReturnInvalidRequestError_WhenWeekStartIsInvalid(string weekStart)
+    {
+        using var client = Context.CreateHttpClient();
+        var body = $$$"""{"weekStart":{"value":"{{{weekStart}}}"}}""";
         using var content = new StringContent(body, Encoding.UTF8, MediaTypeNames.Application.Json);
 
         using var response = await client.PutAsync("api/v1/user/settings", content);

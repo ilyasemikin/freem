@@ -50,6 +50,47 @@ public sealed class UsersSettingsUpdateUseCaseTests : UseCaseTestBase
     }
     
     [Fact]
+    public async Task ShouldSuccess_WhenUpdateWeekStart()
+    {
+        var request = new UpdateUserSettingsRequest
+        {
+            WeekStart = new UpdateField<WeekStart>(WeekStart.Sunday)
+        };
+        
+        var response = await Context.ExecuteAsync<UpdateUserSettingsRequest, Result<Error>>(_context, request);
+        
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        
+        using var executor = Context.CreateExecutor();
+        var actual = await executor.UsersSettings.RequiredGetAsync(_context);
+        
+        Assert.Equal(WeekStart.Sunday, actual.WeekStart);
+    }
+
+    [Fact]
+    public async Task ShouldKeepOtherFields_WhenUpdateOneField()
+    {
+        using var executor = Context.CreateExecutor();
+        await executor.UsersSettings.UpdateTimeZoneOffsetAsync(_context, UpdatedTimeZoneOffset);
+        await executor.UsersSettings.UpdateWeekStartAsync(_context, WeekStart.Sunday);
+
+        var actual = await executor.UsersSettings.RequiredGetAsync(_context);
+        
+        Assert.Equal(UpdatedTimeZoneOffset, actual.TimeZoneOffset);
+        Assert.Equal(WeekStart.Sunday, actual.WeekStart);
+    }
+
+    [Fact]
+    public async Task ShouldUseMonday_WhenWeekStartIsNotSet()
+    {
+        using var executor = Context.CreateExecutor();
+        var actual = await executor.UsersSettings.RequiredGetAsync(_context);
+        
+        Assert.Equal(WeekStart.Monday, actual.WeekStart);
+    }
+    
+    [Fact]
     public async Task ShouldFailure_WhenNothingToDo()
     {
         var request = new UpdateUserSettingsRequest();

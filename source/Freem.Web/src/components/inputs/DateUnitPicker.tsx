@@ -22,7 +22,7 @@ export function DateUnitPicker(props: IDateUnitPickerProps) {
 
   return (
       <div className="segmented">
-        {[[DateUnit.Day, "Day"], [DateUnit.Month, "Month"], [DateUnit.Year, "Year"]].map(([value, label]) =>
+        {[[DateUnit.Day, "Day"], [DateUnit.Week, "Week"], [DateUnit.Month, "Month"], [DateUnit.Year, "Year"]].map(([value, label]) =>
             <Button key={label} text={!active(value as DateUnit)} aria-pressed={active(value as DateUnit)}
                     onClick={() => change(value as DateUnit)} size="small">{label}</Button>)}
       </div>

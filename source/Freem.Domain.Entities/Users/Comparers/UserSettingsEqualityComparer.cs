@@ -14,11 +14,13 @@ public sealed class UserSettingsEqualityComparer : IEqualityComparer<UserSetting
             return false;
         if (x.GetType() != y.GetType()) 
             return false;
-        return x.TimeZoneOffset.Equals(y.TimeZoneOffset);
+        return 
+            x.TimeZoneOffset.Equals(y.TimeZoneOffset) &&
+            x.WeekStart.Equals(y.WeekStart);
     }
 
     public int GetHashCode(UserSettings obj)
     {
-        return obj.TimeZoneOffset.GetHashCode();
+        return HashCode.Combine(obj.TimeZoneOffset, obj.WeekStart);
     }
 }

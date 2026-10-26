@@ -1,7 +1,8 @@
 import {ReactNode, useEffect, useMemo, useState} from "react";
-import {IUserSettingsContext, UserSettingsContext} from "./UserSettingsContext.ts";
+import {IUserSettingsChanges, IUserSettingsContext, UserSettingsContext} from "./UserSettingsContext.ts";
 import {useBackendClients} from "../../clients/context/useBackendClients.ts";
 import {TimeZoneOffset} from "../../data/TimeZoneOffset.ts";
+import {WeekStart} from "../../data/WeekStart.ts";
 import {UserSettingsResponse} from "../../clients/models/users/Settings/UserSettingsResponse.ts";
 import {UpdateUserSettingsRequest} from "../../clients/models/users/Settings/UpdateUserSettingsRequest.ts";
 import {UpdateField} from "../../clients/models/UpdateField.ts";
@@ -12,11 +13,12 @@ interface IUserSettingsProviderProps {
   children: ReactNode;
 }
 
-// Everything that shows or reads time depends on the offset, so children are rendered only after it is loaded.
+// Everything that shows or reads time depends on the settings, so children are rendered only after they are loaded.
 export function UserSettingsProvider({children}: IUserSettingsProviderProps) {
   const {user} = useBackendClients();
 
   const [timeZoneOffset, setTimeZoneOffset] = useState<TimeZoneOffset | undefined>();
+  const [weekStart, setWeekStart] = useState<WeekStart | undefined>();
   const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export function UserSettingsProvider({children}: IUserSettingsProviderProps) {
       const body: UserSettingsResponse = await response.json();
       if (current) {
         setTimeZoneOffset(TimeZoneOffset.parse(body.timeZoneOffset));
+        setWeekStart(WeekStart.parse(body.weekStart));
         setError(undefined);
       }
     }
@@ -47,25 +50,33 @@ export function UserSettingsProvider({children}: IUserSettingsProviderProps) {
   }, [user]);
 
   const context = useMemo<IUserSettingsContext | undefined>(() => {
-    if (timeZoneOffset === undefined) {
+    if (timeZoneOffset === undefined || weekStart === undefined) {
       return undefined;
     }
 
-    async function updateTimeZoneOffset(value: TimeZoneOffset) {
-      const text = value.toString();
-      const field = new UpdateField(text);
-      const request: UpdateUserSettingsRequest = {timeZoneOffset: field};
+    async function updateSettings(changes: IUserSettingsChanges) {
+      const offsetText = changes.timeZoneOffset?.toString();
+      const weekStartText = changes.weekStart?.toString();
+      const request: UpdateUserSettingsRequest = {
+        timeZoneOffset: offsetText === undefined ? undefined : new UpdateField(offsetText),
+        weekStart: weekStartText === undefined ? undefined : new UpdateField(weekStartText)
+      };
       const response = await user.updateSettings(request);
       if (!response.ok) {
         return "Failed to save settings";
       }
 
-      setTimeZoneOffset(value);
+      if (changes.timeZoneOffset !== undefined) {
+        setTimeZoneOffset(changes.timeZoneOffset);
+      }
+      if (changes.weekStart !== undefined) {
+        setWeekStart(changes.weekStart);
+      }
       return undefined;
     }
 
-    return {timeZoneOffset, updateTimeZoneOffset};
-  }, [timeZoneOffset, user]);
+    return {timeZoneOffset, weekStart, updateSettings};
+  }, [timeZoneOffset, weekStart, user]);
 
   if (context === undefined) {
     return error !== undefined

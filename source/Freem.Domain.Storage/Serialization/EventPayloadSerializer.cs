@@ -71,7 +71,8 @@ public static class EventPayloadSerializer
                     .Set(nameof(UserRegisteredEvent.Nickname), e.Nickname);
             case UserSettingsChangedEvent e:
                 return new EventPayload(Policy)
-                    .Set(nameof(UserSettingsChangedEvent.TimeZoneOffset), e.TimeZoneOffset);
+                    .Set(nameof(UserSettingsChangedEvent.TimeZoneOffset), e.TimeZoneOffset)
+                    .Set(nameof(UserSettingsChangedEvent.WeekStart), e.WeekStart);
             default:
                 throw new InvalidOperationException($"Unmapped event type [{@event.Type}]");
         }
@@ -218,7 +219,8 @@ public static class EventPayloadSerializer
             return new UserSettingsChangedEvent(record.Id)
             {
                 UserId = UserId.Parse(entityRef, null),
-                TimeZoneOffset = payload.GetOptional(nameof(UserSettingsChangedEvent.TimeZoneOffset), TimeZoneOffset.Parse) ?? TimeZoneOffset.Default
+                TimeZoneOffset = payload.GetOptional(nameof(UserSettingsChangedEvent.TimeZoneOffset), TimeZoneOffset.Parse) ?? TimeZoneOffset.Default,
+                WeekStart = payload.GetOptional(nameof(UserSettingsChangedEvent.WeekStart), WeekStart.Parse) ?? WeekStart.Default
             };
 
         return null;

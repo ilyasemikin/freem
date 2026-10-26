@@ -8,9 +8,14 @@ public sealed class UserSettingsUpdateRequest
     /// <summary>New offset of the user's time zone from UTC, whole minutes in [-12:00, +14:00].</summary>
     public UpdateField<TimeZoneOffset>? TimeZoneOffset { get; init; }
 
+    /// <summary>New first day of the week: Monday or Sunday.</summary>
+    public UpdateField<WeekStart>? WeekStart { get; init; }
+
     /// <summary>Whether at least one field is set.</summary>
     public bool HasChanges()
     {
-        return TimeZoneOffset is not null;
+        return 
+            TimeZoneOffset is not null ||
+            WeekStart is not null;
     }
 }

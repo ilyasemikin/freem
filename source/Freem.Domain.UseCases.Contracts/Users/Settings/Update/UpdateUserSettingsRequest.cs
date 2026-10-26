@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Freem.Domain.Users.Models;
+﻿using Freem.Domain.Users.Models;
 using Utilities.UseCases.Abstractions;
 using Utilities.UseCases.Models;
 
@@ -10,10 +9,12 @@ public sealed class UpdateUserSettingsRequest : IRequest
     public RequestType Type => RequestTypes.Users.Settings.Update;
 
     public UpdateField<TimeZoneOffset>? TimeZoneOffset { get; init; }
+    public UpdateField<WeekStart>? WeekStart { get; init; }
 
-    [MemberNotNullWhen(true, nameof(TimeZoneOffset))]
     public bool HasChanges()
     {
-        return TimeZoneOffset is not null;
+        return 
+            TimeZoneOffset is not null ||
+            WeekStart is not null;
     }
 }
