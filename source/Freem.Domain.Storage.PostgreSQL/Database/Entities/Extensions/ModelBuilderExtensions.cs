@@ -4,6 +4,7 @@ using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
 using Freem.Domain.Storage.PostgreSQL.Database.Entities.Relations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ActivityStatus = Freem.Domain.Storage.PostgreSQL.Database.Entities.Models.ActivityStatus;
+using WeekStart = Freem.Domain.Storage.PostgreSQL.Database.Entities.Models.WeekStart;
 
 namespace Freem.Domain.Storage.PostgreSQL.Database.Entities.Extensions;
 
@@ -14,6 +15,7 @@ internal static class ModelBuilderExtensions
         builder.ApplyRelationEnttitiesConfiguration();
 
         builder.HasPostgresEnum<ActivityStatus>(EnvironmentNames.Schema, EntitiesNames.Activities.Models.Status);
+        builder.HasPostgresEnum<WeekStart>(EnvironmentNames.Schema, EntitiesNames.UserSettings.Models.WeekStart);
         
         builder.ApplyConfiguration(new ActivityEntityTypeConfiguration());
         

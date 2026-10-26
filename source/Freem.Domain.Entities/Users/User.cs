@@ -36,7 +36,8 @@ public sealed class User :
         return new UserSettingsChangedEvent(eventId)
         {
             UserId = Id,
-            TimeZoneOffset = Settings.TimeZoneOffset
+            TimeZoneOffset = Settings.TimeZoneOffset,
+            WeekStart = Settings.WeekStart
         };
     }
 }

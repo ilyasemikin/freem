@@ -28,7 +28,8 @@ internal static class UserRequestMapper
     {
         return new UpdateUserSettingsRequest
         {
-            TimeZoneOffset = request.Body.TimeZoneOffset?.Map()
+            TimeZoneOffset = request.Body.TimeZoneOffset?.Map(),
+            WeekStart = request.Body.WeekStart?.Map()
         };
     }
 }

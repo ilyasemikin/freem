@@ -1,4 +1,5 @@
-﻿using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
+﻿using Freem.Domain.Storage.PostgreSQL.Database.Constants;
+using Freem.Domain.Storage.PostgreSQL.Database.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +19,12 @@ internal sealed class UserSettingsEntityTypeConfiguration : IEntityTypeConfigura
         builder
             .Property(e => e.TimeZoneOffsetTicks)
             .HasColumnName(EntitiesNames.UserSettings.Properties.TimeZoneOffsetTicks)
+            .IsRequired();
+
+        builder
+            .Property(e => e.WeekStart)
+            .HasColumnName(EntitiesNames.UserSettings.Properties.WeekStart)
+            .HasColumnType($"{EnvironmentNames.Schema}.{EntitiesNames.UserSettings.Models.WeekStart}")
             .IsRequired();
 
         builder

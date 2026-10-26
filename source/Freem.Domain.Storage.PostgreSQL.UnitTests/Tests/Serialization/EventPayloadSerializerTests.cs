@@ -68,7 +68,7 @@ public sealed class EventPayloadSerializerTests
                 new TagUpdatedEvent(id) { TagId = FirstTagId, Name = tagName },
                 new TagRemovedEvent(id) { TagId = FirstTagId },
                 new UserRegisteredEvent(id) { UserId = UserId, Nickname = nickname },
-                new UserSettingsChangedEvent(id) { UserId = UserId, TimeZoneOffset = offset }
+                new UserSettingsChangedEvent(id) { UserId = UserId, TimeZoneOffset = offset, WeekStart = WeekStart.Sunday }
             };
         }
     }
@@ -195,7 +195,7 @@ public sealed class EventPayloadSerializerTests
     public void Deserialize_ShouldUseDefaultOffset_WhenSettingsPayloadHasNoOffset()
     {
         var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
-        var @event = new UserSettingsChangedEvent(EventId.Generate()) { UserId = UserId, TimeZoneOffset = offset };
+        var @event = new UserSettingsChangedEvent(EventId.Generate()) { UserId = UserId, TimeZoneOffset = offset, WeekStart = WeekStart.Sunday };
         var payload = new EventPayload(Utilities.Naming.Abstractions.INamingPolicy.CamelCase);
 
         var result = EventPayloadSerializer.Deserialize(CreateRecord(@event, payload: payload));
@@ -203,6 +203,23 @@ public sealed class EventPayloadSerializerTests
         Assert.True(result.Success);
         var restored = Assert.IsType<UserSettingsChangedEvent>(result.Value.Event);
         Assert.Equal(TimeZoneOffset.Default, restored.TimeZoneOffset);
+    }
+
+    [Fact]
+    public void Deserialize_ShouldUseDefaultWeekStart_WhenSettingsPayloadHasNoWeekStart()
+    {
+        var offset = new TimeZoneOffset(TimeSpan.FromHours(3));
+        var @event = new UserSettingsChangedEvent(EventId.Generate()) { UserId = UserId, TimeZoneOffset = offset, WeekStart = WeekStart.Sunday };
+        var payload = new EventPayload(Utilities.Naming.Abstractions.INamingPolicy.CamelCase)
+            .Set(nameof(UserSettingsChangedEvent.TimeZoneOffset), offset);
+
+        var record = CreateRecord(@event, payload: payload);
+        var result = EventPayloadSerializer.Deserialize(record);
+
+        Assert.True(result.Success);
+        var restored = Assert.IsType<UserSettingsChangedEvent>(result.Value.Event);
+        Assert.Equal(offset, restored.TimeZoneOffset);
+        Assert.Equal(WeekStart.Monday, restored.WeekStart);
     }
 
     [Fact]

@@ -32,6 +32,7 @@ internal static class EntitiesNames
         {
             public const string UserId = "user_id";
             public const string TimeZoneOffsetTicks = "time_zone_offset_ticks";
+            public const string WeekStart = "week_start";
             public const string CreatedAt = "created_at";
             public const string UpdatedAt = "updated_at";
         }
@@ -40,6 +41,11 @@ internal static class EntitiesNames
         {
             public const string PrimaryKey = $"{Table}_{NamingConvention.PrimaryKeySuffix}";
             public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
+        }
+
+        public static class Models
+        {
+            public const string WeekStart = "week_start";
         }
     }
 

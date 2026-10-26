@@ -7,6 +7,8 @@ import {DashboardPanel} from "../../components/DashboardPanel.tsx";
 import {PanelHeader} from "../../components/PanelHeader.tsx";
 import {ValidationError} from "../../components/ValidationError.tsx";
 import {TimeZoneOffset} from "../../data/TimeZoneOffset.ts";
+import {WeekStart} from "../../data/WeekStart.ts";
+import {IUserSettingsChanges} from "../../settings/context/UserSettingsContext.ts";
 import {useUserSettings} from "../../settings/context/useUserSettings.ts";
 
 interface ITimeZoneOffsetOption {
@@ -15,10 +17,11 @@ interface ITimeZoneOffsetOption {
 }
 
 export function SettingsPage() {
-  const {timeZoneOffset, updateTimeZoneOffset} = useUserSettings();
+  const {timeZoneOffset, weekStart, updateSettings} = useUserSettings();
   const navigate = useNavigate();
 
   const [selected, setSelected] = useState<number>(timeZoneOffset.minutes);
+  const [selectedWeekStart, setSelectedWeekStart] = useState<WeekStart>(weekStart);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | undefined>();
@@ -35,20 +38,31 @@ export function SettingsPage() {
     setError(undefined);
   }
 
+  function selectWeekStart(value: WeekStart) {
+    setSelectedWeekStart(value);
+    setSaved(false);
+    setError(undefined);
+  }
+
   function change(e: DropdownChangeEvent) {
     select(e.value);
   }
 
+  const offsetChanged = selected !== timeZoneOffset.minutes;
+  const weekStartChanged = !selectedWeekStart.equals(weekStart);
+  const changed = offsetChanged || weekStartChanged;
+
   async function save() {
     setSaving(true);
-    const value = new TimeZoneOffset(selected);
-    const result = await updateTimeZoneOffset(value);
+    const changes: IUserSettingsChanges = {
+      timeZoneOffset: offsetChanged ? new TimeZoneOffset(selected) : undefined,
+      weekStart: weekStartChanged ? selectedWeekStart : undefined
+    };
+    const result = await updateSettings(changes);
     setSaving(false);
     setError(result);
     setSaved(result === undefined);
   }
-
-  const changed = selected !== timeZoneOffset.minutes;
 
   return (
       <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
@@ -74,6 +88,15 @@ export function SettingsPage() {
                     label={`As in browser (${browser.toDisplayString()})`}
                     disabled={saving}
                     onClick={() => select(browser.minutes)}/>
+              </div>
+              <span className="muted" style={{fontSize: "13px", marginTop: "8px"}}>
+                First day of the week: weeks in statistics, records and calendars start on it
+              </span>
+              <div className="segmented" style={{alignSelf: "flex-start"}}>
+                {WeekStart.all().map(item =>
+                    <Button key={item.value} text={!item.equals(selectedWeekStart)}
+                            aria-pressed={item.equals(selectedWeekStart)} disabled={saving}
+                            onClick={() => selectWeekStart(item)} size="small">{item.label}</Button>)}
               </div>
               <ValidationError error={error}/>
               {saved && <span className="muted" style={{fontSize: "13px"}}>Saved</span>}

@@ -64,7 +64,7 @@ public sealed class EventsRepositoryTests : BaseRepositoryTests<IEventRepository
                 { EntityType.Tag, (id, e, _, _) => new TagUpdatedEvent(id) { TagId = TagId.Parse(e, null), Name = tagName } },
                 { EntityType.Tag, (id, e, _, _) => new TagRemovedEvent(id) { TagId = TagId.Parse(e, null) } },
                 { EntityType.User, (id, e, _, _) => new UserRegisteredEvent(id) { UserId = UserId.Parse(e, null), Nickname = nickname } },
-                { EntityType.User, (id, e, _, _) => new UserSettingsChangedEvent(id) { UserId = UserId.Parse(e, null), TimeZoneOffset = offset } },
+                { EntityType.User, (id, e, _, _) => new UserSettingsChangedEvent(id) { UserId = UserId.Parse(e, null), TimeZoneOffset = offset, WeekStart = WeekStart.Sunday } },
             };
         }
     }

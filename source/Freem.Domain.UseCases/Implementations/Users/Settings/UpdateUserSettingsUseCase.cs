@@ -48,9 +48,11 @@ internal sealed class UpdateUserSettingsUseCase :
         }
 
         var user = result.Value;
+        // Fields that are not in the request keep their current values
         var settings = new UserSettings()
         {
-            TimeZoneOffset = request.TimeZoneOffset.Value
+            TimeZoneOffset = request.TimeZoneOffset?.Value ?? user.Settings.TimeZoneOffset,
+            WeekStart = request.WeekStart?.Value ?? user.Settings.WeekStart
         };
         
         user.Settings = settings;

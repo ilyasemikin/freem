@@ -7,4 +7,5 @@ public sealed class UserSettings
     public static UserSettings Default { get; } = new();
     
     public TimeZoneOffset TimeZoneOffset { get; set; } = TimeZoneOffset.Default;
+    public WeekStart WeekStart { get; set; } = WeekStart.Default;
 }
