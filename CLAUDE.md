@@ -57,7 +57,10 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   asked. Docker socket may be inaccessible from the agent session — the user runs `docker compose` themselves.
 - Host port pool: each project has a 50-port range (StashIt 10000-10049, EgoHub 10050-10099, Trandoma
   10100-10149). Freem takes **10150-10199** (confirmed by the user): `docker/develop` 10150-10169, `docker/service` 10170-10189, local
-  `dotnet run`/misc 10190-10199. Never bind default ports (5432, 6379, 9092, ...).
+  `dotnet run`/misc 10190-10199. Never bind default ports (5432, 6379, 9092, ...). Runs from worktrees take ports
+  from **40000-40100** (allowed by the user).
+- Parallel features: git worktrees in `.claude/worktrees/<name>`, created, set up and removed per
+  `ai/skills/worktree/SKILL.md` (subagents must `Read` it).
 - Local secrets in tracked config (`appsettings.Development.json`, `configuration.json`) are hidden with
   `git update-index --skip-worktree <file>`, never `.gitignore`. `git stash` and `git checkout -- <path>` clear
   the bit: re-check with `git ls-files -v` (`S` = set, `H` = cleared).

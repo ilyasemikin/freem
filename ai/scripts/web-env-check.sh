@@ -1,10 +1,10 @@
 #!/bin/bash
 # Checks that everything needed for a manual web pass is reachable. Starts nothing.
-# Usage: ai/scripts/web-env-check.sh
+# Usage: [API_PORT=...] [WEB_PORT=...] ai/scripts/web-env-check.sh (worktree ports: see ai/skills/worktree)
 set -uo pipefail
 
-API_PORT=10190
-WEB_PORT=10191
+API_PORT="${API_PORT:-10190}"
+WEB_PORT="${WEB_PORT:-10191}"
 POSTGRES_PORT=10150
 REDIS_PORT=10151
 EGOHUB_URL="${EGOHUB_URL:-http://127.0.0.1:25001}"
