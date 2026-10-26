@@ -73,7 +73,6 @@ public static class RequestTypes
 
     public static class Statistics
     {
-        public static readonly RequestType PerDays = RequestType.Parse("statistics.per-days", null);
         public static readonly RequestType PerPeriod = RequestType.Parse("statistics.per-period", null);
     }
 

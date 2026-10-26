@@ -135,7 +135,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddStatisticsUseCases(this IServiceCollection services)
     {
-        services.AddHandler<ApiStatisticsPerDaysRequest, ApiStatisticsPerDaysRequestHandler>();
         services.AddHandler<ApiStatisticsPerPeriodRequest, ApiStatisticsPerPeriodRequestHandler>();
 
         return services;

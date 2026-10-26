@@ -1,5 +1,4 @@
 using Freem.Api.Public.Contracts.V1.Statistics.Periods;
-using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods.Abstractions;
@@ -9,11 +8,6 @@ namespace Freem.Api.Public.UseCases.Implementations.Mappers.Requests;
 
 internal static class StatisticsRequestMapper
 {
-    public static StatisticsPerDaysRequest Map(this ApiStatisticsPerDaysRequest request)
-    {
-        return new StatisticsPerDaysRequest(request.Query.Period);
-    }
-
     public static StatisticsPerPeriodRequest Map(this ApiStatisticsPerPeriodRequest request)
     {
         IStatisticsPeriod period = request.Query.Period switch

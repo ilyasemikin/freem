@@ -2,7 +2,6 @@ using Freem.Domain.Relations.Collections;
 using Freem.Domain.Users.Models;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
-using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
@@ -24,24 +23,6 @@ public sealed class StatisticsTimeZoneOffsetUseCaseTests : UseCaseTestBase
 
     // Записи по UTC: D-1 22:00-23:00, D 04:00-06:00, D 20:00-22:00
     [Theory]
-    [InlineData(0, 4, 0)]
-    [InlineData(180, 4, 1)]
-    [InlineData(-300, 3, 0)]
-    public async Task PerDays_ShouldUseUserDayBounds(int offsetMinutes, int expectedDayHours, int expectedNextDayHours)
-    {
-        var context = await CreateUserWithRecordsAsync(offsetMinutes);
-        var period = new DatePeriod(Day, Day.AddDays(1));
-        var request = new StatisticsPerDaysRequest(period);
-
-        var response = await Context.ExecuteAsync<StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>>(context, request);
-
-        Assert.True(response.Success);
-        Assert.Equal(2, response.Value.Statistics.Count);
-        Assert.Equal(TimeSpan.FromHours(expectedDayHours), response.Value.Statistics[Day].RecordedTime);
-        Assert.Equal(TimeSpan.FromHours(expectedNextDayHours), response.Value.Statistics[Day.AddDays(1)].RecordedTime);
-    }
-
-    [Theory]
     [InlineData(0, 4)]
     [InlineData(180, 4)]
     [InlineData(-300, 3)]
@@ -50,6 +31,23 @@ public sealed class StatisticsTimeZoneOffsetUseCaseTests : UseCaseTestBase
     {
         var context = await CreateUserWithRecordsAsync(offsetMinutes);
         var period = new DayStatisticsPeriod(Day);
+        var request = new StatisticsPerPeriodRequest(period);
+
+        var response = await Context.ExecuteAsync<StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>>(context, request);
+
+        Assert.True(response.Success);
+        Assert.Equal(TimeSpan.FromHours(expectedHours), response.Value.Statistics.RecordedTime);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(180, 1)]
+    [InlineData(-300, 0)]
+    public async Task PerPeriod_ShouldUseUserBoundsOfNextDay(int offsetMinutes, int expectedHours)
+    {
+        var context = await CreateUserWithRecordsAsync(offsetMinutes);
+        var day = Day.AddDays(1);
+        var period = new DayStatisticsPeriod(day);
         var request = new StatisticsPerPeriodRequest(period);
 
         var response = await Context.ExecuteAsync<StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>>(context, request);
