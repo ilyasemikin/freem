@@ -35,7 +35,6 @@ using Freem.Domain.UseCases.Contracts.RunningRecords.Remove;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Start;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Stop;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Update;
-using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
 using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
 using Freem.Domain.UseCases.Contracts.Tags.Create;
 using Freem.Domain.UseCases.Contracts.Tags.Get;
@@ -180,7 +179,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddStatisticsUseCases(this IServiceCollection services)
     {
-        services.AddHandler<StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>, StatisticsPerDaysUseCase>();
         services.AddHandler<StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>, StatisticsPerPeriodUseCase>();
 
         return services;

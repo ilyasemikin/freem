@@ -1,7 +1,8 @@
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.UseCases.Context;
 using Freem.Domain.UseCases.Contracts.Records.Create;
-using Freem.Domain.UseCases.Contracts.Statistics.PerDays;
+using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod;
+using Freem.Domain.UseCases.Contracts.Statistics.PerPeriod.Periods;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
 using Freem.Time;
@@ -44,18 +45,20 @@ public sealed class StatisticsSeveralPeriodsUseCaseTests : UseCaseTestBase
         await filler.Records.CreateAsync(_context, new CreateRecordRequest(overlappingPeriod, activities));
     }
 
-    [Fact]
-    public async Task PerDays_ShouldCountEachPeriodOnceAndClipByDay()
+    // День 1: 10:00-12:00 (периоды двух записей пересекаются, считаются один раз), 14:00-16:00 и 23:00-24:00
+    // День 2: хвост третьего периода первой записи 00:00-02:00
+    [Theory]
+    [InlineData(0, 5)]
+    [InlineData(1, 2)]
+    public async Task PerPeriod_ShouldCountEachPeriodOnceAndClipByDay(int dayShift, int expectedHours)
     {
-        var request = new StatisticsPerDaysRequest(new DatePeriod(Day, Day.AddDays(1)));
+        var day = Day.AddDays(dayShift);
+        var period = new DayStatisticsPeriod(day);
+        var request = new StatisticsPerPeriodRequest(period);
 
-        var response = await Context.ExecuteAsync<StatisticsPerDaysRequest, Result<StatisticsPerDaysResponse, Error>>(_context, request);
+        var response = await Context.ExecuteAsync<StatisticsPerPeriodRequest, Result<StatisticsPerPeriodResponse, Error>>(_context, request);
 
         Assert.True(response.Success);
-
-        // День 1: 10:00-12:00 (периоды двух записей пересекаются, считаются один раз), 14:00-16:00 и 23:00-24:00
-        Assert.Equal(TimeSpan.FromHours(5), response.Value.Statistics[Day].RecordedTime);
-        // День 2: хвост третьего периода первой записи 00:00-02:00
-        Assert.Equal(TimeSpan.FromHours(2), response.Value.Statistics[Day.AddDays(1)].RecordedTime);
+        Assert.Equal(TimeSpan.FromHours(expectedHours), response.Value.Statistics.RecordedTime);
     }
 }
