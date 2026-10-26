@@ -61,6 +61,11 @@ internal sealed class ActivityEntityTypeConfiguration : IEntityTypeConfiguration
             .HasDatabaseName(EntitiesNames.Activities.Constraints.UserIdIndex);
 
         builder
+            .HasIndex(e => new { e.Name, e.UserId })
+            .IsUnique()
+            .HasDatabaseName(EntitiesNames.Activities.Constraints.NameUnique);
+
+        builder
             .HasOne(e => e.User)
             .WithMany()
             .HasForeignKey(e => e.UserId)

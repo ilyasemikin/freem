@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Freem.Domain.Activities;
 using Freem.Domain.RunningRecords;
 using Freem.Domain.Tags;
 using Freem.Domain.Users;
@@ -22,6 +23,9 @@ internal sealed class DuplicateKeyErrorToErrorConverter
                 return true;
             case EntitiesNames.RunningRecords.Constraints.PrimaryKey when context.ProcessedId is RunningRecordId runningRecordId:
                 output = DomainErrorCatalog.Factories.CreateRunningRecordAlreadyExists(runningRecordId);
+                return true;
+            case EntitiesNames.Activities.Constraints.NameUnique when context.ProcessedId is ActivityId activityId:
+                output = DomainErrorCatalog.Factories.CreateActivityNameAlreadyExists(activityId);
                 return true;
             case EntitiesNames.Tags.Constraints.NameUnique when context.ProcessedId is TagId tagId:
                 output = DomainErrorCatalog.Factories.CreateTagNameAlreadyExists(tagId);

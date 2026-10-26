@@ -87,6 +87,7 @@ internal static class EntitiesNames
             public const string StatusCheck = $"{Table}_{Properties.Status}_{NamingConvention.CheckSuffix}";
             public const string UsersForeignKey = $"{Table}_{Users.Table}_{NamingConvention.ForeignKeySuffix}";
             public const string UserIdIndex = $"{Table}_{Properties.UserId}_{NamingConvention.IndexSuffix}";
+            public const string NameUnique = $"{Table}_{Properties.Name}_{NamingConvention.UniqueSuffix}";
         }
 
         public static class Models

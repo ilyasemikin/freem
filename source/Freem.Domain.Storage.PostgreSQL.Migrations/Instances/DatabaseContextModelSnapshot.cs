@@ -74,6 +74,10 @@ namespace Freem.Domain.Storage.PostgreSQL.Migrations.Instances
                     b.HasIndex("UserId")
                         .HasDatabaseName("activities_user_id_idx");
 
+                    b.HasIndex("Name", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("activities_name_unique");
+
                     b.ToTable("activities", "core_entities");
                 });
 

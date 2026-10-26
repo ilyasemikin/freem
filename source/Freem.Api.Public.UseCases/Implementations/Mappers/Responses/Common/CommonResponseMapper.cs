@@ -27,6 +27,7 @@ internal static class CommonResponseMapper
             return StatusCodes.Status409Conflict;
         if (type == DomainErrorCatalog.Types.RelatedEntitiesNotFound ||
             type == DomainErrorCatalog.Types.ActivityInvalidStatus ||
+            type == DomainErrorCatalog.Types.ActivityNameAlreadyExists ||
             type == DomainErrorCatalog.Types.TagNameAlreadyExists ||
             type == DomainErrorCatalog.Types.ImportUnmappedEntities ||
             type == DomainErrorCatalog.Types.ImportTooManyRows ||

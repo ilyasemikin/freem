@@ -50,6 +50,24 @@ public sealed class ActivitiesCreateUseCase : UseCaseTestBase
     }
 
     [Fact]
+    public async Task ShouldFailure_WhenActivityNameAlreadyExists()
+    {
+        using var executor = Context.CreateExecutor();
+        var anotherRequest = new CreateActivityRequest(ActivityName, ActivityColor);
+        await executor.Activities.CreateAsync(_context, anotherRequest);
+
+        var request = new CreateActivityRequest(ActivityName, ActivityColor);
+
+        var response = await Context.ExecuteAsync<CreateActivityRequest, Result<CreateActivityResponse, Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+
+        Assert.Equal(DomainErrorCatalog.Types.ActivityNameAlreadyExists, response.Error.Type);
+    }
+
+    [Fact]
     public async Task ShouldFailure_WhenRelatedTagsDoesNotExist()
     {
         var notExistedTagId = TagId.Generate();

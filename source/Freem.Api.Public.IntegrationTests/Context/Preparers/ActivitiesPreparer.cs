@@ -20,8 +20,10 @@ public sealed class ActivitiesPreparer
 
     private static readonly ActivityColor DefaultColor = ActivityColor.Parse("#6366f1", null);
 
-    public async Task<ActivityId> CreateAsync(string name = "name0")
+    // Activity names are unique per user, so generated names never collide
+    public async Task<ActivityId> CreateAsync(string? name = null)
     {
+        name ??= $"name-{Guid.NewGuid()}";
         var activityName = ActivityName.Parse(name, null);
         var request = new ActivityCreateRequest(activityName, DefaultColor);
         var response = await _context.Client.Activities.CreateAsync(request);
@@ -38,7 +40,7 @@ public sealed class ActivitiesPreparer
         var ids = new ActivityId[count];
         for (var i = 0; i < count; i++)
         {
-            var name = $"name{i}";
+            var name = $"name{i}-{Guid.NewGuid()}";
             var activityName = ActivityName.Parse(name, null);
             
             var request = new ActivityCreateRequest(activityName, DefaultColor, tags);

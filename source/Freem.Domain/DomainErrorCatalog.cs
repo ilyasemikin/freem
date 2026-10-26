@@ -31,6 +31,7 @@ public static class DomainErrorCatalog
         public static readonly ErrorType AuthenticationRejected = ErrorType.Create(Scope, "auth:rejected");
         public static readonly ErrorType UserNotRegistered = ErrorType.Create(Scope, "user:not_registered");
         public static readonly ErrorType ActivityInvalidStatus = ErrorType.Create(Scope, "activity:invalid_status");
+        public static readonly ErrorType ActivityNameAlreadyExists = ErrorType.Create(Scope, "activity:name_already_exists");
         public static readonly ErrorType TagNameAlreadyExists = ErrorType.Create(Scope, "tag:name_already_exists");
         public static readonly ErrorType ImportInvalidStatus = ErrorType.Create(Scope, "import:invalid_status");
         public static readonly ErrorType ImportUnmappedEntities = ErrorType.Create(Scope, "import:unmapped_entities");
@@ -242,6 +243,14 @@ public static class DomainErrorCatalog
                 .WithType(Types.EntityNotFound)
                 .WithMessage($"Tag with name = [{name}] not found")
                 .WithProperty(Properties.TagName, name);
+        }
+
+        public static Error CreateActivityNameAlreadyExists(ActivityId id)
+        {
+            return new Error.Builder()
+                .WithType(Types.ActivityNameAlreadyExists)
+                .WithMessage($"Name of activity with id = [{id}] already exists")
+                .WithProperty(Properties.ActivityId, id);
         }
 
         public static Error CreateTagNameAlreadyExists(TagId id)
