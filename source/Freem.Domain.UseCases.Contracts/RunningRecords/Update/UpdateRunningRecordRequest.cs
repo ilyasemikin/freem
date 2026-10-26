@@ -15,12 +15,15 @@ public sealed class UpdateRunningRecordRequest : IRequest
     public UpdateField<RelatedActivityIdsCollection>? Activities { get; init; }
     public UpdateField<RelatedTagIdsCollection>? Tags { get; init; }
 
+    public UpdateField<DateTimeOffset>? StartAt { get; init; }
+
     public bool HasChanges()
     {
         return 
             Name is not null ||
             Description is not null ||
             Activities is not null ||
-            Tags is not null;
+            Tags is not null ||
+            StartAt is not null;
     }
 }

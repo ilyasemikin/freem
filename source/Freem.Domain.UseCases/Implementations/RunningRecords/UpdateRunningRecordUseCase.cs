@@ -6,6 +6,7 @@ using Freem.Domain.UseCases.Contracts.RunningRecords.Update;
 using Freem.Domain.UseCases.Implementations.Events;
 using Freem.Storage.Transactions.Implementations;
 using Freem.Storage.Transactions.Implementations.Extensions;
+using Utilities.Clock.Abstractions;
 using Utilities.Errors;
 using Utilities.Locking;
 using Utilities.Primitives;
@@ -20,22 +21,26 @@ internal class UpdateRunningRecordUseCase
     private readonly IRunningRecordRepository _repository;
     private readonly EventProducer _eventProducer;
     private readonly StorageTransactionRunner _transactionRunner;
+    private readonly IClock _clock;
 
     public UpdateRunningRecordUseCase(
         ILocker locker,
         IRunningRecordRepository repository, 
         EventProducer eventProducer, 
-        StorageTransactionRunner transactionRunner)
+        StorageTransactionRunner transactionRunner,
+        IClock clock)
     {
         ArgumentNullException.ThrowIfNull(locker);
         ArgumentNullException.ThrowIfNull(repository);
         ArgumentNullException.ThrowIfNull(eventProducer);
         ArgumentNullException.ThrowIfNull(transactionRunner);
+        ArgumentNullException.ThrowIfNull(clock);
 
         _locker = locker;
         _repository = repository;
         _eventProducer = eventProducer;
         _transactionRunner = transactionRunner;
+        _clock = clock;
     }
 
     public async Task<Result<Error>> HandleAsync(
@@ -44,6 +49,9 @@ internal class UpdateRunningRecordUseCase
     {
         if (!request.HasChanges())
             return DomainErrorCatalog.Factories.CreateNothingToDo();
+
+        if (request.StartAt is not null && request.StartAt.Value > _clock.Get())
+            return DomainErrorCatalog.Factories.CreatePeriodIsInvalid("StartAt must not be in the future.");
 
         var lockResult = await _locker.LockAsync(Lock.Prefix + context.UserId, cancellationToken);
         if (!lockResult.Success)
@@ -65,6 +73,8 @@ internal class UpdateRunningRecordUseCase
             record.Activities.Update(request.Activities);
         if (request.Tags is not null)
             record.Tags.Update(request.Tags);
+        if (request.StartAt is not null)
+            record.StartAt = request.StartAt;
 
         return await RunTransactionAsync(record, cancellationToken);
     }

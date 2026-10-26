@@ -20,7 +20,13 @@ public class RunningRecord :
     public RecordName? Name { get; set; }
     public RecordDescription? Description { get; set; }
 
-    public DateTimeOffset StartAt { get; }
+    private DateTimeOffset _startAt;
+
+    public DateTimeOffset StartAt
+    {
+        get => _startAt;
+        set => _startAt = DateTimeOperations.TruncateToMilliseconds(value.UtcDateTime);
+    }
 
     public RunningRecord(
         UserId userId,
@@ -35,7 +41,7 @@ public class RunningRecord :
         Activities = activities;
         Tags = tags;
 
-        StartAt = DateTimeOperations.TruncateToMilliseconds(startAt.UtcDateTime);
+        StartAt = startAt;
     }
 
     public RunningRecordStartedEvent BuildStartedEvent(EventId eventId)

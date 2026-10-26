@@ -18,6 +18,9 @@ public sealed class RunningRecordUpdateRequest
     /// <summary>New full set of tag ids; replaces the current one.</summary>
     public UpdateField<IReadOnlyRelatedIdsCollection<TagId>>? Tags { get; init; }
 
+    /// <summary>New start of tracking; must not be in the future.</summary>
+    public UpdateField<DateTimeOffset>? StartAt { get; init; }
+
     /// <summary>Whether at least one field is set.</summary>
     public bool HasChanges()
     {
@@ -25,6 +28,7 @@ public sealed class RunningRecordUpdateRequest
             Name is not null ||
             Description is not null ||
             Activities is not null ||
-            Tags is not null;
+            Tags is not null ||
+            StartAt is not null;
     }
 }

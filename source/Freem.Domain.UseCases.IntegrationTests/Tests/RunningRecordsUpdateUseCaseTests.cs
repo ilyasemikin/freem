@@ -7,6 +7,7 @@ using Freem.Domain.UseCases.Contracts;
 using Freem.Domain.UseCases.Contracts.RunningRecords.Update;
 using Freem.Domain.UseCases.IntegrationTests.Fixtures;
 using Freem.Domain.UseCases.IntegrationTests.Tests.Abstractions;
+using Freem.Time;
 using Utilities.Errors;
 using Utilities.Primitives;
 
@@ -234,6 +235,45 @@ public sealed class RunningRecordsUpdateUseCaseTests : UseCaseTestBase
         Assert.Equal(DomainErrorCatalog.Types.RelatedEntitiesNotFound, response.Error.Type);
     }
     
+    [Fact]
+    public async Task ShouldSuccess_WhenUpdateStartAt()
+    {
+        var startAt = DateTimeOperations.TruncateToMilliseconds(DateTime.UtcNow.AddHours(-1));
+        var request = new UpdateRunningRecordRequest
+        {
+            StartAt = new UpdateField<DateTimeOffset>(startAt)
+        };
+
+        var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, Result<Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.Null(response.Error);
+
+        using var executor = Context.CreateExecutor();
+        var actual = await executor.RunningRecords.RequiredGetAsync(_context);
+
+        Assert.Equal(startAt, actual.StartAt);
+    }
+
+    [Fact]
+    public async Task ShouldFailure_WhenStartAtInFuture()
+    {
+        var startAt = DateTimeOffset.UtcNow.AddHours(1);
+        var request = new UpdateRunningRecordRequest
+        {
+            StartAt = new UpdateField<DateTimeOffset>(startAt)
+        };
+
+        var response = await Context.ExecuteAsync<UpdateRunningRecordRequest, Result<Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+
+        Assert.Equal(DomainErrorCatalog.Types.PeriodIsInvalid, response.Error.Type);
+    }
+
     [Fact]
     public async Task ShouldFailure_WhenNothingToDo()
     {

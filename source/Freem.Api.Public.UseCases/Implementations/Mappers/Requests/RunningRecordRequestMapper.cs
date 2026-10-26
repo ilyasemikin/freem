@@ -65,7 +65,8 @@ internal static class RunningRecordRequestMapper
             Name = body.Name?.Map(),
             Description = body.Description?.Map(),
             Activities = activities,
-            Tags = tags
+            Tags = tags,
+            StartAt = body.StartAt?.Map()
         };
     }
 }
