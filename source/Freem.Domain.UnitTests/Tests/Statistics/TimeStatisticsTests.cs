@@ -242,6 +242,54 @@ public class TimeStatisticsTests
         Assert.Equal(expected, statistics.PerActivities[DefaultActivityId].RecordedTime);
     }
 
+    [Fact]
+    public void Calculate_ShouldIgnorePeriodsOutsideWindow_WhenRecordHasPeriodsOnOtherDays()
+    {
+        var date = new DateOnly(2025, 01, 01);
+        var expected = TimeSpan.FromHours(1);
+
+        var periods = new[]
+        {
+            CreatePeriod(date.AddDays(-1).ToUtcDateTime(13), date.AddDays(-1).ToUtcDateTime(14)),
+            CreatePeriod(date.ToUtcDateTime(13), date.ToUtcDateTime(14)),
+            CreatePeriod(date.AddDays(1).ToUtcDateTime(13), date.AddDays(1).ToUtcDateTime(14))
+        };
+        var record = new Record(
+            RecordId.Generate(),
+            DefaultUserId,
+            DefaultRelatedActivities,
+            RelatedTagIdsCollection.Empty,
+            new RecordPeriodsCollection(periods));
+
+        var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
+
+        var statistics = TimeStatisticsCalculator.Calculate(period, [record]);
+
+        Assert.Equal(expected, statistics.RecordedTime);
+        Assert.Equal(expected, statistics.PerActivities[DefaultActivityId].RecordedTime);
+    }
+
+    [Fact]
+    public void Calculate_ShouldNotAddActivity_WhenPeriodOnlyTouchesWindow()
+    {
+        var date = new DateOnly(2025, 01, 01);
+        var otherActivityId = ActivityId.Generate();
+
+        var records = new[]
+        {
+            CreateRecord(date.ToUtcDateTime(2), date.ToUtcDateTime(4)),
+            CreateRecord(date.ToUtcDateTime().AddHours(-2), date.ToUtcDateTime(),
+                new RelatedActivityIdsCollection([otherActivityId]))
+        };
+
+        var period = new DateTimePeriod(date.ToUtcDateTime(), TimeSpan.FromDays(1));
+
+        var statistics = TimeStatisticsCalculator.Calculate(period, records);
+
+        Assert.Equal(TimeSpan.FromHours(2), statistics.RecordedTime);
+        Assert.DoesNotContain(otherActivityId, statistics.PerActivities);
+    }
+
     private static RecordPeriod CreatePeriod(DateTimeOffset startAt, DateTimeOffset endAt)
     {
         return new RecordPeriod(RecordPeriodId.Generate(), new DateTimePeriod(startAt, endAt), TimeZoneOffset.Default);

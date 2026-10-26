@@ -50,19 +50,17 @@ public static class TimeStatisticsCalculator
 
         public void Process(RecordInterval interval)
         {
-            if (interval.Period.EndAt < _period.StartAt)
+            // A record is selected when any of its periods intersects the window, so other periods may lie outside it
+            var clippedStartAt = DateTimeOperations.Max(_period.StartAt, interval.Period.StartAt);
+            var clippedEndAt = DateTimeOperations.Min(_period.EndAt, interval.Period.EndAt);
+            if (clippedEndAt <= clippedStartAt)
                 return;
 
-            var startAt = interval.Period.StartAt;
-            var endAt = DateTimeOperations.Min(_period.EndAt, interval.Period.EndAt);
-
-            if (startAt < _lastEntAt)
-                startAt = _lastEntAt;
-
-            if (endAt > _lastEntAt)
+            var startAt = DateTimeOperations.Max(clippedStartAt, _lastEntAt);
+            if (clippedEndAt > startAt)
             {
-                _result += endAt - startAt;
-                _lastEntAt = endAt;
+                _result += clippedEndAt - startAt;
+                _lastEntAt = clippedEndAt;
             }
 
             foreach (var activityId in interval.ActivityIds)
@@ -70,19 +68,14 @@ public static class TimeStatisticsCalculator
                 if (!_lastEndAtByActivityIds.TryGetValue(activityId, out var lastEndAtByActivityId))
                     lastEndAtByActivityId = _period.StartAt;
 
-                startAt = interval.Period.StartAt;
-                endAt = DateTimeOperations.Min(_period.EndAt, interval.Period.EndAt);
-
-                if (startAt < lastEndAtByActivityId)
-                    startAt = lastEndAtByActivityId;
-
                 if (!_resultByActivityIds.ContainsKey(activityId))
                     _resultByActivityIds[activityId] = TimeSpan.Zero;
 
-                if (endAt > lastEndAtByActivityId)
+                var activityStartAt = DateTimeOperations.Max(clippedStartAt, lastEndAtByActivityId);
+                if (clippedEndAt > activityStartAt)
                 {
-                    _resultByActivityIds[activityId] += endAt - startAt;
-                    _lastEndAtByActivityIds[activityId] = endAt;
+                    _resultByActivityIds[activityId] += clippedEndAt - activityStartAt;
+                    _lastEndAtByActivityIds[activityId] = clippedEndAt;
                 }
             }
         }
