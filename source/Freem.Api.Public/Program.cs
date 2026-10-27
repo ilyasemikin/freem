@@ -20,6 +20,7 @@ using Freem.Api.Public.OpenApi;
 using Freem.Api.Public.OpenApi.Errors;
 using Freem.Api.Public.UseCases.DependencyInjection.Microsoft.Extensions;
 using Freem.Domain.UseCases.DependencyInjection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -55,6 +56,15 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .WithExposedHeaders([HeaderNames.ContentDisposition]);
     });
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    // Only the prefix stripped by a reverse proxy is taken, so the proxy address is not checked: a forged header
+    // changes PathBase (and the refresh cookie path) of the sender's own request only.
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedPrefix;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 builder.Services.AddBuildInfo();
@@ -128,6 +138,8 @@ builder.Services.AddOpenApi(options =>
 });
 
 var application = builder.Build();
+
+application.UseForwardedHeaders();
 
 application.UseApiErrorHandling();
 

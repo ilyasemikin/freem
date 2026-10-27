@@ -12,7 +12,10 @@ namespace Freem.Api.Public.UseCases.Implementations.Handlers.Auth;
 internal static class EgoHubAuthSupport
 {
     public const string RefreshCookieName = "eh_refresh_token";
-    public const string RefreshCookiePath = "/api/v1/auth";
+
+    // Relative to Request.PathBase, which is the prefix a reverse proxy stripped (X-Forwarded-Prefix): the browser
+    // sees the prefixed path and sends the cookie only there.
+    private static readonly PathString RefreshCookiePath = new("/api/v1/auth");
 
     // Only errors caused by the caller's input are passed through; a rejected service token, EgoHub failures
     // and network errors are not the caller's fault and become 502.
@@ -61,7 +64,7 @@ internal static class EgoHubAuthSupport
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Lax,
-            Path = RefreshCookiePath,
+            Path = GetRefreshCookiePath(httpContext),
             Expires = tokens.RefreshTokenExpiresAt
         };
         httpContext.Response.Cookies.Append(RefreshCookieName, tokens.RefreshToken, options);
@@ -69,7 +72,13 @@ internal static class EgoHubAuthSupport
 
     public static void DeleteRefreshCookie(HttpContext httpContext)
     {
-        var options = new CookieOptions { Path = RefreshCookiePath };
+        var options = new CookieOptions { Path = GetRefreshCookiePath(httpContext) };
         httpContext.Response.Cookies.Delete(RefreshCookieName, options);
+    }
+
+    private static string GetRefreshCookiePath(HttpContext httpContext)
+    {
+        var path = httpContext.Request.PathBase.Add(RefreshCookiePath);
+        return path.Value!;
     }
 }
