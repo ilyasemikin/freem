@@ -9,6 +9,9 @@
   "Redis": {
     "ConnectionString": "redis:6379,allowAdmin=true"
   },
+  "OpenSearch": {
+    "Url": "http://localhost:9200"
+  },
   "Integrations": {
     "EgoHubClient": {
       "Address": ""

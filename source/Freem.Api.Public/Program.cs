@@ -28,6 +28,8 @@ using Utilities.App.DependencyInjection;
 using Utilities.Clock.DependencyInjection.Microsoft;
 using Utilities.Errors.Serialization.Json.Extensions;
 using Utilities.Locking.Redis.DependencyInjection;
+using Utilities.Logging.OpenSearch.DependencyInjection;
+using Utilities.Metrics.Prometheus.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +69,12 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
+builder.Services.AddAppInfo(configuration.App);
 builder.Services.AddBuildInfo();
+
+builder.Host.AddOpenSearchLogging(configuration.OpenSearch, configuration.App);
+
+builder.Services.AddPrometheusMetrics();
 
 builder.Services
     .AddUtcTruncatedToSecondsClock()
