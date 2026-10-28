@@ -6,6 +6,11 @@
 
 - [ ] Перевести бэкенд на архитектурные подходы StashIt, EgoHub и Trandoma: разделение `Domain`/`Domain.Entities`, события, use case'ы, именование слоёв и проектов. Детали и порядок — в наброске `ai/plans/freem-architecture/general/roadmap.md` (его нужно доработать, прежде чем начинать этапы)
 
+## Infrastructure
+
+- [ ] Перевести `Freem.Api.Public.IntegrationTests` с `WebApplicationFactory` на запросы к реально запущенному API (в `docker/test` — отдельный контейнер API). Сейчас Serilog из `Utilities.Logging.OpenSearch` заменяет логгер, и логи приложения в xUnit-output больше не попадают
+- [ ] Вынести OpenSearch в отдельное окружение и подключить к нему `docker/service`: API требует секцию `OpenSearch:Url`, без неё сервис в `docker/service` не стартует
+
 ## Domain
 
 - [ ] Удалить заготовку Telegram-интеграции (`UserTelegramIntegration`, событие `TelegramIntegrationChanged`, сущность и конфигурация хранилища): пока нет понимания, что именно нужно. Затрагивает схему БД (удаление таблицы/колонок) — перед реализацией согласовать с пользователем
