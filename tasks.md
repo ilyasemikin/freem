@@ -8,7 +8,7 @@
 
 ## Infrastructure
 
-- [ ] Перевести `Freem.Api.Public.IntegrationTests` с `WebApplicationFactory` на запросы к реально запущенному API (в `docker/test` — отдельный контейнер API). Сейчас Serilog из `Utilities.Logging.OpenSearch` заменяет логгер, и логи приложения в xUnit-output больше не попадают
+- [x] Перевести `Freem.Api.Public.IntegrationTests` с `WebApplicationFactory` на запросы к реально запущенному API (в `docker/test` — отдельный контейнер `api`; тесты идут параллельно, каждый со своим пользователем EgoHub)
 - [ ] Вынести OpenSearch в отдельное окружение и подключить к нему `docker/service`: API требует секцию `OpenSearch:Url`, без неё сервис в `docker/service` не стартует
 
 ## Domain

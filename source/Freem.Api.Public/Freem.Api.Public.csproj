@@ -22,10 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Freem.Api.Public.IntegrationTests"/>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
       <PackageReference Include="Microsoft.OpenApi" Version="2.12.2"/>
       <PackageReference Include="Scalar.AspNetCore" Version="2.11.1" />

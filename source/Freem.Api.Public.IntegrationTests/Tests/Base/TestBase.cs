@@ -1,22 +1,11 @@
-﻿using Freem.Api.Public.IntegrationTests.Context;
-using Xunit.Abstractions;
+using Freem.Api.Public.IntegrationTests.Context;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.Base;
 
-[Collection("Tests")]
-public abstract class TestBase : IAsyncLifetime, IDisposable
+// Every test signs up its own EgoHub user, so data of parallel tests never overlaps.
+public abstract class TestBase : IAsyncLifetime
 {
-    protected TestContext Context { get; }
-
-    protected TestBase(TestContext context, ITestOutputHelper? output = null)
-    {
-        ArgumentNullException.ThrowIfNull(context);
-        
-        Context = context;
-        Context.Output = output;
-        
-        Context.CleanDatabase();
-    }
+    protected TestContext Context { get; } = new();
 
     public virtual Task InitializeAsync()
     {
@@ -25,14 +14,8 @@ public abstract class TestBase : IAsyncLifetime, IDisposable
 
     public Task DisposeAsync()
     {
-        return Task.CompletedTask;
-    }
+        Context.Dispose();
 
-    public void Dispose()
-    {
-        Context.ClientSession.Clean();
-        Context.CleanDatabase();
-        
-        GC.SuppressFinalize(this);
+        return Task.CompletedTask;
     }
 }

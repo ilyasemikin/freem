@@ -2,19 +2,13 @@ using System.Net;
 using Freem.Api.Public.Contracts.V1.Events;
 using Freem.Domain;
 using EventId = Freem.Domain.Events.EventId;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Events.Base;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Events;
 
 public sealed class GetEventTests : EventTestBase
 {
-    public GetEventTests(TestContext context, ITestOutputHelper? output = null) : base(context, output)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess()
     {

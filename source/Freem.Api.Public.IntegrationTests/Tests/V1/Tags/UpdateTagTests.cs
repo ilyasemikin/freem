@@ -2,20 +2,13 @@
 using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.Contracts.V1.Tags;
 using Freem.Domain.Tags.Models;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Tags.Base;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Tags;
 
 public sealed class UpdateTagTests : TagTestBase
 {
-    public UpdateTagTests(TestContext context, ITestOutputHelper output) 
-        : base(context, output)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess()
     {

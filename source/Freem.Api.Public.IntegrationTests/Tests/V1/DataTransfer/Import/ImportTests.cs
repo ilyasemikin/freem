@@ -2,25 +2,18 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using Freem.Api.Public.Contracts.V1.DataTransfer.Import;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
 using Freem.Domain;
 using Freem.Domain.DataTransfer.Formats;
 using Freem.Domain.DataTransfer.Import;
 using Freem.Domain.Users.Models;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.DataTransfer.Import;
 
 public sealed class ImportTests : TestBase
 {
     private static readonly FormatKey TimeTrackerKey = FormatKey.Parse("time-tracker", null);
-
-    public ImportTests(TestContext context, ITestOutputHelper? output = null)
-        : base(context, output)
-    {
-    }
 
     public override async Task InitializeAsync()
     {

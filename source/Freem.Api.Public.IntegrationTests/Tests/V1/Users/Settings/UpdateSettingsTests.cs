@@ -5,7 +5,6 @@ using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Users.Settings.Base;
 
@@ -13,11 +12,6 @@ namespace Freem.Api.Public.IntegrationTests.Tests.V1.Users.Settings;
 
 public sealed class UpdateSettingsTests : SettingsTestBase
 {
-    public UpdateSettingsTests(TestContext context) 
-        : base(context)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess()
     {

@@ -1,9 +1,7 @@
 ﻿using Freem.Domain.Records;
 using Freem.Domain.Relations.Collections;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
 using Freem.Time;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
 
@@ -16,11 +14,6 @@ public abstract class RecordTestBase : TestBase
     
     protected RelatedActivityIdsCollection AddedRelatedActivities { get; private set; } = null!;
     protected RelatedTagIdsCollection AddedRelatedTags { get; private set; } = null!;
-    
-    protected RecordTestBase(TestContext context, ITestOutputHelper? output = null) 
-        : base(context, output)
-    {
-    }
 
     public override async Task InitializeAsync()
     {

@@ -1,22 +1,15 @@
 using System.Net;
 using System.Text.Json;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
 using Freem.Domain;
 using Freem.Domain.DataTransfer.Formats;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.DataTransfer.Export;
 
 public sealed class ExportDataTests : RecordTestBase
 {
     private static readonly FormatKey NativeJsonKey = FormatKey.Parse("freem-json", null);
-
-    public ExportDataTests(TestContext context, ITestOutputHelper? output = null)
-        : base(context, output)
-    {
-    }
 
     [Fact]
     public async Task Request_ShouldReturnFileWithAllData()

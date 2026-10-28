@@ -1,8 +1,6 @@
 ﻿using Freem.Domain.Activities;
 using Freem.Domain.Relations.Collections;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Activities.Base;
 
@@ -13,11 +11,6 @@ public abstract class ActivityTestBase : TestBase
     protected IReadOnlyList<ActivityId> AddedActivityIds { get; private set; } = null!;
     
     protected RelatedTagIdsCollection AddedRelatedTags { get; private set; } = null!;
-    
-    protected ActivityTestBase(TestContext context, ITestOutputHelper output) 
-        : base(context, output)
-    {
-    }
 
     public override async Task InitializeAsync()
     {

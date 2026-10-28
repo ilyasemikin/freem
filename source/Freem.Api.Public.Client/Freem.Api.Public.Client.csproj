@@ -23,8 +23,4 @@
         <ProjectReference Include="..\Freem.Api.Public.Contracts\Freem.Api.Public.Contracts.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="Freem.Api.Public.IntegrationTests"/>
-    </ItemGroup>
-
 </Project>

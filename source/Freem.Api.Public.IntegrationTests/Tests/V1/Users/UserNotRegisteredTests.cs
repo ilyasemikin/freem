@@ -3,7 +3,6 @@ using Freem.Api.Public.Contracts.V1;
 using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
 
@@ -12,11 +11,6 @@ namespace Freem.Api.Public.IntegrationTests.Tests.V1.Users;
 // The EgoHub identity exists, but the Freem user has not been registered yet.
 public sealed class UserNotRegisteredTests : TestBase
 {
-    public UserNotRegisteredTests(TestContext context) 
-        : base(context)
-    {
-    }
-
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();

@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Utilities.Errors.Serialization.Json.Extensions;
 using Utilities.Http.SystemNet.DependencyInjection.Microsoft.Extensions;
-using NetHttpClient = System.Net.Http.HttpClient;
 
 namespace Freem.Api.Public.Client.DependencyInjection;
 
@@ -27,13 +26,6 @@ public static class ServiceCollectionExtensions
 
         return services
             .AddSystemNetHttpClient(address)
-            .AddWebClientSpecific();
-    }
-
-    internal static IServiceCollection AddWebClient(this IServiceCollection services, NetHttpClient client)
-    {
-        return services
-            .AddSystemNetHttpClient(client)
             .AddWebClientSpecific();
     }
 

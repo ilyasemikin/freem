@@ -163,5 +163,3 @@ application.UseAuthorization();
 application.MapControllers();
 
 application.Run();
-
-public partial class Program {}

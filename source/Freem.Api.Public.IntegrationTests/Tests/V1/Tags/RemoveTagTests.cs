@@ -1,19 +1,12 @@
 ﻿using System.Net;
 using Freem.Domain.Tags;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Tags.Base;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Tags;
 
 public sealed class RemoveTagTests : TagTestBase
 {
-    public RemoveTagTests(TestContext context, ITestOutputHelper output) 
-        : base(context, output)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess()
     {

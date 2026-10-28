@@ -1,24 +1,21 @@
-﻿using System.Net.Http.Headers;
-using Freem.Domain.Storage.PostgreSQL.Database;
-using Freem.Domain.Storage.PostgreSQL.Database.Extensions;
+using System.Net.Http.Headers;
 using Freem.Api.Public.Client;
 using Freem.Api.Public.Client.DependencyInjection;
 using Freem.Api.Public.Client.Implementations;
+using Freem.Api.Public.IntegrationTests.Configuration;
 using Freem.Api.Public.IntegrationTests.Context.Preparers;
-using Freem.Api.Public.IntegrationTests.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit.Abstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Freem.Api.Public.IntegrationTests.Context;
 
-public sealed class TestContext
+// One context per test: its own client and session against a running API, so tests run in parallel.
+public sealed class TestContext : IDisposable
 {
-    private const string ConfigurationFileName = "configuration.json";
+    private static readonly Lazy<ConfigurationProperties> Configuration = new(BuildConfiguration);
 
-    private readonly WebApplicationFactory<Program> _application;
-    
-    public ITestOutputHelper? Output { get; set; }
-    
+    private readonly ServiceProvider _services;
+
     public ClientSession ClientSession { get; }
     
     public CompositeClient Client { get; }
@@ -27,14 +24,13 @@ public sealed class TestContext
     
     public TestContext()
     {
-        var configuration = BuildConfiguration();
+        _services = new ServiceCollection()
+            .AddWebClient(Configuration.Value)
+            .BuildServiceProvider();
         
-        _application = BuildApplication(configuration);
-        var services = BuildServices(_application);
+        ClientSession = _services.GetRequiredService<ClientSession>();
         
-        ClientSession = services.GetRequiredService<ClientSession>();
-        
-        Client = services.GetRequiredService<CompositeClient>();
+        Client = _services.GetRequiredService<CompositeClient>();
 
         Preparer = new CombinedPreparer(this);
     }
@@ -42,44 +38,29 @@ public sealed class TestContext
     // A raw client for requests the typed client cannot express (e.g. malformed route values).
     public HttpClient CreateHttpClient()
     {
-        var client = _application.CreateClient();
+        var client = new HttpClient
+        {
+            BaseAddress = Configuration.Value.FreemClient.Address
+        };
         if (ClientSession.TryGet(out var accessToken))
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         return client;
     }
 
-    public void CleanDatabase()
+    public void Dispose()
     {
-        using var scope = _application.Services.CreateScope();
-        var services = scope.ServiceProvider;
-
-        var context = services.GetRequiredService<DatabaseContext>();
-        
-        context.TruncateTables();
+        _services.Dispose();
     }
 
-    private WebApplicationFactory<Program> BuildApplication(IConfiguration configuration)
+    private static ConfigurationProperties BuildConfiguration()
     {
-        return new WebApiApplication(configuration, () => Output);
-    }
-    
-    private static IConfiguration BuildConfiguration()
-    {
-        return new ConfigurationBuilder()
-            .AddJsonFile(ConfigurationFileName)
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile(ConfigurationProperties.Filename)
             .AddEnvironmentVariables()
             .Build();
-    }
-    
-    private static IServiceProvider BuildServices(WebApplicationFactory<Program> application)
-    {
-        var services = new ServiceCollection();
 
-        var client = application.CreateClient();
-        
-        services.AddWebClient(client);
-        
-        return services.BuildServiceProvider();
+        return configuration.Get<ConfigurationProperties>()
+            ?? throw new InvalidOperationException("configuration is null");
     }
 }

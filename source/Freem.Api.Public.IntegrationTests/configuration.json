@@ -1,18 +1,5 @@
 {
-  "Cors": {
-    "Origins": []
-  },
-  "Postgres": {
-    "ConnectionString": "",
-    "EnableSensitiveDataLogging": true
-  },
-  "Redis": {
-    "ConnectionString": ""
-  },
-  "Integrations": {
-    "EgoHubClient": {
-      "Address": ""
-    },
-    "EgoHubApiKey": ""
+  "FreemClient": {
+    "Address": "http://localhost:10190"
   }
 }

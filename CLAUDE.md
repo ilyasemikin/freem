@@ -72,9 +72,13 @@ code impact (point fix vs structural change, review volume), not in days/weeks.
   10150, Redis 10151; `service` API 10170, web 10171; local `dotnet run` API 10190, `npm run dev` 10191 (strict).
   Images need `.nupkg` files in `source/packages/`.
 - `.IntegrationTests` (storage, Redis, use cases, API) run in `docker/test` (`docker compose up --build --abort-on-container-exit
-  test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; EgoHub address and token come from `docker/test/.env` (see `.env.example`); each test assembly has its own database `freem_{storage,usecases,api}_test`, because assemblies run in parallel and truncate tables). `TruncateTables` refuses a
-  database whose name does not end with `_test`. The committed `configuration.json` files of the test projects hold
-  empty placeholders for local runs against `develop` (use a `*_test` database).
+  test`, then `down -v`; no ports published, test configs in `docker/test/configs/`; EgoHub address and token come from `docker/test/.env` (see `.env.example`); the storage and use case assemblies have
+  their own databases `freem_{storage,usecases}_test`, because assemblies run in parallel and truncate tables).
+  `TruncateTables` refuses a database whose name does not end with `_test`. The committed `configuration.json` files of
+  the test projects hold empty placeholders for local runs against `develop` (use a `*_test` database).
+- `Freem.Api.Public.IntegrationTests` call a running API through `Freem.Api.Public.Client` (`FreemClient:Address`):
+  in `docker/test` it is the `api` container (database `freem_api_test`), locally a `dotnet run` API on 10190 (point it
+  at `freem_api_test`, not `freem`). Tests run in parallel without cleanup: each test signs up its own EgoHub user.
 - Do not spend time on manual browser passes once build and tests pass; ask first. When the user agrees, follow
   `ai/skills/web-manual-test/SKILL.md` (Playwright MCP from `.mcp.json`, `ai/scripts/web-env-check.sh`, `ai/scripts/dev-account.sh`;
   subagents must `Read` the `SKILL.md`). The dev account credentials are `FREEM_DEV_USERNAME`/`FREEM_DEV_PASSWORD` in
@@ -114,7 +118,7 @@ takes the Freem user id from the token `sub` claim (`UseCaseContextProvider`). E
 by `Integrations:EgoHubClient:Address` and `Integrations:EgoHubApiKey` (service token `<KeyId>:<Value>`); the web client signs in through the Freem API
 (`api/v1/auth/{register,login,refresh,logout}`, refresh token in an HttpOnly cookie), which proxies to EgoHub. A Freem
 user is created explicitly by `POST api/v1/user/register` after the EgoHub identity exists. `Freem.Api.Public.IntegrationTests` need a
-running EgoHub (`docker/test` reaches it via `host.docker.internal`) and a valid token in the local test config.
+running EgoHub behind the tested API (`docker/test` reaches it via `host.docker.internal`).
 
 ## Commands
 
@@ -127,6 +131,6 @@ cd Freem.Web && npm install && npm run dev   # also: npm run build, npm run lint
 docker build -f Freem.Api.Public/Dockerfile .   # run from source
 ```
 
-`.IntegrationTests` projects (PostgreSQL, Redis, UseCases, API) keep a committed
+`.IntegrationTests` projects (PostgreSQL, Redis, UseCases) keep a committed
 `configuration.json` with empty placeholders; hide local values with `git update-index --skip-worktree` (see
 "Local Environment"). Frontend API address: `VITE_API_URL` (`Freem.Web/.env.example`).

@@ -1,18 +1,11 @@
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
 using Freem.Domain.DataTransfer.Formats;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.DataTransfer.Formats;
 
 public sealed class ListFormatsTests : TestBase
 {
-    public ListFormatsTests(TestContext context, ITestOutputHelper? output = null)
-        : base(context, output)
-    {
-    }
-
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();

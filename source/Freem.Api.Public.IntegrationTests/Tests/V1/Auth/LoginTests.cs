@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using Freem.Domain;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.Base;
 
@@ -10,11 +9,6 @@ namespace Freem.Api.Public.IntegrationTests.Tests.V1.Auth;
 
 public sealed class LoginTests : TestBase
 {
-    public LoginTests(TestContext context) 
-        : base(context)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldReturnInvalidRequestError_WhenBodyMissesFields()
     {

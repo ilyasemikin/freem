@@ -6,21 +6,14 @@ using Freem.Api.Public.Contracts.V1.Users.Settings;
 using Freem.Domain.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Users.Models;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
 using Freem.Time;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records;
 
 public sealed class RecordPeriodTests : RecordTestBase
 {
-    public RecordPeriodTests(TestContext context, ITestOutputHelper? output = null)
-        : base(context, output)
-    {
-    }
-
     private DateTimePeriod CreateAfterAddedPeriods(int startHours, int durationHours)
     {
         var startAt = AddedPeriods.Max(p => p.EndAt).AddHours(startHours);

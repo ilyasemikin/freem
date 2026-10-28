@@ -2,21 +2,14 @@
 using Freem.Api.Public.Contracts.V1.Records;
 using Freem.Domain.Records.Models;
 using Freem.Domain.Records.Sources;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Base;
 using Freem.Time;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records;
 
 public sealed class CreateRecordTests : RecordTestBase
 {
-    public CreateRecordTests(TestContext context, ITestOutputHelper? output = null) 
-        : base(context, output)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess()
     {

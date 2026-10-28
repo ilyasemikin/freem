@@ -5,20 +5,13 @@ using Freem.Domain.Activities;
 using Freem.Domain.Activities.Models;
 using Freem.Domain.Relations.Collections;
 using Freem.Domain.Tags;
-using Freem.Api.Public.IntegrationTests.Context;
 using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Activities.Base;
-using Xunit.Abstractions;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Activities;
 
 public sealed class UpdateActivityTests : ActivityTestBase
 {
-    public UpdateActivityTests(TestContext context, ITestOutputHelper output) 
-        : base(context, output)
-    {
-    }
-
     [Fact]
     public async Task Request_ShouldSuccess_WhenUpdateName()
     {
