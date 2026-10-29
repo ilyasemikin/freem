@@ -93,7 +93,7 @@ services:
         aliases:
           - freem-web
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost/"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/"]
       interval: 5s
       timeout: 3s
       retries: 5
