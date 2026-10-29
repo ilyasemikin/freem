@@ -60,15 +60,16 @@ services:
       Integrations__EgoHubApiKey: ${EGOHUB_INTEGRATION_TOKEN}
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - ${API_PORT}:8080
     depends_on:
       postgres-migration:
         condition: service_completed_successfully
       redis:
         condition: service_healthy
     networks:
-      - freem_network
+      freem_network:
+      proxy_network:
+        aliases:
+          - freem-api
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/_health/liveness"]
       interval: 5s
@@ -83,13 +84,14 @@ services:
       args:
         VITE_API_URL: ${API_PUBLIC_URL}
         VITE_BASE_PATH: ${WEB_BASE_PATH:-/}
-    ports:
-      - ${WEB_PORT}:80
     depends_on:
       api:
         condition: service_healthy
     networks:
-      - freem_network
+      freem_network:
+      proxy_network:
+        aliases:
+          - freem-web
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost/"]
       interval: 5s
@@ -137,6 +139,9 @@ services:
 networks:
   freem_network:
     driver: bridge
+  proxy_network:
+    external: true
+    name: ${PROXY_NETWORK_NAME}
 
 volumes:
   postgres_data:
