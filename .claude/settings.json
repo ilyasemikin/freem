@@ -17,7 +17,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/ilyasemikin/Sources/Freem/.claude/hooks/block-coauthored-commits.sh"
+            "command": "node \"$(git rev-parse --show-toplevel)/ai/hooks/block-commit-attribution.cjs\"",
+            "timeout": 10
           }
         ]
       }
