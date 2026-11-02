@@ -150,6 +150,8 @@ application.UseForwardedHeaders();
 
 application.UseApiErrorHandling();
 
+application.UseHttpLogging();
+
 application
     .MapOpenApi()
     .CacheOutput();
