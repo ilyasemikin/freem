@@ -1,0 +1,9 @@
+{
+  "name": "freem-playwright-fallback",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repo-owned playwright-core for the web-manual-test fallback (ai/skills/web-manual-test). The version is pinned to the cached Chromium revision used by .mcp.json; bump both together.",
+  "dependencies": {
+    "playwright-core": "1.63.0"
+  }
+}

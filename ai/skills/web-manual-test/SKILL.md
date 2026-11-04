@@ -57,8 +57,10 @@ the web register form) when the check needs a clean state or an empty-data case;
 Known noise, not bugs: `401 POST auth/refresh` on first load (no cookie yet).
 
 `.mcp.json` pins the cached Chromium via `--executable-path` (the MCP default is the system Google Chrome, which is not installed). If `mcp__playwright__*` tools are unavailable (`.mcp.json` not approved, browser revision mismatch), fall back to a Node script
-with `playwright-core` (e.g. from `~/Sources/Trandoma/Trandoma.Web/node_modules`) and `executablePath` pointing at the
-cached `~/.cache/ms-playwright/chromium_headless_shell-*/…/chrome-headless-shell`. Icon-only buttons are found by their
+with the repo's own `playwright-core` from `ai/tools/playwright/` (`npm ci` there if `node_modules` is missing; the version
+is pinned to the cached Chromium revision, bump both together) and `executablePath` pointing at the cached
+`~/.cache/ms-playwright/chromium_headless_shell-*/…/chrome-headless-shell`. Never borrow `node_modules` from sibling
+repositories. Icon-only buttons are found by their
 PrimeIcons class: `.pi-plus` (inside `.panel-header`), `.pi-play-circle`, `.pi-stop-circle`, `.pi-ellipsis-v`.
 
 ## 4. Report
