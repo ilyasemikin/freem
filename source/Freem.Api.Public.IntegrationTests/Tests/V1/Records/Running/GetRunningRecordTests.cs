@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Freem.Api.Public.IntegrationTests.Extensions;
+﻿using Freem.Api.Public.IntegrationTests.Extensions;
 using Freem.Api.Public.IntegrationTests.Tests.V1.Records.Running.Base;
 
 namespace Freem.Api.Public.IntegrationTests.Tests.V1.Records.Running;
@@ -20,17 +19,18 @@ public sealed class GetRunningRecordTests : RunningRecordTestBase
         
         Assert.NotNull(response);
         response.ShouldSuccess();
-        Assert.NotNull(response);
+        Assert.NotNull(response.Unwrap().RunningRecord);
     }
 
     [Fact]
-    public async Task Request_ShouldFail_WhenRecordNotExists()
+    public async Task Request_ShouldReturnNull_WhenRecordNotExists()
     {
         await Context.Preparer.Records.StopRunningAsync();
 
         var response = await Context.Client.Records.GetRunningAsync();
         
         Assert.NotNull(response);
-        response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+        response.ShouldSuccess();
+        Assert.Null(response.Unwrap().RunningRecord);
     }
 }

@@ -55,6 +55,7 @@ public sealed class RunningRecordsExecutor
     {
         var result = await GetAsync(context);
         var response = result.EnsureSuccess();
-        return response.Record;
+        var record = response.Record ?? throw new InvalidOperationException("Running record is not found");
+        return record;
     }
 }

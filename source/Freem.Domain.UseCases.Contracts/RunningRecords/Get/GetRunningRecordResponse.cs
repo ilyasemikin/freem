@@ -4,12 +4,10 @@ namespace Freem.Domain.UseCases.Contracts.RunningRecords.Get;
 
 public sealed class GetRunningRecordResponse
 {
-    public RunningRecord Record { get; }
+    public RunningRecord? Record { get; }
 
-    public GetRunningRecordResponse(RunningRecord record)
+    public GetRunningRecordResponse(RunningRecord? record)
     {
-        ArgumentNullException.ThrowIfNull(record);
-
         Record = record;
     }
 }

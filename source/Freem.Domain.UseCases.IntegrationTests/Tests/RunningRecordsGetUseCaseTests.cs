@@ -45,5 +45,20 @@ public sealed class RunningRecordsGetUseCaseTests : UseCaseTestBase
 
         Assert.Equal(_record, response.Value.Record, RunningRecordEqualityComparer.Instance);
     }
-    
+
+    [Fact]
+    public async Task ShouldReturnNull_WhenRecordNotExists()
+    {
+        using var executor = Context.CreateExecutor();
+        await executor.RunningRecords.RemoveAsync(_context);
+
+        var request = new GetRunningRecordRequest();
+
+        var response = await Context.ExecuteAsync<GetRunningRecordRequest, Result<GetRunningRecordResponse, Error>>(_context, request);
+
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.Null(response.Value.Record);
+        Assert.Null(response.Error);
+    }
 }

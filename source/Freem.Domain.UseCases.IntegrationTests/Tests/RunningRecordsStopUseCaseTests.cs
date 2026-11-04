@@ -48,7 +48,8 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
         using var executor = Context.CreateExecutor();
         var result = await executor.RunningRecords.GetAsync(_context);
         
-        Assert.False(result.Success);
+        Assert.True(result.Success);
+        Assert.Null(result.Value.Record);
     }
 
     [Fact]
@@ -79,7 +80,8 @@ public sealed class RunningRecordsStopUseCaseTests : UseCaseTestBase
 
         using var executor = Context.CreateExecutor();
         var running = await executor.RunningRecords.GetAsync(_context);
-        Assert.False(running.Success);
+        Assert.True(running.Success);
+        Assert.Null(running.Value.Record);
     }
 
     [Fact]

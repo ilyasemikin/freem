@@ -2,16 +2,14 @@
 
 namespace Freem.Api.Public.Contracts.V1.Records.Running;
 
-/// <summary>Response containing the running record.</summary>
+/// <summary>Response containing the running record, or <see langword="null"/> if no record is running.</summary>
 public sealed class RunningRecordResponse
 {
-    /// <summary>The record.</summary>
-    public RunningRecordDto RunningRecord { get; }
+    /// <summary>The record, or <see langword="null"/> if no record is running.</summary>
+    public RunningRecordDto? RunningRecord { get; }
 
-    public RunningRecordResponse(RunningRecordDto runningRecord)
+    public RunningRecordResponse(RunningRecordDto? runningRecord)
     {
-        ArgumentNullException.ThrowIfNull(runningRecord);
-
         RunningRecord = runningRecord;
     }
 }

@@ -54,7 +54,7 @@ the web register form) when the check needs a clean state or an empty-data case;
 - The refresh token is an HttpOnly cookie on the API origin; Playwright runs `--isolated`, so every session starts
   signed out.
 
-Known noise, not bugs: `401 POST auth/refresh` on first load (no cookie yet) and `404 GET records/running` when nothing is running.
+Known noise, not bugs: `401 POST auth/refresh` on first load (no cookie yet).
 
 `.mcp.json` pins the cached Chromium via `--executable-path` (the MCP default is the system Google Chrome, which is not installed). If `mcp__playwright__*` tools are unavailable (`.mcp.json` not approved, browser revision mismatch), fall back to a Node script
 with `playwright-core` (e.g. from `~/Sources/Trandoma/Trandoma.Web/node_modules`) and `executablePath` pointing at the

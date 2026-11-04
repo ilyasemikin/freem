@@ -27,7 +27,11 @@ internal class GetRunningRecordUseCase
         var id = RunningRecordId.FromUserId(context.UserId);
         var result = await _repository.FindByIdAsync(id, cancellationToken);
         if (!result.Success)
-            return result.Error;
+        {
+            return result.Error.Type == DomainErrorCatalog.Types.EntityNotFound
+                ? new GetRunningRecordResponse(null)
+                : result.Error;
+        }
 
         return new GetRunningRecordResponse(result.Value);
     }

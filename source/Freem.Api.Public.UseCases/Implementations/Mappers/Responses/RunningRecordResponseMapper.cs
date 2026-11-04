@@ -16,7 +16,7 @@ internal static class RunningRecordResponseMapper
         if (!result.Success)
             return result.Error.MapError();
 
-        var runningRecord = result.Value.Record.Map();
+        var runningRecord = result.Value.Record?.Map();
         var response = new RunningRecordResponse(runningRecord);
         return new OkObjectResult(response);
     }

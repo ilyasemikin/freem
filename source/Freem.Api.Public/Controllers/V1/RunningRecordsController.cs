@@ -87,11 +87,10 @@ public sealed class RunningRecordsController : BaseController
         return await Mediator.ExecuteAsync<ApiStopRunningRecordRequest, IActionResult>(context, request, cancellationToken);
     }
     
-    /// <summary>Returns the running record.</summary>
+    /// <summary>Returns the running record, or a response containing <see langword="null"/> if no record is running.</summary>
     [HttpGet]
     [ProducesResponseType<RunningRecordResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(CancellationToken cancellationToken = default)
     {

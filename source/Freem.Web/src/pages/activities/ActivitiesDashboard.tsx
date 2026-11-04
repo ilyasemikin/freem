@@ -55,14 +55,14 @@ export function ActivitiesDashboard(props: IActivitiesDashboardProps) {
     async function loadRunningRecord() {
       const response = await clients.records.getRunning();
 
-      if (!response.ok && response.status !== 404) {
+      if (!response.ok) {
         throw new Error(response.statusText);
       }
 
       const payload = await response.json();
-      const body: RunningRecordResponse = response.ok ? payload.runningRecord : payload;
+      const body: RunningRecordResponse | null = payload.runningRecord;
 
-      if (response.ok) {
+      if (body !== null) {
         const record = new RunningRecordEntity(
             new Date(body.startAt),
             await cache.activities.list(body.activities),
